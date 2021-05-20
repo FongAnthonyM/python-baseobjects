@@ -17,4 +17,5 @@ __status__ = "Production/Stable"
 # Downloaded Libraries #
 
 # Local Libraries #
-from .dynamicwrapper import *
+from .baseobject import BaseObject
+from .wrappers import StaticWrapper, DynamicWrapper

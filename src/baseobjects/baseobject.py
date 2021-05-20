@@ -10,7 +10,7 @@ __license__ = ""
 __version__ = "1.0.0"
 __maintainer__ = "Anthony Fong"
 __email__ = ""
-__status__ = "Prototype"
+__status__ = "Production/Stable"
 
 # Default Libraries #
 from abc import ABC
@@ -25,21 +25,14 @@ from copyreg import dispatch_table
 # Definitions #
 # Classes #
 class BaseObject(ABC):
-    """
+    """An abstract class that implements copy and deepcopy from the copy library"""
 
-    Class Attributes:
-
-    Attributes:
-
-    Args:
-
-    """
     # Construction/Destruction
     def __copy__(self):
-        """The copy magic method (shallow)
+        """The copy magic method (shallow).
 
         Returns:
-            :obj:`ObjectWithLogging`: A shallow copy of this object.
+            :obj:`BaseObject`: A shallow copy of this object.
         """
         cls = type(self)
 
@@ -70,13 +63,13 @@ class BaseObject(ABC):
         return _reconstruct(self, None, *rv)
 
     def __deepcopy__(self, memo=None, _nil=[]):
-        """Overrides the deep copy magic method to ensure the dynamically inheriting objects are copied.
+        """The deepcopy magic method
 
         Args:
             memo (dict): A dictionary of user defined information to pass to another deepcopy call which it will handle.
 
         Returns:
-            :obj:`ObjectWithLogging`: A deep copy of this object.
+            :obj:`BaseObject`: A deep copy of this object.
         """
         if memo is None:
             memo = {}
@@ -88,10 +81,12 @@ class BaseObject(ABC):
 
         cls = type(self)
 
+        # If copy method is in the deepcopy dispatch then use it
         copier = _deepcopy_dispatch.get(cls)
         if copier is not None:
             y = copier(self, memo)
         else:
+            # Handle if this object is a type subclass
             if issubclass(cls, type):
                 y = _deepcopy_atomic(self, memo)
             else:
@@ -107,8 +102,7 @@ class BaseObject(ABC):
                         if reductor:
                             rv = reductor()
                         else:
-                            raise Error(
-                                "un(deep)copyable object of type %s" % cls)
+                            raise Error("un(deep)copyable object of type %s" % cls)
                 if isinstance(rv, str):
                     y = self
                 else:
@@ -118,6 +112,7 @@ class BaseObject(ABC):
         if y is not self:
             memo[d] = y
             _keep_alive(self, memo)  # Make sure x lives at least as long as d
+
         return y
 
     def copy(self):
@@ -125,9 +120,3 @@ class BaseObject(ABC):
 
     def deepcopy(self, memo={}):
         return self.__deepcopy__(memo=memo)
-
-
-if __name__ == '__main__':
-    thing = BaseObject()
-    ming = thing.deepcopy()
-    print()
