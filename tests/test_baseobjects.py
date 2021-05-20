@@ -178,6 +178,14 @@ class BaseWrapperTest(BaseBaseObjectTest):
         assert test_object.three == "two"
         assert test_object.function() == "two"
 
+    def test_setting_wrapped(self, test_object):
+        test_object.one = "set"
+        assert test_object._first.one == "set"
+
+    def test_deleting_wrapped(self, test_object):
+        del test_object.one
+        assert "one" not in dir(test_object._first)
+
     @pytest.mark.xfail
     def test_magic_inheritance(self, test_object):
         assert test_object == 1

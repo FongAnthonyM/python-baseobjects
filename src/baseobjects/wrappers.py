@@ -1,9 +1,33 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ wrappers.py
+Abstract classes for objects that can wrap any objects and make their attributes/methods accessible from the wrapper.
 
+StaticWrapper calls wrapped attributes/methods by creating property descriptor objects for each of the wrapped objects'
+attributes/methods. There some limitations to how StaticWapper can be used. First, for any given subclass of
+StaticWrapper all object instances must contain the same wrapped object types because descriptor are handled at the
+class scope. Second, creating property descriptors does not happen automatically, creation must be invoked though the
+_wrap method. This means a subclass must call _wrap to initialize at some point. Also, if the wrapped objects create new
+attributes/methods afterwards, then _wrap or _rewrap must be called to add the new attributes/methods. Overall, this
+means subclasses should be designed to wrap the same objects and be used to wrap objects that do not create new
+attributes/methods after initialization. These limitation are strict, but it leads to great performance preservation
+when compared to normal object attribute/method access.
 
+DynamicWrapper calls wrapped attribute methods by changing the __getattribute__ method to check the wrapped classes
+after checking itself. This makes DynamicWrapper very flexible with its wrapped objects. DynamicWrapper does not have
+any usage limitation, but it is significantly slower than normal object attribute/method access, because it handles
+every get, set, and delete. Performance would be better if DynamicWrapper was written in C.
 
+Ultimately, StaticWrapper and DynamicWrapper are solutions for two different case. StaticWrapper should be used when
+if the application is within the limitations StaticWrapper has. DynamicWrapper would be used if the application involves
+wrapping various indeterminate object types and/or if the objects change available attributes/methods frequently.
+
+Here are some tested relative performance metrics to highlight those differences: let normal attribute access be 1, when
+StaticWrapper accesses a wrapped attribute it takes about 1.7 while DynamicWrapper takes about 4.4. StaticWrapper's
+performance loss is debatable depending on the application, but DynamicWrapper takes about x4 longer a normal attribute
+access which is not great for most applications.
+
+Todo: add magic method support for StaticWrapper and DynamicWrapper (requires thorough method resolution handling)
 """
 __author__ = "Anthony Fong"
 __copyright__ = "Copyright 2021, Anthony Fong"
@@ -66,8 +90,8 @@ class StaticWrapper(BaseObject):
     create or delete attributes/methods after initialization.
 
     Class Attributes:
-        _wrap_attributes (:obj:'list' of :obj:'str'): The list of attribute names that will contain the objects to
-            dynamically wrap from where the resolution order is descending inheritance.
+        _wrap_attributes (:obj:'list' of :obj:'str'): The list of attribute names that will contain the objects to wrap
+            where the resolution order is descending inheritance.
     """
     __original_dir_set = None
     _wrap_attributes = []
@@ -120,15 +144,14 @@ class DynamicWrapper(BaseObject):
     important to ensure the order of _attribute_as_parents is the order of descending inheritance.
 
     Class Attributes:
-        _attributes_as_parents (:obj:'list' of :obj:'str'): The list of attribute names that will contain the objects to
-            dynamically wrap from where the order is ascending inheritance.
+        _wrap_attributes (:obj:'list' of :obj:'str'): The list of attribute names that will contain the objects to
+            dynamically wrap where the order is descending inheritance.
     """
-    _attributes_as_parents = []
+    _wrap_attributes = []
 
     # Attribute Access
-    def __getattribute__(self, name):
-        """Overrides the get_attribute magic method to get the attribute of another object if that attribute name is not
-        present.
+    def __getattr__(self, name):
+        """Overrides the getattr magic method to get the attribute of another object if that attribute is not present.
 
         Args:
             name (str): The name of the attribute to get.
@@ -136,37 +159,53 @@ class DynamicWrapper(BaseObject):
         Returns:
             obj: Whatever the attribute contains.
         """
-        try:
-            return super().__getattribute__(name)
-        except AttributeError as error:
-            # Iterate through all object parents to find the attribute
-            for attribute in self._attributes_as_parents:
-                try:
-                    return getattr(super().__getattribute__(attribute), name)
-                except AttributeError:
-                    pass
+        # Iterate through all object parents to find the attribute
+        for attribute in self._wrap_attributes:
+            try:
+                return getattr(object.__getattribute__(self, attribute), name)
+            except AttributeError:
+                pass
 
-            raise error
+        raise AttributeError
 
     def __setattr__(self, name, value):
         """Overrides the setattr magic method to set the attribute of another object if that attribute name is not
         present.
 
         Args:
-            name (str): The name of the attribute to get.
+            name (str): The name of the attribute to set.
             value: Whatever the attribute will contain.
         """
         # Check if item is in self and if not check in object parents
-        if name not in self._attributes_as_parents and name not in dir(self):
+        if name not in self._wrap_attributes and name not in dir(self):
             # Iterate through all indirect parents to find attribute
-            for attribute in self._attributes_as_parents:
+            for attribute in self._wrap_attributes:
                 if attribute in dir(self):
-                    parent_object = super().__getattribute__(attribute)
+                    parent_object = getattr(self, attribute)
                     if name in dir(parent_object):
                         return setattr(parent_object, name, value)
 
         # If the item is an attribute in self or not in any indirect parent set as attribute
-        super().__setattr__(name, value)
+        object.__setattr__(self, name, value)
+
+    def __delattr__(self, name):
+        """Overrides the delattr magic method to set the attribute of another object if that attribute name is not
+        present.
+
+        Args:
+            name (str): The name of the attribute to delete.
+        """
+        # Check if item is in self and if not check in object parents
+        if name not in self._wrap_attributes and name not in dir(self):
+            # Iterate through all indirect parents to find attribute
+            for attribute in self._wrap_attributes:
+                if attribute in dir(self):
+                    parent_object = getattr(self, attribute)
+                    if name in dir(parent_object):
+                        return delattr(parent_object, name)
+
+        # If the item is an attribute in self or not in any indirect parent set as attribute
+        object.__delattr__(self, name)
 
     def _setattr(self, name, value):
         """An override method that will set an attribute of this object without checking its presence in other objects.
@@ -174,7 +213,7 @@ class DynamicWrapper(BaseObject):
         This is useful for setting new attributes after class the definition.
 
         Args:
-            name (str): The name of the attribute to get.
+            name (str): The name of the attribute to set.
             value: Whatever the attribute will contain.
         """
         super().__setattr__(name, value)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ baseobject.py
-
+The BaseObject class is an abstract class which implements some basic methods that all objects should have.
 """
 __author__ = "Anthony Fong"
 __copyright__ = "Copyright 2021, Anthony Fong"
@@ -25,7 +25,7 @@ from copyreg import dispatch_table
 # Definitions #
 # Classes #
 class BaseObject(ABC):
-    """An abstract class that implements copy and deepcopy from the copy library"""
+    """An abstract class that implements some basic methods that all objects should have."""
 
     # Construction/Destruction
     def __copy__(self):
@@ -115,8 +115,22 @@ class BaseObject(ABC):
 
         return y
 
+    # Constructors/Destructors
     def copy(self):
+        """Creates a shallow copy of this object.
+
+        Returns:
+            A shallow copy of this object.
+        """
         return self.__copy__()
 
     def deepcopy(self, memo={}):
+        """Creates a deep copy of this object.
+
+        Args:
+            memo (dict): A dictionary of user defined information to pass to another deepcopy call which it will handle.
+
+        Returns:
+            A deep copy of this object.
+        """
         return self.__deepcopy__(memo=memo)
