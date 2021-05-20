@@ -97,6 +97,42 @@ class StaticWrapper(BaseObject):
     _wrap_attributes = []
     _exclude_attributes = {"__slotnames__"}
 
+    # Class Methods
+    @classmethod
+    def _class_wrap(cls, objects):
+        """Adds attributes from embedded objects as properties.
+
+         Args:
+            objects: A list of objects or types this object will wrap. Must be in the same order as _wrap_attributes.
+        """
+        if len(objects) != cls._wrap_attributes:
+            raise IndexError("objects must be the same length as _wrap_attributes")
+
+        for name, obj in zip(reversed(cls._wrap_attributes), reversed(objects)):
+            if obj is not None:
+                add_dir = set(dir(obj)) - cls.__original_dir_set - cls._exclude_attributes
+                for attribute in add_dir:
+                    get_, set_, del_ = create_callback_functions(name, attribute)
+                    setattr(cls, attribute, property(get_, set_, del_))
+
+    @classmethod
+    def _unwrap(cls):
+        """Removes all attributes added from other objects."""
+        for name in set(dir(cls)) - cls.__original_dir_set:
+            if isinstance(getattr(cls, name, None), property):
+                delattr(cls, name)
+
+    @classmethod
+    def _class_rewrap(cls, objects):
+        """Removes all the attributes added from other objects then adds attributes from embedded the objects.
+
+        Args:
+            objects: A list of objects or types this object will wrap. Must be in the same order as _wrap_attributes.
+        """
+        cls._unwrap()
+        cls._class_wrap(objects)
+
+    # Subclasss Initialization
     def __init_subclass__(cls, **kwargs):
         """Initializes the subclass of this class setting the original dir.
 
@@ -106,6 +142,8 @@ class StaticWrapper(BaseObject):
         super().__init_subclass__(**kwargs)
         cls.__original_dir_set = set(dir(cls))
 
+    # Methods
+    # Wrapping
     def _wrap(self):
         """Adds attributes from embedded objects as properties."""
         for name in reversed(self._wrap_attributes):
@@ -115,12 +153,6 @@ class StaticWrapper(BaseObject):
                 for attribute in add_dir:
                     get_, set_, del_ = create_callback_functions(name, attribute)
                     setattr(type(self), attribute, property(get_, set_, del_))
-
-    def _unwrap(self):
-        """Removes all attributes added from other objects."""
-        for name in set(dir(self)) - self.__original_dir_set:
-            if isinstance(getattr(type(self), name, None), property):
-                delattr(type(self), name)
 
     def _rewrap(self):
         """Removes all the attributes added from other objects then adds attributes from embedded the objects."""
@@ -149,6 +181,7 @@ class DynamicWrapper(BaseObject):
     """
     _wrap_attributes = []
 
+    # Magic Methods
     # Attribute Access
     def __getattr__(self, name):
         """Overrides the getattr magic method to get the attribute of another object if that attribute is not present.
@@ -207,6 +240,8 @@ class DynamicWrapper(BaseObject):
         # If the item is an attribute in self or not in any indirect parent set as attribute
         object.__delattr__(self, name)
 
+    # Methods
+    # Attribute Access
     def _setattr(self, name, value):
         """An override method that will set an attribute of this object without checking its presence in other objects.
 
