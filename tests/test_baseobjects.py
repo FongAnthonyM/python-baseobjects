@@ -7,7 +7,7 @@ __author__ = "Anthony Fong"
 __copyright__ = "Copyright 2021, Anthony Fong"
 __credits__ = ["Anthony Fong"]
 __license__ = ""
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __maintainer__ = "Anthony Fong"
 __email__ = ""
 __status__ = "Production/Stable"
@@ -43,6 +43,22 @@ class ClassTest(abc.ABC):
 
     def test_instance_creation(self):
         pass
+
+
+class TestInitMeta(ClassTest):
+    class InitMetaTest(baseobjects.BaseObject, metaclass=baseobjects.InitMeta):
+        one = 1
+
+        @classmethod
+        def _init_class_(cls):
+             cls.one = 2
+
+    def test_init_class(self):
+        assert self.InitMetaTest.one == 2
+
+    def test_meta(self):
+        obj = self.InitMetaTest()
+        obj.copy()
 
 
 class BaseBaseObjectTest(ClassTest):
@@ -143,7 +159,7 @@ class BaseWrapperTest(BaseBaseObjectTest):
         obj = self.new_object()
         pickle_jar = pickle.dumps(obj)
         new_obj = pickle.loads(pickle_jar)
-        assert set(dir(new_obj)).issuperset(dir(obj))
+        assert set(dir(new_obj)) == set(dir(obj))
 
     @pytest.fixture(params=[new_object])
     def test_object(self, request):
@@ -155,7 +171,7 @@ class BaseWrapperTest(BaseBaseObjectTest):
     def test_pickling(self, test_object):
         pickle_jar = pickle.dumps(test_object)
         new_obj = pickle.loads(pickle_jar)
-        assert set(dir(new_obj)).issuperset(dir(test_object))
+        assert set(dir(new_obj)) == set(dir(test_object))
 
     def test_copy(self, test_object):
         new = test_object.copy()
@@ -259,9 +275,59 @@ class BaseWrapperTest(BaseBaseObjectTest):
         assert percent < self.speed_tolerance
 
 
+class TestStaticWrapper(BaseWrapperTest):
+    class StaticWrapperTestObject1(baseobjects.StaticWrapper):
+        _wrap_attributes = ["_first", "_second"]
+
+        @classmethod
+        def _init_class_(cls):
+            super()._init_class_()
+            first = BaseWrapperTest.ExampleOne()
+            second = BaseWrapperTest.ExampleTwo()
+            cls._class_wrap([first, second])
+
+        def __init__(self, first=None, second=None):
+            self._first = first
+            self._second = second
+            self.two = "wrapper"
+            self.four = "wrapper"
+
+        def wrap(self):
+            return "wrapper"
+
+    class StaticWrapperTestObject2(baseobjects.StaticWrapper):
+        _wrap_attributes = ["_first", "_second"]
+
+        def __init__(self, first=None, second=None):
+            self._first = first
+            self._second = second
+            self.two = "wrapper"
+            self.four = "wrapper"
+            self._wrap()
+
+        def wrap(self):
+            return "wrapper"
+
+    class_ = StaticWrapperTestObject1
+
+    def new_object_1(self):
+        first = self.ExampleOne()
+        second = self.ExampleTwo()
+        return self.StaticWrapperTestObject1(first, second)
+
+    def new_object_2(self):
+        first = self.ExampleOne()
+        second = self.ExampleTwo()
+        return self.StaticWrapperTestObject2(first, second)
+
+    @pytest.fixture(params=[new_object_1, new_object_2])
+    def test_object(self, request):
+        return request.param(self)
+
+
 class TestDynamicWrapper(BaseWrapperTest):
     class DynamicWrapperTestObject(baseobjects.DynamicWrapper):
-        _attributes_as_parents = ["_first", "_second"]
+        _wrap_attributes = ["_first", "_second"]
 
         def __init__(self, first=None, second=None):
             self._first = first
@@ -278,32 +344,6 @@ class TestDynamicWrapper(BaseWrapperTest):
         first = self.ExampleOne()
         second = self.ExampleTwo()
         return self.DynamicWrapperTestObject(first, second)
-
-    @pytest.fixture(params=[new_object])
-    def test_object(self, request):
-        return request.param(self)
-
-
-class TestStaticWrapper(BaseWrapperTest):
-    class StaticWrapperTestObject(baseobjects.StaticWrapper):
-        _wrap_attributes = ["_first", "_second"]
-
-        def __init__(self, first=None, second=None):
-            self._first = first
-            self._second = second
-            self.two = "wrapper"
-            self.four = "wrapper"
-            self._wrap()
-
-        def wrap(self):
-            return "wrapper"
-
-    class_ = StaticWrapperTestObject
-
-    def new_object(self):
-        first = self.ExampleOne()
-        second = self.ExampleTwo()
-        return self.StaticWrapperTestObject(first, second)
 
     @pytest.fixture(params=[new_object])
     def test_object(self, request):

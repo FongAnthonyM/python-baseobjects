@@ -1,16 +1,22 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+""" __main__.py
+The __main__ file for the baseobjects package.
 """
-Entrypoint module, in case you use `python -mbaseobjects`.
+__author__ = "Anthony Fong"
+__copyright__ = "Copyright 2021, Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__license__ = ""
+__version__ = "1.1.0"
+__maintainer__ = "Anthony Fong"
+__email__ = ""
+__status__ = "Production/Stable"
 
+# Default Libraries #
 
-Why does this file exist, and why __main__? For more info, read:
+# Downloaded Libraries #
 
-- https://www.python.org/dev/peps/pep-0338/
-- https://docs.python.org/2/using/cmdline.html#cmdoption-m
-- https://docs.python.org/3/using/cmdline.html#cmdoption-m
-"""
-import sys
-
-from baseobjects.cli import main
+# Local Libraries #
 
 if __name__ == "__main__":
-    sys.exit(main())
+    pass
