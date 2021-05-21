@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" baseobject.py
-BaseObject is an abstract class which implements some basic methods that all objects should have.
+""" basemeta.py
+BaseMeta is an abstract metaclass that implements some basic methods that all meta objects should have.
 """
 __author__ = "Anthony Fong"
 __copyright__ = "Copyright 2021, Anthony Fong"
@@ -13,7 +13,7 @@ __email__ = ""
 __status__ = "Production/Stable"
 
 # Default Libraries #
-from abc import ABC
+from abc import ABCMeta
 from copy import _copy_dispatch, _copy_immutable, _deepcopy_dispatch, _deepcopy_atomic, _keep_alive, _reconstruct, Error
 from copyreg import dispatch_table
 
@@ -24,8 +24,8 @@ from copyreg import dispatch_table
 
 # Definitions #
 # Classes #
-class BaseObject(ABC):
-    """An abstract class that implements some basic methods that all objects should have."""
+class BaseMeta(ABCMeta):
+    """An abstract metaclass that implements some basic methods that all meta objects should have."""
 
     # Magic Methods
     # Construction/Destruction
@@ -115,24 +115,3 @@ class BaseObject(ABC):
             _keep_alive(self, memo)  # Make sure x lives at least as long as d
 
         return y
-
-    # Methods
-    # Constructors/Destructors
-    def copy(self):
-        """Creates a shallow copy of this object.
-
-        Returns:
-            A shallow copy of this object.
-        """
-        return self.__copy__()
-
-    def deepcopy(self, memo={}):
-        """Creates a deep copy of this object.
-
-        Args:
-            memo (dict): A dictionary of user defined information to pass to another deepcopy call which it will handle.
-
-        Returns:
-            A deep copy of this object.
-        """
-        return self.__deepcopy__(memo=memo)

@@ -7,7 +7,7 @@ __author__ = "Anthony Fong"
 __copyright__ = "Copyright 2021, Anthony Fong"
 __credits__ = ["Anthony Fong"]
 __license__ = ""
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __maintainer__ = "Anthony Fong"
 __email__ = ""
 __status__ = "Production/Stable"
@@ -18,4 +18,6 @@ __status__ = "Production/Stable"
 
 # Local Libraries #
 from .baseobject import BaseObject
+from .basemeta import BaseMeta
+from .initmeta import InitMeta
 from .wrappers import StaticWrapper, DynamicWrapper
