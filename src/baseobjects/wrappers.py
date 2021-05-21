@@ -33,7 +33,7 @@ __author__ = "Anthony Fong"
 __copyright__ = "Copyright 2021, Anthony Fong"
 __credits__ = ["Anthony Fong"]
 __license__ = ""
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 __maintainer__ = "Anthony Fong"
 __email__ = ""
 __status__ = "Production/Stable"
@@ -90,19 +90,36 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
     ensure all the attributes/methods are present. This object is best used to wrap frozen objects or ones that do not
     create or delete attributes/methods after initialization.
 
+    If the objects to wrap can be defined during class instantiation then this class can setup the wrapping by listing
+    the types or objects in _wrapped_types. The setup will occur immediately after class instantiation.
+
     Class Attributes:
-        _wrap_attributes (:obj:'list' of :obj:'str'): The list of attribute names that will contain the objects to wrap
+        __original_dir_set (:obj:`set` of :obj:`str`): The dir of the original wrapper class.
+        _wrapped_types (:obj:`list` of :obj:): A list of either types or objects to setup wrapping for.
+        _wrap_attributes (:obj:`list` of :obj:`str`): The list of attribute names that will contain the objects to wrap
             where the resolution order is descending inheritance.
+        _original_dir_set (:obj:`set` of :obj:`str`): The names of the attributes to exclude from wrapping.
     """
     __original_dir_set = None
+    _wrapped_types = []
     _wrap_attributes = []
     _exclude_attributes = {"__slotnames__"}
 
     # Class Methods
     @classmethod
     def _init_class_(cls):
-        """A method that runs after class creation, creating the original dir as a set."""
+        """A method that runs after class creation, creating the original dir as a set and sets up wrapping."""
         cls.__original_dir_set = set(dir(cls))
+        cls._class_wrapping_setup()
+
+    @classmethod
+    def _class_wrapping_setup(cls):
+        """Sets up the class by wrapping what is is _wrapped_types"""
+        if cls._wrapped_types:
+            try:
+                cls._class_wrap(cls._wrapped_types)
+            except IndexError:
+                raise IndexError("_wrapped_types must be the same length as _wrap_attributes")
 
     @classmethod
     def _class_wrap(cls, objects):
@@ -172,7 +189,7 @@ class DynamicWrapper(BaseObject):
     important to ensure the order of _attribute_as_parents is the order of descending inheritance.
 
     Class Attributes:
-        _wrap_attributes (:obj:'list' of :obj:'str'): The list of attribute names that will contain the objects to
+        _wrap_attributes (:obj:`list` of :obj:`str`): The list of attribute names that will contain the objects to
             dynamically wrap where the order is descending inheritance.
     """
     _wrap_attributes = []
