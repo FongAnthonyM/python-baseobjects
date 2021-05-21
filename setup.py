@@ -23,7 +23,7 @@ def read(*names, **kwargs):
 
 setup(
     name='baseobjects',
-    version='1.0.0',
+    version='1.1.0',
     license='MIT',
     description='Basic object templates.',
     long_description='%s\n%s' % (
