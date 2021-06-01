@@ -23,7 +23,7 @@ def read(*names, **kwargs):
 
 setup(
     name='baseobjects',
-    version='1.1.1',
+    version='1.2.0',
     license='MIT',
     description='Basic object templates.',
     long_description='%s\n%s' % (
@@ -74,7 +74,7 @@ setup(
         # eg: 'aspectlib==1.1.1', 'six>=1.7',
     ],
     extras_require={
-        'dev': ['pytest'],
+        'dev': ['pytest>=6.2.3'],
     },
     entry_points={
         'console_scripts': [

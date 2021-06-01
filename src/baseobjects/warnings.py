@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" __main__.py
-The __main__ file for the baseobjects package.
+""" warnings.py
+Adds additional Warnings.
 """
 __author__ = "Anthony Fong"
 __copyright__ = "Copyright 2021, Anthony Fong"
@@ -10,7 +10,7 @@ __license__ = ""
 __version__ = "1.2.0"
 __maintainer__ = "Anthony Fong"
 __email__ = ""
-__status__ = "Production/Stable"
+__status__ = "Prototype"
 
 # Default Libraries #
 
@@ -18,5 +18,11 @@ __status__ = "Production/Stable"
 
 # Local Libraries #
 
-if __name__ == "__main__":
-    pass
+
+# Definitions #
+# Classes #
+class TimeoutWarning(Warning):
+    """A general warning for timeouts."""
+    def __init__(self, name="A function"):
+        message = f"{name} timed out"
+        super().__init__(message)
