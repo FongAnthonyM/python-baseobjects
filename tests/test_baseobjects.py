@@ -277,14 +277,8 @@ class BaseWrapperTest(BaseBaseObjectTest):
 
 class TestStaticWrapper(BaseWrapperTest):
     class StaticWrapperTestObject1(baseobjects.StaticWrapper):
+        _wrapped_types = [BaseWrapperTest.ExampleOne(), BaseWrapperTest.ExampleTwo()]
         _wrap_attributes = ["_first", "_second"]
-
-        @classmethod
-        def _init_class_(cls):
-            super()._init_class_()
-            first = BaseWrapperTest.ExampleOne()
-            second = BaseWrapperTest.ExampleTwo()
-            cls._class_wrap([first, second])
 
         def __init__(self, first=None, second=None):
             self._first = first
@@ -296,13 +290,14 @@ class TestStaticWrapper(BaseWrapperTest):
             return "wrapper"
 
     class StaticWrapperTestObject2(baseobjects.StaticWrapper):
+        _set_next_wrapped = True
         _wrap_attributes = ["_first", "_second"]
 
         def __init__(self, first=None, second=None):
-            self._first = first
-            self._second = second
             self.two = "wrapper"
             self.four = "wrapper"
+            self._first = first
+            self._second = second
             self._wrap()
 
         def wrap(self):
