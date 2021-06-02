@@ -78,12 +78,9 @@ def _set_temp_attributes(obj, new, name):
     for attribute in wrapped:
         try:
             if hasattr(new, attribute):
-                try:
-                    setattr(new, attribute, getattr(obj, "__" + attribute))
-                    delattr(obj, "__" + attribute)
-                except AttributeError:
-                    pass
-        except:
+                setattr(new, attribute, getattr(obj, "__" + attribute))
+                delattr(obj, "__" + attribute)
+        finally:
             pass
 
 
