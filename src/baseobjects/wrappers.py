@@ -95,7 +95,7 @@ def create_wrapping_functions(call_name):
         set_: The wet function for a property object.
         del_: The del function for a property object.
     """
-    store_name = "__" + call_name
+    store_name = "_" + call_name
 
     def get_(obj):
         """Gets the wrapped object."""
@@ -145,7 +145,7 @@ def create_callback_functions(call_name, name):
         set_: The wet function for a property object.
         del_: The del function for a property object.
     """
-    store_name = "__" + call_name
+    store_name = "_" + call_name
 
     def get_(obj):
         """Gets the wrapped object's attribute."""
