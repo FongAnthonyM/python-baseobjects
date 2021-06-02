@@ -148,8 +148,14 @@ def create_callback_functions(call_name, name):
     store_name = "_" + call_name
 
     def get_(obj):
-        """Gets the wrapped object's attribute."""
-        return getattr(getattr(obj, store_name), name)
+        """Gets the wrapped object's attribute and check the temporary attribute if not."""
+        try:
+            return getattr(getattr(obj, store_name), name)
+        except AttributeError as error:
+            try:
+                return getattr(obj, "__" + name)
+            except AttributeError:
+                raise error
 
     def set_(obj, value):
         """Sets the wrapped object's attribute and saves it to a temporary attribute if wrapped object is not there."""
