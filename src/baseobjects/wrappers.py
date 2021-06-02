@@ -76,12 +76,15 @@ def _set_temp_attributes(obj, new, name):
     """
     wrapped = obj._wrapped_attributes[name]
     for attribute in wrapped:
-        if hasattr(new, attribute):
-            try:
-                setattr(new, attribute, getattr(obj, "__" + attribute))
-                delattr(obj, "__" + attribute)
-            except AttributeError:
-                pass
+        try:
+            if hasattr(new, attribute):
+                try:
+                    setattr(new, attribute, getattr(obj, "__" + attribute))
+                    delattr(obj, "__" + attribute)
+                except AttributeError:
+                    pass
+        except:
+            pass
 
 
 def create_wrapping_functions(call_name):
