@@ -296,6 +296,36 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         self._unwrap()
         self._wrap()
 
+    def _get_temp_attributes(self, name):
+        """Creates temporary attributes from a wrapped object.
+
+        Args:
+            name: The attribute name of the wrapped object.
+        """
+        sub = getattr(self, name)
+        wrapped = self._wrapped_attributes[name]
+        for attribute in wrapped:
+            try:
+                setattr(self, "__" + attribute, getattr(sub, attribute))
+            except AttributeError:
+                pass
+
+    def _set_temp_attributes(self, new, name):
+        """Sets a wrapped object's attributes from temporary attributes.
+
+        Args:
+            new: The new object to set the attributes of.
+            name: The attribute name of the wrapped object.
+        """
+        wrapped = self._wrapped_attributes[name]
+        for attribute in wrapped:
+            if hasattr(new, attribute):
+                try:
+                    setattr(new, attribute, getattr(self, "__" + attribute))
+                    delattr(self, "__" + attribute)
+                except AttributeError:
+                    pass
+
 
 class DynamicWrapper(BaseObject):
     """An object that can call the attributes/methods of embedded objects, acting as if it is inheriting from them.
