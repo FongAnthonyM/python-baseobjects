@@ -132,7 +132,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
     # Callbacks for Accessing a Wrapped Object
     @classmethod
     def _get_wrapped(cls, obj, name):
-        """Gets a wrapped within the target object's attribute.
+        """Gets a wrapped object from the target object's attribute.
 
         Args:
             obj (Any): The target object to get the wrapped object from.
@@ -167,7 +167,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
     # Callbacks for Accessing a Wrapped Object's Attributes
     @classmethod
     def _get_attribute(cls, obj, wrap_name, attr_name):
-        """Gets a wrapped within the target object's attribute.
+        """Gets an attribute from a wrapped object.
 
         Args:
             obj (Any): The target object to get the wrapped object from.
@@ -181,7 +181,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
 
     @classmethod
     def _set_attribute(cls, obj, wrap_name, attr_name, value):
-        """Sets the target object's attribute to be a wrapped object.
+        """Sets an attribute in a wrapped object.
 
         Args:
             obj (Any): The target object to set.
@@ -193,7 +193,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
 
     @classmethod
     def _del_attribute(cls, obj, wrap_name, attr_name):
-        """Deletes the target object's attribute which stores a wrapped object.
+        """Deletes an attribute in a wrapped object.
 
         Args:
             obj (Any): The target object to set.
