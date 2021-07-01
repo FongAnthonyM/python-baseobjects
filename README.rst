@@ -51,9 +51,9 @@ Overview
     :alt: Supported implementations
     :target: https://pypi.org/project/baseobjects
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/fonganthonym/python-baseobjects/v1.1.1.svg
+.. |commits-since| image:: https://img.shields.io/github/commits-since/fonganthonym/python-baseobjects/v1.2.0.svg
     :alt: Commits since latest release
-    :target: https://github.com/fonganthonym/python-baseobjects/compare/v1.0.0...master
+    :target: https://github.com/fonganthonym/python-baseobjects/compare/v1.2.0...master
 
 
 
