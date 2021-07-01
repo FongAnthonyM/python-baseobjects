@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ initmeta.py
-InitMEta is an abstract metaclass that implements an init class method which allows some setup after a class is created.
+InitMeta is an abstract metaclass that implements an init class method which allows some setup after a class is created.
 """
 __author__ = "Anthony Fong"
 __copyright__ = "Copyright 2021, Anthony Fong"
 __credits__ = ["Anthony Fong"]
 __license__ = ""
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 __maintainer__ = "Anthony Fong"
 __email__ = ""
 __status__ = "Production/Stable"
