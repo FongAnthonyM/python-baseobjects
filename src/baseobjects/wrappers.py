@@ -197,7 +197,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
                     raise error
 
         def set_(obj, value):
-            """Sets the wrapped object's attribute and saves it to a temporary attribute if wrapped object is not there."""
+            """Sets the wrapped object's attribute or saves it to a temporary attribute if wrapped object."""
             try:
                 setattr(getattr(obj, store_name), name, value)
             except AttributeError as error:
@@ -280,7 +280,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             if obj is not None:
                 # Set wrapped property
                 delattr(self, name)
-                get_, set_, del_ = create_wrapping_functions(name)
+                get_, set_, del_ = self._create_wrapping_functions(name)
                 setattr(type(self), name, property(get_, set_, del_))
                 setattr(self, "__" + name, obj)
 
@@ -289,7 +289,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
                 self._wrapped_attributes[name] = add_dir = obj_set - remove
                 remove = obj_set | remove
                 for attribute in add_dir:
-                    get_, set_, del_ = create_callback_functions(name, attribute)
+                    get_, set_, del_ = self._create_callback_functions(name, attribute)
                     setattr(type(self), attribute, property(get_, set_, del_))
 
     def _rewrap(self):
