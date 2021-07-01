@@ -84,96 +84,6 @@ def _set_temp_attributes(obj, new, name):
             pass
 
 
-def create_wrapping_functions(call_name):
-    """A factory for creating property modification functions for wrapped objects.
-
-    Args:
-        call_name (str): The name attribute the object to call is stored.
-
-    Returns:
-        get_: The get function for a property object.
-        set_: The wet function for a property object.
-        del_: The del function for a property object.
-    """
-    store_name = "_" + call_name
-
-    def get_(obj):
-        """Gets the wrapped object."""
-        return getattr(obj, store_name)
-
-    def set_(obj, value):
-        """Sets the wrapped object, copying the old object's attributes."""
-        # Get old attributes
-        try:
-            if obj._get_previous_wrapped:
-                _get_temp_attributes(obj, call_name)
-        except AttributeError:
-            pass
-
-        # Set new attributes
-        try:
-            if obj._set_next_wrapped:
-                _set_temp_attributes(obj, value, call_name)
-        except AttributeError:
-            pass
-
-        setattr(obj, store_name, value)
-
-    def del_(obj):
-        """Deletes the wrapped object, storing its attributes for the next object."""
-        # Get old attributes
-        try:
-            if obj._get_previous_wrapped:
-                _get_temp_attributes(obj, call_name)
-        except AttributeError:
-            pass
-
-        delattr(obj, store_name)
-
-    return get_, set_, del_
-
-
-def create_callback_functions(call_name, name):
-    """A factory for creating property modification functions which accesses an embedded objects attributes.
-
-    Args:
-        call_name (str): The name attribute the object to call is stored.
-        name (str): The name of the attribute that this property will mask.
-
-    Returns:
-        get_: The get function for a property object.
-        set_: The wet function for a property object.
-        del_: The del function for a property object.
-    """
-    store_name = "_" + call_name
-
-    def get_(obj):
-        """Gets the wrapped object's attribute and check the temporary attribute if not."""
-        try:
-            return getattr(getattr(obj, store_name), name)
-        except AttributeError as error:
-            try:
-                return getattr(obj, "__" + name)
-            except AttributeError:
-                raise error
-
-    def set_(obj, value):
-        """Sets the wrapped object's attribute and saves it to a temporary attribute if wrapped object is not there."""
-        try:
-            setattr(getattr(obj, store_name), name, value)
-        except AttributeError as error:
-            if not hasattr(obj, store_name) or getattr(obj, store_name) is None:
-                setattr(obj, "__" + name, value)
-            else:
-                raise error
-
-    def del_(obj):
-        """Deletes the wrapped object's attribute."""
-        delattr(getattr(obj, store_name), name)
-
-    return get_, set_, del_
-
-
 # Classes #
 class StaticWrapper(BaseObject, metaclass=InitMeta):
     """An object that can call the attributes/methods of embedded objects, acting as if it is inheriting from them.
@@ -211,6 +121,97 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
     _exclude_attributes = {"__slotnames__"}
     _wrapped_attributes = {}
 
+    # Static Methods
+    @staticmethod
+    def _create_wrapping_functions(call_name):
+        """A factory for creating property modification functions for wrapped objects.
+
+        Args:
+            call_name (str): The name attribute the object to call is stored.
+
+        Returns:
+            get_: The get function for a property object.
+            set_: The wet function for a property object.
+            del_: The del function for a property object.
+        """
+        store_name = "_" + call_name
+
+        def get_(obj):
+            """Gets the wrapped object."""
+            return getattr(obj, store_name)
+
+        def set_(obj, value):
+            """Sets the wrapped object, copying the old object's attributes."""
+            # Get old attributes
+            try:
+                if obj._get_previous_wrapped:
+                    _get_temp_attributes(obj, call_name)
+            except AttributeError:
+                pass
+
+            # Set new attributes
+            try:
+                if obj._set_next_wrapped:
+                    _set_temp_attributes(obj, value, call_name)
+            except AttributeError:
+                pass
+
+            setattr(obj, store_name, value)
+
+        def del_(obj):
+            """Deletes the wrapped object, storing its attributes for the next object."""
+            # Get old attributes
+            try:
+                if obj._get_previous_wrapped:
+                    _get_temp_attributes(obj, call_name)
+            except AttributeError:
+                pass
+
+            delattr(obj, store_name)
+
+        return get_, set_, del_
+
+    @staticmethod
+    def _create_callback_functions(call_name, name):
+        """A factory for creating property modification functions which accesses an embedded objects attributes.
+
+        Args:
+            call_name (str): The name attribute the object to call is stored.
+            name (str): The name of the attribute that this property will mask.
+
+        Returns:
+            get_: The get function for a property object.
+            set_: The wet function for a property object.
+            del_: The del function for a property object.
+        """
+        store_name = "_" + call_name
+
+        def get_(obj):
+            """Gets the wrapped object's attribute and check the temporary attribute if not."""
+            try:
+                return getattr(getattr(obj, store_name), name)
+            except AttributeError as error:
+                try:
+                    return getattr(obj, "__" + name)
+                except AttributeError:
+                    raise error
+
+        def set_(obj, value):
+            """Sets the wrapped object's attribute and saves it to a temporary attribute if wrapped object is not there."""
+            try:
+                setattr(getattr(obj, store_name), name, value)
+            except AttributeError as error:
+                if not hasattr(obj, store_name) or getattr(obj, store_name) is None:
+                    setattr(obj, "__" + name, value)
+                else:
+                    raise error
+
+        def del_(obj):
+            """Deletes the wrapped object's attribute."""
+            delattr(getattr(obj, store_name), name)
+
+        return get_, set_, del_
+
     # Class Methods
     @classmethod
     def _init_class_(cls):
@@ -241,7 +242,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         for name, obj in zip(cls._wrap_attributes, objects):
             if obj is not None:
                 # Set wrapped property
-                get_, set_, del_ = create_wrapping_functions(name)
+                get_, set_, del_ = cls._create_wrapping_functions(name)
                 setattr(cls, name, property(get_, set_, del_))
 
                 # Set attributes properties
@@ -249,7 +250,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
                 cls._wrapped_attributes[name] = add_dir = obj_set - remove
                 remove = obj_set | remove
                 for attribute in add_dir:
-                    get_, set_, del_ = create_callback_functions(name, attribute)
+                    get_, set_, del_ = cls._create_callback_functions(name, attribute)
                     setattr(cls, attribute, property(get_, set_, del_))
 
     @classmethod
