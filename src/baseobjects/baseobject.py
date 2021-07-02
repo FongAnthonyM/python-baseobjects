@@ -7,7 +7,7 @@ __author__ = "Anthony Fong"
 __copyright__ = "Copyright 2021, Anthony Fong"
 __credits__ = ["Anthony Fong"]
 __license__ = ""
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 __maintainer__ = "Anthony Fong"
 __email__ = ""
 __status__ = "Production/Stable"
@@ -116,7 +116,7 @@ class BaseObject(ABC):
 
         return y
 
-    # Methods
+    # Instance Methods
     # Constructors/Destructors
     def copy(self):
         """Creates a shallow copy of this object.
