@@ -116,7 +116,7 @@ class BaseObject(ABC):
 
         return y
 
-    # Methods
+    # Instance Methods
     # Constructors/Destructors
     def copy(self):
         """Creates a shallow copy of this object.
