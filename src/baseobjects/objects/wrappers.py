@@ -33,7 +33,7 @@ __author__ = "Anthony Fong"
 __copyright__ = "Copyright 2021, Anthony Fong"
 __credits__ = ["Anthony Fong"]
 __license__ = ""
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 __maintainer__ = "Anthony Fong"
 __email__ = ""
 __status__ = "Production/Stable"
@@ -44,7 +44,7 @@ from builtins import property
 # Downloaded Libraries #
 
 # Local Libraries #
-from .baseobject import BaseObject
+from ..baseobject import BaseObject
 from .initmeta import InitMeta
 
 
@@ -132,7 +132,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
     # Callbacks for Accessing a Wrapped Object
     @classmethod
     def _get_wrapped(cls, obj, name):
-        """Gets a wrapped within the target object's attribute.
+        """Gets a wrapped object from the target object's attribute.
 
         Args:
             obj (Any): The target object to get the wrapped object from.
@@ -159,15 +159,15 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         """Deletes the target object's attribute which stores a wrapped object.
 
         Args:
-            obj (Any): The target object to set.
-            name (str): The attribute name to set the wrapped object to.
+            obj (Any): The target object to delete.
+            name (str): The attribute name to delete the wrapped object to.
         """
         delattr(obj, name)
 
     # Callbacks for Accessing a Wrapped Object's Attributes
     @classmethod
     def _get_attribute(cls, obj, wrap_name, attr_name):
-        """Gets a wrapped within the target object's attribute.
+        """Gets an attribute from a wrapped object.
 
         Args:
             obj (Any): The target object to get the wrapped object from.
@@ -181,7 +181,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
 
     @classmethod
     def _set_attribute(cls, obj, wrap_name, attr_name, value):
-        """Sets the target object's attribute to be a wrapped object.
+        """Sets an attribute in a wrapped object.
 
         Args:
             obj (Any): The target object to set.
@@ -193,7 +193,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
 
     @classmethod
     def _del_attribute(cls, obj, wrap_name, attr_name):
-        """Deletes the target object's attribute which stores a wrapped object.
+        """Deletes an attribute in a wrapped object.
 
         Args:
             obj (Any): The target object to set.
