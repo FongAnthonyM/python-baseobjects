@@ -7,7 +7,7 @@ __author__ = "Anthony Fong"
 __copyright__ = "Copyright 2021, Anthony Fong"
 __credits__ = ["Anthony Fong"]
 __license__ = ""
-__version__ = "1.4.0"
+__version__ = "1.4.1"
 __maintainer__ = "Anthony Fong"
 __email__ = ""
 __status__ = "Production/Stable"
@@ -126,7 +126,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
     def _construct_properties_map(cls):
         """An abstract method that assigns how properties should be constructed."""
         # cls._properties_map.append(["name", cls._dictionary_to_properties, cls._default_callback_factory])
-        raise NotImplementedError
+        pass
 
     # Properties Constructor
     @classmethod
