@@ -33,7 +33,7 @@ __author__ = "Anthony Fong"
 __copyright__ = "Copyright 2021, Anthony Fong"
 __credits__ = ["Anthony Fong"]
 __license__ = ""
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 __maintainer__ = "Anthony Fong"
 __email__ = ""
 __status__ = "Production/Stable"
@@ -44,7 +44,7 @@ from builtins import property
 # Downloaded Libraries #
 
 # Local Libraries #
-from .baseobject import BaseObject
+from ..baseobject import BaseObject
 from .initmeta import InitMeta
 
 
@@ -159,8 +159,8 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         """Deletes the target object's attribute which stores a wrapped object.
 
         Args:
-            obj (Any): The target object to set.
-            name (str): The attribute name to set the wrapped object to.
+            obj (Any): The target object to delete.
+            name (str): The attribute name to delete the wrapped object to.
         """
         delattr(obj, name)
 
