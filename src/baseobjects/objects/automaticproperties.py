@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ automaticproperties.py
-Description:
+An abstract class which creates properties for this class automatically.
 """
 __author__ = "Anthony Fong"
 __copyright__ = "Copyright 2021, Anthony Fong"
 __credits__ = ["Anthony Fong"]
 __license__ = ""
-__version__ = "1.4.2"
+__version__ = "1.4.3"
 __maintainer__ = "Anthony Fong"
 __email__ = ""
 __status__ = "Production/Stable"
@@ -117,8 +117,9 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
             callback_factory: The factory that creates get, set, del, functions for the property.
         """
         for name in iter_:
-            get_, set_, del_ = callback_factory(name)
-            setattr(cls, name, property(get_, set_, del_))
+            if not hasattr(cls, name):
+                get_, set_, del_ = callback_factory(name)
+                setattr(cls, name, property(get_, set_, del_))
 
     @classmethod
     def _dictionary_to_properties(cls, dict_, callback_factory):
@@ -129,8 +130,9 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
             callback_factory: The factory that creates get, set, del, functions for the property.
         """
         for name, info in dict_.items():
-            get_, set_, del_ = callback_factory(info)
-            setattr(cls, name, property(get_, set_, del_))
+            if not hasattr(cls, name):
+                get_, set_, del_ = callback_factory(info)
+                setattr(cls, name, property(get_, set_, del_))
 
     # Properties Mapping
     @classmethod
