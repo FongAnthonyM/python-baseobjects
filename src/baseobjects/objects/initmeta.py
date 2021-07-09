@@ -7,7 +7,7 @@ __author__ = "Anthony Fong"
 __copyright__ = "Copyright 2021, Anthony Fong"
 __credits__ = ["Anthony Fong"]
 __license__ = ""
-__version__ = "1.4.2"
+__version__ = "1.4.3"
 __maintainer__ = "Anthony Fong"
 __email__ = ""
 __status__ = "Production/Stable"
@@ -21,7 +21,7 @@ from ..basemeta import BaseMeta
 
 
 # Definitions #
-# Classes #
+# Meta Classes #
 class InitMeta(BaseMeta):
     """An abstract metaclass that implements an init class method which allows some setup after a class is created."""
 
