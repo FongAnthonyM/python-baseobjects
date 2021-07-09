@@ -7,7 +7,7 @@ __author__ = "Anthony Fong"
 __copyright__ = "Copyright 2021, Anthony Fong"
 __credits__ = ["Anthony Fong"]
 __license__ = ""
-__version__ = "1.4.1"
+__version__ = "1.4.2"
 __maintainer__ = "Anthony Fong"
 __email__ = ""
 __status__ = "Production/Stable"
@@ -108,6 +108,18 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         return get_, set_, del_
 
     # Property Constructors
+    @classmethod
+    def _iterable_to_properties(cls, iter_, callback_factory):
+        """Create properties for this class based on an iterable where the items are the property names.
+
+        Args:
+            iter_ : The names of the properties which the factories will use to create functions.
+            callback_factory: The factory that creates get, set, del, functions for the property.
+        """
+        for name in iter_:
+            get_, set_, del_ = callback_factory(name)
+            setattr(cls, name, property(get_, set_, del_))
+
     @classmethod
     def _dictionary_to_properties(cls, dict_, callback_factory):
         """Create properties for this class based on a dictionary where the keys are the property names.
