@@ -3,15 +3,17 @@
 """ test_baseobjects.py
 Test for the baseobjects package
 """
-__author__ = "Anthony Fong"
-__copyright__ = "Copyright 2021, Anthony Fong"
-__credits__ = ["Anthony Fong"]
-__license__ = ""
-__version__ = "1.4.2"
-__maintainer__ = "Anthony Fong"
-__email__ = ""
-__status__ = "Production/Stable"
+# Package Header #
+from src.baseobjects.__header__ import *
 
+# Header #
+__author__ = __author__
+__credits__ = __credits__
+__maintainer__ = __maintainer__
+__email__ = __email__
+
+
+# Imports #
 # Default Libraries #
 import abc
 import copy
