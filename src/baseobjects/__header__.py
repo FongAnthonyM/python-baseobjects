@@ -4,6 +4,8 @@
 Description: Information about this package.
 """
 # Header #
+__package__ = "baseobjects"
+
 __author__ = "Anthony Fong"
 __credits__ = ["Anthony Fong"]
 __maintainer__ = "Anthony Fong"
@@ -13,4 +15,4 @@ __copyright__ = "Copyright 2021, Anthony Fong"
 __license__ = "MIT"
 
 __version__ = "1.4.4"
-__status__ = "Prototype"
+__status__ = "Production/Stable"

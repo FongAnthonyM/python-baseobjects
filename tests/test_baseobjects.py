@@ -24,6 +24,7 @@ import pytest
 
 # Local Libraries #
 import src.baseobjects as baseobjects
+import src.baseobjects.objects.cachingobject
 
 
 # Definitions #
