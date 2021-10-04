@@ -3,15 +3,17 @@
 """ basemeta.py
 BaseMeta is an abstract metaclass that implements some basic methods that all meta objects should have.
 """
-__author__ = "Anthony Fong"
-__copyright__ = "Copyright 2021, Anthony Fong"
-__credits__ = ["Anthony Fong"]
-__license__ = ""
-__version__ = "1.4.3"
-__maintainer__ = "Anthony Fong"
-__email__ = ""
-__status__ = "Production/Stable"
+# Package Header #
+from .__header__ import *
 
+# Header #
+__author__ = __author__
+__credits__ = __credits__
+__maintainer__ = __maintainer__
+__email__ = __email__
+
+
+# Imports #
 # Default Libraries #
 from abc import ABCMeta
 from copy import _copy_dispatch, _copy_immutable, _deepcopy_dispatch, _deepcopy_atomic, _keep_alive, _reconstruct, Error

@@ -29,15 +29,17 @@ access which is not great for most applications.
 
 Todo: add magic method support for StaticWrapper and DynamicWrapper (requires thorough method resolution handling)
 """
-__author__ = "Anthony Fong"
-__copyright__ = "Copyright 2021, Anthony Fong"
-__credits__ = ["Anthony Fong"]
-__license__ = ""
-__version__ = "1.4.3"
-__maintainer__ = "Anthony Fong"
-__email__ = ""
-__status__ = "Production/Stable"
+# Package Header #
+from ..__header__ import *
 
+# Header #
+__author__ = __author__
+__credits__ = __credits__
+__maintainer__ = __maintainer__
+__email__ = __email__
+
+
+# Imports #
 # Default Libraries #
 from builtins import property
 

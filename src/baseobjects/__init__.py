@@ -3,19 +3,16 @@
 """ __init__.py
 baseobjects provides several base classes.
 """
-__author__ = "Anthony Fong"
-__copyright__ = "Copyright 2021, Anthony Fong"
-__credits__ = ["Anthony Fong"]
-__license__ = ""
-__version__ = "1.4.3"
-__maintainer__ = "Anthony Fong"
-__email__ = ""
-__status__ = "Production/Stable"
+# Package Header #
+from .__header__ import *
 
-# Default Libraries #
+# Header #
+__author__ = __author__
+__credits__ = __credits__
+__maintainer__ = __maintainer__
+__email__ = __email__
 
-# Downloaded Libraries #
-
+# Imports #
 # Local Libraries #
 from .baseobject import BaseObject
 from .basemeta import BaseMeta
