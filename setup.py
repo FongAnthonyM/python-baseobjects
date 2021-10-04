@@ -1,5 +1,17 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
+""" setup.py
+The setup for this package.
+"""
+# Package Header #
+from src.baseobjects.__header__ import *
+
+# Header #
+__author__ = __author__
+__credits__ = __credits__
+__maintainer__ = __maintainer__
+__email__ = __email__
+
 
 # Imports #
 # Default Libraries #
@@ -26,10 +38,11 @@ def read(*names, **kwargs):
         return fh.read()
 
 
+# Main #
 setup(
-    name='baseobjects',
-    version='1.4.3',
-    license='MIT',
+    name=__package_name__,
+    version=__version__,
+    license=__license__,
     description='Basic object templates.',
     long_description='%s\n%s' % (
         re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),

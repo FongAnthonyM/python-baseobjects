@@ -4,22 +4,16 @@
 BaseObject is an abstract class which implements some basic methods that all objects should have.
 """
 # Package Header #
-from . import __header__ as package_header
+from .__header__ import *
 
 # Header #
-__package__ = package_header.__package__
+__author__ = __author__
+__credits__ = __credits__
+__maintainer__ = __maintainer__
+__email__ = __email__
 
-__author__ = package_header.__author__
-__credits__ = package_header.__credits__
-__maintainer__ = package_header.__maintainer__
-__email__ = package_header.__email__
 
-__copyright__ = package_header.__copyright__
-__license__ = package_header.__license__
-
-__version__ = package_header.__version__
-__status__ = package_header.__status__
-
+# Imports #
 # Default Libraries #
 from abc import ABC
 from copy import _copy_dispatch, _copy_immutable, _deepcopy_dispatch, _deepcopy_atomic, _keep_alive, _reconstruct, Error
