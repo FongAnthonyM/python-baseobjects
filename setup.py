@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+# Imports #
+# Default Libraries #
 import io
 import re
 from glob import glob
@@ -9,10 +11,13 @@ from os.path import dirname
 from os.path import join
 from os.path import splitext
 
+# Downloaded Libraries #
 from setuptools import find_packages
 from setuptools import setup
 
 
+# Definitions #
+# Functions #
 def read(*names, **kwargs):
     with io.open(
         join(dirname(__file__), *names),
