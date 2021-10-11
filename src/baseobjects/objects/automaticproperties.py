@@ -24,8 +24,6 @@ from builtins import property
 from ..baseobject import BaseObject
 from .initmeta import InitMeta
 
-# Local Libraries #
-
 
 # Definitions #
 # Classes #

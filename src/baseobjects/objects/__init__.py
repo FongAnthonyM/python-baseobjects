@@ -16,5 +16,6 @@ __email__ = __email__
 # Imports
 # Local Libraries #
 from .automaticproperties import AutomaticProperties
+from .cachingobject import TimedLRUCache, TimedCacheMethod, CachingObject, timed_lru_cache, timed_cache_method
 from .initmeta import InitMeta
 from .wrappers import StaticWrapper, DynamicWrapper

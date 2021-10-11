@@ -26,6 +26,7 @@ import pytest
 
 # Local Libraries #
 import src.baseobjects as baseobjects
+from src.baseobjects.objects.cachingobject import *
 
 
 # Definitions #
@@ -64,7 +65,7 @@ class TestInitMeta(ClassTest):
 
 
 class BaseBaseObjectTest(ClassTest):
-    """All BaseObject subclasses need to base these tests to considered functional."""
+    """All BaseObject subclasses need to pass these tests to considered functional."""
     pass
 
 
@@ -345,6 +346,39 @@ class TestDynamicWrapper(BaseWrapperTest):
     @pytest.fixture(params=[new_object])
     def test_object(self, request):
         return request.param(self)
+
+
+class TestCachingObject(ClassTest):
+    class_ = CachingObject
+
+    def test_lru_cache(self):
+        @timed_lru_cache(lifetime=1)
+        def add_one(number=0):
+            return number + 1
+
+        n = add_one(number=1)
+
+        assert n == 2
+
+    def test_lru_cache_original_func(self):
+        @timed_lru_cache(lifetime=1)
+        def add_one(number=0):
+            return number + 1
+
+        n = add_one.func(number=1)
+
+        assert n == 2
+
+    def test_lru_cache_switch(self):
+        @timed_lru_cache(lifetime=1)
+        def add_one(number=0):
+            return number + 1
+
+        add_one.set_call(caching=False)
+
+        n = add_one.func(number=1)
+
+        assert n == 2
 
 
 # Main #
