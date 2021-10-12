@@ -17,8 +17,10 @@ __email__ = __email__
 # Default Libraries #
 import abc
 import copy
+import datetime
 import pathlib
 import pickle
+import time
 import timeit
 
 # Downloaded Libraries #
@@ -26,7 +28,7 @@ import pytest
 
 # Local Libraries #
 import src.baseobjects as baseobjects
-from src.baseobjects.objects.cachingobject import *
+from baseobjects.cachingtools.cachingobject import timed_lru_cache, timed_cache_method
 
 
 # Definitions #
@@ -349,7 +351,25 @@ class TestDynamicWrapper(BaseWrapperTest):
 
 
 class TestCachingObject(ClassTest):
-    class_ = CachingObject
+    class_ = baseobjects.CachingObject
+    zero_time = datetime.timedelta(0)
+
+    class CachingTestObject(baseobjects.CachingObject):
+        def __init__(self, a=1):
+            super().__init__()
+            self.a = a
+
+        @property
+        def proxy(self):
+            return self.get_proxy.caching_call()
+
+        @timed_cache_method(lifetime=2, call_type="clearing_call")
+        def get_proxy(self):
+            print(self.a)
+            return datetime.datetime.now()
+
+        def printer(self):
+            print(self.a)
 
     def test_lru_cache(self):
         @timed_lru_cache(lifetime=1)
@@ -379,6 +399,26 @@ class TestCachingObject(ClassTest):
         n = add_one.func(number=1)
 
         assert n == 2
+
+    def test_object_timed_cache(self):
+        cacher = TestCachingObject.CachingTestObject()
+
+        first = cacher.proxy
+        time.sleep(1)
+        second = cacher.proxy
+        time.sleep(2)
+        third = cacher.proxy
+
+        assert (second - first == self.zero_time) and (third - first != self.zero_time)
+
+    def test_object_cache_reset(self):
+        cacher = TestCachingObject.CachingTestObject()
+
+        first = cacher.proxy
+        second = cacher.get_proxy()
+        third = cacher.proxy
+
+        assert (second - first != self.zero_time) and (third - second == self.zero_time)
 
 
 # Main #

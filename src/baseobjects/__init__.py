@@ -16,5 +16,6 @@ __email__ = __email__
 # Local Libraries #
 from .baseobject import BaseObject
 from .basemeta import BaseMeta
+from .cachingtools import *
 from .objects import *
 from .warnings import TimeoutWarning
