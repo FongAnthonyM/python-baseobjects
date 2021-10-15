@@ -20,7 +20,7 @@ __email__ = __email__
 
 # Local Libraries #
 from ..baseobject import BaseObject
-from .caches import TimedLRUCache
+from .timedcache import TimedCache
 
 
 # Definitions #
@@ -34,13 +34,12 @@ class CachingObject(BaseObject):
 
     # Magic Methods
     # Construction/Destruction
-    def __new__(cls, *args, **kwargs):
-        instance = super().__new__(cls, *args, **kwargs)
-        for name, attribute in cls.__dict__.items():
-            if isinstance(attribute, TimedLRUCache):
-                attribute.bind_to_deepcopy(instance, name)
-        return instance
+    # def __new__(cls, *args, **kwargs):
+    #     instance = super().__new__(cls, *args, **kwargs)
+    #     for name, attribute in cls.__dict__.items():
+    #         if isinstance(attribute, TimedCache):
+    #             attribute.bind_to_new(instance, name)
+    #     return instance
 
     def __init__(self):
         self.is_cache = True
-

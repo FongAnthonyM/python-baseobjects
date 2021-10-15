@@ -28,7 +28,7 @@ import pytest
 
 # Local Libraries #
 import src.baseobjects as baseobjects
-from baseobjects.cachingtools.cachingobject import timed_lru_cache, timed_cache_method
+from src.baseobjects.cachingtools import timed_lru_cache, timed_cache_method
 
 
 # Definitions #
@@ -363,7 +363,7 @@ class TestCachingObject(ClassTest):
         def proxy(self):
             return self.get_proxy.caching_call()
 
-        @timed_cache_method(lifetime=2, call_type="clearing_call")
+        @timed_cache_method(lifetime=2, call_method="clearing_call", collective=False)
         def get_proxy(self):
             print(self.a)
             return datetime.datetime.now()
@@ -419,6 +419,17 @@ class TestCachingObject(ClassTest):
         third = cacher.proxy
 
         assert (second - first != self.zero_time) and (third - second == self.zero_time)
+
+    def test_object_cache_instances(self):
+        cacher = TestCachingObject.CachingTestObject()
+        cacher2 = TestCachingObject.CachingTestObject()
+
+        first = cacher.proxy
+        _ = cacher.proxy
+        time.sleep(1)
+        second = cacher2.proxy
+
+        assert second - first != self.zero_time
 
 
 # Main #

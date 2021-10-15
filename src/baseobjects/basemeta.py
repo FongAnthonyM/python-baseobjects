@@ -39,7 +39,7 @@ class BaseMeta(ABCMeta):
         """
         cls = type(self)
 
-        copier = _copy_dispatch.get(cls)
+        copier = _copy_dispatch.get_item(cls)
         if copier:
             return copier(self)
 
@@ -47,7 +47,7 @@ class BaseMeta(ABCMeta):
             # treat it as a regular class:
             return _copy_immutable(self)
 
-        reductor = dispatch_table.get(cls)
+        reductor = dispatch_table.get_item(cls)
         if reductor is not None:
             rv = reductor(self)
         else:
@@ -85,7 +85,7 @@ class BaseMeta(ABCMeta):
         cls = type(self)
 
         # If copy method is in the deepcopy dispatch then use it
-        copier = _deepcopy_dispatch.get(cls)
+        copier = _deepcopy_dispatch.get_item(cls)
         if copier is not None:
             y = copier(self, memo)
         else:
@@ -93,7 +93,7 @@ class BaseMeta(ABCMeta):
             if issubclass(cls, type):
                 y = _deepcopy_atomic(self, memo)
             else:
-                reductor = dispatch_table.get(cls)
+                reductor = dispatch_table.get_item(cls)
                 if reductor:
                     rv = reductor(self)
                 else:
