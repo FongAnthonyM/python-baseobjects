@@ -28,26 +28,49 @@ from ..objects import CirularDoublyLinkedContainer
 # Definitions #
 # Classes #
 class _HashedSeq(list):
-    """This class guarantees that hash() will be called no more than once per element.
+    """A hash value based on an iterable.
+
+    Attributes:
+        hashvalue: The hash value to store.
+
+    Args:
+        tuple_: The iterable to create a hash value from.
+        hash_: The function that will create hash value.
     """
     __slots__ = "hashvalue"
 
+    # Magic Methods #
+    # Construction/Destruction
     def __init__(self, tuple_, hash_=hash):
+        # Attributes #
         self[:] = tuple_
         self.hashvalue = hash_(tuple_)
 
+    # Representation
     def __hash__(self):
+        """Get the hash value of this object."""
         return self.hashvalue
 
 
 class CacheItem(BaseObject):
     """An item within a cache which contains the result and a link to priority.
+
+    Attributes:
+        priority_link: The object that represents this item's priority.
+        key: The key to this item in the cache.
+        result: The cached value.
+
+    Args:
+        key: The key to this item in the cache.
+        result: The value to store in the cache.
+        priority_link: The object that represents this item's priority.
     """
     __slots__ = ["key", "result", "priority_link"]
 
-    # Magic Methods
+    # Magic Methods #
     # Construction/Destruction
     def __init__(self, key=None, result=None, priority_link=None):
+        # Attributes #
         self.priority_link = priority_link
 
         self.key = key
@@ -56,6 +79,11 @@ class CacheItem(BaseObject):
 
 class TimedCache(BaseObject):
     """A cache wrapper object for a function which resets its cache periodically.
+
+    Class Attributes:
+        sentinel: An object used to determine if a value was unsuccessfully found.
+        cache_item_type = The class that will create the cache items.
+        priority_queue_type = The type of priority queue to hold cache item priorities.
 
     Attributes:
         __func__: The original function to wrap.
@@ -75,7 +103,7 @@ class TimedCache(BaseObject):
         _call_method: The function to call when this object is called.
 
     Args:
-        func:  The function to wrap.
+        func: The function to wrap.
         maxsize: The max size of the cache.
         typed: Determines if the function's arguments are type sensitive for caching.
         lifetime: The period between cache resets in seconds.
@@ -85,6 +113,7 @@ class TimedCache(BaseObject):
     """
     sentinel = object()
     cache_item_type = CacheItem
+    priority_queue_type = CirularDoublyLinkedContainer
 
     # Magic Methods #
     # Construction/Destruction
@@ -102,7 +131,7 @@ class TimedCache(BaseObject):
         self.lifetime = None
         self.expiration = None
 
-        self.priority = CirularDoublyLinkedContainer()
+        self.priority = self.priority_queue_type()
         self.cache = {}
         self._caching_method = self.unlimited_cache
 
@@ -114,6 +143,10 @@ class TimedCache(BaseObject):
 
     @property
     def is_collective(self):
+        """Determines if the cache is collective for all method bindings or for each instance.
+
+        When set, the __get__ method will be changed to match the chosen style.
+        """
         return self._is_collective
 
     @is_collective.setter
@@ -126,6 +159,10 @@ class TimedCache(BaseObject):
 
     @property
     def _get_method(self):
+        """The method that will be used for the __get__ method.
+
+        When set, any function can be set or the name of a method within this object can be given to select it.
+        """
         return self.__get_method
 
     @_get_method.setter
@@ -143,6 +180,10 @@ class TimedCache(BaseObject):
 
     @property
     def caching_method(self):
+        """The method that will be used for caching.
+
+        When set, any function can be set or the name of a method within this object can be given to select it.
+        """
         return self._caching_method
 
     @caching_method.setter
@@ -151,6 +192,10 @@ class TimedCache(BaseObject):
 
     @property
     def call_method(self):
+        """The method that will be used for the __call__ method.
+
+        When set, any function can be set or the name of a method within this object can be given to select it.
+        """
         return self._call_method
 
     @call_method.setter
@@ -159,6 +204,12 @@ class TimedCache(BaseObject):
 
     # Descriptors
     def __get__(self, instance, owner=None):
+        """When this object is requested by another object as an attribute.
+
+        Args:
+            instance: The other object requesting this object.
+            owner: The class of the other object requesting this object.
+        """
         return self._get_method(instance, owner=owner)
 
     # Callable
@@ -176,6 +227,7 @@ class TimedCache(BaseObject):
 
     # Container Methods
     def __len__(self):
+        """The method that gets this object's length."""
         return self.get_length()
 
     # Instance Methods #
@@ -213,17 +265,34 @@ class TimedCache(BaseObject):
 
     # Descriptor
     def set_get_method(self, method):
+        """Sets the __get__ method to another function or a method within this object can be given to select it.
+
+        Args:
+            method: The function or name to set the __get__ method to.
+        """
         if isinstance(method, str):
             method = getattr(self, method)
 
         self.__get_method = method
 
     def get_self(self, instance, owner=None):
+        """The __get__ method where it binds itself to the other object.
+
+        Args:
+            instance: The other object requesting this object.
+            owner: The class of the other object requesting this object.
+        """
         if instance is not None:
             self.bind(instance)
         return self
 
     def get_subinstance(self, instance, owner=None):
+        """The __get__ method where it binds a registered copy to the other object.
+
+        Args:
+            instance: The other object requesting this object.
+            owner: The class of the other object requesting this object.
+        """
         if instance is None:
             return self
         else:
@@ -234,10 +303,10 @@ class TimedCache(BaseObject):
 
     # Object Calling
     def set_call_method(self, method):
-        """Set the call method of this object to either the caching wrapper or the original function.
+        """Sets the call method to another function or a method within this object can be given to select it.
 
         Args:
-            method: The name of the method to call when this object is called.
+            method: The function or name to set the call method to.
         """
         if method is None:
             method = self.__func__
@@ -300,7 +369,7 @@ class TimedCache(BaseObject):
             setattr(instance, name, self)
 
     def bind_to_new(self, instance, name=None):
-        """Creates a deepcopy of this object and binds it to another object.
+        """Creates a new instance of this object and binds it to another object.
 
         Args:
             instance: The object ot bing this object to.
@@ -365,9 +434,11 @@ class TimedCache(BaseObject):
         self._maxsize = value
 
     def poll(self):
+        """Check if the cache has reached its max size."""
         return self.cache.__len__() <= self._maxsize
 
     def get_length(self):
+        """Gets the length of the cache."""
         return self.cache.__len__()
 
     def no_cache(self, *args, **kwargs):
@@ -424,6 +495,11 @@ class TimedCache(BaseObject):
             return result
 
     def set_caching_method(self, method):
+        """Sets the caching method to another function or a method within this object can be given to select it.
+
+        Args:
+            method: The function or name to set the caching method to.
+        """
         if isinstance(method, str):
             method = getattr(self, method)
 

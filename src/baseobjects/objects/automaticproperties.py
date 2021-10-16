@@ -35,7 +35,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
     """
     _properties_map = []
 
-    # Class Methods
+    # Class Methods #
     # Class Construction
     @classmethod
     def _init_class_(cls):

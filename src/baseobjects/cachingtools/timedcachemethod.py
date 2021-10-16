@@ -27,7 +27,7 @@ from .timedcache import TimedCache
 class TimedCacheMethod(TimedCache):
     """A timed cache wrapper for a method which includes extra control from the object."""
 
-    # Instance Methods
+    # Instance Methods #
     # Object Calling
     def caching_call(self, *args, **kwargs):
         """Calls the caching function, clears the cache at certain time, and allows the owning object to override.

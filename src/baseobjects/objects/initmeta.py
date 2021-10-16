@@ -27,7 +27,7 @@ from ..basemeta import BaseMeta
 class InitMeta(BaseMeta):
     """An abstract metaclass that implements an init class method which allows some setup after a class is created."""
 
-    # Magic Methods
+    # Magic Methods #
     # Construction/Destruction
     def __new__(mcs, name, bases, namespace, **kwargs):
         cls = super().__new__(mcs, name, bases, namespace, **kwargs)

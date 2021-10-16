@@ -42,4 +42,5 @@ class CachingObject(BaseObject):
     #     return instance
 
     def __init__(self):
+        # Attributes #
         self.is_cache = True

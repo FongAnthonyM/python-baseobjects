@@ -123,7 +123,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
     _exclude_attributes = {"__slotnames__"}
     _wrapped_attributes = {}
 
-    # Class Methods
+    # Class Methods #
     # Class Construction
     @classmethod
     def _init_class_(cls):
@@ -351,7 +351,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         cls._unwrap()
         cls._class_wrap(objects)
 
-    # Instance Methods
+    # Instance Methods #
     # Wrapping
     def _wrap(self):
         """Adds attributes from embedded objects as properties."""
@@ -443,7 +443,7 @@ class DynamicWrapper(BaseObject):
     """
     _wrap_attributes = []
 
-    # Magic Methods
+    # Magic Methods #
     # Attribute Access
     def __getattr__(self, name):
         """Overrides the getattr magic method to get the attribute of another object if that attribute is not present.
@@ -502,7 +502,7 @@ class DynamicWrapper(BaseObject):
         # If the item is an attribute in self or not in any indirect parent set as attribute
         object.__delattr__(self, name)
 
-    # Instance Methods
+    # Instance Methods #
     # Attribute Access
     def _setattr(self, name, value):
         """An override method that will set an attribute of this object without checking its presence in other objects.

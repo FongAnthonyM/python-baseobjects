@@ -1,6 +1,21 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+""" conf.py
+Config for read the docs and sphinx.
+"""
+# Package Header #
+from src.baseobjects.__header__ import *
 
+# Header #
+__author__ = __author__
+__credits__ = __credits__
+__maintainer__ = __maintainer__
+__email__ = __email__
+
+
+# Imports #
+# Default Libraries #
 import os
 
 extensions = [

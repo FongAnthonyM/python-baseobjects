@@ -29,7 +29,7 @@ from copyreg import dispatch_table
 class BaseObject(ABC):
     """An abstract class that implements some basic methods that all objects should have."""
 
-    # Magic Methods
+    # Magic Methods #
     # Construction/Destruction
     def __copy__(self):
         """The copy magic method (shallow).
@@ -118,7 +118,7 @@ class BaseObject(ABC):
 
         return y
 
-    # Instance Methods
+    # Instance Methods #
     # Constructors/Destructors
     def copy(self):
         """Creates a shallow copy of this object.

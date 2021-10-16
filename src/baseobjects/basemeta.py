@@ -29,7 +29,7 @@ from copyreg import dispatch_table
 class BaseMeta(ABCMeta):
     """An abstract metaclass that implements some basic methods that all meta objects should have."""
 
-    # Magic Methods
+    # Magic Methods #
     # Construction/Destruction
     def __copy__(self):
         """The copy magic method (shallow).

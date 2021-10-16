@@ -3,7 +3,21 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
+""" bootstrap.py
+Command line tools bootstrap.
+"""
+# Package Header #
+from src.baseobjects.__header__ import *
 
+# Header #
+__author__ = __author__
+__credits__ = __credits__
+__maintainer__ = __maintainer__
+__email__ = __email__
+
+
+# Imports #
+# Default Libraries #
 import os
 import subprocess
 import sys
@@ -15,6 +29,8 @@ from os.path import join
 base_path = dirname(dirname(abspath(__file__)))
 
 
+# Definitions #
+# Functions #
 def check_call(args):
     print("+", *args)
     subprocess.check_call(args)
@@ -78,6 +94,7 @@ def main():
     print("DONE.")
 
 
+# Main #
 if __name__ == "__main__":
     args = sys.argv[1:]
     if args == ["--no-env"]:

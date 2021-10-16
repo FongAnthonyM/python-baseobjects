@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ test_baseobjects.py
-Test for the baseobjects package
+Test for the baseobjects package.
 """
 # Package Header #
 from src.baseobjects.__header__ import *

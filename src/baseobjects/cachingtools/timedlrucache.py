@@ -25,34 +25,9 @@ from .timedcache import TimedCache
 # Definitions #
 # Classes #
 class TimedLRUCache(TimedCache):
-    """A least recently used cache wrapper object for a function which resets its cache periodically.
+    """A least recently used cache wrapper object for a function which resets its cache periodically."""
 
-    Attributes:
-        __func__: The original function to wrap.
-        __self__: The object to bind this object to.
-        _maxsize: The max size of the lru_cache.
-        typed: Determines if the function's arguments are type sensitive for caching.
-        is_timed: Determines if the cache will be reset periodically.
-        lifetime: The period between cache resets in seconds.
-        expiration: The next time the cache will be rest.
-
-        priority: A container that keeps track of cache deletion priority.
-        cache: Contains the results of the wrapped function.
-        caching_method: The designated function to handle caching.
-
-        call_type: The default call method to use.
-        call: The function to call when this object is called.
-
-    Args:
-        func: The function to wrap.
-        lifetime: The period between cache resets in seconds.
-        maxsize: The max size of the lru_cache.
-        call_type: The default call method to use.
-        typed: Determines if the function's arguments are type sensitive for caching.
-        init: Determines if this object will construct.
-    """
-
-    # Instance Methods
+    # Instance Methods #
     # LRU Caching
     def unlimited_cache(self, *args, **kwargs):
         """Caching with no limit on items in the cache.

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ __header__.py
-Description: Information about this package.
+Information about this package.
 """
 # Header #
 __package_name__ = "baseobjects"
