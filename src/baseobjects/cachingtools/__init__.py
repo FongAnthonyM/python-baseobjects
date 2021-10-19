@@ -15,7 +15,8 @@ __email__ = __email__
 
 # Imports
 # Local Libraries #
+from .basetimedcache import BaseTimedCache
 from .timedcache import TimedCache, timed_cache
 from .timedlrucache import TimedLRUCache, timed_lru_cache
-from .timedcachemethod import TimedCacheMethod, timed_cache_method
-from .cachingobject import CachingObject
+from .cachingobject import CachingObject, CachingObjectMethod, TimedSingleCacheMethod, TimedCacheMethod, \
+    timed_single_cache_method, timed_cache_method
