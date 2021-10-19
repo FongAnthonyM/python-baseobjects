@@ -19,6 +19,7 @@ import abc
 import copy
 import cProfile
 import datetime
+import functools
 import io
 import pathlib
 import pickle
@@ -490,7 +491,7 @@ class TestCachingObject(ClassTest):
             cacher.get_proxy()
 
         def old_access():
-            cacher.a
+            cacher.normal()
 
         mean_new = timeit.timeit(new_access, number=self.timeit_runs) / self.timeit_runs * 1000000
         mean_old = timeit.timeit(old_access, number=self.timeit_runs) / self.timeit_runs * 1000000
@@ -525,6 +526,47 @@ class TestCachingObject(ClassTest):
         pr.enable()
 
         cacher.proxy
+
+        pr.disable()
+        s = io.StringIO()
+        sortby = pstats.SortKey.TIME
+        ps = StatsMicro(pr, stream=s).sort_stats(sortby)
+        ps.print_stats()
+        print(s.getvalue())
+
+    def test_functool_speed(self):
+        x = 1
+
+        @functools.lru_cache
+        def proxy(a=None):
+            return datetime.datetime.now()
+
+        proxy()
+
+        def new_access():
+            proxy()
+
+        def old_access():
+            x
+
+        mean_new = timeit.timeit(new_access, number=self.timeit_runs) / self.timeit_runs * 1000000
+        mean_old = timeit.timeit(old_access, number=self.timeit_runs) / self.timeit_runs * 1000000
+        percent = (mean_new / mean_old) * 100
+
+        print(f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function.")
+        assert percent < self.speed_tolerance
+
+    def test_functool_profile(self):
+        @functools.lru_cache
+        def proxy(a=None):
+            return datetime.datetime.now()
+
+        proxy()
+
+        pr = cProfile.Profile()
+        pr.enable()
+
+        proxy()
 
         pr.disable()
         s = io.StringIO()
