@@ -117,6 +117,8 @@ class BaseTimedCache(BaseMethod):
         super().__init__(init=False)
 
         # New Attributes #
+        self._is_collective = True
+
         self.typed = False
         self.is_timed = True
         self.lifetime = None
@@ -130,6 +132,22 @@ class BaseTimedCache(BaseMethod):
         # Object Construction #
         if init:
             self.construct(func=func, lifetime=lifetime, typed=typed, call_method=call_method, collective=collective)
+
+    @property
+    def is_collective(self):
+        """Determines if the cache is collective for all method bindings or for each instance.
+
+        When set, the __get__ method will be changed to match the chosen style.
+        """
+        return self._is_collective
+
+    @is_collective.setter
+    def is_collective(self, value):
+        if value is True:
+            self._get_method_ = self.get_self_bind
+        else:
+            self._get_method_ = self.get_new_bind
+        self._is_collective = value
 
     @property
     def caching_method(self):
@@ -190,7 +208,21 @@ class BaseTimedCache(BaseMethod):
         if call_method is not None:
             self.set_call_method(call_method)
 
-        super().construct(func=func, collective=collective)
+        if collective is not None:
+            self.is_collective = collective
+
+        super().construct(func=func)
+
+    # Binding
+    def get_new_bind(self, instance, owner=None, new_binding="get_self"):
+        """The __get__ method where it binds a new copy to the other object. Changed the default parameter.
+
+        Args:
+            instance: The other object requesting this object.
+            owner: The class of the other object requesting this object.
+            new_binding: The binding method the new object will use.
+        """
+        return super().get_new_bind(instance, owner=owner, new_binding=new_binding)
 
     # Object Calling
     def set_call_method(self, method):

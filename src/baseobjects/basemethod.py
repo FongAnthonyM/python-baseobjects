@@ -33,47 +33,28 @@ class BaseMethod(BaseObject):
     Attributes:
         __func__: The original function to wrap.
         __self__: The object to bind this object to.
-        _is_collective: Determines if the cache is collective for all method bindings or for each instance.
         _instances: Copies of this object for specific owner instances.
 
     Args:
         func: The function to wrap.
-        collective: Determines if the cache is collective for all method bindings or for each instance.
         init: Determines if this object will construct.
     """
     sentinel = object()
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, func=None, collective=True,  init=True):
+    def __init__(self, func=None, init=True):
         # Special Attributes #
         self.__func__ = None
         self.__self__ = None
 
         # Attributes #
-        self._is_collective = True
-        self.__get_method = self.get_self
+        self._get_method_ = self.get_self_bind
         self._instances = {}
 
         # Object Construction #
         if init:
-            self.construct(func=func, collective=collective)
-
-    @property
-    def is_collective(self):
-        """Determines if the cache is collective for all method bindings or for each instance.
-
-        When set, the __get__ method will be changed to match the chosen style.
-        """
-        return self._is_collective
-
-    @is_collective.setter
-    def is_collective(self, value):
-        if value is True:
-            self.__get_method = self.get_self
-        else:
-            self.__get_method = self.get_subinstance
-        self._is_collective = value
+            self.construct(func=func)
 
     @property
     def _get_method(self):
@@ -81,7 +62,7 @@ class BaseMethod(BaseObject):
 
         When set, any function can be set or the name of a method within this object can be given to select it.
         """
-        return self.__get_method
+        return self._get_method
 
     @_get_method.setter
     def _get_method(self, value):
@@ -95,20 +76,16 @@ class BaseMethod(BaseObject):
             instance: The other object requesting this object.
             owner: The class of the other object requesting this object.
         """
-        return self._get_method(instance, owner=owner)
+        return self._get_method_(instance, owner=owner)
 
     # Instance Methods #
     # Constructors/Destructors
-    def construct(self, func=None, collective=None):
+    def construct(self, func=None):
         """The constructor for this object.
 
             Args:
                 func:  The function to wrap.
-                collective: Determines if the cache is collective for all method bindings or for each instance.
             """
-        if collective is not None:
-            self.is_collective = collective
-
         if func is not None:
             self.__func__ = func
             update_wrapper(self, self.__func__)
@@ -123,18 +100,46 @@ class BaseMethod(BaseObject):
         if isinstance(method, str):
             method = getattr(self, method)
 
-        self.__get_method = method
+        self._get_method_ = method
 
     def get_self(self, instance, owner=None):
+        """The __get__ method where it returns itself.
+
+        Args:
+            instance: The other object requesting this object.
+            owner: The class of the other object requesting this object.
+        """
+        return self
+
+    def get_self_bind(self, instance, owner=None):
         """The __get__ method where it binds itself to the other object.
 
         Args:
             instance: The other object requesting this object.
             owner: The class of the other object requesting this object.
         """
-        if instance is not None:
+        if instance is not None and self.__self__ is not instance:
             self.bind(instance)
         return self
+
+    def get_new_bind(self, instance, owner=None, new_binding="get_self_bind"):
+        """The __get__ method where it binds a new copy to the other object.
+
+        Args:
+            instance: The other object requesting this object.
+            owner: The class of the other object requesting this object.
+            new_binding: The binding method the new object will use.
+        """
+        if instance is None:
+            return self
+        else:
+            bound = self.bind_to_new(instance=instance)
+            bound.set_get_method(new_binding)
+            for name, attribute in owner.__dict__.items():
+                if attribute is self:
+                    setattr(instance, name, bound)
+                    break
+            return bound
 
     def get_subinstance(self, instance, owner=None):
         """The __get__ method where it binds a registered copy to the other object.

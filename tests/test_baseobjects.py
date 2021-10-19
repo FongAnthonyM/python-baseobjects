@@ -23,6 +23,7 @@ import io
 import pathlib
 import pickle
 import pstats
+from pstats import Stats, f8, func_std_string
 import time
 import timeit
 
@@ -31,7 +32,7 @@ import pytest
 
 # Local Libraries #
 import src.baseobjects as baseobjects
-from src.baseobjects.cachingtools import timed_lru_cache, timed_single_cache_method
+from src.baseobjects.cachingtools import timed_lru_cache, timed_keyless_cache_method
 
 
 # Definitions #
@@ -43,6 +44,49 @@ def tmp_dir(tmpdir):
 
 
 # Classes #
+class StatsMicro(Stats):
+    def print_stats(self, *amount):
+        for filename in self.files:
+            print(filename, file=self.stream)
+        if self.files:
+            print(file=self.stream)
+        indent = ' ' * 8
+        for func in self.top_level:
+            print(indent, func_get_function_name(func), file=self.stream)
+
+        print(indent, self.total_calls, "function calls", end=' ', file=self.stream)
+        if self.total_calls != self.prim_calls:
+            print("(%d primitive calls)" % self.prim_calls, end=' ', file=self.stream)
+        print("in %.3f microseconds" % (self.total_tt*1000000), file=self.stream)
+        print(file=self.stream)
+        width, list = self.get_print_list(amount)
+        if list:
+            self.print_title()
+            for func in list:
+                self.print_line(func)
+            print(file=self.stream)
+            print(file=self.stream)
+        return self
+
+    def print_line(self, func):  # hack: should print percentages
+        cc, nc, tt, ct, callers = self.stats[func]
+        c = str(nc)
+        if nc != cc:
+            c = c + '/' + str(cc)
+        print(c.rjust(9), end=' ', file=self.stream)
+        print(f8(tt*1000000), end=' ', file=self.stream)
+        if nc == 0:
+            print(' '*8, end=' ', file=self.stream)
+        else:
+            print(f8(tt/nc*1000000), end=' ', file=self.stream)
+        print(f8(ct*1000000), end=' ', file=self.stream)
+        if cc == 0:
+            print(' '*8, end=' ', file=self.stream)
+        else:
+            print(f8(ct/cc*1000000), end=' ', file=self.stream)
+        print(func_std_string(func), file=self.stream)
+
+
 class ClassTest(abc.ABC):
     """Default class tests that all classes should pass."""
     class_ = None
@@ -369,7 +413,7 @@ class TestCachingObject(ClassTest):
         def proxy(self):
             return self.get_proxy.caching_call()
 
-        @timed_single_cache_method(lifetime=2, call_method="clearing_call", collective=False)
+        @timed_keyless_cache_method(lifetime=2, call_method="clearing_call", collective=False)
         def get_proxy(self):
             return datetime.datetime.now()
 
@@ -485,7 +529,7 @@ class TestCachingObject(ClassTest):
         pr.disable()
         s = io.StringIO()
         sortby = pstats.SortKey.TIME
-        ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+        ps = StatsMicro(pr, stream=s).sort_stats(sortby)
         ps.print_stats()
         print(s.getvalue())
 

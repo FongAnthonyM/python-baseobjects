@@ -21,6 +21,7 @@ __email__ = __email__
 # Local Libraries #
 from ..baseobject import BaseObject
 from .timedsinglecache import TimedSingleCache
+from  .timedkeylesscache import TimedKeylessCache
 from .timedcache import TimedCache
 from .basetimedcache import BaseTimedCache
 
@@ -80,6 +81,11 @@ class CachingObjectMethod(BaseTimedCache):
 
 class TimedSingleCacheMethod(TimedSingleCache, CachingObjectMethod):
     """A mixin class that implements both TimedSingleCache and CachingObjectMethod"""
+    pass
+
+
+class TimedKeylessCacheMethod(TimedKeylessCache, CachingObjectMethod):
+    """A mixin class that implements both TimedKeylessCache and CachingObjectMethod"""
     pass
 
 
@@ -157,6 +163,34 @@ def timed_single_cache_method(typed=False, lifetime=None, call_method="cache_cal
         """
         return TimedSingleCacheMethod(func, typed=typed, lifetime=lifetime,
                                       call_method=call_method, collective=collective)
+
+    return timed_cache_method_factory
+
+
+def timed_keyless_cache_method(typed=False, lifetime=None, call_method="cache_call", collective=True):
+    """A factory to be used a decorator that sets the parameters of timed keyless cache method factory.
+
+    Args:
+        typed: Determines if the function's arguments are type sensitive for caching.
+        lifetime: The period between cache resets in seconds.
+        call_method: The default call method to use.
+        collective: Determines if the cache is collective for all method bindings or for each instance.
+
+    Returns:
+        The parameterized timed keyless cache method factory.
+    """
+
+    def timed_cache_method_factory(func):
+        """A factory for wrapping a method with a TimedKeylessCacheMethod object.
+
+        Args:
+            func: The function to wrap with a TimedKeylessCacheMethod.
+
+        Returns:
+            The TimeKeylessCacheMethod object which wraps the given function.
+        """
+        return TimedKeylessCacheMethod(func, typed=typed, lifetime=lifetime,
+                                       call_method=call_method, collective=collective)
 
     return timed_cache_method_factory
 
