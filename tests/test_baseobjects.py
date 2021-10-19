@@ -17,9 +17,12 @@ __email__ = __email__
 # Default Libraries #
 import abc
 import copy
+import cProfile
 import datetime
+import io
 import pathlib
 import pickle
+import pstats
 import time
 import timeit
 
@@ -368,7 +371,9 @@ class TestCachingObject(ClassTest):
 
         @timed_single_cache_method(lifetime=2, call_method="clearing_call", collective=False)
         def get_proxy(self):
-            print(self.a)
+            return datetime.datetime.now()
+
+        def normal(self):
             return datetime.datetime.now()
 
         def printer(self):
@@ -433,6 +438,56 @@ class TestCachingObject(ClassTest):
         second = cacher2.proxy
 
         assert second - first != self.zero_time
+
+    def test_cache_bypass_speed(self):
+        cacher = TestCachingObject.CachingTestObject()
+
+        def new_access():
+            cacher.get_proxy()
+
+        def old_access():
+            cacher.a
+
+        mean_new = timeit.timeit(new_access, number=self.timeit_runs) / self.timeit_runs * 1000000
+        mean_old = timeit.timeit(old_access, number=self.timeit_runs) / self.timeit_runs * 1000000
+        percent = (mean_new / mean_old) * 100
+
+        print(f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function.")
+        assert percent < self.speed_tolerance
+
+    def test_cached_speed(self):
+        cacher = TestCachingObject.CachingTestObject()
+
+        cacher.proxy
+
+        def new_access():
+            cacher.proxy
+
+        def old_access():
+            cacher.a
+
+        mean_new = timeit.timeit(new_access, number=self.timeit_runs) / self.timeit_runs * 1000000
+        mean_old = timeit.timeit(old_access, number=self.timeit_runs) / self.timeit_runs * 1000000
+        percent = (mean_new / mean_old) * 100
+
+        print(f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function.")
+        assert percent < self.speed_tolerance
+
+    def test_cached_profile(self):
+        cacher = TestCachingObject.CachingTestObject()
+        cacher.proxy
+
+        pr = cProfile.Profile()
+        pr.enable()
+
+        cacher.proxy
+
+        pr.disable()
+        s = io.StringIO()
+        sortby = pstats.SortKey.TIME
+        ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+        ps.print_stats()
+        print(s.getvalue())
 
 
 # Main #
