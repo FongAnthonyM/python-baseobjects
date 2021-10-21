@@ -62,7 +62,7 @@ class BaseMethod(BaseObject):
 
         When set, any function can be set or the name of a method within this object can be given to select it.
         """
-        return self._get_method
+        return self._get_method_
 
     @_get_method.setter
     def _get_method(self, value):
@@ -135,10 +135,7 @@ class BaseMethod(BaseObject):
         else:
             bound = self.bind_to_new(instance=instance)
             bound.set_get_method(new_binding)
-            for name in dir(owner):
-                if getattr(owner, name) is self:
-                    setattr(instance, name, bound)
-                    break
+            setattr(instance, self.__func__.__name__, bound)
             return bound
 
     def get_subinstance(self, instance, owner=None):

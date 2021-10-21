@@ -128,14 +128,21 @@ class CachingObject(BaseObject):
             All the cache objects within this object.
         """
         for name in dir(self):
-            attribute = getattr(self, name)
-            if isinstance(attribute, BaseTimedCache):
-                self._caches[name] = attribute
+            attribute = getattr(type(self), name, None)
+            if isinstance(attribute, BaseTimedCache) or attribute is None:
+                self._caches[name] = getattr(self, name)
+
         return self._caches
 
-    def clear_caches(self):
-        """Clears all caches in this object."""
-        self.get_caches()
+    def clear_caches(self, get_caches=False):
+        """Clears all caches in this object.
+
+        Args:
+            get_caches: Determine if get_caches will be ran before clearing the caches.
+        """
+        if not self._caches or get_caches:
+            self.get_caches()
+
         for cache in self._caches.values():
             cache.clear_cache()
 
