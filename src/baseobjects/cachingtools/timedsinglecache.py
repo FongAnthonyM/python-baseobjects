@@ -90,11 +90,12 @@ class TimedSingleCache(BaseTimedCache):
 
         return self.cache
 
-    def cache_clear(self):
+    def clear_cache(self):
         """Clear the cache and update the expiration of the cache."""
         self.cache = None
         self.args_key = None
-        self.expiration = perf_counter() + self.lifetime
+        if self.lifetime is not None:
+            self.expiration = perf_counter() + self.lifetime
 
 
 # Functions #

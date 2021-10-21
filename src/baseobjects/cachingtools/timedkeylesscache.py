@@ -93,7 +93,8 @@ class TimedKeylessCache(TimedSingleCache):
         """Clear the cache and update the expiration of the cache."""
         self.cache = None
         self.args_key = False
-        self.expiration = perf_counter() + self.lifetime
+        if self.lifetime is not None:
+            self.expiration = perf_counter() + self.lifetime
 
 
 # Functions #

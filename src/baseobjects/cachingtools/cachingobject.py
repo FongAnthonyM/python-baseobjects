@@ -49,7 +49,7 @@ class CachingObjectMethod(BaseTimedCache):
             obj = args[0]
 
         if self.clear_condition() or not obj.is_cache:
-            self.cache_clear()
+            self.clear_cache()
 
         if obj.is_cache:
             return self.caching_method(obj, *args, **kwargs)
@@ -71,7 +71,7 @@ class CachingObjectMethod(BaseTimedCache):
         else:
             obj = args[0]
 
-        self.cache_clear()
+        self.clear_cache()
 
         if obj.is_cache:
             return self.caching_method(obj, *args, **kwargs)
@@ -127,13 +127,15 @@ class CachingObject(BaseObject):
         Returns:
             All the cache objects within this object.
         """
-        for name, attribute in self.__dict__.items():
+        for name in dir(self):
+            attribute = getattr(self, name)
             if isinstance(attribute, BaseTimedCache):
                 self._caches[name] = attribute
         return self._caches
 
     def clear_caches(self):
         """Clears all caches in this object."""
+        self.get_caches()
         for cache in self._caches.values():
             cache.clear_cache()
 

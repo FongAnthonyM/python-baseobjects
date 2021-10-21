@@ -135,8 +135,8 @@ class BaseMethod(BaseObject):
         else:
             bound = self.bind_to_new(instance=instance)
             bound.set_get_method(new_binding)
-            for name, attribute in owner.__dict__.items():
-                if attribute is self:
+            for name in dir(owner):
+                if getattr(owner, name) is self:
                     setattr(instance, name, bound)
                     break
             return bound

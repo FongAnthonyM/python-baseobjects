@@ -249,7 +249,7 @@ class BaseTimedCache(BaseMethod):
             The result or the caching_method.
         """
         if self.clear_condition():
-            self.cache_clear()
+            self.clear_cache()
 
         return self.caching_method(*args, **kwargs)
 
@@ -263,7 +263,7 @@ class BaseTimedCache(BaseMethod):
         Returns:
             The result or the caching_method.
         """
-        self.cache_clear()
+        self.clear_cache()
 
         return self.caching_method(*args, **kwargs)
 
@@ -354,6 +354,7 @@ class BaseTimedCache(BaseMethod):
         self._caching_method = method
 
     @abc.abstractmethod
-    def cache_clear(self):
+    def clear_cache(self):
         """Clear the cache and update the expiration of the cache."""
-        self.expiration = perf_counter() + self.lifetime
+        if self.lifetime is not None:
+            self.expiration = perf_counter() + self.lifetime
