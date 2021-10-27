@@ -404,11 +404,8 @@ class TestCachingObject(ClassTest):
 
     class CachingTestObject(baseobjects.CachingObject):
         def __init__(self, a=1, init=True):
-            super().__init__(init=False)
+            super().__init__()
             self.a = a
-
-            if init:
-                self.construct()
 
         @property
         def proxy(self):

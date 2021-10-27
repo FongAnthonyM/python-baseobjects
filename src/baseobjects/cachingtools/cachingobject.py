@@ -20,8 +20,9 @@ __email__ = __email__
 
 # Local Libraries #
 from ..baseobject import BaseObject
+from .metacachingobject import MetaCachingObject
 from .timedsinglecache import TimedSingleCache
-from  .timedkeylesscache import TimedKeylessCache
+from .timedkeylesscache import TimedKeylessCache
 from .timedcache import TimedCache
 from .basetimedcache import BaseTimedCache
 
@@ -94,7 +95,7 @@ class TimedCacheMethod(TimedCache, CachingObjectMethod):
     pass
 
 
-class CachingObject(BaseObject):
+class CachingObject(BaseObject, metaclass=MetaCachingObject):
     """An abstract class which is has functionality for methods that are caching.
 
     Attributes:
@@ -104,22 +105,13 @@ class CachingObject(BaseObject):
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, init=True):
+    def __init__(self):
         # Attributes #
         self.is_cache = True
 
-        self._caches = {}
-
-        # Object Construction #
-        if init:
-            self.construct()
+        self._caches = self._caches_.copy()
 
     # Instance Methods #
-    # Constructors/Destructors #
-    def construct(self, *args, **kwargs):
-        """Constructs this object."""
-        self.get_caches()
-
     # Caches
     def get_caches(self):
         """Get all the caches in this object.
@@ -129,8 +121,9 @@ class CachingObject(BaseObject):
         """
         for name in dir(self):
             attribute = getattr(type(self), name, None)
-            if isinstance(attribute, BaseTimedCache) or attribute is None:
-                self._caches[name] = getattr(self, name)
+            if (isinstance(attribute, BaseTimedCache) or (attribute is None and
+                isinstance(getattr(self, name), BaseTimedCache))):
+                self._caches.add(name)
 
         return self._caches
 
@@ -143,8 +136,8 @@ class CachingObject(BaseObject):
         if not self._caches or get_caches:
             self.get_caches()
 
-        for cache in self._caches.values():
-            cache.clear_cache()
+        for name in self._caches:
+            getattr(self, name).clear_cache()
 
 
 # Functions #
