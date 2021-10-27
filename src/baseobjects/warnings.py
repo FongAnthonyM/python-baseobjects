@@ -26,7 +26,7 @@ __email__ = __email__
 class TimeoutWarning(Warning):
     """A general warning for timeouts."""
 
-    # Magic Methods
+    # Magic Methods #
     # Construction/Destruction
     def __init__(self, name="A function"):
         message = f"{name} timed out"

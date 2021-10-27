@@ -1,18 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ __init__.py
+__init__ for accessing the package within src.
 """
-__author__ = "Anthony Fong"
-__copyright__ = "Copyright 2021, Anthony Fong"
-__credits__ = ["Anthony Fong"]
-__license__ = ""
-__version__ = "1.1.0"
-__maintainer__ = "Anthony Fong"
-__email__ = ""
-__status__ = "Production/Stable"
+# Package Header #
+from .baseobjects.__header__ import *
 
-# Default Libraries #
-
-# Downloaded Libraries #
-
-# Local Libraries #
+# Header #
+__author__ = __author__
+__credits__ = __credits__
+__maintainer__ = __maintainer__
+__email__ = __email__

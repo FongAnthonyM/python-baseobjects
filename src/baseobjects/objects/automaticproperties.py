@@ -24,8 +24,6 @@ from builtins import property
 from ..baseobject import BaseObject
 from .initmeta import InitMeta
 
-# Local Libraries #
-
 
 # Definitions #
 # Classes #
@@ -37,7 +35,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
     """
     _properties_map = []
 
-    # Class Methods
+    # Class Methods #
     # Class Construction
     @classmethod
     def _init_class_(cls):
