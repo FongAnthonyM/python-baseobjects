@@ -290,7 +290,7 @@ class BaseTimedCache(BaseMethod):
         Returns:
             The new bound deepcopy of this object.
         """
-        if self._call_method.__name__ in dir(self):
+        if hasattr(self, self._call_method.__name__):
             call_method = self._call_method.__name__
         else:
             call_method = self._call_method
