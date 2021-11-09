@@ -4,7 +4,7 @@
 Creates a registry for the caching objects with a class.
 """
 # Package Header #
-from ..__header__ import *
+from baseobjects.__header__ import *
 
 # Header #
 __author__ = __author__
@@ -18,8 +18,8 @@ __email__ = __email__
 # Third-Party Packages #
 
 # Local Packages #
-from ..basemeta import BaseMeta
-from .basetimedcache import BaseTimedCache
+from ...basemeta import BaseMeta
+from ..basetimedcache import BaseTimedCache
 
 
 # Definitions #
@@ -29,13 +29,13 @@ class MetaCachingObject(BaseMeta):
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(cls, name, bases, attr):
-        super().__init__(name, bases, attr)
+    def __init__(cls, name, bases, namespace):
+        super().__init__(name, bases, namespace)
         if hasattr(cls, "_caches_"):
             cls._caches_ = cls._caches_.copy()
         else:
             cls._caches_ = set()
 
-        for name, cls_attribute in attr.items():
+        for name, cls_attribute in namespace.items():
             if isinstance(cls_attribute, BaseTimedCache):
                 cls._caches_.add(name)

@@ -15,6 +15,7 @@ __email__ = __email__
 
 # Imports
 # Local Packages #
+from .meta import *
 from .basetimedcache import BaseTimedCache
 from .timedsinglecache import TimedSingleCache
 from .timedkeylesscache import TimedKeylessCache

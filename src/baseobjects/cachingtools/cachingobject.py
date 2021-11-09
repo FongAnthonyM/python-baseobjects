@@ -20,7 +20,7 @@ __email__ = __email__
 
 # Local Packages #
 from ..baseobject import BaseObject
-from .metacachingobject import MetaCachingObject
+from .meta import MetaCachingObject
 from .timedsinglecache import TimedSingleCache
 from .timedkeylesscache import TimedKeylessCache
 from .timedcache import TimedCache
