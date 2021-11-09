@@ -1,4 +1,4 @@
-base objects
+baseobjects
 ============
 
 |PyPI| |Status| |Python Version| |License|
@@ -7,14 +7,14 @@ base objects
 
 |pre-commit| |Black|
 
-.. |PyPI| image:: https://img.shields.io/pypi/v/python-baseobjects.svg
-   :target: https://pypi.org/project/python-baseobjects/
+.. |PyPI| image:: https://img.shields.io/pypi/v/baseobjects.svg
+   :target: https://pypi.org/project/baseobjects/
    :alt: PyPI
 .. |Status| image:: https://img.shields.io/pypi/status/python-baseobjects.svg
-   :target: https://pypi.org/project/python-baseobjects/
+   :target: https://pypi.org/project/baseobjects/
    :alt: Status
 .. |Python Version| image:: https://img.shields.io/pypi/pyversions/python-baseobjects
-   :target: https://pypi.org/project/python-baseobjects
+   :target: https://pypi.org/project/baseobjects
    :alt: Python Version
 .. |License| image:: https://img.shields.io/pypi/l/python-baseobjects
    :target: https://opensource.org/licenses/MIT
@@ -23,7 +23,7 @@ base objects
    :target: https://python-baseobjects.readthedocs.io/
    :alt: Read the documentation at https://python-baseobjects.readthedocs.io/
 .. |Tests| image:: https://github.com/fongant/python-baseobjects/workflows/Tests/badge.svg
-   :target: https://github.com/fongant/python-baseobjects/actions?workflow=Tests
+   :target: https://github.com/fongant/baseobjects/actions?workflow=Tests
    :alt: Tests
 .. |Codecov| image:: https://codecov.io/gh/fongant/python-baseobjects/branch/main/graph/badge.svg
    :target: https://codecov.io/gh/fongant/python-baseobjects
@@ -51,11 +51,11 @@ Requirements
 Installation
 ------------
 
-You can install *base objects* via pip_ from PyPI_:
+You can install *baseobjects* via pip_ from PyPI_:
 
 .. code:: console
 
-   $ pip install python-baseobjects
+   $ pip install baseobjects
 
 
 Usage
@@ -75,7 +75,7 @@ License
 -------
 
 Distributed under the terms of the `MIT license`_,
-*base objects* is free and open source software.
+*baseobjects* is free and open source software.
 
 
 Issues
