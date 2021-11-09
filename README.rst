@@ -10,13 +10,13 @@ baseobjects
 .. |PyPI| image:: https://img.shields.io/pypi/v/baseobjects.svg
    :target: https://pypi.org/project/baseobjects/
    :alt: PyPI
-.. |Status| image:: https://img.shields.io/pypi/status/python-baseobjects.svg
+.. |Status| image:: https://img.shields.io/pypi/status/baseobjects.svg
    :target: https://pypi.org/project/baseobjects/
    :alt: Status
-.. |Python Version| image:: https://img.shields.io/pypi/pyversions/python-baseobjects
+.. |Python Version| image:: https://img.shields.io/pypi/pyversions/baseobjects
    :target: https://pypi.org/project/baseobjects
    :alt: Python Version
-.. |License| image:: https://img.shields.io/pypi/l/python-baseobjects
+.. |License| image:: https://img.shields.io/pypi/l/baseobjects
    :target: https://opensource.org/licenses/MIT
    :alt: License
 .. |Read the Docs| image:: https://img.shields.io/readthedocs/python-baseobjects/latest.svg?label=Read%20the%20Docs
