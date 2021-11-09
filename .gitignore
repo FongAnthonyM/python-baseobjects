@@ -30,8 +30,11 @@ pip-log.txt
 # Unit test / coverage reports
 .coverage
 .tox
+.nox
 .coverage.*
 .pytest_cache/
+.python-version
+.pytype/
 nosetests.xml
 coverage.xml
 htmlcov

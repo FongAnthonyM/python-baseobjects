@@ -1,107 +1,102 @@
-========
-Overview
-========
-
-.. start-badges
-
-.. list-table::
-    :stub-columns: 1
-
-    * - docs
-      - |docs|
-    * - tests
-      - | |travis| |appveyor| |requires|
-        | |codecov|
-    * - package
-      - | |version| |wheel| |supported-versions| |supported-implementations|
-        | |commits-since|
-.. |docs| image:: https://readthedocs.org/projects/python-baseobjects/badge/?style=flat
-    :target: https://python-baseobjects.readthedocs.io/
-    :alt: Documentation Status
-
-.. |travis| image:: https://api.travis-ci.com/fonganthonym/python-baseobjects.svg?branch=master
-    :alt: Travis-CI Build Status
-    :target: https://travis-ci.com/github/fonganthonym/python-baseobjects
-
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/fonganthonym/python-baseobjects?branch=master&svg=true
-    :alt: AppVeyor Build Status
-    :target: https://ci.appveyor.com/project/fonganthonym/python-baseobjects
-
-.. |requires| image:: https://requires.io/github/fonganthonym/python-baseobjects/requirements.svg?branch=master
-    :alt: Requirements Status
-    :target: https://requires.io/github/fonganthonym/python-baseobjects/requirements/?branch=master
-
-.. |codecov| image:: https://codecov.io/gh/fonganthonym/python-baseobjects/branch/master/graphs/badge.svg?branch=master
-    :alt: Coverage Status
-    :target: https://codecov.io/github/fonganthonym/python-baseobjects
-
-.. |version| image:: https://img.shields.io/pypi/v/baseobjects.svg
-    :alt: PyPI Package latest release
-    :target: https://pypi.org/project/baseobjects
-
-.. |wheel| image:: https://img.shields.io/pypi/wheel/baseobjects.svg
-    :alt: PyPI Wheel
-    :target: https://pypi.org/project/baseobjects
-
-.. |supported-versions| image:: https://img.shields.io/pypi/pyversions/baseobjects.svg
-    :alt: Supported versions
-    :target: https://pypi.org/project/baseobjects
-
-.. |supported-implementations| image:: https://img.shields.io/pypi/implementation/baseobjects.svg
-    :alt: Supported implementations
-    :target: https://pypi.org/project/baseobjects
-
-.. |commits-since| image:: https://img.shields.io/github/commits-since/fonganthonym/python-baseobjects/v1.4.3.svg
-    :alt: Commits since latest release
-    :target: https://github.com/fonganthonym/python-baseobjects/compare/v1.4.3...master
-
-
-
-.. end-badges
-
-Basic object templates.
-
-* Free software: MIT license
-
-Installation
+base objects
 ============
 
-::
+|PyPI| |Status| |Python Version| |License|
 
-    pip install baseobjects
+|Read the Docs| |Tests| |Codecov|
 
-You can also install the in-development version with::
+|pre-commit| |Black|
 
-    pip install https://github.com/fonganthonym/python-baseobjects/archive/master.zip
+.. |PyPI| image:: https://img.shields.io/pypi/v/python-baseobjects.svg
+   :target: https://pypi.org/project/python-baseobjects/
+   :alt: PyPI
+.. |Status| image:: https://img.shields.io/pypi/status/python-baseobjects.svg
+   :target: https://pypi.org/project/python-baseobjects/
+   :alt: Status
+.. |Python Version| image:: https://img.shields.io/pypi/pyversions/python-baseobjects
+   :target: https://pypi.org/project/python-baseobjects
+   :alt: Python Version
+.. |License| image:: https://img.shields.io/pypi/l/python-baseobjects
+   :target: https://opensource.org/licenses/MIT
+   :alt: License
+.. |Read the Docs| image:: https://img.shields.io/readthedocs/python-baseobjects/latest.svg?label=Read%20the%20Docs
+   :target: https://python-baseobjects.readthedocs.io/
+   :alt: Read the documentation at https://python-baseobjects.readthedocs.io/
+.. |Tests| image:: https://github.com/fongant/python-baseobjects/workflows/Tests/badge.svg
+   :target: https://github.com/fongant/python-baseobjects/actions?workflow=Tests
+   :alt: Tests
+.. |Codecov| image:: https://codecov.io/gh/fongant/python-baseobjects/branch/main/graph/badge.svg
+   :target: https://codecov.io/gh/fongant/python-baseobjects
+   :alt: Codecov
+.. |pre-commit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
+   :target: https://github.com/pre-commit/pre-commit
+   :alt: pre-commit
+.. |Black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
+   :target: https://github.com/psf/black
+   :alt: Black
 
 
-Documentation
-=============
+Features
+--------
+
+* TODO
 
 
-https://python-baseobjects.readthedocs.io/
+Requirements
+------------
+
+* TODO
 
 
-Development
-===========
+Installation
+------------
 
-To run all the tests run::
+You can install *base objects* via pip_ from PyPI_:
 
-    tox
+.. code:: console
 
-Note, to combine the coverage data from all the tox environments run:
+   $ pip install python-baseobjects
 
-.. list-table::
-    :widths: 10 90
-    :stub-columns: 1
 
-    - - Windows
-      - ::
+Usage
+-----
 
-            set PYTEST_ADDOPTS=--cov-append
-            tox
+Please see the `Command-line Reference <Usage_>`_ for details.
 
-    - - Other
-      - ::
 
-            PYTEST_ADDOPTS=--cov-append tox
+Contributing
+------------
+
+Contributions are very welcome.
+To learn more, see the `Contributor Guide`_.
+
+
+License
+-------
+
+Distributed under the terms of the `MIT license`_,
+*base objects* is free and open source software.
+
+
+Issues
+------
+
+If you encounter any problems,
+please `file an issue`_ along with a detailed description.
+
+
+Credits
+-------
+
+This project was generated from `@cjolowicz`_'s `Hypermodern Python Cookiecutter`_ template.
+
+.. _@cjolowicz: https://github.com/cjolowicz
+.. _Cookiecutter: https://github.com/audreyr/cookiecutter
+.. _MIT license: https://opensource.org/licenses/MIT
+.. _PyPI: https://pypi.org/
+.. _Hypermodern Python Cookiecutter: https://github.com/cjolowicz/cookiecutter-hypermodern-python
+.. _file an issue: https://github.com/fongant/python-baseobjects/issues
+.. _pip: https://pip.pypa.io/
+.. github-only
+.. _Contributor Guide: CONTRIBUTING.rst
+.. _Usage: https://python-baseobjects.readthedocs.io/en/latest/usage.html
