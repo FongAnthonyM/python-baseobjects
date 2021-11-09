@@ -1,9 +1,25 @@
-"""Nox sessions."""
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+""" noxfile.py
+Nox sessions.
+"""
+# Package Header #
+from src.baseobjects.__header__ import *
+
+# Header #
+__author__ = __author__
+__credits__ = __credits__
+__maintainer__ = __maintainer__
+__email__ = __email__
+
+# Imports #
+# Standard Libraries #
 import shutil
 import sys
 from pathlib import Path
 from textwrap import dedent
 
+# Third-Party Packages #
 import nox
 
 try:
@@ -18,7 +34,10 @@ except ImportError:
     {sys.executable} -m pip install nox-poetry"""
     raise SystemExit(dedent(message)) from None
 
+# Local Packages #
 
+
+# Definitions #
 package = "baseobjects"
 python_versions = ["3.10", "3.9", "3.8", "3.7"]
 nox.needs_version = ">= 2021.6.6"
@@ -33,6 +52,7 @@ nox.options.sessions = (
 )
 
 
+# Functions #
 def activate_virtualenv_in_precommit_hooks(session: Session) -> None:
     """Activate virtualenv in hooks installed by pre-commit.
 

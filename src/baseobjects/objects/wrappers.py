@@ -40,12 +40,12 @@ __email__ = __email__
 
 
 # Imports #
-# Default Libraries #
+# Standard Libraries #
 from builtins import property
 
-# Downloaded Libraries #
+# Third-Party Packages #
 
-# Local Libraries #
+# Local Packages #
 from ..baseobject import BaseObject
 from .initmeta import InitMeta
 

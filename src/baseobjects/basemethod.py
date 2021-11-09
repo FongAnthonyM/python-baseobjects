@@ -13,12 +13,12 @@ __maintainer__ = __maintainer__
 __email__ = __email__
 
 # Imports #
-# Default Libraries #
+# Standard Libraries #
 from functools import update_wrapper
 
-# Downloaded Libraries #
+# Third-Party Packages #
 
-# Local Libraries #
+# Local Packages #
 from .baseobject import BaseObject
 
 

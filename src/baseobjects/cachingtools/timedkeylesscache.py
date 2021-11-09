@@ -13,12 +13,12 @@ __maintainer__ = __maintainer__
 __email__ = __email__
 
 # Imports #
-# Default Libraries #
+# Standard Libraries #
 from time import perf_counter
 
-# Downloaded Libraries #
+# Third-Party Packages #
 
-# Local Libraries #
+# Local Packages #
 from .timedsinglecache import TimedSingleCache
 
 

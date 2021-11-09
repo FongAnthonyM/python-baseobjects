@@ -14,7 +14,7 @@ __email__ = __email__
 
 
 # Imports #
-# Default Libraries #
+# Standard Libraries #
 import abc
 import copy
 import cProfile
@@ -28,10 +28,10 @@ from pstats import Stats, f8, func_std_string
 import time
 import timeit
 
-# Downloaded Libraries #
+# Third-Party Packages #
 import pytest
 
-# Local Libraries #
+# Local Packages #
 import src.baseobjects as baseobjects
 from src.baseobjects.cachingtools import timed_lru_cache, timed_keyless_cache_method
 

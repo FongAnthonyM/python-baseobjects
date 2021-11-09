@@ -13,13 +13,13 @@ __maintainer__ = __maintainer__
 __email__ = __email__
 
 # Imports #
-# Default Libraries #
+# Standard Libraries #
 import abc
 from time import perf_counter
 
-# Downloaded Libraries #
+# Third-Party Packages #
 
-# Local Libraries #
+# Local Packages #
 from ..basemethod import BaseMethod
 from ..baseobject import BaseObject
 

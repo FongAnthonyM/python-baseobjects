@@ -14,7 +14,7 @@ __email__ = __email__
 
 
 # Imports
-# Local Libraries #
+# Local Packages #
 from .automaticproperties import AutomaticProperties
 from .circulardoublylinkedcontainer import LinkedNode, CirularDoublyLinkedContainer
 from .initmeta import InitMeta

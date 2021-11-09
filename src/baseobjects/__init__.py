@@ -14,7 +14,7 @@ __email__ = __email__
 
 
 # Imports #
-# Local Libraries #
+# Local Packages #
 from .baseobject import BaseObject
 from .basemeta import BaseMeta
 from .cachingtools import *

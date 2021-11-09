@@ -14,13 +14,13 @@ __email__ = __email__
 
 
 # Imports #
-# Default Libraries #
+# Standard Libraries #
 from abc import abstractmethod
 from builtins import property
 
-# Downloaded Libraries #
+# Third-Party Packages #
 
-# Local Libraries #
+# Local Packages #
 from ..baseobject import BaseObject
 from .initmeta import InitMeta
 
