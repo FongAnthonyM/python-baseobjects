@@ -96,6 +96,7 @@ class BaseTimedCache(BaseMethod):
         expiration: The next time the cache will be rest.
 
         cache: Contains the results of the wrapped function.
+        _defualt_caching_method: The default caching function to use.
         _caching_method: The designated function to handle caching.
 
         _call_method: The function to call when this object is called.
@@ -125,6 +126,7 @@ class BaseTimedCache(BaseMethod):
         self.expiration = None
 
         self.cache = None
+        self._defualt_caching_method = self.no_cache
         self._caching_method = self.no_cache
 
         self._call_method = None
@@ -342,7 +344,7 @@ class BaseTimedCache(BaseMethod):
         """
         return self.__func__(*args, **kwargs)
 
-    def set_caching_method(self, method):
+    def set_caching_method(self, method=None):
         """Sets the caching method to another function or a method within this object can be given to select it.
 
         Args:
@@ -350,6 +352,8 @@ class BaseTimedCache(BaseMethod):
         """
         if isinstance(method, str):
             method = getattr(self, method)
+        elif methed is None:
+            method = self._defualt_caching_method
 
         self._caching_method = method
 

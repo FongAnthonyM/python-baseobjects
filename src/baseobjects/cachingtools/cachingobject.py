@@ -112,7 +112,7 @@ class CachingObject(BaseObject, metaclass=MetaCachingObject):
         self._caches = self._caches_.copy()
 
     # Instance Methods #
-    # Caches
+    # Caches Operators
     def get_caches(self):
         """Get all the caches in this object.
 
@@ -127,17 +127,75 @@ class CachingObject(BaseObject, metaclass=MetaCachingObject):
 
         return self._caches
 
-    def clear_caches(self, get_caches=False):
+    def enable_caching(self, exclude=set(), get_caches=False):
+        """Enables all caches to cache.
+
+        Args:
+            exclude: The names of the caches to exclude from caching.
+            get_caches: Determine if get_caches will be ran before setting the caches.
+        """
+        if not self._caches or get_caches:
+            self.get_caches()
+
+        for name in self._caches:
+            if name not in exclude:
+                getattr(self, name).set_caching_method()
+
+    def disable_caching(self, exclude=set(), get_caches=False):
+        """Disables all caches to cache.
+
+        Args:
+            exclude: The names of the caches to exclude from not caching.
+            get_caches: Determine if get_caches will be ran before setting the caches.
+        """
+        if not self._caches or get_caches:
+            self.get_caches()
+
+        for name in self._caches:
+            if name not in exclude:
+                getattr(self, name).set_caching_method(method="no_cache")
+
+    def timeless_caching(self, exclude=set(), get_caches=False):
+        """Sets all caches to have no expiration time.
+
+        Args:
+            exclude: The names of the caches to exclude from not expiring.
+            get_caches: Determine if get_caches will be ran before setting the caches.
+        """
+        if not self._caches or get_caches:
+            self.get_caches()
+
+        for name in self._caches:
+            if name not in exclude:
+                getattr(self, name).is_timed = False
+
+    def timed_caching(self, exclude=set(), get_caches=False):
+        """Sets all caches to have an expiration time.
+
+        Args:
+            exclude: The names of the caches to exclude from expiring.
+            get_caches: Determine if get_caches will be ran before setting the caches.
+        """
+        if not self._caches or get_caches:
+            self.get_caches()
+
+        for name in self._caches:
+            if name not in exclude:
+                getattr(self, name).is_timed = True
+
+    def clear_caches(self, exclude=set(), get_caches=False):
         """Clears all caches in this object.
 
         Args:
+            exclude: The names of the caches to exclude from clearing.
             get_caches: Determine if get_caches will be ran before clearing the caches.
         """
         if not self._caches or get_caches:
             self.get_caches()
 
         for name in self._caches:
-            getattr(self, name).clear_cache()
+            if name not in exclude:
+                getattr(self, name).clear_cache()
 
 
 # Functions #

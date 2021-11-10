@@ -44,7 +44,8 @@ class TimedSingleCache(BaseTimedCache):
         expiration: The next time the cache will be rest.
 
         cache: Contains the results of the wrapped function.
-        caching_method: The designated function to handle caching.
+        _defualt_caching_method: The default caching function to use.
+        _caching_method: The designated function to handle caching.
 
         _call_method: The function to call when this object is called.
 
@@ -62,6 +63,7 @@ class TimedSingleCache(BaseTimedCache):
         # Parent Attributes #
         super().__init__(init=False)
 
+        self._defualt_caching_method = self.caching
         self._caching_method = self.caching
 
         # New Attributes #
