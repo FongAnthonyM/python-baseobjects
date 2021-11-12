@@ -138,3 +138,6 @@ class BaseObject(ABC):
             A deep copy of this object.
         """
         return self.__deepcopy__(memo=memo)
+
+# Names #
+search_sentinel = object()
