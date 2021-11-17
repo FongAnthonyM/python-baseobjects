@@ -15,5 +15,5 @@ __email__ = __email__
 
 # Imports
 # Local Packages #
-from .metacachingobject import MetaCachingObject
-from .metacachinginit import MetaCachingInit
+from .cachingobjectmeta import CachingObjectMeta
+from .cachinginitmeta import CachingInitMeta

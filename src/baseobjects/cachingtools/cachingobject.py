@@ -20,7 +20,7 @@ __email__ = __email__
 
 # Local Packages #
 from ..baseobject import BaseObject
-from .meta import MetaCachingObject
+from .meta import CachingObjectMeta
 from .timedsinglecache import TimedSingleCache
 from .timedkeylesscache import TimedKeylessCache
 from .timedcache import TimedCache
@@ -95,7 +95,7 @@ class TimedCacheMethod(TimedCache, CachingObjectMethod):
     pass
 
 
-class CachingObject(BaseObject, metaclass=MetaCachingObject):
+class CachingObject(BaseObject, metaclass=CachingObjectMeta):
     """An abstract class which is has functionality for methods that are caching.
 
     Attributes:

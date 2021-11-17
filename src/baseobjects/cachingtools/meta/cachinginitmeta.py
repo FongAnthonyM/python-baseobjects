@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" metacachinginit.py
+""" cachinginitmeta.py
 A mixin metaclass that implements caching and init functionalities
 """
 # Package Header #
@@ -19,15 +19,15 @@ __email__ = __email__
 
 # Local Packages #
 from ...objects.initmeta import InitMeta
-from .metacachingobject import MetaCachingObject
+from .cachingobjectmeta import CachingObjectMeta
 
 # Definitions #
 # Classes #
-class MetaCachingInit(InitMeta, MetaCachingObject):
+class CachingInitMeta(InitMeta, CachingObjectMeta):
     """Automatically makes a set of all function that are Timed Caches in the class."""
 
     # Magic Methods #
     # Construction/Destruction
     def __init__(cls, name, bases, namespace):
-        MetaCachingObject.__init__(cls, name, bases, namespace)
+        CachingObjectMeta.__init__(cls, name, bases, namespace)
         InitMeta.__init__(cls, name, bases, namespace)

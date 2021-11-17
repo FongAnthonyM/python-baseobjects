@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" metacachingobject.py
+""" cachingobjectmeta.py
 Creates a registry for the caching objects with a class.
 """
 # Package Header #
@@ -24,7 +24,7 @@ from ..basetimedcache import BaseTimedCache
 
 # Definitions #
 # Classes #
-class MetaCachingObject(BaseMeta):
+class CachingObjectMeta(BaseMeta):
     """Automatically makes a set of all function that are Timed Caches in the class."""
 
     # Magic Methods #
