@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "baseobjects"
 version = "1.5.1"
-description = "base objects"
+description = "Basic object templates."
 authors = ["Anthony Fong <FongAnthonyM@gmail.com>"]
 license = "MIT"
 readme = "README.rst"
