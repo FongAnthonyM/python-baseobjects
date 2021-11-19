@@ -40,12 +40,12 @@ __email__ = __email__
 
 
 # Imports #
-# Default Libraries #
+# Standard Libraries #
 from builtins import property
 
-# Downloaded Libraries #
+# Third-Party Packages #
 
-# Local Libraries #
+# Local Packages #
 from ..baseobject import BaseObject
 from .initmeta import InitMeta
 
@@ -63,7 +63,7 @@ def _get_temp_attributes(obj, name):
     wrapped = obj._wrapped_attributes[name]
     for attribute in wrapped:
         try:
-            setattr(obj, "__" + attribute, getattr(sub, attribute))
+            setattr(obj, "__" + attribute + "_", getattr(sub, attribute))
         except AttributeError:
             continue
 
@@ -80,8 +80,8 @@ def _set_temp_attributes(obj, new, name):
     for attribute in wrapped:
         try:
             if hasattr(new, attribute):
-                setattr(new, attribute, getattr(obj, "__" + attribute))
-                delattr(obj, "__" + attribute)
+                setattr(new, attribute, getattr(obj, "__" + attribute + "_"))
+                delattr(obj, "__" + attribute + "_")
         finally:
             continue
 
@@ -279,7 +279,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
                 return cls._get_attribute(obj, store_name, attr_name)
             except AttributeError as error:
                 try:
-                    return getattr(obj, "__" + attr_name)
+                    return getattr(obj, "__" + attr_name + "_")
                 except AttributeError:
                     raise error
 
@@ -289,7 +289,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
                 cls._set_attribute(obj, store_name, attr_name, value)
             except AttributeError as error:
                 if not hasattr(obj, store_name) or getattr(obj, store_name) is None:
-                    setattr(obj, "__" + attr_name, value)
+                    setattr(obj, "__" + attr_name + "_", value)
                 else:
                     raise error
 
@@ -377,11 +377,11 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
                 for attribute in add_dir:
                     # Reassign attribute storage location
                     if hasattr(self, attribute):
-                        setattr(self, "__" + attribute, getattr(self, attribute))
+                        setattr(self, "__" + attribute + "_", getattr(self, attribute))
                         try:
                             delattr(self, attribute)
                         except AttributeError:
-                            delattr(self, "__" + attribute)
+                            delattr(self, "__" + attribute + "_")
                     # Create property
                     get_, set_, del_ = self._create_attribute_functions(name, attribute)
                     setattr(type(self), attribute, property(get_, set_, del_))
@@ -401,7 +401,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         wrapped = self._wrapped_attributes[name]
         for attribute in wrapped:
             try:
-                setattr(self, "__" + attribute, getattr(sub, attribute))
+                setattr(self, "__" + attribute + "_", getattr(sub, attribute))
             except AttributeError:
                 pass
 
@@ -416,8 +416,8 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         for attribute in wrapped:
             if hasattr(new, attribute):
                 try:
-                    setattr(new, attribute, getattr(self, "__" + attribute))
-                    delattr(self, "__" + attribute)
+                    setattr(new, attribute, getattr(self, "__" + attribute + "_"))
+                    delattr(self, "__" + attribute + "_")
                 except AttributeError:
                     pass
 

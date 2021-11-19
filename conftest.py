@@ -14,13 +14,13 @@ __email__ = __email__
 
 
 # Imports #
-# Default Libraries #
+# Standard Libraries #
 from typing import Dict, Tuple
 
-# Downloaded Libraries #
+# Third-Party Packages #
 import pytest
 
-# Local Libraries #
+# Local Packages #
 
 
 # Definitions #

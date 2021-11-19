@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" metacachingobject.py
+""" cachingobjectmeta.py
 Creates a registry for the caching objects with a class.
 """
 # Package Header #
-from ..__header__ import *
+from baseobjects.__header__ import *
 
 # Header #
 __author__ = __author__
@@ -13,29 +13,29 @@ __maintainer__ = __maintainer__
 __email__ = __email__
 
 # Imports #
-# Default Libraries #
+# Standard Libraries #
 
-# Downloaded Libraries #
+# Third-Party Packages #
 
-# Local Libraries #
-from ..basemeta import BaseMeta
-from .basetimedcache import BaseTimedCache
+# Local Packages #
+from ...basemeta import BaseMeta
+from ..basetimedcache import BaseTimedCache
 
 
 # Definitions #
 # Classes #
-class MetaCachingObject(BaseMeta):
+class CachingObjectMeta(BaseMeta):
     """Automatically makes a set of all function that are Timed Caches in the class."""
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(cls, name, bases, attr):
-        super().__init__(name, bases, attr)
+    def __init__(cls, name, bases, namespace):
+        super().__init__(name, bases, namespace)
         if hasattr(cls, "_caches_"):
             cls._caches_ = cls._caches_.copy()
         else:
             cls._caches_ = set()
 
-        for name, cls_attribute in attr.items():
+        for name, cls_attribute in namespace.items():
             if isinstance(cls_attribute, BaseTimedCache):
                 cls._caches_.add(name)

@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ __init__.py
-__init__ for accessing the package within src.
+Test suite for the baseobjects package.
 """
 # Package Header #
-from .baseobjects.__header__ import *
+from src.baseobjects.__header__ import *
 
 # Header #
 __author__ = __author__

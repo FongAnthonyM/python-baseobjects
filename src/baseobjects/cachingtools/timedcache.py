@@ -14,12 +14,12 @@ __email__ = __email__
 
 
 # Imports #
-# Default Libraries #
+# Standard Libraries #
 from time import perf_counter
 
-# Downloaded Libraries #
+# Third-Party Packages #
 
-# Local Libraries #
+# Local Packages #
 from .basetimedcache import BaseTimedCache
 from ..objects import CirularDoublyLinkedContainer
 
@@ -48,7 +48,8 @@ class TimedCache(BaseTimedCache):
 
         priority: A container that keeps track of cache deletion priority.
         cache: Contains the results of the wrapped function.
-        caching_method: The designated function to handle caching.
+        _defualt_caching_method: The default caching function to use.
+        _caching_method: The designated function to handle caching.
 
         _call_method: The function to call when this object is called.
 
@@ -71,6 +72,7 @@ class TimedCache(BaseTimedCache):
         super().__init__(init=False)
 
         self.cache = {}
+        self._defualt_caching_method = self.unlimited_cache
         self._caching_method = self.unlimited_cache
 
         # New Attributes #

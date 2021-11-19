@@ -13,12 +13,12 @@ __maintainer__ = __maintainer__
 __email__ = __email__
 
 # Imports #
-# Default Libraries #
+# Standard Libraries #
 from time import perf_counter
 
-# Downloaded Libraries #
+# Third-Party Packages #
 
-# Local Libraries #
+# Local Packages #
 from .timedsinglecache import TimedSingleCache
 
 
@@ -44,7 +44,8 @@ class TimedKeylessCache(TimedSingleCache):
         expiration: The next time the cache will be rest.
 
         cache: Contains the results of the wrapped function.
-        caching_method: The designated function to handle caching.
+        _defualt_caching_method: The default caching function to use.
+        _caching_method: The designated function to handle caching.
 
         _call_method: The function to call when this object is called.
 
@@ -61,8 +62,6 @@ class TimedKeylessCache(TimedSingleCache):
     def __init__(self, func=None, typed=False, lifetime=None, call_method="cache_call", collective=True,  init=True):
         # Parent Attributes #
         super().__init__(init=False)
-
-        self._caching_method = self.caching
 
         # New Attributes #
         self.args_key = None

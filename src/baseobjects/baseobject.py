@@ -14,14 +14,14 @@ __email__ = __email__
 
 
 # Imports #
-# Default Libraries #
+# Standard Libraries #
 from abc import ABC
 from copy import _copy_dispatch, _copy_immutable, _deepcopy_dispatch, _deepcopy_atomic, _keep_alive, _reconstruct, Error
 from copyreg import dispatch_table
 
-# Downloaded Libraries #
+# Third-Party Packages #
 
-# Local Libraries #
+# Local Packages #
 
 
 # Definitions #
@@ -39,7 +39,7 @@ class BaseObject(ABC):
         """
         cls = type(self)
 
-        copier = _copy_dispatch.get_item(cls)
+        copier = _copy_dispatch.get(cls)
         if copier:
             return copier(self)
 
@@ -47,7 +47,7 @@ class BaseObject(ABC):
             # treat it as a regular class:
             return _copy_immutable(self)
 
-        reductor = dispatch_table.get_item(cls)
+        reductor = dispatch_table.get(cls)
         if reductor is not None:
             rv = reductor(self)
         else:
@@ -85,7 +85,7 @@ class BaseObject(ABC):
         cls = type(self)
 
         # If copy method is in the deepcopy dispatch then use it
-        copier = _deepcopy_dispatch.get_item(cls)
+        copier = _deepcopy_dispatch.get(cls)
         if copier is not None:
             y = copier(self, memo)
         else:
@@ -93,7 +93,7 @@ class BaseObject(ABC):
             if issubclass(cls, type):
                 y = _deepcopy_atomic(self, memo)
             else:
-                reductor = dispatch_table.get_item(cls)
+                reductor = dispatch_table.get(cls)
                 if reductor:
                     rv = reductor(self)
                 else:
@@ -138,3 +138,6 @@ class BaseObject(ABC):
             A deep copy of this object.
         """
         return self.__deepcopy__(memo=memo)
+
+# Names #
+search_sentinel = object()

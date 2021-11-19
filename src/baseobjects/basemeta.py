@@ -14,14 +14,14 @@ __email__ = __email__
 
 
 # Imports #
-# Default Libraries #
+# Standard Libraries #
 from abc import ABCMeta
 from copy import _copy_dispatch, _copy_immutable, _deepcopy_dispatch, _deepcopy_atomic, _keep_alive, _reconstruct, Error
 from copyreg import dispatch_table
 
-# Downloaded Libraries #
+# Third-Party Packages #
 
-# Local Libraries #
+# Local Packages #
 
 
 # Definitions #

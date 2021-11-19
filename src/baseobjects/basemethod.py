@@ -13,13 +13,13 @@ __maintainer__ = __maintainer__
 __email__ = __email__
 
 # Imports #
-# Default Libraries #
+# Standard Libraries #
 from functools import update_wrapper
 
-# Downloaded Libraries #
+# Third-Party Packages #
 
-# Local Libraries #
-from .baseobject import BaseObject
+# Local Packages #
+from .baseobject import BaseObject, search_sentinel
 
 
 # Definitions #
@@ -39,7 +39,7 @@ class BaseMethod(BaseObject):
         func: The function to wrap.
         init: Determines if this object will construct.
     """
-    sentinel = object()
+    sentinel = search_sentinel
 
     # Magic Methods #
     # Construction/Destruction
@@ -148,8 +148,8 @@ class BaseMethod(BaseObject):
         if instance is None:
             return self
         else:
-            bound = self._instances.get(instance, self.sentinel)
-            if bound is self.sentinel:
+            bound = self._instances.get(instance, search_sentinel)
+            if bound is search_sentinel:
                 self._instances[instance] = bound = self.bind_to_new(instance=instance)
             return bound
 

@@ -14,11 +14,11 @@ __email__ = __email__
 
 
 # Imports #
-# Default Libraries #
+# Standard Libraries #
 
-# Downloaded Libraries #
+# Third-Party Packages #
 
-# Local Libraries #
+# Local Packages #
 from ..basemeta import BaseMeta
 
 
@@ -29,7 +29,6 @@ class InitMeta(BaseMeta):
 
     # Magic Methods #
     # Construction/Destruction
-    def __new__(mcs, name, bases, namespace, **kwargs):
-        cls = super().__new__(mcs, name, bases, namespace, **kwargs)
+    def __init__(cls, name, bases, namespace):
+        super().__init__(name, bases, namespace)
         cls._init_class_()
-        return cls
