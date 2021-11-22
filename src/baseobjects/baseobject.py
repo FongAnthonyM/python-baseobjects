@@ -18,6 +18,7 @@ __email__ = __email__
 from abc import ABC
 from copy import _copy_dispatch, _copy_immutable, _deepcopy_dispatch, _deepcopy_atomic, _keep_alive, _reconstruct, Error
 from copyreg import dispatch_table
+from typing import Optional
 
 # Third-Party Packages #
 
@@ -31,11 +32,11 @@ class BaseObject(ABC):
 
     # Magic Methods #
     # Construction/Destruction
-    def __copy__(self):
+    def __copy__(self) -> "BaseObject":
         """The copy magic method (shallow).
 
         Returns:
-            :obj:`BaseObject`: A shallow copy of this object.
+            A shallow copy of this object.
         """
         cls = type(self)
 
@@ -65,14 +66,14 @@ class BaseObject(ABC):
             return self
         return _reconstruct(self, None, *rv)
 
-    def __deepcopy__(self, memo=None, _nil=[]):
+    def __deepcopy__(self, memo: Optional[dict] = None, _nil=[]) -> "BaseObject":
         """The deepcopy magic method
 
         Args:
-            memo (dict): A dictionary of user defined information to pass to another deepcopy call which it will handle.
+            memo: A dictionary of user defined information to pass to another deepcopy call which it will handle.
 
         Returns:
-            :obj:`BaseObject`: A deep copy of this object.
+            A deep copy of this object.
         """
         if memo is None:
             memo = {}
@@ -120,7 +121,7 @@ class BaseObject(ABC):
 
     # Instance Methods #
     # Constructors/Destructors
-    def copy(self):
+    def copy(self) -> "BaseObject":
         """Creates a shallow copy of this object.
 
         Returns:
@@ -128,11 +129,11 @@ class BaseObject(ABC):
         """
         return self.__copy__()
 
-    def deepcopy(self, memo={}):
+    def deepcopy(self, memo: Optional[dict] = None) -> "BaseObject":
         """Creates a deep copy of this object.
 
         Args:
-            memo (dict): A dictionary of user defined information to pass to another deepcopy call which it will handle.
+            memo: A dictionary of user defined information to pass to another deepcopy call which it will handle.
 
         Returns:
             A deep copy of this object.

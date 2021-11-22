@@ -17,6 +17,7 @@ __email__ = __email__
 # Standard Libraries #
 from abc import abstractmethod
 from builtins import property
+from typing import Any, Callable, Iterable, Optional
 
 # Third-Party Packages #
 
@@ -45,31 +46,31 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
     # Callbacks
     @classmethod
-    def _get(cls, obj, name):
+    def _get(cls, obj: Any, name: str) -> Any:
         """A generic get which can be implemented in a subclass.
 
         Args:
-            obj (Any): The target object to get the attribute from.
-            name (str): The name of the attribute to get from the object.
+            obj: The target object to get the attribute from.
+            name: The name of the attribute to get from the object.
 
         Returns:
-            (Any): The item to return.
+            The item to return.
         """
         getattr(obj, name)
 
     @classmethod
-    def _set(cls, obj, name, value):
+    def _set(cls, obj: Any, name: str, value: Any):
         """A generic set which can be implemented in a subclass.
 
         Args:
-            obj (Any): The target object to set.
-            name (str): The name of the attribute to set.
-            value (Any): The the item to set within the target object.
+            obj: The target object to set.
+            name: The name of the attribute to set.
+            value: The the item to set within the target object.
         """
         setattr(obj, name, value)
 
     @classmethod
-    def _del(cls, obj, name):
+    def _del(cls, obj: Any, name: str):
         """A generic delete which can be implemented in a subclass.
 
         Args:
@@ -80,7 +81,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
     # Callback Factories
     @classmethod
-    def _default_callback_factory(cls, info):
+    def _default_callback_factory(cls, info: Any):
         """An example factory for creating property modification functions.
 
         Args:
@@ -109,11 +110,11 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
     # Property Constructors
     @classmethod
-    def _iterable_to_properties(cls, iter_, callback_factory):
+    def _iterable_to_properties(cls, iter_: Iterable, callback_factory: Callable):
         """Create properties for this class based on an iterable where the items are the property names.
 
         Args:
-            iter_ : The names of the properties which the factories will use to create functions.
+            iter_: The names of the properties which the factories will use to create functions.
             callback_factory: The factory that creates get, set, del, functions for the property.
         """
         for name in iter_:
@@ -122,11 +123,11 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
                 setattr(cls, name, property(get_, set_, del_))
 
     @classmethod
-    def _dictionary_to_properties(cls, dict_, callback_factory):
+    def _dictionary_to_properties(cls, dict_: dict, callback_factory: Callable):
         """Create properties for this class based on a dictionary where the keys are the property names.
 
         Args:
-            dict_ (dict): The names of the properties and some info to help the factory create functions.
+            dict_: The names of the properties and some info to help the factory create functions.
             callback_factory: The factory that creates get, set, del, functions for the property.
         """
         for name, info in dict_.items():
@@ -144,11 +145,11 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
     # Properties Constructor
     @classmethod
-    def _construct_properties(cls, map_=None):
+    def _construct_properties(cls, map_: Optional[list] = None):
         """Constructs all properties from a list which maps the properties and their functionality.
 
         Args:
-            map_ (list, optional): A list to map the properties from.
+            map_: A list to map the properties from.
         """
         if map_ is not None:
             cls._properties_map = map_
