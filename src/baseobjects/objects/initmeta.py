@@ -29,6 +29,6 @@ class InitMeta(BaseMeta):
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(cls, name, bases, namespace):
+    def __init__(cls, name, bases=None, namespace=None):
         super().__init__(name, bases, namespace)
         cls._init_class_()

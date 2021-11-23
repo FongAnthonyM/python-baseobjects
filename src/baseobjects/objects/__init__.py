@@ -18,4 +18,5 @@ __email__ = __email__
 from .automaticproperties import AutomaticProperties
 from .circulardoublylinkedcontainer import LinkedNode, CirularDoublyLinkedContainer
 from .initmeta import InitMeta
+from .timeddict import TimedDict
 from .wrappers import StaticWrapper, DynamicWrapper

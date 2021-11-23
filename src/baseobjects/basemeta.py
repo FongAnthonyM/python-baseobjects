@@ -18,6 +18,7 @@ __email__ = __email__
 from abc import ABCMeta
 from copy import _copy_dispatch, _copy_immutable, _deepcopy_dispatch, _deepcopy_atomic, _keep_alive, _reconstruct, Error
 from copyreg import dispatch_table
+from typing import Optional
 
 # Third-Party Packages #
 
@@ -31,11 +32,11 @@ class BaseMeta(ABCMeta):
 
     # Magic Methods #
     # Construction/Destruction
-    def __copy__(self):
+    def __copy__(self) -> "BaseMeta":
         """The copy magic method (shallow).
 
         Returns:
-            :obj:`BaseObject`: A shallow copy of this object.
+            A shallow copy of this object.
         """
         cls = type(self)
 
@@ -65,14 +66,14 @@ class BaseMeta(ABCMeta):
             return self
         return _reconstruct(self, None, *rv)
 
-    def __deepcopy__(self, memo=None, _nil=[]):
-        """The deepcopy magic method
+    def __deepcopy__(self,  memo: Optional[dict] = None, _nil=[]) -> "BaseMeta":
+        """The deepcopy magic method based on python's deepcopy function.
 
         Args:
-            memo (dict): A dictionary of user defined information to pass to another deepcopy call which it will handle.
+            memo: A dictionary of user defined information to pass to another deepcopy call which it will handle.
 
         Returns:
-            :obj:`BaseObject`: A deep copy of this object.
+            A deep copy of this object.
         """
         if memo is None:
             memo = {}

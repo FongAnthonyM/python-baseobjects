@@ -15,6 +15,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from functools import update_wrapper
+from typing import Any, Callable, Optional, Union
 
 # Third-Party Packages #
 
@@ -43,7 +44,7 @@ class BaseMethod(BaseObject):
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, func=None, init=True):
+    def __init__(self, func: Optional[Callable] = None, init: Optional[bool] = True):
         # Special Attributes #
         self.__func__ = None
         self.__self__ = None
@@ -65,11 +66,11 @@ class BaseMethod(BaseObject):
         return self._get_method_
 
     @_get_method.setter
-    def _get_method(self, value):
+    def _get_method(self, value: Union[Callable, str]):
         self.set_get_method(value)
 
     # Descriptors
-    def __get__(self, instance, owner=None):
+    def __get__(self, instance: Any, owner: Optional[Any] = None):
         """When this object is requested by another object as an attribute.
 
         Args:
@@ -80,7 +81,7 @@ class BaseMethod(BaseObject):
 
     # Instance Methods #
     # Constructors/Destructors
-    def construct(self, func=None):
+    def construct(self, func: Optional[Callable] = None):
         """The constructor for this object.
 
             Args:
@@ -91,7 +92,7 @@ class BaseMethod(BaseObject):
             update_wrapper(self, self.__func__)
 
     # Descriptor
-    def set_get_method(self, method):
+    def set_get_method(self, method: Union[Callable, str]):
         """Sets the __get__ method to another function or a method within this object can be given to select it.
 
         Args:
@@ -102,7 +103,7 @@ class BaseMethod(BaseObject):
 
         self._get_method_ = method
 
-    def get_self(self, instance, owner=None):
+    def get_self(self, instance: Any, owner: Optional[Any] = None) -> "BaseMethod":
         """The __get__ method where it returns itself.
 
         Args:
@@ -111,7 +112,7 @@ class BaseMethod(BaseObject):
         """
         return self
 
-    def get_self_bind(self, instance, owner=None):
+    def get_self_bind(self, instance: Any, owner: Optional[Any] = None) -> "BaseMethod":
         """The __get__ method where it binds itself to the other object.
 
         Args:
@@ -122,7 +123,10 @@ class BaseMethod(BaseObject):
             self.bind(instance)
         return self
 
-    def get_new_bind(self, instance, owner=None, new_binding="get_self_bind"):
+    def get_new_bind(self,
+                     instance: Any,
+                     owner: Optional[Any] = None,
+                     new_binding: str = "get_self_bind") -> "BaseMethod":
         """The __get__ method where it binds a new copy to the other object.
 
         Args:
@@ -138,7 +142,7 @@ class BaseMethod(BaseObject):
             setattr(instance, self.__func__.__name__, bound)
             return bound
 
-    def get_subinstance(self, instance, owner=None):
+    def get_subinstance(self, instance: Any, owner: Optional[Any] = None) -> "BaseMethod":
         """The __get__ method where it binds a registered copy to the other object.
 
         Args:
@@ -154,7 +158,7 @@ class BaseMethod(BaseObject):
             return bound
 
     # Binding
-    def bind(self, instance, name=None):
+    def bind(self, instance: Any, name: Optional[str] = None):
         """Binds this object to another object to give this object method functionality.
 
         Args:
@@ -165,7 +169,7 @@ class BaseMethod(BaseObject):
         if name is not None:
             setattr(instance, name, self)
 
-    def bind_to_new(self, instance, name=None):
+    def bind_to_new(self, instance: Any, name: Optional[str] = None) -> Any:
         """Creates a new instance of this object and binds it to another object.
 
         Args:
