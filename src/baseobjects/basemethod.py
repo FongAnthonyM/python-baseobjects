@@ -15,7 +15,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from functools import update_wrapper
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, Union
 
 # Third-Party Packages #
 
@@ -158,7 +158,7 @@ class BaseMethod(BaseObject):
             return bound
 
     # Binding
-    def bind(self, instance: Any, owner: Optional[Any] = None):
+    def bind(self, instance: Any, name: Optional[str] = None):
         """Binds this object to another object to give this object method functionality.
 
         Args:
@@ -169,7 +169,7 @@ class BaseMethod(BaseObject):
         if name is not None:
             setattr(instance, name, self)
 
-    def bind_to_new(self, instance: Any, owner: Optional[Any] = None) -> Any:
+    def bind_to_new(self, instance: Any, name: Optional[str] = None) -> Any:
         """Creates a new instance of this object and binds it to another object.
 
         Args:

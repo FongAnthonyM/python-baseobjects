@@ -67,7 +67,7 @@ class BaseObject(ABC):
         return _reconstruct(self, None, *rv)
 
     def __deepcopy__(self, memo: Optional[dict] = None, _nil=[]) -> "BaseObject":
-        """The deepcopy magic method
+        """The deepcopy magic method based on python's deepcopy function.
 
         Args:
             memo: A dictionary of user defined information to pass to another deepcopy call which it will handle.
