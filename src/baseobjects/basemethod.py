@@ -34,31 +34,38 @@ class BaseMethod(BaseObject):
     Attributes:
         __func__: The original function to wrap.
         __self__: The object to bind this object to.
+        _selected_get_method: The __get__ method to use as a Callable or a string.
+        _get_method_: The method that will be used as the __get__ method.
         _instances: Copies of this object for specific owner instances.
 
     Args:
         func: The function to wrap.
+        get_method: The method that will be used for the __get__ method.
         init: Determines if this object will construct.
     """
     sentinel = search_sentinel
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, func: Optional[Callable] = None, init: Optional[bool] = True):
+    def __init__(self,
+                 func: Optional[Callable] = None,
+                 get_method: Optional[Callable, str] = None,
+                 init: Optional[bool] = True):
         # Special Attributes #
         self.__func__ = None
         self.__self__ = None
 
         # Attributes #
+        self._selected_get_method = "get_self_bind"
         self._get_method_ = self.get_self_bind
         self._instances = {}
 
         # Object Construction #
         if init:
-            self.construct(func=func)
+            self.construct(func=func, get_method=get_method)
 
     @property
-    def _get_method(self):
+    def _get_method(self) -> Callable:
         """The method that will be used for the __get__ method.
 
         When set, any function can be set or the name of a method within this object can be given to select it.
@@ -66,11 +73,11 @@ class BaseMethod(BaseObject):
         return self._get_method_
 
     @_get_method.setter
-    def _get_method(self, value: Union[Callable, str]):
+    def _get_method(self, value: Union[Callable, str]) -> None:
         self.set_get_method(value)
 
     # Descriptors
-    def __get__(self, instance: Any, owner: Optional[Any] = None):
+    def __get__(self, instance: Any, owner: Optional[Any] = None) -> "BaseMethod":
         """When this object is requested by another object as an attribute.
 
         Args:
@@ -81,23 +88,29 @@ class BaseMethod(BaseObject):
 
     # Instance Methods #
     # Constructors/Destructors
-    def construct(self, func: Optional[Callable] = None):
+    def construct(self, func: Optional[Callable] = None, get_method: Optional[Callable, str] = None) -> None:
         """The constructor for this object.
 
-            Args:
-                func:  The function to wrap.
-            """
+        Args:
+            func:  The function to wrap.
+            get_method: The method that will be used for the __get__ method.
+        """
         if func is not None:
             self.__func__ = func
             update_wrapper(self, self.__func__)
 
+        if get_method is not None:
+            self.set_get_method(get_method)
+
     # Descriptor
-    def set_get_method(self, method: Union[Callable, str]):
+    def set_get_method(self, method: Union[Callable, str]) -> None:
         """Sets the __get__ method to another function or a method within this object can be given to select it.
 
         Args:
             method: The function or name to set the __get__ method to.
         """
+        self._selected_get_method = method
+
         if isinstance(method, str):
             method = getattr(self, method)
 
@@ -179,6 +192,6 @@ class BaseMethod(BaseObject):
         Returns:
             The new bound deepcopy of this object.
         """
-        new_obj = type(self)(func=self.__func__, collective=self._is_collective)
+        new_obj = type(self)(func=self.__func__, get_method=self._selected_get_method)
         new_obj.bind(instance, name=name)
         return new_obj

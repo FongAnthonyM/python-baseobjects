@@ -140,5 +140,6 @@ class BaseObject(ABC):
         """
         return self.__deepcopy__(memo=memo)
 
+
 # Names #
 search_sentinel = object()

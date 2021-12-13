@@ -17,12 +17,13 @@ __email__ = __email__
 # Standard Libraries #
 from abc import abstractmethod
 from builtins import property
-from typing import Any, Callable, Iterable, Optional
+from typing import Any, Callable, Iterable, Optional, Tuple
 
 # Third-Party Packages #
 
 # Local Packages #
 from ..baseobject import BaseObject
+from ..types_ import PropertyCallbacks
 from .initmeta import InitMeta
 
 
@@ -39,7 +40,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
     # Class Methods #
     # Class Construction
     @classmethod
-    def _init_class_(cls):
+    def _init_class_(cls) -> None:
         """A method that runs after class creation, creating the properties for this class."""
         cls._construct_properties_map()
         cls._construct_properties()
@@ -59,7 +60,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         getattr(obj, name)
 
     @classmethod
-    def _set(cls, obj: Any, name: str, value: Any):
+    def _set(cls, obj: Any, name: str, value: Any) -> None:
         """A generic set which can be implemented in a subclass.
 
         Args:
@@ -70,7 +71,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         setattr(obj, name, value)
 
     @classmethod
-    def _del(cls, obj: Any, name: str):
+    def _del(cls, obj: Any, name: str) -> None:
         """A generic delete which can be implemented in a subclass.
 
         Args:
@@ -81,11 +82,11 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
     # Callback Factories
     @classmethod
-    def _default_callback_factory(cls, info: Any):
+    def _default_callback_factory(cls, info: Any) -> PropertyCallbacks:
         """An example factory for creating property modification functions.
 
         Args:
-            info (Any): An object that can be use to create the get, set, and delete functions
+            info: An object that can be used to create the get, set, and delete functions
 
         Returns:
             get_: The get function for a property object.
@@ -94,23 +95,23 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         """
         name = info
 
-        def get_(obj):
-            """Gets the object."""
+        def get_(obj: Any) -> Any:
+            """Gets an attribute in the object."""
             return cls._get(obj, name)
 
-        def set_(obj, value):
-            """Sets the wrapped object."""
+        def set_(obj: Any, value) -> None:
+            """Sets an attribute in the object."""
             cls._set(obj, name, value)
 
-        def del_(obj):
-            """Deletes the wrapped object."""
+        def del_(obj: Any) -> None:
+            """Deletes an attribute in the object object."""
             cls._del(obj, name)
 
         return get_, set_, del_
 
     # Property Constructors
     @classmethod
-    def _iterable_to_properties(cls, iter_: Iterable, callback_factory: Callable):
+    def _iterable_to_properties(cls, iter_: Iterable, callback_factory: Callable) -> None:
         """Create properties for this class based on an iterable where the items are the property names.
 
         Args:
@@ -123,7 +124,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
                 setattr(cls, name, property(get_, set_, del_))
 
     @classmethod
-    def _dictionary_to_properties(cls, dict_: dict, callback_factory: Callable):
+    def _dictionary_to_properties(cls, dict_: dict, callback_factory: Callable) -> None:
         """Create properties for this class based on a dictionary where the keys are the property names.
 
         Args:
@@ -138,18 +139,21 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
     # Properties Mapping
     @classmethod
     @abstractmethod
-    def _construct_properties_map(cls):
+    def _construct_properties_map(cls) -> None:
         """An abstract method that assigns how properties should be constructed."""
         # cls._properties_map.append(["name", cls._dictionary_to_properties, cls._default_callback_factory])
         pass
 
     # Properties Constructor
     @classmethod
-    def _construct_properties(cls, map_: Optional[list] = None):
+    def _construct_properties(cls, map_: Optional[list] = None) -> None:
         """Constructs all properties from a list which maps the properties and their functionality.
 
         Args:
             map_: A list to map the properties from.
+
+        Raises:
+            AttributeError: If an attribute in the map is not in the object.
         """
         if map_ is not None:
             cls._properties_map = map_
