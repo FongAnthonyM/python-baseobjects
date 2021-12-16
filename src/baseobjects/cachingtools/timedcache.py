@@ -21,7 +21,7 @@ from time import perf_counter
 
 # Local Packages #
 from .basetimedcache import BaseTimedCache
-from ..objects import CirularDoublyLinkedContainer
+from ..objects import CircularDoublyLinkedContainer
 
 
 # Definitions #
@@ -62,7 +62,7 @@ class TimedCache(BaseTimedCache):
         collective: Determines if the cache is collective for all method bindings or for each instance.
         init: Determines if this object will construct.
     """
-    priority_queue_type = CirularDoublyLinkedContainer
+    priority_queue_type = CircularDoublyLinkedContainer
 
     # Magic Methods #
     # Construction/Destruction

@@ -42,7 +42,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from builtins import property
-from typing import Any, Optional
+from typing import Any, Optional, Iterable
 
 # Third-Party Packages #
 
@@ -159,7 +159,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         setattr(obj, name, value)
 
     @classmethod
-    def _del_wrapped(cls, obj: Any, name: str):
+    def _del_wrapped(cls, obj: Any, name: str) -> None:
         """Deletes the target object's attribute which stores a wrapped object.
 
         Args:
@@ -264,7 +264,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         return get_, set_, del_
 
     @classmethod
-    def _create_attribute_functions(cls, wrap_name, attr_name):
+    def _create_attribute_functions(cls, wrap_name, attr_name) -> PropertyCallbacks:
         """A factory for creating property modification functions for accessing a wrapped objects attributes.
 
         Args:
@@ -306,7 +306,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
 
     # Wrapping
     @classmethod
-    def _class_wrapping_setup(cls):
+    def _class_wrapping_setup(cls) -> None:
         """Sets up the class by wrapping what is in _wrapped_types."""
         if cls._wrapped_types:
             try:
@@ -315,7 +315,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
                 raise IndexError("_wrapped_types must be the same length as _wrap_attributes")
 
     @classmethod
-    def _class_wrap(cls, objects):
+    def _class_wrap(cls, objects: list[Any]) -> None:
         """Adds attributes from embedded objects as properties.
 
          Args:
@@ -340,14 +340,14 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
                     setattr(cls, attribute, property(get_, set_, del_))
 
     @classmethod
-    def _unwrap(cls):
+    def _unwrap(cls) -> None:
         """Removes all attributes added from other objects."""
         for name in set(dir(cls)) - cls.__original_dir_set:
             if isinstance(getattr(cls, name, None), property):
                 delattr(cls, name)
 
     @classmethod
-    def _class_rewrap(cls, objects):
+    def _class_rewrap(cls, objects: list[Any]) -> None:
         """Removes all the attributes added from other objects then adds attributes from embedded the objects.
 
         Args:
@@ -358,7 +358,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
 
     # Instance Methods #
     # Wrapping
-    def _wrap(self):
+    def _wrap(self) -> None:
         """Adds attributes from embedded objects as properties."""
         remove = self.__original_dir_set | self._exclude_attributes
         for name in self._wrap_attributes:
@@ -391,12 +391,12 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
                     get_, set_, del_ = self._create_attribute_functions(name, attribute)
                     setattr(type(self), attribute, property(get_, set_, del_))
 
-    def _rewrap(self):
+    def _rewrap(self) -> None:
         """Removes all the attributes added from other objects then adds attributes from embedded the objects."""
         self._unwrap()
         self._wrap()
 
-    def _get_temp_attributes(self, name):
+    def _get_temp_attributes(self, name: str) -> None:
         """Creates temporary attributes from a wrapped object.
 
         Args:
@@ -410,7 +410,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             except AttributeError:
                 pass
 
-    def _set_temp_attributes(self, new, name):
+    def _set_temp_attributes(self, new: str, name: str) -> None:
         """Sets a wrapped object's attributes from temporary attributes.
 
         Args:
