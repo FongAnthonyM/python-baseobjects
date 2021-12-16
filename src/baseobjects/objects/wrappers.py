@@ -324,7 +324,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         if len(objects) != len(cls._wrap_attributes):
             raise IndexError("objects must be the same length as _wrap_attributes")
 
-        remove = cls.__original_dir_set | cls._exclude_attributes
+        remove = cls.__original_dir_set.union(cls._exclude_attributes)
         for name, obj in zip(cls._wrap_attributes, objects):
             if obj is not None:
                 # Set wrapped property
