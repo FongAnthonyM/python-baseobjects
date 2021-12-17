@@ -23,7 +23,7 @@ from typing import Any, Optional
 # Third-Party Packages #
 
 # Local Packages #
-from ..baseobject import BaseObject
+from ..bases import BaseObject
 
 
 # Definitions #
@@ -45,13 +45,16 @@ class LinkedNode(BaseObject):
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, data: Any = None, previous: "LinkedNode" = None, next_: "LinkedNode" = None,
+    def __init__(self,
+                 data: Optional[Any] = None,
+                 previous: Optional["LinkedNode"] = None,
+                 next_: Optional["LinkedNode"] = None,
                  init: bool = True) -> None:
         # Attributes #
-        self.previous = self
-        self.next = self
+        self.previous: "LinkedNode" = self
+        self.next: "LinkedNode" = self
 
-        self.data = None
+        self.data: Optional[Any] = None
 
         # Object Construction #
         if init:
@@ -59,7 +62,10 @@ class LinkedNode(BaseObject):
 
     # Instance Methods #
     # Constructors
-    def construct(self, data: Any = None, previous: "LinkedNode" = None, next_: "LinkedNode" = None) -> None:
+    def construct(self,
+                  data: Optional[Any] = None,
+                  previous: Optional["LinkedNode"] = None,
+                  next_: Optional["LinkedNode"] = None) -> None:
         """Constructs this object.
 
         Args:
@@ -85,15 +91,15 @@ class CircularDoublyLinkedContainer(BaseObject):
     # Construction/Destruction
     def __init__(self) -> None:
         # Attributes #
-        self.first_node = None
+        self.first_node: Optional[LinkedNode] = None
 
     @property
-    def is_empty(self) -> None:
+    def is_empty(self) -> bool:
         """Determines if this container is empty."""
         return self.first_node is None
 
     @property
-    def last_node(self) -> None:
+    def last_node(self) -> LinkedNode:
         """The last node in this container."""
         return self.first_node.previous
 
@@ -239,7 +245,7 @@ class CircularDoublyLinkedContainer(BaseObject):
 
     @singledispatchmethod
     def insert(self, data, index: int) -> LinkedNode:
-        """Add a new node and data at index within the nodes container.
+        """Add a new node and data at index within the container.
 
         Args:
             data: The data to add to the new node.
@@ -262,8 +268,8 @@ class CircularDoublyLinkedContainer(BaseObject):
         return new_node
 
     @insert.register
-    def _(self, data: LinkedNode, index: int):
-        """Add a new node and data at index within the nodes container.
+    def _(self, data: LinkedNode, index: int) -> LinkedNode:
+        """Add a new node and data at index within the container.
 
         Args:
             data: The data to add to the new node.

@@ -4,7 +4,7 @@
 A cache that periodically resets and include its instantiation decorator function.
 """
 # Package Header #
-from ..__header__ import *
+from ...__header__ import *
 
 # Header #
 __author__ = __author__
@@ -21,7 +21,7 @@ from time import perf_counter
 
 # Local Packages #
 from .basetimedcache import BaseTimedCache
-from ..objects import CircularDoublyLinkedContainer
+from ...objects import CircularDoublyLinkedContainer
 
 
 # Definitions #

@@ -22,7 +22,7 @@ from typing import Optional
 # Third-Party Packages #
 
 # Local Packages #
-from ..baseobject import BaseObject
+from ..bases import BaseObject
 
 
 # Definitions #
@@ -39,15 +39,17 @@ class TimedDict(UserDict, BaseObject):
         dict_: The dictionary to copy into this dictionary.
         **kwargs: The keywords to add to this dictionary.
     """
+    __slots__ = ["is_timed", "lifetime", "expiration", "_data"]
+
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, dict_: Optional[dict] = None, /, **kwargs) -> None:
         # Attributes #
-        self.is_timed = True
-        self.lifetime = None
-        self.expiration = None
+        self.is_timed: bool = True
+        self.lifetime: Optional[float, int] = None
+        self.expiration: Optional[float, int] = None
 
-        self._data = {}
+        self._data: dict = {}
 
         # Object Construction #
         if dict_ is not None:

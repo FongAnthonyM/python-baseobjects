@@ -28,6 +28,6 @@ class TimeoutWarning(Warning):
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, name="A function"):
+    def __init__(self, name: str = "A function") -> None:
         message = f"{name} timed out"
         super().__init__(message)

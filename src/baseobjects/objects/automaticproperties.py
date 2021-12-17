@@ -22,9 +22,9 @@ from typing import Any, Callable, Iterable, Optional, Tuple
 # Third-Party Packages #
 
 # Local Packages #
-from ..baseobject import BaseObject
+from ..bases import BaseObject
+from ..metaclasses import InitMeta
 from ..types_ import PropertyCallbacks
-from .initmeta import InitMeta
 
 
 # Definitions #
@@ -33,15 +33,24 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
     """An abstract class which creates properties for this class automatically.
 
     Class Attributes:
-        _properties_map (list): A list of names and functions used to create properties.
+        _properties_map: Names and functions used to create properties.
     """
-    _properties_map = []
+    _properties_map: list[str] = []
 
     # Class Methods #
     # Class Construction
     @classmethod
-    def _init_class_(cls) -> None:
-        """A method that runs after class creation, creating the properties for this class."""
+    def _init_class_(cls,
+                     name: Optional[str] = None,
+                     bases: Optional[Tuple[type, ...]] = None,
+                     namespace: Optional[dict[str, Any]] = None) -> None:
+        """A method that runs after class creation, creating the properties for this class.
+
+        Args:
+            name: The name of this class.
+            bases: The parent types of this class.
+            namespace: The methods and class attributes of this class.
+        """
         cls._construct_properties_map()
         cls._construct_properties()
 

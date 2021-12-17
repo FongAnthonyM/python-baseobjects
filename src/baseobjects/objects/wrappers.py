@@ -47,9 +47,9 @@ from typing import Any, Optional, Iterable
 # Third-Party Packages #
 
 # Local Packages #
-from ..baseobject import BaseObject
+from ..bases import BaseObject
+from ..metaclasses import InitMeta
 from ..types_ import PropertyCallbacks
-from .initmeta import InitMeta
 
 
 # Definitions #
@@ -108,22 +108,22 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
     the types or objects in _wrapped_types. The setup will occur immediately after class instantiation.
 
     Class Attributes:
-        __original_dir_set (:obj:`set` of :obj:`str`): The dir of the original wrapper class.
-        _get_previous_wrapped (bool): Determines if temporary attributes should be made from the previous wrapped object
-        _set_next_wrapped (bool): Determines if temporary attributes should be passed to the next wrapped object.
-        _wrapped_types (:obj:`list` of :obj:): A list of either types or objects to setup wrapping for.
-        _wrap_attributes (:obj:`list` of :obj:`str`): The list of attribute names that will contain the objects to wrap
-            where the resolution order is descending inheritance.
-        _exclude_attributes (:obj:`set` of :obj:`str`): The names of the attributes to exclude from wrapping.
-        _wrapped_attributes (:obj:`dict` of :obj:`set` of :obj:`str`): The names of the attributes to wrap.
+        __original_dir_set: The dir of the original wrapper class.
+        _get_previous_wrapped: Determines if temporary attributes should be made from the previous wrapped object
+        _set_next_wrapped: Determines if temporary attributes should be passed to the next wrapped object.
+        _wrapped_types: A list of either types or objects to setup wrapping for.
+        _wrap_attributes: Attribute names that will contain the objects to wrap where the resolution order is descending
+            inheritance.
+        _exclude_attributes: The names of the attributes to exclude from wrapping.
+        _wrapped_attributes: The names of the attributes to wrap.
     """
-    __original_dir_set = None
-    _get_previous_wrapped = False
-    _set_next_wrapped = True
-    _wrapped_types = []
-    _wrap_attributes = []
-    _exclude_attributes = {"__slotnames__"}
-    _wrapped_attributes = {}
+    __original_dir_set: Optional[set[str]] = None
+    _get_previous_wrapped: bool = False
+    _set_next_wrapped: bool = True
+    _wrapped_types: list[Any] = []
+    _wrap_attributes: list[str] = []
+    _exclude_attributes: set[str] = {"__slotnames__"}
+    _wrapped_attributes: dict[str, set[str]] = {}
 
     # Class Methods #
     # Class Construction
@@ -443,10 +443,10 @@ class DynamicWrapper(BaseObject):
     important to ensure the order of _attribute_as_parents is the order of descending inheritance.
 
     Class Attributes:
-        _wrap_attributes (:obj:`list` of :obj:`str`): The list of attribute names that will contain the objects to
-            dynamically wrap where the order is descending inheritance.
+        _wrap_attributes: The list of attribute names that will contain the objects to dynamically wrap where the order
+            is descending inheritance.
     """
-    _wrap_attributes = []
+    _wrap_attributes: list[str] = []
 
     # Magic Methods #
     # Attribute Access

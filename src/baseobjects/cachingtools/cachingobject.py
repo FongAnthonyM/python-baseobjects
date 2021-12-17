@@ -15,16 +15,14 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
+from typing import Any, Callable, Optional, Union
 
 # Third-Party Packages #
 
 # Local Packages #
-from ..baseobject import BaseObject
-from .meta import CachingObjectMeta
-from .timedsinglecache import TimedSingleCache
-from .timedkeylesscache import TimedKeylessCache
-from .timedcache import TimedCache
-from .basetimedcache import BaseTimedCache
+from ..bases import BaseObject
+from .metaclasses import CachingObjectMeta
+from .caches import TimedSingleCache, TimedKeylessCache, TimedCache, BaseTimedCache
 
 
 # Definitions #
@@ -34,7 +32,7 @@ class CachingObjectMethod(BaseTimedCache):
 
     # Instance Methods #
     # Object Calling
-    def caching_call(self, *args, **kwargs):
+    def caching_call(self, *args, **kwargs) -> Any:
         """Calls the caching function, clears the cache at certain time, and allows the owning object to override.
 
         Args:
@@ -44,20 +42,24 @@ class CachingObjectMethod(BaseTimedCache):
         Returns:
             The result or the caching_method.
         """
+        # Get the object to operate on.
         if self.__self__ is not None:
             obj = self.__self__
         else:
             obj = args[0]
 
+        # Clear cache if condition is met or not caching.
         if self.clear_condition() or not obj.is_cache:
             self.clear_cache()
 
+        # Use caching method if allowed.
         if obj.is_cache:
             return self.caching_method(obj, *args, **kwargs)
+        # Run normal method if not allowed.
         else:
             return self.__func__(obj, *args, **kwargs)
 
-    def clearing_call(self, *args, **kwargs):
+    def clearing_call(self, *args, **kwargs) -> Any:
         """Clears the cache then calls the caching function and allows the owning object to override.
 
         Args:
@@ -67,15 +69,19 @@ class CachingObjectMethod(BaseTimedCache):
         Returns:
             The result or the caching_method.
         """
+        # Get the object to operate on.
         if self.__self__ is not None:
             obj = self.__self__
         else:
             obj = args[0]
 
+        # Clear Cache
         self.clear_cache()
 
+        # Use caching method if allowed.
         if obj.is_cache:
             return self.caching_method(obj, *args, **kwargs)
+        # Run normal method if not allowed.
         else:
             return self.__func__(obj, *args, **kwargs)
 
@@ -105,15 +111,15 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self):
+    def __init__(self) -> None:
         # Attributes #
-        self.is_cache = True
+        self.is_cache: bool = True
 
-        self._caches = self._caches_.copy()
+        self._caches: set[str] = self._caches_.copy()
 
     # Instance Methods #
     # Caches Operators
-    def get_caches(self):
+    def get_caches(self) -> set[str]:
         """Get all the caches in this object.
 
         Returns:
@@ -127,79 +133,117 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
 
         return self._caches
 
-    def enable_caching(self, exclude=set(), get_caches=False):
+    def enable_caching(self, exclude: Optional[set] = None, get_caches: bool = False) -> None:
         """Enables all caches to cache.
 
         Args:
             exclude: The names of the caches to exclude from caching.
-            get_caches: Determine if get_caches will be ran before setting the caches.
+            get_caches: Determines if get_caches will run before setting the caches.
         """
+        # Get caches if needed.
         if not self._caches or get_caches:
             self.get_caches()
 
-        for name in self._caches:
-            if name not in exclude:
-                getattr(self, name).set_caching_method()
+        # Exclude caches if needed.
+        if exclude is not None:
+            caches = self._caches.difference(exclude)
+        else:
+            caches = self._caches
 
-    def disable_caching(self, exclude=set(), get_caches=False):
+        # Enable caches in the set.
+        for name in caches:
+            getattr(self, name).set_caching_method()
+
+    def disable_caching(self, exclude: Optional[set] = None, get_caches: bool = False) -> None:
         """Disables all caches to cache.
 
         Args:
-            exclude: The names of the caches to exclude from not caching.
-            get_caches: Determine if get_caches will be ran before setting the caches.
+            exclude: The names of the caches to exclude from caching.
+            get_caches: Determines if get_caches will run before setting the caches.
         """
+        # Get caches if needed.
         if not self._caches or get_caches:
             self.get_caches()
 
-        for name in self._caches:
-            if name not in exclude:
-                getattr(self, name).set_caching_method(method="no_cache")
+        # Exclude caches if needed.
+        if exclude is not None:
+            caches = self._caches.difference(exclude)
+        else:
+            caches = self._caches
 
-    def timeless_caching(self, exclude=set(), get_caches=False):
+        # Disable caches in the set.
+        for name in caches:
+            getattr(self, name).set_caching_method(method="no_cache")
+
+    def timeless_caching(self, exclude: Optional[set] = None, get_caches: bool = False) -> None:
         """Sets all caches to have no expiration time.
 
         Args:
-            exclude: The names of the caches to exclude from not expiring.
-            get_caches: Determine if get_caches will be ran before setting the caches.
+            exclude: The names of the caches to exclude from caching.
+            get_caches: Determines if get_caches will run before setting the caches.
         """
+        # Get caches if needed.
         if not self._caches or get_caches:
             self.get_caches()
 
-        for name in self._caches:
-            if name not in exclude:
-                getattr(self, name).is_timed = False
+        # Exclude caches if needed.
+        if exclude is not None:
+            caches = self._caches.difference(exclude)
+        else:
+            caches = self._caches
 
-    def timed_caching(self, exclude=set(), get_caches=False):
+        # Disable expiration all caches in set.
+        for name in caches:
+            getattr(self, name).is_timed = False
+
+    def timed_caching(self, exclude: Optional[set] = None, get_caches: bool = False) -> None:
         """Sets all caches to have an expiration time.
 
         Args:
-            exclude: The names of the caches to exclude from expiring.
-            get_caches: Determine if get_caches will be ran before setting the caches.
+            exclude: The names of the caches to exclude from caching.
+            get_caches: Determines if get_caches will run before setting the caches.
         """
+        # Get caches if needed.
         if not self._caches or get_caches:
             self.get_caches()
 
-        for name in self._caches:
-            if name not in exclude:
-                getattr(self, name).is_timed = True
+        # Exclude caches if needed.
+        if exclude is not None:
+            caches = self._caches.difference(exclude)
+        else:
+            caches = self._caches
 
-    def clear_caches(self, exclude=set(), get_caches=False):
+        # Enable expiration for all caches in the set.
+        for name in caches:
+            getattr(self, name).is_timed = True
+
+    def clear_caches(self, exclude: Optional[set] = None, get_caches: bool = False) -> None:
         """Clears all caches in this object.
 
         Args:
-            exclude: The names of the caches to exclude from clearing.
-            get_caches: Determine if get_caches will be ran before clearing the caches.
+            exclude: The names of the caches to exclude from caching.
+            get_caches: Determines if get_caches will run before setting the caches.
         """
+        # Get caches if needed.
         if not self._caches or get_caches:
             self.get_caches()
 
-        for name in self._caches:
-            if name not in exclude:
-                getattr(self, name).clear_cache()
+        # Exclude caches if needed.
+        if exclude is not None:
+            caches = self._caches.difference(exclude)
+        else:
+            caches = self._caches
+
+        # Clear caches in the set.
+        for name in caches:
+            getattr(self, name).clear_cache()
 
 
 # Functions #
-def timed_single_cache_method(typed=False, lifetime=None, call_method="cache_call", collective=True):
+def timed_single_cache_method(typed: bool = False,
+                              lifetime: Optional[float] = None,
+                              call_method: Union[str, Callable] = "cache_call",
+                              collective: bool = True) -> Callable:
     """A factory to be used a decorator that sets the parameters of timed single cache method factory.
 
     Args:
@@ -212,7 +256,7 @@ def timed_single_cache_method(typed=False, lifetime=None, call_method="cache_cal
         The parameterized timed single cache method factory.
     """
 
-    def timed_cache_method_factory(func):
+    def timed_cache_method_factory(func: Callable) -> TimedSingleCacheMethod:
         """A factory for wrapping a method with a TimedSingleCacheMethod object.
 
         Args:
@@ -227,7 +271,10 @@ def timed_single_cache_method(typed=False, lifetime=None, call_method="cache_cal
     return timed_cache_method_factory
 
 
-def timed_keyless_cache_method(typed=False, lifetime=None, call_method="cache_call", collective=True):
+def timed_keyless_cache_method(typed: bool = False,
+                               lifetime: Optional[float] = None,
+                               call_method: Union[str, Callable] = "cache_call",
+                               collective: bool = True) -> Callable:
     """A factory to be used a decorator that sets the parameters of timed keyless cache method factory.
 
     Args:
@@ -240,7 +287,7 @@ def timed_keyless_cache_method(typed=False, lifetime=None, call_method="cache_ca
         The parameterized timed keyless cache method factory.
     """
 
-    def timed_cache_method_factory(func):
+    def timed_cache_method_factory(func: Callable) -> TimedKeylessCacheMethod:
         """A factory for wrapping a method with a TimedKeylessCacheMethod object.
 
         Args:
@@ -255,7 +302,11 @@ def timed_keyless_cache_method(typed=False, lifetime=None, call_method="cache_ca
     return timed_cache_method_factory
 
 
-def timed_cache_method(maxsize=None, typed=False, lifetime=None, call_method="cache_call", collective=True):
+def timed_cache_method(maxsize: Optional[int] = None,
+                       typed: bool = False,
+                       lifetime: Optional[float] = None,
+                       call_method: Union[str, Callable] = "cache_call",
+                       collective: bool = True) -> Callable:
     """A factory to be used a decorator that sets the parameters of timed cache method factory.
 
     Args:
@@ -269,7 +320,7 @@ def timed_cache_method(maxsize=None, typed=False, lifetime=None, call_method="ca
         The parameterized timed cache method factory.
     """
 
-    def timed_cache_method_factory(func):
+    def timed_cache_method_factory(func: Callable) -> TimedCacheMethod:
         """A factory for wrapping a method with a TimedCacheMethod object.
 
         Args:

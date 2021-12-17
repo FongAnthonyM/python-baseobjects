@@ -17,6 +17,5 @@ __email__ = __email__
 # Local Packages #
 from .automaticproperties import AutomaticProperties
 from .circulardoublylinkedcontainer import LinkedNode, CircularDoublyLinkedContainer
-from .initmeta import InitMeta
 from .timeddict import TimedDict
 from .wrappers import StaticWrapper, DynamicWrapper

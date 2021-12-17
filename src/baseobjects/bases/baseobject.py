@@ -4,7 +4,7 @@
 BaseObject is an abstract class which implements some basic methods that all objects should have.
 """
 # Package Header #
-from .__header__ import *
+from ..__header__ import *
 
 # Header #
 __author__ = __author__
