@@ -4,7 +4,7 @@
 A timed cache that only hold a single item.
 """
 # Package Header #
-from ..__header__ import *
+from ...__header__ import *
 
 # Header #
 __author__ = __author__
@@ -15,6 +15,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from time import perf_counter
+from typing import Any, Callable, Hashable, Optional, Union
 
 # Third-Party Packages #
 
@@ -25,7 +26,7 @@ from .basetimedcache import BaseTimedCache
 # Definitions #
 # Classes #
 class TimedSingleCache(BaseTimedCache):
-    """A cache wrapper object for a function which resets its cache periodically.
+    """A periodically clearing single item cache wrapper object for a function.
 
     Class Attributes:
         sentinel: An object used to determine if a value was unsuccessfully found.
@@ -49,6 +50,8 @@ class TimedSingleCache(BaseTimedCache):
 
         _call_method: The function to call when this object is called.
 
+        args_key: The generated argument key of the current cached result.
+
     Args:
         func: The function to wrap.
         typed: Determines if the function's arguments are type sensitive for caching.
@@ -59,15 +62,21 @@ class TimedSingleCache(BaseTimedCache):
     """
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, func=None, typed=False, lifetime=None, call_method="cache_call", collective=True,  init=True):
+    def __init__(self,
+                 func: Optional[Callable] = None,
+                 typed: bool = False,
+                 lifetime: Optional[int, float] = None,
+                 call_method: Union[str, Callable] = "cache_call",
+                 collective: bool = True,
+                 init: bool = True) -> None:
         # Parent Attributes #
         super().__init__(init=False)
 
-        self._defualt_caching_method = self.caching
-        self._caching_method = self.caching
+        self._defualt_caching_method: Callable = self.caching
+        self._caching_method: Callable = self.caching
 
         # New Attributes #
-        self.args_key = None
+        self.args_key: Optional[Hashable] = None
 
         # Object Construction #
         if init:
@@ -75,7 +84,7 @@ class TimedSingleCache(BaseTimedCache):
 
     # Instance Methods #
     # Caching
-    def caching(self, *args, **kwargs):
+    def caching(self, *args, **kwargs) -> Any:
         """Caching with no limit on items in the cache.
 
         Args:
@@ -92,7 +101,7 @@ class TimedSingleCache(BaseTimedCache):
 
         return self.cache
 
-    def clear_cache(self):
+    def clear_cache(self) -> None:
         """Clear the cache and update the expiration of the cache."""
         self.cache = None
         self.args_key = None
@@ -101,7 +110,10 @@ class TimedSingleCache(BaseTimedCache):
 
 
 # Functions #
-def timed_single_cache(typed=False, lifetime=None, call_method="cache_call", collective=True):
+def timed_single_cache(typed: bool = False,
+                       lifetime: Optional[float] = None,
+                       call_method: Union[str, Callable] = "cache_call",
+                       collective: bool = True) -> Callable:
     """A factory to be used a decorator that sets the parameters of timed single cache function factory.
 
     Args:
@@ -114,7 +126,7 @@ def timed_single_cache(typed=False, lifetime=None, call_method="cache_call", col
         The parameterized timed single cache function factory.
     """
 
-    def timed_single_cache_factory(func):
+    def timed_single_cache_factory(func: Callable) -> TimedSingleCache:
         """A factory for wrapping a function with a TimedSingleCache object.
 
         Args:

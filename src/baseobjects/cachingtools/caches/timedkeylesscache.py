@@ -4,7 +4,7 @@
 A timed cache that only hold a single item and does not create a key from arguments.
 """
 # Package Header #
-from ..__header__ import *
+from ...__header__ import *
 
 # Header #
 __author__ = __author__
@@ -15,6 +15,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from time import perf_counter
+from typing import Any, Callable, Optional, Union
 
 # Third-Party Packages #
 
@@ -25,7 +26,7 @@ from .timedsinglecache import TimedSingleCache
 # Definitions #
 # Classes #
 class TimedKeylessCache(TimedSingleCache):
-    """A cache wrapper object for a function which resets its cache periodically.
+    """A periodically clearing cache wrapper object for a function that only has one result.
 
     Class Attributes:
         sentinel: An object used to determine if a value was unsuccessfully found.
@@ -49,6 +50,8 @@ class TimedKeylessCache(TimedSingleCache):
 
         _call_method: The function to call when this object is called.
 
+        args_key: The flag that notes the cache is occupied.
+
     Args:
         func: The function to wrap.
         typed: Determines if the function's arguments are type sensitive for caching.
@@ -59,12 +62,18 @@ class TimedKeylessCache(TimedSingleCache):
     """
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, func=None, typed=False, lifetime=None, call_method="cache_call", collective=True,  init=True):
+    def __init__(self,
+                 func: Optional[Callable] = None,
+                 typed: bool = False,
+                 lifetime: Optional[int, float] = None,
+                 call_method: Union[str, Callable] = "cache_call",
+                 collective: bool = True,
+                 init: bool = True) -> None:
         # Parent Attributes #
         super().__init__(init=False)
 
         # New Attributes #
-        self.args_key = None
+        self.args_key: bool = None
 
         # Object Construction #
         if init:
@@ -72,7 +81,7 @@ class TimedKeylessCache(TimedSingleCache):
 
     # Instance Methods #
     # Caching
-    def caching(self, *args, **kwargs):
+    def caching(self, *args, **kwargs) -> Any:
         """Caching with no limit on items in the cache.
 
         Args:
@@ -88,7 +97,7 @@ class TimedKeylessCache(TimedSingleCache):
 
         return self.cache
 
-    def cache_clear(self):
+    def cache_clear(self) -> None:
         """Clear the cache and update the expiration of the cache."""
         self.cache = None
         self.args_key = False
@@ -97,7 +106,10 @@ class TimedKeylessCache(TimedSingleCache):
 
 
 # Functions #
-def timed_keyless_cache(typed=False, lifetime=None, call_method="cache_call", collective=True):
+def timed_keyless_cache(typed: bool = False,
+                        lifetime: Optional[float] = None,
+                        call_method: Union[str, Callable] = "cache_call",
+                        collective: bool = True) -> Callable:
     """A factory to be used a decorator that sets the parameters of timed keyless cache function factory.
 
     Args:
@@ -110,7 +122,7 @@ def timed_keyless_cache(typed=False, lifetime=None, call_method="cache_call", co
         The parameterized timed keyless cache function factory.
     """
 
-    def timed_keyless_cache_factory(func):
+    def timed_keyless_cache_factory(func: Callable) -> TimedKeylessCache:
         """A factory for wrapping a function with a TimedKeylessCache object.
 
         Args:

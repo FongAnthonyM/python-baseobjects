@@ -52,13 +52,13 @@ class BaseMethod(BaseObject):
                  get_method: Optional[Callable, str] = None,
                  init: Optional[bool] = True):
         # Special Attributes #
-        self.__func__ = None
-        self.__self__ = None
+        self.__func__: Callable = None
+        self.__self__: Any = None
 
         # Attributes #
-        self._selected_get_method = "get_self_bind"
-        self._get_method_ = self.get_self_bind
-        self._instances = {}
+        self._selected_get_method: Union[str, Callable] = "get_self_bind"
+        self._get_method_: Callable = self.get_self_bind
+        self._instances: dict = {}
 
         # Object Construction #
         if init:
@@ -83,6 +83,9 @@ class BaseMethod(BaseObject):
         Args:
             instance: The other object requesting this object.
             owner: The class of the other object requesting this object.
+
+        Returns:
+            The bound BaseMethod which can either self or a new BaseMethod.
         """
         return self._get_method_(instance, owner=owner)
 
@@ -122,6 +125,9 @@ class BaseMethod(BaseObject):
         Args:
             instance: The other object requesting this object.
             owner: The class of the other object requesting this object.
+
+        Returns:
+            This object.
         """
         return self
 
@@ -131,6 +137,9 @@ class BaseMethod(BaseObject):
         Args:
             instance: The other object requesting this object.
             owner: The class of the other object requesting this object.
+
+        Returns:
+            This object.
         """
         if instance is not None and self.__self__ is not instance:
             self.bind(instance)
@@ -146,6 +155,9 @@ class BaseMethod(BaseObject):
             instance: The other object requesting this object.
             owner: The class of the other object requesting this object.
             new_binding: The binding method the new object will use.
+
+        Returns:
+            Either bound self or a new BaseMethod bound to the instance.
         """
         if instance is None:
             return self
@@ -161,6 +173,9 @@ class BaseMethod(BaseObject):
         Args:
             instance: The other object requesting this object.
             owner: The class of the other object requesting this object.
+
+        Returns:
+            Either bound self or a BaseMethod bound to the instance.
         """
         if instance is None:
             return self
@@ -171,7 +186,7 @@ class BaseMethod(BaseObject):
             return bound
 
     # Binding
-    def bind(self, instance: Any, name: Optional[str] = None):
+    def bind(self, instance: Any, name: Optional[str] = None) -> None:
         """Binds this object to another object to give this object method functionality.
 
         Args:
