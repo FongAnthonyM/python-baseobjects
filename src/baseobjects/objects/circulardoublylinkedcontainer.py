@@ -41,15 +41,18 @@ class LinkedNode(BaseObject):
         previous: The previous node.
         next_: The next node.
     """
+
     __slots__ = ["previous", "next", "data"]
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self,
-                 data: Optional[Any] = None,
-                 previous: Optional["LinkedNode"] = None,
-                 next_: Optional["LinkedNode"] = None,
-                 init: bool = True) -> None:
+    def __init__(
+        self,
+        data: Optional[Any] = None,
+        previous: Optional["LinkedNode"] = None,
+        next_: Optional["LinkedNode"] = None,
+        init: bool = True,
+    ) -> None:
         # Attributes #
         self.previous: "LinkedNode" = self
         self.next: "LinkedNode" = self
@@ -62,10 +65,12 @@ class LinkedNode(BaseObject):
 
     # Instance Methods #
     # Constructors
-    def construct(self,
-                  data: Optional[Any] = None,
-                  previous: Optional["LinkedNode"] = None,
-                  next_: Optional["LinkedNode"] = None) -> None:
+    def construct(
+        self,
+        data: Optional[Any] = None,
+        previous: Optional["LinkedNode"] = None,
+        next_: Optional["LinkedNode"] = None,
+    ) -> None:
         """Constructs this object.
 
         Args:
@@ -85,6 +90,7 @@ class CircularDoublyLinkedContainer(BaseObject):
     Attributes:
         first_node: The first linked node in this container.
     """
+
     __slots__ = "first_node"
 
     # Magic Methods #
@@ -103,7 +109,9 @@ class CircularDoublyLinkedContainer(BaseObject):
         """The last node in this container."""
         return self.first_node.previous
 
-    def __deepcopy__(self, memo: Optional[dict] = None, _nil=[]) -> "CircularDoublyLinkedContainer":
+    def __deepcopy__(
+        self, memo: Optional[dict] = None, _nil=[]
+    ) -> "CircularDoublyLinkedContainer":
         """Creates a deep copy of this object.
 
         Args:

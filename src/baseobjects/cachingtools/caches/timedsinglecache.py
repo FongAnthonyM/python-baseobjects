@@ -60,15 +60,18 @@ class TimedSingleCache(BaseTimedCache):
         collective: Determines if the cache is collective for all method bindings or for each instance.
         init: Determines if this object will construct.
     """
+
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self,
-                 func: Optional[Callable] = None,
-                 typed: bool = False,
-                 lifetime: Optional[int, float] = None,
-                 call_method: Union[str, Callable] = "cache_call",
-                 collective: bool = True,
-                 init: bool = True) -> None:
+    def __init__(
+        self,
+        func: Optional[Callable] = None,
+        typed: bool = False,
+        lifetime: Union[int, float, None] = None,
+        call_method: Union[str, Callable] = "caching_call",
+        collective: bool = True,
+        init: bool = True,
+    ) -> None:
         # Parent Attributes #
         super().__init__(init=False)
 
@@ -80,7 +83,13 @@ class TimedSingleCache(BaseTimedCache):
 
         # Object Construction #
         if init:
-            self.construct(func=func, lifetime=lifetime, typed=typed, call_method=call_method, collective=collective)
+            self.construct(
+                func=func,
+                lifetime=lifetime,
+                typed=typed,
+                call_method=call_method,
+                collective=collective,
+            )
 
     # Instance Methods #
     # Caching
@@ -110,10 +119,12 @@ class TimedSingleCache(BaseTimedCache):
 
 
 # Functions #
-def timed_single_cache(typed: bool = False,
-                       lifetime: Optional[float] = None,
-                       call_method: Union[str, Callable] = "cache_call",
-                       collective: bool = True) -> Callable:
+def timed_single_cache(
+    typed: bool = False,
+    lifetime: Union[int, float, None] = None,
+    call_method: Union[str, Callable] = "caching_call",
+    collective: bool = True,
+) -> Callable:
     """A factory to be used a decorator that sets the parameters of timed single cache function factory.
 
     Args:
@@ -135,6 +146,12 @@ def timed_single_cache(typed: bool = False,
         Returns:
             The TimeSingleCache object which wraps the given function.
         """
-        return TimedSingleCache(func, typed=typed, lifetime=lifetime, call_method=call_method, collective=collective)
+        return TimedSingleCache(
+            func,
+            typed=typed,
+            lifetime=lifetime,
+            call_method=call_method,
+            collective=collective,
+        )
 
     return timed_single_cache_factory

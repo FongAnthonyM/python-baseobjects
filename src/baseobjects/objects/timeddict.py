@@ -39,6 +39,7 @@ class TimedDict(UserDict, BaseObject):
         dict_: The dictionary to copy into this dictionary.
         **kwargs: The keywords to add to this dictionary.
     """
+
     __slots__ = ["is_timed", "lifetime", "expiration", "_data"]
 
     # Magic Methods #
@@ -106,10 +107,13 @@ class TimedDict(UserDict, BaseObject):
         Returns:
             bool: Determines if the cache should be cleared.
         """
-        return self.is_timed and self.lifetime is not None and perf_counter() >= self.expiration
+        return (
+            self.is_timed
+            and self.lifetime is not None
+            and perf_counter() >= self.expiration
+        )
 
     def verify(self) -> None:
         """Verifies if the dictionary should be cleared and then clears it."""
         if self.clear_condition():
             self.clear()
-

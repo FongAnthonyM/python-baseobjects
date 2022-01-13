@@ -16,7 +16,15 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from abc import ABCMeta
-from copy import _copy_dispatch, _copy_immutable, _deepcopy_dispatch, _deepcopy_atomic, _keep_alive, _reconstruct, Error
+from copy import (
+    _copy_dispatch,
+    _copy_immutable,
+    _deepcopy_dispatch,
+    _deepcopy_atomic,
+    _keep_alive,
+    _reconstruct,
+    Error,
+)
 from copyreg import dispatch_table
 from typing import Optional
 
@@ -66,7 +74,7 @@ class BaseMeta(ABCMeta):
             return self
         return _reconstruct(self, None, *rv)
 
-    def __deepcopy__(self,  memo: Optional[dict] = None, _nil=[]) -> "BaseMeta":
+    def __deepcopy__(self, memo: Optional[dict] = None, _nil=[]) -> "BaseMeta":
         """The deepcopy magic method based on python's deepcopy function.
 
         Args:

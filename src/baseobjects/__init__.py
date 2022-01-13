@@ -16,6 +16,7 @@ __email__ = __email__
 # Imports #
 # Local Packages #
 from .bases import *
-from .cachingtools import *
+from .metaclasses import *
 from .objects import *
+from .cachingtools import *
 from .warnings import TimeoutWarning

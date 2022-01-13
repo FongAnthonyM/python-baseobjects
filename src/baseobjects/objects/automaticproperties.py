@@ -35,15 +35,18 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
     Class Attributes:
         _properties_map: Names and functions used to create properties.
     """
+
     _properties_map: list[str] = []
 
     # Class Methods #
     # Class Construction
     @classmethod
-    def _init_class_(cls,
-                     name: Optional[str] = None,
-                     bases: Optional[Tuple[type, ...]] = None,
-                     namespace: Optional[dict[str, Any]] = None) -> None:
+    def _init_class_(
+        cls,
+        name: Optional[str] = None,
+        bases: Optional[Tuple[type, ...]] = None,
+        namespace: Optional[dict[str, Any]] = None,
+    ) -> None:
         """A method that runs after class creation, creating the properties for this class.
 
         Args:
@@ -120,7 +123,9 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
     # Property Constructors
     @classmethod
-    def _iterable_to_properties(cls, iter_: Iterable, callback_factory: Callable) -> None:
+    def _iterable_to_properties(
+        cls, iter_: Iterable, callback_factory: Callable
+    ) -> None:
         """Create properties for this class based on an iterable where the items are the property names.
 
         Args:

@@ -16,7 +16,7 @@ __email__ = __email__
 # Standard Libraries #
 import abc
 from time import perf_counter
-from typing import Any, Callable, Hashable, Optional, Union
+from typing import Any, Callable, Hashable, Iterable, Optional, Union
 
 # Third-Party Packages #
 
@@ -36,11 +36,12 @@ class _HashedSeq(list):
         tuple_: The iterable to create a hash value from.
         hash_: The function that will create hash value.
     """
+
     __slots__ = "hashvalue"
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, tuple_: tuple, hash_: Callable = hash) -> None:
+    def __init__(self, tuple_: Iterable, hash_: Callable = hash) -> None:
         # Attributes #
         self[:] = tuple_
         self.hashvalue = hash_(tuple_)
@@ -64,14 +65,17 @@ class CacheItem(BaseObject):
         result: The value to store in the cache.
         priority_link: The object that represents this item's priority.
     """
+
     __slots__ = ["key", "result", "priority_link"]
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self,
-                 key: Optional[Hashable] = None,
-                 result: Optional[Any] = None,
-                 priority_link: Optional[Any] = None) -> None:
+    def __init__(
+        self,
+        key: Optional[Hashable] = None,
+        result: Optional[Any] = None,
+        priority_link: Optional[Any] = None,
+    ) -> None:
         # Attributes #
         self.priority_link = priority_link
 
@@ -112,17 +116,20 @@ class BaseTimedCache(BaseMethod):
         collective: Determines if the cache is collective for all method bindings or for each instance.
         init: Determines if this object will construct.
     """
+
     cache_item_type = CacheItem
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self,
-                 func: Optional[Callable] = None,
-                 typed: bool = False,
-                 lifetime: Optional[int, float] = None,
-                 call_method: Union[str, Callable] = "cache_call",
-                 collective: bool = True,
-                 init: bool = True) -> None:
+    def __init__(
+        self,
+        func: Optional[Callable] = None,
+        typed: bool = False,
+        lifetime: Union[int, float, None] = None,
+        call_method: Union[str, Callable] = "caching_call",
+        collective: bool = True,
+        init: bool = True,
+    ) -> None:
         # Parent Attributes #
         super().__init__(init=False)
 
@@ -138,11 +145,17 @@ class BaseTimedCache(BaseMethod):
         self._defualt_caching_method: Callable = self.no_cache
         self._caching_method: Callable = self.no_cache
 
-        self._call_method: Callable = None
+        self._call_method: Optional[Callable] = None
 
         # Object Construction #
         if init:
-            self.construct(func=func, lifetime=lifetime, typed=typed, call_method=call_method, collective=collective)
+            self.construct(
+                func=func,
+                lifetime=lifetime,
+                typed=typed,
+                call_method=call_method,
+                collective=collective,
+            )
 
     @property
     def is_collective(self) -> bool:
@@ -199,12 +212,14 @@ class BaseTimedCache(BaseMethod):
 
     # Instance Methods #
     # Constructors
-    def construct(self,
-                  func: Optional[Callable] = None,
-                  typed: bool = False,
-                  lifetime: Optional[int, float] = None,
-                  call_method: Union[str, Callable] = "cache_call",
-                  collective: bool = True) -> None:
+    def construct(
+        self,
+        func: Optional[Callable] = None,
+        typed: bool = False,
+        lifetime: Union[int, float, None] = None,
+        call_method: Union[str, Callable] = "caching_call",
+        collective: bool = True,
+    ) -> None:
         """The constructor for this object.
 
         Args:
@@ -230,10 +245,12 @@ class BaseTimedCache(BaseMethod):
         super().construct(func=func)
 
     # Binding
-    def get_new_bind(self,
-                     instance: Any,
-                     owner: Optional[Any] = None,
-                     new_binding: Union[str, Callable] = "get_self") -> BaseMethod:
+    def get_new_bind(
+        self,
+        instance: Any,
+        owner: Optional[Any] = None,
+        new_binding: Union[str, Callable] = "get_self",
+    ) -> BaseMethod:
         """The __get__ method where it binds a new copy to the other object. Changed the default parameter.
 
         Args:
@@ -299,15 +316,22 @@ class BaseTimedCache(BaseMethod):
         Returns:
             Determines if the cache should be cleared.
         """
-        return self.is_timed and self.lifetime is not None and perf_counter() >= self.expiration
+        return (
+            self.is_timed
+            and self.lifetime is not None
+            and perf_counter() >= self.expiration
+        )
 
     # Binding
-    def bind_to_new(self, instance: Any, name: Optional[str] = None) -> "BaseTimedCache":
+    def bind_to_new(
+        self, instance: Any, name: Optional[str] = None, set_attr: bool = True
+    ) -> "BaseTimedCache":
         """Creates a new instance of this object and binds it to another object.
 
         Args:
             instance: The object ot bing this object to.
             name: The name of the attribute this object will bind to in the other object.
+            set_attr: Determines if this object will be set as an attribute in the object.
 
         Returns:
             The new bound deepcopy of this object.
@@ -317,15 +341,28 @@ class BaseTimedCache(BaseMethod):
         else:
             call_method = self._call_method
 
-        new_obj = type(self)(func=self.__func__, typed=self.typed, lifetime=self.lifetime,
-                             call_method=call_method, collective=self._is_collective)
-        new_obj.bind(instance, name=name)
+        new_obj = type(self)(
+            func=self.__func__,
+            typed=self.typed,
+            lifetime=self.lifetime,
+            call_method=call_method,
+            collective=self._is_collective,
+        )
+        new_obj.bind(instance=instance, name=name, set_attr=set_attr)
         return new_obj
 
     # Caching
-    def create_key(self, args: tuple, kwds: dict,
-                   typed: bool, kwd_mark: tuple = (object(),), fasttypes: set = {int, str},
-                   tuple_: Callable = tuple, type_: Callable = type, len_: Callable = len) -> _HashedSeq:
+    def create_key(
+        self,
+        args: tuple,
+        kwds: dict,
+        typed: bool,
+        kwd_mark: tuple = (object(),),
+        fasttypes: set = {int, str},
+        tuple_: Callable = tuple,
+        type_: Callable = type,
+        len_: Callable = len,
+    ) -> _HashedSeq:
         """Make a cache key from optionally typed positional and keyword arguments.
 
         The key is constructed in a way that is flat as possible rather than
@@ -365,7 +402,7 @@ class BaseTimedCache(BaseMethod):
         """
         return self.__func__(*args, **kwargs)
 
-    def set_caching_method(self, method: Optional[str, Callable] = None) -> None:
+    def set_caching_method(self, method: Union[str, Callable, None] = None) -> None:
         """Sets the caching method to another function or a method within this object can be given to select it.
 
         Args:

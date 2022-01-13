@@ -43,16 +43,19 @@ class BaseMethod(BaseObject):
         get_method: The method that will be used for the __get__ method.
         init: Determines if this object will construct.
     """
+
     sentinel = search_sentinel
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self,
-                 func: Optional[Callable] = None,
-                 get_method: Optional[Callable, str] = None,
-                 init: Optional[bool] = True):
+    def __init__(
+        self,
+        func: Optional[Callable] = None,
+        get_method: Union[Callable, str, None] = None,
+        init: Optional[bool] = True,
+    ):
         # Special Attributes #
-        self.__func__: Callable = None
+        self.__func__: Optional[Callable] = None
         self.__self__: Any = None
 
         # Attributes #
@@ -89,9 +92,26 @@ class BaseMethod(BaseObject):
         """
         return self._get_method_(instance, owner=owner)
 
+    # Callable
+    def __call__(self, *args, **kwargs) -> Any:
+        """The call magic method for this object.
+
+        Args:
+            *args: Arguments for the wrapped function.
+            **kwargs: Keyword arguments for the wrapped function.
+
+        Returns:
+            The results of the wrapped function.
+        """
+        return self.__func__(*args, **kwargs)
+
     # Instance Methods #
     # Constructors/Destructors
-    def construct(self, func: Optional[Callable] = None, get_method: Optional[Callable, str] = None) -> None:
+    def construct(
+        self,
+        func: Optional[Callable] = None,
+        get_method: Union[Callable, str, None] = None,
+    ) -> None:
         """The constructor for this object.
 
         Args:
@@ -145,10 +165,12 @@ class BaseMethod(BaseObject):
             self.bind(instance)
         return self
 
-    def get_new_bind(self,
-                     instance: Any,
-                     owner: Optional[Any] = None,
-                     new_binding: str = "get_self_bind") -> "BaseMethod":
+    def get_new_bind(
+        self,
+        instance: Any,
+        owner: Optional[Any] = None,
+        new_binding: str = "get_self_bind",
+    ) -> "BaseMethod":
         """The __get__ method where it binds a new copy to the other object.
 
         Args:
@@ -167,7 +189,9 @@ class BaseMethod(BaseObject):
             setattr(instance, self.__func__.__name__, bound)
             return bound
 
-    def get_subinstance(self, instance: Any, owner: Optional[Any] = None) -> "BaseMethod":
+    def get_subinstance(
+        self, instance: Any, owner: Optional[Any] = None
+    ) -> "BaseMethod":
         """The __get__ method where it binds a registered copy to the other object.
 
         Args:
@@ -186,27 +210,35 @@ class BaseMethod(BaseObject):
             return bound
 
     # Binding
-    def bind(self, instance: Any, name: Optional[str] = None) -> None:
+    def bind(
+        self, instance: Any, name: Optional[str] = None, set_attr: bool = True
+    ) -> None:
         """Binds this object to another object to give this object method functionality.
 
         Args:
-            instance: The object ot bing this object to.
+            instance: The object to bing this object to.
             name: The name of the attribute this object will bind to in the other object.
+            set_attr: Determines if this object will be set as an attribute in the object.
         """
         self.__self__ = instance
         if name is not None:
             setattr(instance, name, self)
+        elif set_attr:
+            setattr(instance, self.__func__.__name__, self)
 
-    def bind_to_new(self, instance: Any, name: Optional[str] = None) -> Any:
+    def bind_to_new(
+        self, instance: Any, name: Optional[str] = None, set_attr: bool = True
+    ) -> Any:
         """Creates a new instance of this object and binds it to another object.
 
         Args:
             instance: The object ot bing this object to.
             name: The name of the attribute this object will bind to in the other object.
+            set_attr: Determines if this object will be set as an attribute in the object.
 
         Returns:
             The new bound deepcopy of this object.
         """
         new_obj = type(self)(func=self.__func__, get_method=self._selected_get_method)
-        new_obj.bind(instance, name=name)
+        new_obj.bind(instance=instance, name=name, set_attr=set_attr)
         return new_obj

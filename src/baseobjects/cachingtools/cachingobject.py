@@ -88,16 +88,19 @@ class CachingObjectMethod(BaseTimedCache):
 
 class TimedSingleCacheMethod(TimedSingleCache, CachingObjectMethod):
     """A mixin class that implements both TimedSingleCache and CachingObjectMethod"""
+
     pass
 
 
 class TimedKeylessCacheMethod(TimedKeylessCache, CachingObjectMethod):
     """A mixin class that implements both TimedKeylessCache and CachingObjectMethod"""
+
     pass
 
 
 class TimedCacheMethod(TimedCache, CachingObjectMethod):
     """A mixin class that implements both TimedCache and CachingObjectMethod"""
+
     pass
 
 
@@ -127,13 +130,16 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         """
         for name in dir(self):
             attribute = getattr(type(self), name, None)
-            if (isinstance(attribute, BaseTimedCache) or (attribute is None and
-                isinstance(getattr(self, name), BaseTimedCache))):
+            if isinstance(attribute, BaseTimedCache) or (
+                attribute is None and isinstance(getattr(self, name), BaseTimedCache)
+            ):
                 self._caches.add(name)
 
         return self._caches
 
-    def enable_caching(self, exclude: Optional[set] = None, get_caches: bool = False) -> None:
+    def enable_caching(
+        self, exclude: Optional[set] = None, get_caches: bool = False
+    ) -> None:
         """Enables all caches to cache.
 
         Args:
@@ -154,7 +160,9 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         for name in caches:
             getattr(self, name).set_caching_method()
 
-    def disable_caching(self, exclude: Optional[set] = None, get_caches: bool = False) -> None:
+    def disable_caching(
+        self, exclude: Optional[set] = None, get_caches: bool = False
+    ) -> None:
         """Disables all caches to cache.
 
         Args:
@@ -175,7 +183,9 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         for name in caches:
             getattr(self, name).set_caching_method(method="no_cache")
 
-    def timeless_caching(self, exclude: Optional[set] = None, get_caches: bool = False) -> None:
+    def timeless_caching(
+        self, exclude: Optional[set] = None, get_caches: bool = False
+    ) -> None:
         """Sets all caches to have no expiration time.
 
         Args:
@@ -196,7 +206,9 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         for name in caches:
             getattr(self, name).is_timed = False
 
-    def timed_caching(self, exclude: Optional[set] = None, get_caches: bool = False) -> None:
+    def timed_caching(
+        self, exclude: Optional[set] = None, get_caches: bool = False
+    ) -> None:
         """Sets all caches to have an expiration time.
 
         Args:
@@ -217,7 +229,9 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         for name in caches:
             getattr(self, name).is_timed = True
 
-    def clear_caches(self, exclude: Optional[set] = None, get_caches: bool = False) -> None:
+    def clear_caches(
+        self, exclude: Optional[set] = None, get_caches: bool = False
+    ) -> None:
         """Clears all caches in this object.
 
         Args:
@@ -240,10 +254,12 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
 
 
 # Functions #
-def timed_single_cache_method(typed: bool = False,
-                              lifetime: Optional[float] = None,
-                              call_method: Union[str, Callable] = "cache_call",
-                              collective: bool = True) -> Callable:
+def timed_single_cache_method(
+    typed: bool = False,
+    lifetime: Optional[float] = None,
+    call_method: Union[str, Callable] = "caching_call",
+    collective: bool = True,
+) -> Callable:
     """A factory to be used a decorator that sets the parameters of timed single cache method factory.
 
     Args:
@@ -265,16 +281,23 @@ def timed_single_cache_method(typed: bool = False,
         Returns:
             The TimeSingleCacheMethod object which wraps the given function.
         """
-        return TimedSingleCacheMethod(func, typed=typed, lifetime=lifetime,
-                                      call_method=call_method, collective=collective)
+        return TimedSingleCacheMethod(
+            func,
+            typed=typed,
+            lifetime=lifetime,
+            call_method=call_method,
+            collective=collective,
+        )
 
     return timed_cache_method_factory
 
 
-def timed_keyless_cache_method(typed: bool = False,
-                               lifetime: Optional[float] = None,
-                               call_method: Union[str, Callable] = "cache_call",
-                               collective: bool = True) -> Callable:
+def timed_keyless_cache_method(
+    typed: bool = False,
+    lifetime: Optional[float] = None,
+    call_method: Union[str, Callable] = "caching_call",
+    collective: bool = True,
+) -> Callable:
     """A factory to be used a decorator that sets the parameters of timed keyless cache method factory.
 
     Args:
@@ -296,17 +319,24 @@ def timed_keyless_cache_method(typed: bool = False,
         Returns:
             The TimeKeylessCacheMethod object which wraps the given function.
         """
-        return TimedKeylessCacheMethod(func, typed=typed, lifetime=lifetime,
-                                       call_method=call_method, collective=collective)
+        return TimedKeylessCacheMethod(
+            func,
+            typed=typed,
+            lifetime=lifetime,
+            call_method=call_method,
+            collective=collective,
+        )
 
     return timed_cache_method_factory
 
 
-def timed_cache_method(maxsize: Optional[int] = None,
-                       typed: bool = False,
-                       lifetime: Optional[float] = None,
-                       call_method: Union[str, Callable] = "cache_call",
-                       collective: bool = True) -> Callable:
+def timed_cache_method(
+    maxsize: Optional[int] = None,
+    typed: bool = False,
+    lifetime: Optional[float] = None,
+    call_method: Union[str, Callable] = "caching_call",
+    collective: bool = True,
+) -> Callable:
     """A factory to be used a decorator that sets the parameters of timed cache method factory.
 
     Args:
@@ -329,7 +359,13 @@ def timed_cache_method(maxsize: Optional[int] = None,
         Returns:
             The TimeCacheMethod object which wraps the given function.
         """
-        return TimedCacheMethod(func, maxsize=maxsize, typed=typed, lifetime=lifetime,
-                                call_method=call_method, collective=collective)
+        return TimedCacheMethod(
+            func,
+            maxsize=maxsize,
+            typed=typed,
+            lifetime=lifetime,
+            call_method=call_method,
+            collective=collective,
+        )
 
     return timed_cache_method_factory

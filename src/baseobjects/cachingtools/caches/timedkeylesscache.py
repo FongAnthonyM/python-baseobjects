@@ -60,15 +60,18 @@ class TimedKeylessCache(TimedSingleCache):
         collective: Determines if the cache is collective for all method bindings or for each instance.
         init: Determines if this object will construct.
     """
+
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self,
-                 func: Optional[Callable] = None,
-                 typed: bool = False,
-                 lifetime: Optional[int, float] = None,
-                 call_method: Union[str, Callable] = "cache_call",
-                 collective: bool = True,
-                 init: bool = True) -> None:
+    def __init__(
+        self,
+        func: Optional[Callable] = None,
+        typed: bool = False,
+        lifetime: Union[int, float, None] = None,
+        call_method: Union[str, Callable] = "caching_call",
+        collective: bool = True,
+        init: bool = True,
+    ) -> None:
         # Parent Attributes #
         super().__init__(init=False)
 
@@ -77,7 +80,13 @@ class TimedKeylessCache(TimedSingleCache):
 
         # Object Construction #
         if init:
-            self.construct(func=func, lifetime=lifetime, typed=typed, call_method=call_method, collective=collective)
+            self.construct(
+                func=func,
+                lifetime=lifetime,
+                typed=typed,
+                call_method=call_method,
+                collective=collective,
+            )
 
     # Instance Methods #
     # Caching
@@ -106,10 +115,12 @@ class TimedKeylessCache(TimedSingleCache):
 
 
 # Functions #
-def timed_keyless_cache(typed: bool = False,
-                        lifetime: Optional[float] = None,
-                        call_method: Union[str, Callable] = "cache_call",
-                        collective: bool = True) -> Callable:
+def timed_keyless_cache(
+    typed: bool = False,
+    lifetime: Union[int, float, None] = None,
+    call_method: Union[str, Callable] = "caching_call",
+    collective: bool = True,
+) -> Callable:
     """A factory to be used a decorator that sets the parameters of timed keyless cache function factory.
 
     Args:
@@ -131,6 +142,12 @@ def timed_keyless_cache(typed: bool = False,
         Returns:
             The TimeKeylessCache object which wraps the given function.
         """
-        return TimedKeylessCache(func, typed=typed, lifetime=lifetime, call_method=call_method, collective=collective)
+        return TimedKeylessCache(
+            func,
+            typed=typed,
+            lifetime=lifetime,
+            call_method=call_method,
+            collective=collective,
+        )
 
     return timed_keyless_cache_factory

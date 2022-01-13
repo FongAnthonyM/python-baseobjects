@@ -42,7 +42,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from builtins import property
-from typing import Any, Optional, Iterable
+from typing import Any, Optional, Iterable, Tuple
 
 # Third-Party Packages #
 
@@ -117,6 +117,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         _exclude_attributes: The names of the attributes to exclude from wrapping.
         _wrapped_attributes: The names of the attributes to wrap.
     """
+
     __original_dir_set: Optional[set[str]] = None
     _get_previous_wrapped: bool = False
     _set_next_wrapped: bool = True
@@ -128,7 +129,12 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
     # Class Methods #
     # Class Construction
     @classmethod
-    def _init_class_(cls) -> None:
+    def _init_class_(
+        cls,
+        name: Optional[str] = None,
+        bases: Optional[Tuple[type, ...]] = None,
+        namespace: Optional[dict[str, Any]] = None,
+    ) -> None:
         """A method that runs after class creation, creating the original dir as a set and sets up wrapping."""
         cls.__original_dir_set = set(dir(cls))
         cls._class_wrapping_setup()
@@ -184,7 +190,9 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         return getattr(getattr(obj, wrap_name), attr_name)
 
     @classmethod
-    def _set_attribute(cls,  obj: Any, wrap_name: str, attr_name: str, value: Any) -> None:
+    def _set_attribute(
+        cls, obj: Any, wrap_name: str, attr_name: str, value: Any
+    ) -> None:
         """Sets an attribute in a wrapped object.
 
         Args:
@@ -226,7 +234,9 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             set_: The wet function for a property object.
             del_: The del function for a property object.
         """
-        store_name = "_" + wrap_name  # The true name of the attribute where the wrapped object is stored.
+        store_name = (
+            "_" + wrap_name
+        )  # The true name of the attribute where the wrapped object is stored.
 
         def get_(obj: Any) -> Any:
             """Gets the wrapped object."""
@@ -276,7 +286,9 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             set_: The wet function for a property object.
             del_: The del function for a property object.
         """
-        store_name = "_" + wrap_name  # The true name of the attribute where the wrapped object is stored.
+        store_name = (
+            "_" + wrap_name
+        )  # The true name of the attribute where the wrapped object is stored.
 
         def get_(obj):
             """Gets the wrapped object's attribute and check the temporary attribute if not."""
@@ -312,14 +324,16 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             try:
                 cls._class_wrap(cls._wrapped_types)
             except IndexError:
-                raise IndexError("_wrapped_types must be the same length as _wrap_attributes")
+                raise IndexError(
+                    "_wrapped_types must be the same length as _wrap_attributes"
+                )
 
     @classmethod
     def _class_wrap(cls, objects: list[Any]) -> None:
         """Adds attributes from embedded objects as properties.
 
-         Args:
-            objects: A list of objects or types this object will wrap. Must be in the same order as _wrap_attributes.
+        Args:
+           objects: A list of objects or types this object will wrap. Must be in the same order as _wrap_attributes.
         """
         if len(objects) != len(cls._wrap_attributes):
             raise IndexError("objects must be the same length as _wrap_attributes")
@@ -365,7 +379,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             # Get object to wrap
             try:
                 obj = getattr(self, name)
-                delattr(self, name)             # Delete attribute to be replaced by property
+                delattr(self, name)  # Delete attribute to be replaced by property
             except AttributeError:
                 continue
 
@@ -446,6 +460,7 @@ class DynamicWrapper(BaseObject):
         _wrap_attributes: The list of attribute names that will contain the objects to dynamically wrap where the order
             is descending inheritance.
     """
+
     _wrap_attributes: list[str] = []
 
     # Magic Methods #

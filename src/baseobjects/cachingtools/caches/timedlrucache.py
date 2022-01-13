@@ -117,7 +117,9 @@ class TimedLRUCache(TimedCache):
                 priority_link = self.priority.last_node
                 old_key = priority_link.key
 
-                item = self.cache_item_type(key=key, result=result, priority_link=priority_link)
+                item = self.cache_item_type(
+                    key=key, result=result, priority_link=priority_link
+                )
                 priority_link.data = item
 
                 del cache_item[old_key]
@@ -129,11 +131,13 @@ class TimedLRUCache(TimedCache):
 
 
 # Functions #
-def timed_lru_cache(maxsize: Optional[int] = None,
-                    typed: bool = False,
-                    lifetime: Optional[float] = None,
-                    call_method: Union[str, Callable] = "cache_call",
-                    collective: bool = True) -> Callable:
+def timed_lru_cache(
+    maxsize: Optional[int] = None,
+    typed: bool = False,
+    lifetime: Union[int, float, None] = None,
+    call_method: Union[str, Callable] = "caching_call",
+    collective: bool = True,
+) -> Callable:
     """A factory to be used a decorator that sets the parameters of timed lru cache function factory.
 
     Args:
@@ -156,8 +160,13 @@ def timed_lru_cache(maxsize: Optional[int] = None,
         Returns:
             The TimeLRUCache object which wraps the given function.
         """
-        return TimedLRUCache(func, maxsize=maxsize, typed=typed, lifetime=lifetime,
-                             call_method=call_method, collective=collective)
+        return TimedLRUCache(
+            func,
+            maxsize=maxsize,
+            typed=typed,
+            lifetime=lifetime,
+            call_method=call_method,
+            collective=collective,
+        )
 
     return timed_lru_cache_factory
-

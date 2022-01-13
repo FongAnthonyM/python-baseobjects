@@ -67,18 +67,21 @@ class TimedCache(BaseTimedCache):
         collective: Determines if the cache is collective for all method bindings or for each instance.
         init: Determines if this object will construct.
     """
+
     priority_queue_type = CircularDoublyLinkedContainer
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self,
-                 func: Optional[Callable] = None,
-                 maxsize: Optional[int] = None,
-                 typed: bool = False,
-                 lifetime: Optional[int, float] = None,
-                 call_method: Union[str, Callable] = "cache_call",
-                 collective: bool = True,
-                 init: bool = True) -> None:
+    def __init__(
+        self,
+        func: Optional[Callable] = None,
+        maxsize: Optional[int] = None,
+        typed: bool = False,
+        lifetime: Union[int, float, None] = None,
+        call_method: Union[str, Callable] = "caching_call",
+        collective: bool = True,
+        init: bool = True,
+    ) -> None:
         # Parent Attributes #
         super().__init__(init=False)
 
@@ -93,8 +96,14 @@ class TimedCache(BaseTimedCache):
 
         # Object Construction #
         if init:
-            self.construct(func=func, lifetime=lifetime, maxsize=maxsize, typed=typed,
-                           call_method=call_method, collective=collective)
+            self.construct(
+                func=func,
+                lifetime=lifetime,
+                maxsize=maxsize,
+                typed=typed,
+                call_method=call_method,
+                collective=collective,
+            )
 
     @property
     def maxsize(self) -> int:
@@ -112,13 +121,15 @@ class TimedCache(BaseTimedCache):
 
     # Instance Methods #
     # Constructors
-    def construct(self,
-                  func: Optional[Callable] = None,
-                  maxsize: Optional[int] = None,
-                  typed: bool = False,
-                  lifetime: Optional[int, float] = None,
-                  call_method: Union[str, Callable] = "cache_call",
-                  collective: bool = True) -> None:
+    def construct(
+        self,
+        func: Optional[Callable] = None,
+        maxsize: Optional[int] = None,
+        typed: bool = False,
+        lifetime: Union[int, float, None] = None,
+        call_method: Union[str, Callable] = "caching_call",
+        collective: bool = True,
+    ) -> None:
         """The constructor for this object.
 
         Args:
@@ -132,15 +143,24 @@ class TimedCache(BaseTimedCache):
         if maxsize is not None:
             self.maxsize = maxsize
 
-        super().construct(func=func, typed=typed, lifetime=lifetime, call_method=call_method, collective=collective)
+        super().construct(
+            func=func,
+            typed=typed,
+            lifetime=lifetime,
+            call_method=call_method,
+            collective=collective,
+        )
 
     # Binding
-    def bind_to_new(self, instance: Any, name: Optional[str] = None) -> "TimedCache":
+    def bind_to_new(
+        self, instance: Any, name: Optional[str] = None, set_attr: bool = True
+    ) -> "TimedCache":
         """Creates a new instance of this object and binds it to another object.
 
         Args:
             instance: The object ot bing this object to.
             name: The name of the attribute this object will bind to in the other object.
+            set_attr: Determines if this object will be set as an attribute in the object.
 
         Returns:
             The new bound deepcopy of this object.
@@ -150,9 +170,15 @@ class TimedCache(BaseTimedCache):
         else:
             call_method = self._call_method
 
-        new_obj = type(self)(func=self.__func__, maxsize=self.maxsize, typed=self.typed, lifetime=self.lifetime,
-                             call_method=call_method, collective=self._is_collective)
-        new_obj.bind(instance, name=name)
+        new_obj = type(self)(
+            func=self.__func__,
+            maxsize=self.maxsize,
+            typed=self.typed,
+            lifetime=self.lifetime,
+            call_method=call_method,
+            collective=self._is_collective,
+        )
+        new_obj.bind(instance=instance, name=name, set_attr=set_attr)
         return new_obj
 
     # Caching
@@ -229,11 +255,13 @@ class TimedCache(BaseTimedCache):
 
 
 # Functions #
-def timed_cache(maxsize: Optional[int] = None,
-                typed: bool = False,
-                lifetime: Optional[float] = None,
-                call_method: Union[str, Callable] = "cache_call",
-                collective: bool = True) -> Callable:
+def timed_cache(
+    maxsize: Optional[int] = None,
+    typed: bool = False,
+    lifetime: Union[int, float, None] = None,
+    call_method: Union[str, Callable] = "caching_call",
+    collective: bool = True,
+) -> Callable:
     """A factory to be used a decorator that sets the parameters of timed cache function factory.
 
     Args:
@@ -256,7 +284,13 @@ def timed_cache(maxsize: Optional[int] = None,
         Returns:
             The TimeCache object which wraps the given function.
         """
-        return TimedCache(func, maxsize=maxsize, typed=typed, lifetime=lifetime,
-                          call_method=call_method, collective=collective)
+        return TimedCache(
+            func,
+            maxsize=maxsize,
+            typed=typed,
+            lifetime=lifetime,
+            call_method=call_method,
+            collective=collective,
+        )
 
     return timed_cache_factory

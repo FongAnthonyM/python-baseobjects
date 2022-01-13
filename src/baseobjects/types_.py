@@ -24,4 +24,6 @@ from typing import Any, Callable, Tuple
 
 # Definitions #
 # Types #
-PropertyCallbacks = Tuple[Callable[[Any], Any], Callable[[Any, Any], None], Callable[[Any], None]]
+PropertyCallbacks = Tuple[
+    Callable[[Any], Any], Callable[[Any, Any], None], Callable[[Any], None]
+]
