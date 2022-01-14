@@ -137,9 +137,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
 
         return self._caches
 
-    def enable_caching(
-        self, exclude: Optional[set] = None, get_caches: bool = False
-    ) -> None:
+    def enable_caching(self, exclude: Optional[set] = None, get_caches: bool = False) -> None:
         """Enables all caches to cache.
 
         Args:
@@ -160,9 +158,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         for name in caches:
             getattr(self, name).set_caching_method()
 
-    def disable_caching(
-        self, exclude: Optional[set] = None, get_caches: bool = False
-    ) -> None:
+    def disable_caching(self, exclude: Optional[set] = None, get_caches: bool = False) -> None:
         """Disables all caches to cache.
 
         Args:
@@ -183,9 +179,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         for name in caches:
             getattr(self, name).set_caching_method(method="no_cache")
 
-    def timeless_caching(
-        self, exclude: Optional[set] = None, get_caches: bool = False
-    ) -> None:
+    def timeless_caching(self, exclude: Optional[set] = None, get_caches: bool = False) -> None:
         """Sets all caches to have no expiration time.
 
         Args:
@@ -206,9 +200,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         for name in caches:
             getattr(self, name).is_timed = False
 
-    def timed_caching(
-        self, exclude: Optional[set] = None, get_caches: bool = False
-    ) -> None:
+    def timed_caching(self, exclude: Optional[set] = None, get_caches: bool = False) -> None:
         """Sets all caches to have an expiration time.
 
         Args:
@@ -229,9 +221,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         for name in caches:
             getattr(self, name).is_timed = True
 
-    def clear_caches(
-        self, exclude: Optional[set] = None, get_caches: bool = False
-    ) -> None:
+    def clear_caches(self, exclude: Optional[set] = None, get_caches: bool = False) -> None:
         """Clears all caches in this object.
 
         Args:

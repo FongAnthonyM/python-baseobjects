@@ -15,7 +15,7 @@ __email__ = __email__
 
 # Imports #
 # Default Libraries #
-from typing import Any, Callable, Tuple
+from typing import Any, Callable
 
 # Downloaded Libraries #
 
@@ -24,6 +24,4 @@ from typing import Any, Callable, Tuple
 
 # Definitions #
 # Types #
-PropertyCallbacks = Tuple[
-    Callable[[Any], Any], Callable[[Any, Any], None], Callable[[Any], None]
-]
+PropertyCallbacks = tuple[Callable[[Any], Any], Callable[[Any, Any], None], Callable[[Any], None]]

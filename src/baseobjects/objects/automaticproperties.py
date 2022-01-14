@@ -123,9 +123,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
     # Property Constructors
     @classmethod
-    def _iterable_to_properties(
-        cls, iter_: Iterable, callback_factory: Callable
-    ) -> None:
+    def _iterable_to_properties(cls, iter_: Iterable, callback_factory: Callable) -> None:
         """Create properties for this class based on an iterable where the items are the property names.
 
         Args:

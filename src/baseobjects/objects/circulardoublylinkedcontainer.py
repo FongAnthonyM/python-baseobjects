@@ -109,9 +109,7 @@ class CircularDoublyLinkedContainer(BaseObject):
         """The last node in this container."""
         return self.first_node.previous
 
-    def __deepcopy__(
-        self, memo: Optional[dict] = None, _nil=[]
-    ) -> "CircularDoublyLinkedContainer":
+    def __deepcopy__(self, memo: Optional[dict] = None, _nil=[]) -> "CircularDoublyLinkedContainer":
         """Creates a deep copy of this object.
 
         Args:

@@ -36,9 +36,7 @@ class InitMeta(BaseMeta):
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(
-        cls, name: str, bases: tuple[Any, ...], namespace: dict[str, Any]
-    ) -> None:
+    def __init__(cls, name: str, bases: tuple[Any, ...], namespace: dict[str, Any]) -> None:
         super().__init__(name, bases, namespace)
         cls._init_class_(name=name, bases=bases, namespace=namespace)
 

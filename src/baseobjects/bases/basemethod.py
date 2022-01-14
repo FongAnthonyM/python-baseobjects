@@ -189,9 +189,7 @@ class BaseMethod(BaseObject):
             setattr(instance, self.__func__.__name__, bound)
             return bound
 
-    def get_subinstance(
-        self, instance: Any, owner: Optional[Any] = None
-    ) -> "BaseMethod":
+    def get_subinstance(self, instance: Any, owner: Optional[Any] = None) -> "BaseMethod":
         """The __get__ method where it binds a registered copy to the other object.
 
         Args:
@@ -211,7 +209,10 @@ class BaseMethod(BaseObject):
 
     # Binding
     def bind(
-        self, instance: Any, name: Optional[str] = None, set_attr: bool = True
+        self,
+        instance: Any,
+        name: Optional[str] = None,
+        set_attr: bool = True
     ) -> None:
         """Binds this object to another object to give this object method functionality.
 
@@ -227,7 +228,10 @@ class BaseMethod(BaseObject):
             setattr(instance, self.__func__.__name__, self)
 
     def bind_to_new(
-        self, instance: Any, name: Optional[str] = None, set_attr: bool = True
+        self,
+        instance: Any,
+        name: Optional[str] = None,
+        set_attr: bool = True
     ) -> Any:
         """Creates a new instance of this object and binds it to another object.
 

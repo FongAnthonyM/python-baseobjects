@@ -153,7 +153,10 @@ class TimedCache(BaseTimedCache):
 
     # Binding
     def bind_to_new(
-        self, instance: Any, name: Optional[str] = None, set_attr: bool = True
+        self,
+        instance: Any,
+        name: Optional[str] = None,
+        set_attr: bool = True
     ) -> "TimedCache":
         """Creates a new instance of this object and binds it to another object.
 
