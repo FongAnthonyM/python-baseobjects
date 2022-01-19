@@ -15,7 +15,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from functools import update_wrapper
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable
 
 # Third-Party Packages #
 
@@ -50,16 +50,16 @@ class BaseMethod(BaseObject):
     # Construction/Destruction
     def __init__(
         self,
-        func: Optional[Callable] = None,
-        get_method: Union[Callable, str, None] = None,
-        init: Optional[bool] = True,
+        func: Callable | None = None,
+        get_method: Callable | str | None = None,
+        init: bool | None = True,
     ):
         # Special Attributes #
-        self.__func__: Optional[Callable] = None
+        self.__func__: Callable | None = None
         self.__self__: Any = None
 
         # Attributes #
-        self._selected_get_method: Union[str, Callable] = "get_self_bind"
+        self._selected_get_method: Callable | str = "get_self_bind"
         self._get_method_: Callable = self.get_self_bind
         self._instances: dict = {}
 
@@ -76,11 +76,11 @@ class BaseMethod(BaseObject):
         return self._get_method_
 
     @_get_method.setter
-    def _get_method(self, value: Union[Callable, str]) -> None:
+    def _get_method(self, value: Callable | str) -> None:
         self.set_get_method(value)
 
     # Descriptors
-    def __get__(self, instance: Any, owner: Optional[Any] = None) -> "BaseMethod":
+    def __get__(self, instance: Any, owner: Any | None = None) -> "BaseMethod":
         """When this object is requested by another object as an attribute.
 
         Args:
@@ -109,8 +109,8 @@ class BaseMethod(BaseObject):
     # Constructors/Destructors
     def construct(
         self,
-        func: Optional[Callable] = None,
-        get_method: Union[Callable, str, None] = None,
+        func: Callable | None = None,
+        get_method: Callable | str | None = None,
     ) -> None:
         """The constructor for this object.
 
@@ -126,7 +126,7 @@ class BaseMethod(BaseObject):
             self.set_get_method(get_method)
 
     # Descriptor
-    def set_get_method(self, method: Union[Callable, str]) -> None:
+    def set_get_method(self, method: Callable | str) -> None:
         """Sets the __get__ method to another function or a method within this object can be given to select it.
 
         Args:
@@ -139,7 +139,7 @@ class BaseMethod(BaseObject):
 
         self._get_method_ = method
 
-    def get_self(self, instance: Any, owner: Optional[Any] = None) -> "BaseMethod":
+    def get_self(self, instance: Any, owner: Any | None = None) -> "BaseMethod":
         """The __get__ method where it returns itself.
 
         Args:
@@ -151,7 +151,7 @@ class BaseMethod(BaseObject):
         """
         return self
 
-    def get_self_bind(self, instance: Any, owner: Optional[Any] = None) -> "BaseMethod":
+    def get_self_bind(self, instance: Any, owner: Any | None = None) -> "BaseMethod":
         """The __get__ method where it binds itself to the other object.
 
         Args:
@@ -168,7 +168,7 @@ class BaseMethod(BaseObject):
     def get_new_bind(
         self,
         instance: Any,
-        owner: Optional[Any] = None,
+        owner: Any | None = None,
         new_binding: str = "get_self_bind",
     ) -> "BaseMethod":
         """The __get__ method where it binds a new copy to the other object.
@@ -189,7 +189,7 @@ class BaseMethod(BaseObject):
             setattr(instance, self.__func__.__name__, bound)
             return bound
 
-    def get_subinstance(self, instance: Any, owner: Optional[Any] = None) -> "BaseMethod":
+    def get_subinstance(self, instance: Any, owner: Any | None = None) -> "BaseMethod":
         """The __get__ method where it binds a registered copy to the other object.
 
         Args:
@@ -211,7 +211,7 @@ class BaseMethod(BaseObject):
     def bind(
         self,
         instance: Any,
-        name: Optional[str] = None,
+        name: str | None = None,
         set_attr: bool = True
     ) -> None:
         """Binds this object to another object to give this object method functionality.
@@ -230,7 +230,7 @@ class BaseMethod(BaseObject):
     def bind_to_new(
         self,
         instance: Any,
-        name: Optional[str] = None,
+        name: str | None = None,
         set_attr: bool = True
     ) -> Any:
         """Creates a new instance of this object and binds it to another object.

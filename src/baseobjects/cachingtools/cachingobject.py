@@ -15,7 +15,7 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable
 
 # Third-Party Packages #
 
@@ -137,7 +137,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
 
         return self._caches
 
-    def enable_caching(self, exclude: Optional[set] = None, get_caches: bool = False) -> None:
+    def enable_caching(self, exclude: set | None = None, get_caches: bool = False) -> None:
         """Enables all caches to cache.
 
         Args:
@@ -158,7 +158,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         for name in caches:
             getattr(self, name).set_caching_method()
 
-    def disable_caching(self, exclude: Optional[set] = None, get_caches: bool = False) -> None:
+    def disable_caching(self, exclude: set | None = None, get_caches: bool = False) -> None:
         """Disables all caches to cache.
 
         Args:
@@ -179,7 +179,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         for name in caches:
             getattr(self, name).set_caching_method(method="no_cache")
 
-    def timeless_caching(self, exclude: Optional[set] = None, get_caches: bool = False) -> None:
+    def timeless_caching(self, exclude: set | None = None, get_caches: bool = False) -> None:
         """Sets all caches to have no expiration time.
 
         Args:
@@ -200,7 +200,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         for name in caches:
             getattr(self, name).is_timed = False
 
-    def timed_caching(self, exclude: Optional[set] = None, get_caches: bool = False) -> None:
+    def timed_caching(self, exclude: set | None = None, get_caches: bool = False) -> None:
         """Sets all caches to have an expiration time.
 
         Args:
@@ -221,7 +221,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         for name in caches:
             getattr(self, name).is_timed = True
 
-    def clear_caches(self, exclude: Optional[set] = None, get_caches: bool = False) -> None:
+    def clear_caches(self, exclude: set | None = None, get_caches: bool = False) -> None:
         """Clears all caches in this object.
 
         Args:
@@ -246,8 +246,8 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
 # Functions #
 def timed_single_cache_method(
     typed: bool = False,
-    lifetime: Optional[float] = None,
-    call_method: Union[str, Callable] = "caching_call",
+    lifetime: int | float | None = None,
+    call_method: Callable | str = "caching_call",
     collective: bool = True,
 ) -> Callable:
     """A factory to be used a decorator that sets the parameters of timed single cache method factory.
@@ -284,8 +284,8 @@ def timed_single_cache_method(
 
 def timed_keyless_cache_method(
     typed: bool = False,
-    lifetime: Optional[float] = None,
-    call_method: Union[str, Callable] = "caching_call",
+    lifetime: int | float | None = None,
+    call_method: Callable | str = "caching_call",
     collective: bool = True,
 ) -> Callable:
     """A factory to be used a decorator that sets the parameters of timed keyless cache method factory.
@@ -321,10 +321,10 @@ def timed_keyless_cache_method(
 
 
 def timed_cache_method(
-    maxsize: Optional[int] = None,
+    maxsize: int | None = None,
     typed: bool = False,
-    lifetime: Optional[float] = None,
-    call_method: Union[str, Callable] = "caching_call",
+    lifetime: int | float | None = None,
+    call_method: Callable | str = "caching_call",
     collective: bool = True,
 ) -> Callable:
     """A factory to be used a decorator that sets the parameters of timed cache method factory.

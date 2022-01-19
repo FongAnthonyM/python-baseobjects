@@ -15,7 +15,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from time import perf_counter
-from typing import Any, Callable, Hashable, Optional, Union
+from typing import Any, Callable, Hashable
 
 # Third-Party Packages #
 
@@ -65,10 +65,10 @@ class TimedSingleCache(BaseTimedCache):
     # Construction/Destruction
     def __init__(
         self,
-        func: Optional[Callable] = None,
+        func: Callable | None = None,
         typed: bool = False,
-        lifetime: Union[int, float, None] = None,
-        call_method: Union[str, Callable] = "caching_call",
+        lifetime: int | float | None = None,
+        call_method: Callable | str = "caching_call",
         collective: bool = True,
         init: bool = True,
     ) -> None:
@@ -79,7 +79,7 @@ class TimedSingleCache(BaseTimedCache):
         self._caching_method: Callable = self.caching
 
         # New Attributes #
-        self.args_key: Optional[Hashable] = None
+        self.args_key: Hashable | None = None
 
         # Object Construction #
         if init:
@@ -121,8 +121,8 @@ class TimedSingleCache(BaseTimedCache):
 # Functions #
 def timed_single_cache(
     typed: bool = False,
-    lifetime: Union[int, float, None] = None,
-    call_method: Union[str, Callable] = "caching_call",
+    lifetime: int | float | None = None,
+    call_method: Callable | str = "caching_call",
     collective: bool = True,
 ) -> Callable:
     """A factory to be used a decorator that sets the parameters of timed single cache function factory.

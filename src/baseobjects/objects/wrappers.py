@@ -42,7 +42,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from builtins import property
-from typing import Any, Optional, Iterable, Tuple
+from typing import Any, Iterable
 
 # Third-Party Packages #
 
@@ -118,7 +118,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         _wrapped_attributes: The names of the attributes to wrap.
     """
 
-    __original_dir_set: Optional[set[str]] = None
+    __original_dir_set: set[str] | None = None
     _get_previous_wrapped: bool = False
     _set_next_wrapped: bool = True
     _wrapped_types: list[Any] = []
@@ -131,9 +131,9 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
     @classmethod
     def _init_class_(
         cls,
-        name: Optional[str] = None,
-        bases: Optional[Tuple[type, ...]] = None,
-        namespace: Optional[dict[str, Any]] = None,
+        name: str | None = None,
+        bases: tuple[Any, ...] | None = None,
+        namespace: dict[str, Any] | None = None,
     ) -> None:
         """A method that runs after class creation, creating the original dir as a set and sets up wrapping."""
         cls.__original_dir_set = set(dir(cls))

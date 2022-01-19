@@ -15,7 +15,7 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
-from typing import Any, Optional
+from typing import Any
 
 # Third-Party Packages #
 
@@ -42,8 +42,8 @@ class InitMeta(BaseMeta):
 
     def _init_class_(
         cls,
-        name: Optional[str] = None,
-        bases: Optional[tuple[Any, ...]] = None,
-        namespace: Optional[dict[str, Any]] = None,
+        name: str | None = None,
+        bases: tuple[Any, ...] | None = None,
+        namespace: dict[str, Any] | None = None,
     ) -> None:
         pass

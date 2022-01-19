@@ -18,7 +18,7 @@ __email__ = __email__
 # Standard Libraries #
 import copy
 from functools import singledispatchmethod
-from typing import Any, Optional
+from typing import Any
 
 # Third-Party Packages #
 
@@ -48,16 +48,16 @@ class LinkedNode(BaseObject):
     # Construction/Destruction
     def __init__(
         self,
-        data: Optional[Any] = None,
-        previous: Optional["LinkedNode"] = None,
-        next_: Optional["LinkedNode"] = None,
+        data: Any | None = None,
+        previous: "LinkedNode" | None = None,
+        next_: "LinkedNode" | None = None,
         init: bool = True,
     ) -> None:
         # Attributes #
         self.previous: "LinkedNode" = self
         self.next: "LinkedNode" = self
 
-        self.data: Optional[Any] = None
+        self.data: Any | None = None
 
         # Object Construction #
         if init:
@@ -67,9 +67,9 @@ class LinkedNode(BaseObject):
     # Constructors
     def construct(
         self,
-        data: Optional[Any] = None,
-        previous: Optional["LinkedNode"] = None,
-        next_: Optional["LinkedNode"] = None,
+        data: Any | None = None,
+        previous: "LinkedNode" | None = None,
+        next_: "LinkedNode" | None = None,
     ) -> None:
         """Constructs this object.
 
@@ -97,7 +97,7 @@ class CircularDoublyLinkedContainer(BaseObject):
     # Construction/Destruction
     def __init__(self) -> None:
         # Attributes #
-        self.first_node: Optional[LinkedNode] = None
+        self.first_node: LinkedNode | None = None
 
     @property
     def is_empty(self) -> bool:
@@ -109,7 +109,7 @@ class CircularDoublyLinkedContainer(BaseObject):
         """The last node in this container."""
         return self.first_node.previous
 
-    def __deepcopy__(self, memo: Optional[dict] = None, _nil=[]) -> "CircularDoublyLinkedContainer":
+    def __deepcopy__(self, memo: dict | None = None, _nil=[]) -> "CircularDoublyLinkedContainer":
         """Creates a deep copy of this object.
 
         Args:

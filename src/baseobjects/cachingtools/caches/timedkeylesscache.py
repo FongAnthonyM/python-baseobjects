@@ -15,7 +15,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from time import perf_counter
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable
 
 # Third-Party Packages #
 
@@ -65,10 +65,10 @@ class TimedKeylessCache(TimedSingleCache):
     # Construction/Destruction
     def __init__(
         self,
-        func: Optional[Callable] = None,
+        func: Callable | None = None,
         typed: bool = False,
-        lifetime: Union[int, float, None] = None,
-        call_method: Union[str, Callable] = "caching_call",
+        lifetime: int | float | None = None,
+        call_method: Callable | str = "caching_call",
         collective: bool = True,
         init: bool = True,
     ) -> None:
@@ -117,8 +117,8 @@ class TimedKeylessCache(TimedSingleCache):
 # Functions #
 def timed_keyless_cache(
     typed: bool = False,
-    lifetime: Union[int, float, None] = None,
-    call_method: Union[str, Callable] = "caching_call",
+    lifetime: int | float | None = None,
+    call_method: Callable | str = "caching_call",
     collective: bool = True,
 ) -> Callable:
     """A factory to be used a decorator that sets the parameters of timed keyless cache function factory.

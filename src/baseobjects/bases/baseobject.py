@@ -26,7 +26,6 @@ from copy import (
     Error,
 )
 from copyreg import dispatch_table
-from typing import Optional
 
 # Third-Party Packages #
 
@@ -74,7 +73,7 @@ class BaseObject(ABC):
             return self
         return _reconstruct(self, None, *rv)
 
-    def __deepcopy__(self, memo: Optional[dict] = None, _nil=[]) -> "BaseObject":
+    def __deepcopy__(self, memo: dict | None = None, _nil=[]) -> "BaseObject":
         """The deepcopy magic method based on python's deepcopy function.
 
         Args:
@@ -137,7 +136,7 @@ class BaseObject(ABC):
         """
         return self.__copy__()
 
-    def deepcopy(self, memo: Optional[dict] = None) -> "BaseObject":
+    def deepcopy(self, memo: dict | None = None) -> "BaseObject":
         """Creates a deep copy of this object.
 
         Args:

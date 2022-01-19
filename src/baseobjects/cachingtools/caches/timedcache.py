@@ -16,7 +16,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from time import perf_counter
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable
 
 # Third-Party Packages #
 
@@ -74,11 +74,11 @@ class TimedCache(BaseTimedCache):
     # Construction/Destruction
     def __init__(
         self,
-        func: Optional[Callable] = None,
-        maxsize: Optional[int] = None,
+        func: Callable | None = None,
+        maxsize: int | None = None,
         typed: bool = False,
-        lifetime: Union[int, float, None] = None,
-        call_method: Union[str, Callable] = "caching_call",
+        lifetime: int | float | None = None,
+        call_method: Callable | str = "caching_call",
         collective: bool = True,
         init: bool = True,
     ) -> None:
@@ -90,7 +90,7 @@ class TimedCache(BaseTimedCache):
         self._caching_method: Callable = self.unlimited_cache
 
         # New Attributes #
-        self._maxsize: Optional[int] = None
+        self._maxsize: int | None = None
 
         self.priority: Any = self.priority_queue_type()
 
@@ -123,11 +123,11 @@ class TimedCache(BaseTimedCache):
     # Constructors
     def construct(
         self,
-        func: Optional[Callable] = None,
-        maxsize: Optional[int] = None,
+        func: Callable | None = None,
+        maxsize: int | None = None,
         typed: bool = False,
-        lifetime: Union[int, float, None] = None,
-        call_method: Union[str, Callable] = "caching_call",
+        lifetime: int | float | None = None,
+        call_method: Callable | str = "caching_call",
         collective: bool = True,
     ) -> None:
         """The constructor for this object.
@@ -155,7 +155,7 @@ class TimedCache(BaseTimedCache):
     def bind_to_new(
         self,
         instance: Any,
-        name: Optional[str] = None,
+        name: str | None = None,
         set_attr: bool = True
     ) -> "TimedCache":
         """Creates a new instance of this object and binds it to another object.
@@ -259,10 +259,10 @@ class TimedCache(BaseTimedCache):
 
 # Functions #
 def timed_cache(
-    maxsize: Optional[int] = None,
+    maxsize: int | None = None,
     typed: bool = False,
-    lifetime: Union[int, float, None] = None,
-    call_method: Union[str, Callable] = "caching_call",
+    lifetime: int | float | None = None,
+    call_method: Callable | str = "caching_call",
     collective: bool = True,
 ) -> Callable:
     """A factory to be used a decorator that sets the parameters of timed cache function factory.

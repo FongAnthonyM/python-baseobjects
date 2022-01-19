@@ -17,7 +17,6 @@ __email__ = __email__
 from collections import UserDict
 from contextlib import contextmanager
 from time import perf_counter
-from typing import Optional
 
 # Third-Party Packages #
 
@@ -44,11 +43,11 @@ class TimedDict(UserDict, BaseObject):
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, dict_: Optional[dict] = None, /, **kwargs) -> None:
+    def __init__(self, dict_: dict | None = None, /, **kwargs) -> None:
         # Attributes #
         self.is_timed: bool = True
-        self.lifetime: Optional[float, int] = None
-        self.expiration: Optional[float, int] = None
+        self.lifetime: int | float | None = None
+        self.expiration: int | float | None = None
 
         self._data: dict = {}
 

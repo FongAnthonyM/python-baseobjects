@@ -16,7 +16,7 @@ __email__ = __email__
 # Standard Libraries #
 import abc
 from time import perf_counter
-from typing import Any, Callable, Hashable, Iterable, Optional, Union
+from typing import Any, Callable, Hashable, Iterable
 
 # Third-Party Packages #
 
@@ -72,9 +72,9 @@ class CacheItem(BaseObject):
     # Construction/Destruction
     def __init__(
         self,
-        key: Optional[Hashable] = None,
-        result: Optional[Any] = None,
-        priority_link: Optional[Any] = None,
+        key: Hashable | None = None,
+        result: Any | None = None,
+        priority_link: Any | None = None,
     ) -> None:
         # Attributes #
         self.priority_link = priority_link
@@ -123,10 +123,10 @@ class BaseTimedCache(BaseMethod):
     # Construction/Destruction
     def __init__(
         self,
-        func: Optional[Callable] = None,
+        func: Callable | None = None,
         typed: bool = False,
-        lifetime: Union[int, float, None] = None,
-        call_method: Union[str, Callable] = "caching_call",
+        lifetime: int | float | None = None,
+        call_method: Callable | str = "caching_call",
         collective: bool = True,
         init: bool = True,
     ) -> None:
@@ -138,14 +138,14 @@ class BaseTimedCache(BaseMethod):
 
         self.typed: bool = False
         self.is_timed: bool = True
-        self.lifetime: Optional[int, float] = None
-        self.expiration: Optional[float] = None
+        self.lifetime: int | float | None = None
+        self.expiration: int | float | None = None
 
         self.cache: Any = None
         self._defualt_caching_method: Callable = self.no_cache
         self._caching_method: Callable = self.no_cache
 
-        self._call_method: Optional[Callable] = None
+        self._call_method: Callable | None = None
 
         # Object Construction #
         if init:
@@ -182,7 +182,7 @@ class BaseTimedCache(BaseMethod):
         return self._caching_method
 
     @caching_method.setter
-    def caching_method(self, value: Union[str, Callable]) -> None:
+    def caching_method(self, value: Callable | str) -> None:
         self.set_caching_method(value)
 
     @property
@@ -194,7 +194,7 @@ class BaseTimedCache(BaseMethod):
         return self._call_method
 
     @call_method.setter
-    def call_method(self, value: Union[str, Callable]) -> None:
+    def call_method(self, value: Callable | str) -> None:
         self.set_call_method(value)
 
     # Callable
@@ -214,10 +214,10 @@ class BaseTimedCache(BaseMethod):
     # Constructors
     def construct(
         self,
-        func: Optional[Callable] = None,
+        func: Callable | None = None,
         typed: bool = False,
-        lifetime: Union[int, float, None] = None,
-        call_method: Union[str, Callable] = "caching_call",
+        lifetime: int | float | None = None,
+        call_method: Callable | str = "caching_call",
         collective: bool = True,
     ) -> None:
         """The constructor for this object.
@@ -248,8 +248,8 @@ class BaseTimedCache(BaseMethod):
     def get_new_bind(
         self,
         instance: Any,
-        owner: Optional[Any] = None,
-        new_binding: Union[str, Callable] = "get_self",
+        owner: Any | None = None,
+        new_binding: Callable | None = "get_self",
     ) -> BaseMethod:
         """The __get__ method where it binds a new copy to the other object. Changed the default parameter.
 
@@ -264,7 +264,7 @@ class BaseTimedCache(BaseMethod):
         return super().get_new_bind(instance, owner=owner, new_binding=new_binding)
 
     # Object Calling
-    def set_call_method(self, method: Union[str, Callable]) -> None:
+    def set_call_method(self, method: Callable | str) -> None:
         """Sets the call method to another function or a method within this object can be given to select it.
 
         Args:
@@ -326,7 +326,7 @@ class BaseTimedCache(BaseMethod):
     def bind_to_new(
         self,
         instance: Any,
-        name: Optional[str] = None,
+        name: str | None = None,
         set_attr: bool = True
     ) -> "BaseTimedCache":
         """Creates a new instance of this object and binds it to another object.
@@ -405,7 +405,7 @@ class BaseTimedCache(BaseMethod):
         """
         return self.__func__(*args, **kwargs)
 
-    def set_caching_method(self, method: Union[str, Callable, None] = None) -> None:
+    def set_caching_method(self, method: Callable | str | None = None) -> None:
         """Sets the caching method to another function or a method within this object can be given to select it.
 
         Args:

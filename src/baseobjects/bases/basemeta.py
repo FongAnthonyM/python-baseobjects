@@ -26,7 +26,6 @@ from copy import (
     Error,
 )
 from copyreg import dispatch_table
-from typing import Optional
 
 # Third-Party Packages #
 
@@ -74,7 +73,7 @@ class BaseMeta(ABCMeta):
             return self
         return _reconstruct(self, None, *rv)
 
-    def __deepcopy__(self, memo: Optional[dict] = None, _nil=[]) -> "BaseMeta":
+    def __deepcopy__(self, memo: dict | None = None, _nil=[]) -> "BaseMeta":
         """The deepcopy magic method based on python's deepcopy function.
 
         Args:

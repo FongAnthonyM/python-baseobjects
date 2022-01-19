@@ -17,7 +17,7 @@ __email__ = __email__
 # Standard Libraries #
 from abc import abstractmethod
 from builtins import property
-from typing import Any, Callable, Iterable, Optional, Tuple
+from typing import Any, Callable, Iterable
 
 # Third-Party Packages #
 
@@ -43,9 +43,9 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
     @classmethod
     def _init_class_(
         cls,
-        name: Optional[str] = None,
-        bases: Optional[Tuple[type, ...]] = None,
-        namespace: Optional[dict[str, Any]] = None,
+        name: str | None = None,
+        bases: tuple[Any, ...] | None = None,
+        namespace: dict[str, Any] | None = None,
     ) -> None:
         """A method that runs after class creation, creating the properties for this class.
 
@@ -158,7 +158,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
     # Properties Constructor
     @classmethod
-    def _construct_properties(cls, map_: Optional[list] = None) -> None:
+    def _construct_properties(cls, map_: list | None = None) -> None:
         """Constructs all properties from a list which maps the properties and their functionality.
 
         Args:

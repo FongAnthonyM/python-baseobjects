@@ -14,7 +14,7 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
-from typing import Any, Tuple
+from typing import Any
 
 # Third-Party Packages #
 
@@ -39,7 +39,7 @@ class CachingObjectMeta(BaseMeta):
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(cls, name: str, bases: Tuple[type, ...], namespace: dict[str, Any]) -> None:
+    def __init__(cls, name: str, bases: tuple[Any, ...], namespace: dict[str, Any]) -> None:
         super().__init__(name, bases, namespace)
         if hasattr(cls, "_caches_"):
             cls._caches_ = cls._caches_.copy()
