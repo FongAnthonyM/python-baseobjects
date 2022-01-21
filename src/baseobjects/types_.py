@@ -32,7 +32,7 @@ AnyCallable = Callable[..., Any]
 GetObjectMethod = Callable[[Any, Any, type[Any] | None, ...], "BaseMethod"]
 
 # Getters, Setters, and Deletes
-GetterMethod = Callable[Any, Any]
+GetterMethod = Callable[[Any], Any]
 SetterMethod = Callable[[Any, str], None]
-DeleteMethod = Callable[Any, None]
+DeleteMethod = Callable[[Any], None]
 PropertyCallbacks = tuple[GetterMethod, SetterMethod, DeleteMethod]

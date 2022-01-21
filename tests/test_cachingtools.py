@@ -43,9 +43,7 @@ class TestCachingObject(ClassTest):
         def proxy(self):
             return self.get_proxy.caching_call()
 
-        @timed_keyless_cache_method(
-            lifetime=2, call_method="clearing_call", collective=False
-        )
+        @timed_keyless_cache_method(lifetime=2, call_method="clearing_call", collective=False)
         def get_proxy(self):
             return datetime.datetime.now()
 

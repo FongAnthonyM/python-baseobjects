@@ -75,21 +75,11 @@ class BaseWrapperTest(ClassPerformanceTest):
         def old_access():
             getattr(normal, "four")
 
-        mean_new = (
-            timeit.timeit(new_access, number=self.timeit_runs)
-            / self.timeit_runs
-            * 1000000
-        )
-        mean_old = (
-            timeit.timeit(old_access, number=self.timeit_runs)
-            / self.timeit_runs
-            * 1000000
-        )
+        mean_new = timeit.timeit(new_access, number=self.timeit_runs) / self.timeit_runs * 1000000
+        mean_old = timeit.timeit(old_access, number=self.timeit_runs) / self.timeit_runs * 1000000
         percent = (mean_new / mean_old) * 100
 
-        print(
-            f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function."
-        )
+        print(f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function.")
         assert percent < self.speed_tolerance
 
     @pytest.mark.xfail
@@ -102,21 +92,11 @@ class BaseWrapperTest(ClassPerformanceTest):
         def old_access():
             getattr(getattr(normal, "_first"), "one")
 
-        mean_new = (
-            timeit.timeit(new_access, number=self.timeit_runs)
-            / self.timeit_runs
-            * 1000000
-        )
-        mean_old = (
-            timeit.timeit(old_access, number=self.timeit_runs)
-            / self.timeit_runs
-            * 1000000
-        )
+        mean_new = timeit.timeit(new_access, number=self.timeit_runs) / self.timeit_runs * 1000000
+        mean_old = timeit.timeit(old_access, number=self.timeit_runs) / self.timeit_runs * 1000000
         percent = (mean_new / mean_old) * 100
 
-        print(
-            f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function."
-        )
+        print(f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function.")
         assert percent < self.speed_tolerance
 
     @pytest.mark.xfail
@@ -129,21 +109,11 @@ class BaseWrapperTest(ClassPerformanceTest):
         def old_access():
             getattr(getattr(normal, "_first"), "one")
 
-        mean_new = (
-            timeit.timeit(new_access, number=self.timeit_runs)
-            / self.timeit_runs
-            * 1000000
-        )
-        mean_old = (
-            timeit.timeit(old_access, number=self.timeit_runs)
-            / self.timeit_runs
-            * 1000000
-        )
+        mean_new = timeit.timeit(new_access, number=self.timeit_runs) / self.timeit_runs * 1000000
+        mean_old = timeit.timeit(old_access, number=self.timeit_runs) / self.timeit_runs * 1000000
         percent = (mean_new / mean_old) * 100
 
-        print(
-            f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function."
-        )
+        print(f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function.")
         assert percent < self.speed_tolerance
 
     @pytest.mark.xfail
@@ -156,21 +126,11 @@ class BaseWrapperTest(ClassPerformanceTest):
         def old_access():
             getattr(normal, "one")
 
-        mean_new = (
-            timeit.timeit(new_access, number=self.timeit_runs)
-            / self.timeit_runs
-            * 1000000
-        )
-        mean_old = (
-            timeit.timeit(old_access, number=self.timeit_runs)
-            / self.timeit_runs
-            * 1000000
-        )
+        mean_new = timeit.timeit(new_access, number=self.timeit_runs) / self.timeit_runs * 1000000
+        mean_old = timeit.timeit(old_access, number=self.timeit_runs) / self.timeit_runs * 1000000
         percent = (mean_new / mean_old) * 100
 
-        print(
-            f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function."
-        )
+        print(f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function.")
         assert percent < self.speed_tolerance
 
 

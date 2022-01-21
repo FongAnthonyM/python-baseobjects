@@ -116,21 +116,11 @@ class TestBaseObject(ClassPerformanceTest):
         def normal_copy():
             copy.copy(normal)
 
-        mean_new = (
-            timeit.timeit(test_object.copy, number=self.timeit_runs)
-            / self.timeit_runs
-            * 1000000
-        )
-        mean_old = (
-            timeit.timeit(normal_copy, number=self.timeit_runs)
-            / self.timeit_runs
-            * 1000000
-        )
+        mean_new = timeit.timeit(test_object.copy, number=self.timeit_runs) / self.timeit_runs * 1000000
+        mean_old = timeit.timeit(normal_copy, number=self.timeit_runs) / self.timeit_runs * 1000000
         percent = (mean_new / mean_old) * 100
 
-        print(
-            f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function."
-        )
+        print(f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function.")
         assert percent < self.speed_tolerance
 
     def test_deepcopy_speed(self, test_object):
@@ -139,21 +129,11 @@ class TestBaseObject(ClassPerformanceTest):
         def normal_deepcopy():
             copy.deepcopy(normal)
 
-        mean_new = (
-            timeit.timeit(test_object.deepcopy, number=self.timeit_runs)
-            / self.timeit_runs
-            * 1000000
-        )
-        mean_old = (
-            timeit.timeit(normal_deepcopy, number=self.timeit_runs)
-            / self.timeit_runs
-            * 1000000
-        )
+        mean_new = timeit.timeit(test_object.deepcopy, number=self.timeit_runs) / self.timeit_runs * 1000000
+        mean_old = timeit.timeit(normal_deepcopy, number=self.timeit_runs) / self.timeit_runs * 1000000
         percent = (mean_new / mean_old) * 100
 
-        print(
-            f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function."
-        )
+        print(f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function.")
         assert percent < self.speed_tolerance
 
 

@@ -138,9 +138,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
     @classmethod
     def _dictionary_to_properties(
-            cls,
-            dict_: dict[str, Any],
-            callback_factory: Callable[Any, PropertyCallbacks]
+        cls, dict_: dict[str, Any], callback_factory: Callable[Any, PropertyCallbacks]
     ) -> None:
         """Create properties for this class based on a dictionary where the keys are the property names.
 

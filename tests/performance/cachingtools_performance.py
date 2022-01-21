@@ -46,9 +46,7 @@ class TestCachingObject(ClassPerformanceTest):
         def proxy(self):
             return self.get_proxy.caching_call()
 
-        @timed_keyless_cache_method(
-            lifetime=2, call_method="clearing_call", collective=False
-        )
+        @timed_keyless_cache_method(lifetime=2, call_method="clearing_call", collective=False)
         def get_proxy(self):
             return datetime.datetime.now()
 
@@ -67,21 +65,11 @@ class TestCachingObject(ClassPerformanceTest):
         def old_access():
             cacher.normal()
 
-        mean_new = (
-            timeit.timeit(new_access, number=self.timeit_runs)
-            / self.timeit_runs
-            * 1000000
-        )
-        mean_old = (
-            timeit.timeit(old_access, number=self.timeit_runs)
-            / self.timeit_runs
-            * 1000000
-        )
+        mean_new = timeit.timeit(new_access, number=self.timeit_runs) / self.timeit_runs * 1000000
+        mean_old = timeit.timeit(old_access, number=self.timeit_runs) / self.timeit_runs * 1000000
         percent = (mean_new / mean_old) * 100
 
-        print(
-            f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function."
-        )
+        print(f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function.")
         assert percent < self.speed_tolerance
 
     def test_cached_speed(self):
@@ -95,21 +83,11 @@ class TestCachingObject(ClassPerformanceTest):
         def old_access():
             cacher.a
 
-        mean_new = (
-            timeit.timeit(new_access, number=self.timeit_runs)
-            / self.timeit_runs
-            * 1000000
-        )
-        mean_old = (
-            timeit.timeit(old_access, number=self.timeit_runs)
-            / self.timeit_runs
-            * 1000000
-        )
+        mean_new = timeit.timeit(new_access, number=self.timeit_runs) / self.timeit_runs * 1000000
+        mean_old = timeit.timeit(old_access, number=self.timeit_runs) / self.timeit_runs * 1000000
         percent = (mean_new / mean_old) * 100
 
-        print(
-            f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function."
-        )
+        print(f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function.")
         assert percent < self.speed_tolerance
 
     def test_cached_profile(self):
@@ -143,21 +121,11 @@ class TestCachingObject(ClassPerformanceTest):
         def old_access():
             x
 
-        mean_new = (
-            timeit.timeit(new_access, number=self.timeit_runs)
-            / self.timeit_runs
-            * 1000000
-        )
-        mean_old = (
-            timeit.timeit(old_access, number=self.timeit_runs)
-            / self.timeit_runs
-            * 1000000
-        )
+        mean_new = timeit.timeit(new_access, number=self.timeit_runs) / self.timeit_runs * 1000000
+        mean_old = timeit.timeit(old_access, number=self.timeit_runs) / self.timeit_runs * 1000000
         percent = (mean_new / mean_old) * 100
 
-        print(
-            f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function."
-        )
+        print(f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function.")
         assert percent < self.speed_tolerance
 
     def test_functool_profile(self):
