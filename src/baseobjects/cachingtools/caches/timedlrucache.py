@@ -15,11 +15,13 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 # Third-Party Packages #
 
 # Local Packages #
+from ...types_ import AnyCallable
 from .timedcache import TimedCache
 
 
@@ -68,7 +70,7 @@ class TimedLRUCache(TimedCache):
 
     # Instance Methods #
     # LRU Caching
-    def unlimited_cache(self, *args, **kwargs) -> Any:
+    def unlimited_cache(self, *args: Any, **kwargs: Any) -> Any:
         """Caching with no limit on items in the cache.
 
         Args:
@@ -91,7 +93,7 @@ class TimedLRUCache(TimedCache):
             item.priority_link = priority_link
             return result
 
-    def limited_cache(self, *args, **kwargs) -> Any:
+    def limited_cache(self, *args: Any, **kwargs: Any) -> Any:
         """Caching that does not cache new results when cache is full.
 
         Args:
@@ -117,9 +119,7 @@ class TimedLRUCache(TimedCache):
                 priority_link = self.priority.last_node
                 old_key = priority_link.key
 
-                item = self.cache_item_type(
-                    key=key, result=result, priority_link=priority_link
-                )
+                item = self.cache_item_type(key=key, result=result, priority_link=priority_link)
                 priority_link.data = item
 
                 del cache_item[old_key]
@@ -135,9 +135,9 @@ def timed_lru_cache(
     maxsize: int | None = None,
     typed: bool = False,
     lifetime: int | float | None = None,
-    call_method: Callable | str = "caching_call",
+    call_method: AnyCallable | str = "caching_call",
     collective: bool = True,
-) -> Callable:
+) -> Callable[[AnyCallable], TimedLRUCache]:
     """A factory to be used a decorator that sets the parameters of timed lru cache function factory.
 
     Args:
@@ -151,7 +151,7 @@ def timed_lru_cache(
         The parameterized timed lru cache function factory.
     """
 
-    def timed_lru_cache_factory(func: Callable) -> TimedLRUCache:
+    def timed_lru_cache_factory(func: AnyCallable) -> TimedLRUCache:
         """A factory for wrapping a function with a TimedLRUCache object.
 
         Args:

@@ -190,9 +190,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         return getattr(getattr(obj, wrap_name), attr_name)
 
     @classmethod
-    def _set_attribute(
-        cls, obj: Any, wrap_name: str, attr_name: str, value: Any
-    ) -> None:
+    def _set_attribute(cls, obj: Any, wrap_name: str, attr_name: str, value: Any) -> None:
         """Sets an attribute in a wrapped object.
 
         Args:
@@ -234,9 +232,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             set_: The wet function for a property object.
             del_: The del function for a property object.
         """
-        store_name = (
-            "_" + wrap_name
-        )  # The true name of the attribute where the wrapped object is stored.
+        store_name = "_" + wrap_name  # The true name of the attribute where the wrapped object is stored.
 
         def get_(obj: Any) -> Any:
             """Gets the wrapped object."""
@@ -286,9 +282,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             set_: The wet function for a property object.
             del_: The del function for a property object.
         """
-        store_name = (
-            "_" + wrap_name
-        )  # The true name of the attribute where the wrapped object is stored.
+        store_name = "_" + wrap_name  # The true name of the attribute where the wrapped object is stored.
 
         def get_(obj):
             """Gets the wrapped object's attribute and check the temporary attribute if not."""
@@ -324,9 +318,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             try:
                 cls._class_wrap(cls._wrapped_types)
             except IndexError:
-                raise IndexError(
-                    "_wrapped_types must be the same length as _wrap_attributes"
-                )
+                raise IndexError("_wrapped_types must be the same length as _wrap_attributes")
 
     @classmethod
     def _class_wrap(cls, objects: list[Any]) -> None:

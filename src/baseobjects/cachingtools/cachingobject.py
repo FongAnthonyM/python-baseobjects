@@ -15,11 +15,13 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 # Third-Party Packages #
 
 # Local Packages #
+from ..types_ import AnyCallable
 from ..bases import BaseObject
 from .metaclasses import CachingObjectMeta
 from .caches import TimedSingleCache, TimedKeylessCache, TimedCache, BaseTimedCache
@@ -32,7 +34,7 @@ class CachingObjectMethod(BaseTimedCache):
 
     # Instance Methods #
     # Object Calling
-    def caching_call(self, *args, **kwargs) -> Any:
+    def caching_call(self, *args: Any, **kwargs: Any) -> Any:
         """Calls the caching function, clears the cache at certain time, and allows the owning object to override.
 
         Args:
@@ -59,7 +61,7 @@ class CachingObjectMethod(BaseTimedCache):
         else:
             return self.__func__(obj, *args, **kwargs)
 
-    def clearing_call(self, *args, **kwargs) -> Any:
+    def clearing_call(self, *args: Any, **kwargs: Any) -> Any:
         """Clears the cache then calls the caching function and allows the owning object to override.
 
         Args:
@@ -249,7 +251,7 @@ def timed_single_cache_method(
     lifetime: int | float | None = None,
     call_method: Callable | str = "caching_call",
     collective: bool = True,
-) -> Callable:
+) -> Callable[[AnyCallable], TimedSingleCacheMethod]:
     """A factory to be used a decorator that sets the parameters of timed single cache method factory.
 
     Args:
@@ -262,7 +264,7 @@ def timed_single_cache_method(
         The parameterized timed single cache method factory.
     """
 
-    def timed_cache_method_factory(func: Callable) -> TimedSingleCacheMethod:
+    def timed_cache_method_factory(func: AnyCallable) -> TimedSingleCacheMethod:
         """A factory for wrapping a method with a TimedSingleCacheMethod object.
 
         Args:
@@ -285,9 +287,9 @@ def timed_single_cache_method(
 def timed_keyless_cache_method(
     typed: bool = False,
     lifetime: int | float | None = None,
-    call_method: Callable | str = "caching_call",
+    call_method: AnyCallable | str = "caching_call",
     collective: bool = True,
-) -> Callable:
+) -> Callable[[AnyCallable], TimedKeylessCacheMethod]:
     """A factory to be used a decorator that sets the parameters of timed keyless cache method factory.
 
     Args:
@@ -300,7 +302,7 @@ def timed_keyless_cache_method(
         The parameterized timed keyless cache method factory.
     """
 
-    def timed_cache_method_factory(func: Callable) -> TimedKeylessCacheMethod:
+    def timed_cache_method_factory(func: AnyCallable) -> TimedKeylessCacheMethod:
         """A factory for wrapping a method with a TimedKeylessCacheMethod object.
 
         Args:
@@ -324,9 +326,9 @@ def timed_cache_method(
     maxsize: int | None = None,
     typed: bool = False,
     lifetime: int | float | None = None,
-    call_method: Callable | str = "caching_call",
+    call_method: AnyCallable | str = "caching_call",
     collective: bool = True,
-) -> Callable:
+) -> Callable[[AnyCallable], TimedCacheMethod]:
     """A factory to be used a decorator that sets the parameters of timed cache method factory.
 
     Args:
@@ -340,7 +342,7 @@ def timed_cache_method(
         The parameterized timed cache method factory.
     """
 
-    def timed_cache_method_factory(func: Callable) -> TimedCacheMethod:
+    def timed_cache_method_factory(func: AnyCallable) -> TimedCacheMethod:
         """A factory for wrapping a method with a TimedCacheMethod object.
 
         Args:

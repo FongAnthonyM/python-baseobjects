@@ -15,7 +15,8 @@ __email__ = __email__
 
 # Imports #
 # Default Libraries #
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 # Downloaded Libraries #
 
@@ -24,4 +25,14 @@ from typing import Any, Callable
 
 # Definitions #
 # Types #
-PropertyCallbacks = tuple[Callable[[Any], Any], Callable[[Any, Any], None], Callable[[Any], None]]
+# Callables
+AnyCallable = Callable[..., Any]
+
+# Objects
+GetObjectMethod = Callable[[Any, Any, type[Any] | None, ...], "BaseMethod"]
+
+# Getters, Setters, and Deletes
+GetterMethod = Callable[Any, Any]
+SetterMethod = Callable[[Any, str], None]
+DeleteMethod = Callable[Any, None]
+PropertyCallbacks = tuple[GetterMethod, SetterMethod, DeleteMethod]

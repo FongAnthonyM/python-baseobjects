@@ -106,11 +106,7 @@ class TimedDict(UserDict, BaseObject):
         Returns:
             bool: Determines if the cache should be cleared.
         """
-        return (
-            self.is_timed
-            and self.lifetime is not None
-            and perf_counter() >= self.expiration
-        )
+        return self.is_timed and self.lifetime is not None and perf_counter() >= self.expiration
 
     def verify(self) -> None:
         """Verifies if the dictionary should be cleared and then clears it."""

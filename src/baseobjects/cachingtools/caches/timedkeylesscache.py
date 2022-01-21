@@ -14,12 +14,14 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
+from collections.abc import Callable
 from time import perf_counter
-from typing import Any, Callable
+from typing import Any
 
 # Third-Party Packages #
 
 # Local Packages #
+from ...types_ import AnyCallable
 from .timedsinglecache import TimedSingleCache
 
 
@@ -65,10 +67,10 @@ class TimedKeylessCache(TimedSingleCache):
     # Construction/Destruction
     def __init__(
         self,
-        func: Callable | None = None,
+        func: AnyCallable | None = None,
         typed: bool = False,
         lifetime: int | float | None = None,
-        call_method: Callable | str = "caching_call",
+        call_method: AnyCallable | str = "caching_call",
         collective: bool = True,
         init: bool = True,
     ) -> None:
@@ -76,7 +78,7 @@ class TimedKeylessCache(TimedSingleCache):
         super().__init__(init=False)
 
         # New Attributes #
-        self.args_key: bool = None
+        self.args_key: bool | None = None
 
         # Object Construction #
         if init:
@@ -90,7 +92,7 @@ class TimedKeylessCache(TimedSingleCache):
 
     # Instance Methods #
     # Caching
-    def caching(self, *args, **kwargs) -> Any:
+    def caching(self, *args: Any, **kwargs: Any) -> Any:
         """Caching with no limit on items in the cache.
 
         Args:
@@ -118,9 +120,9 @@ class TimedKeylessCache(TimedSingleCache):
 def timed_keyless_cache(
     typed: bool = False,
     lifetime: int | float | None = None,
-    call_method: Callable | str = "caching_call",
+    call_method: AnyCallable | str = "caching_call",
     collective: bool = True,
-) -> Callable:
+) -> Callable[[AnyCallable], TimedKeylessCache]:
     """A factory to be used a decorator that sets the parameters of timed keyless cache function factory.
 
     Args:
@@ -133,7 +135,7 @@ def timed_keyless_cache(
         The parameterized timed keyless cache function factory.
     """
 
-    def timed_keyless_cache_factory(func: Callable) -> TimedKeylessCache:
+    def timed_keyless_cache_factory(func: AnyCallable) -> TimedKeylessCache:
         """A factory for wrapping a function with a TimedKeylessCache object.
 
         Args:

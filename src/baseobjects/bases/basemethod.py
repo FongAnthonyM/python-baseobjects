@@ -14,12 +14,13 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
-from functools import update_wrapper
-from typing import Any, Callable
+from functools import update_wrapper, singledispatchmethod
+from typing import Any
 
 # Third-Party Packages #
 
 # Local Packages #
+from ..types_ import AnyCallable, GetObjectMethod
 from .baseobject import BaseObject, search_sentinel
 
 
@@ -50,25 +51,25 @@ class BaseMethod(BaseObject):
     # Construction/Destruction
     def __init__(
         self,
-        func: Callable | None = None,
-        get_method: Callable | str | None = None,
+        func: AnyCallable | None = None,
+        get_method: GetObjectMethod | str | None = None,
         init: bool | None = True,
     ):
         # Special Attributes #
-        self.__func__: Callable | None = None
+        self.__func__: AnyCallable | None = None
         self.__self__: Any = None
 
         # Attributes #
-        self._selected_get_method: Callable | str = "get_self_bind"
-        self._get_method_: Callable = self.get_self_bind
-        self._instances: dict = {}
+        self._selected_get_method: GetObjectMethod | str = "get_self_bind"
+        self._get_method_: GetObjectMethod = self.get_self_bind
+        self._instances: dict[Any, "BaseMethod"] = {}
 
         # Object Construction #
         if init:
             self.construct(func=func, get_method=get_method)
 
     @property
-    def _get_method(self) -> Callable:
+    def _get_method(self) -> GetObjectMethod:
         """The method that will be used for the __get__ method.
 
         When set, any function can be set or the name of a method within this object can be given to select it.
@@ -76,11 +77,11 @@ class BaseMethod(BaseObject):
         return self._get_method_
 
     @_get_method.setter
-    def _get_method(self, value: Callable | str) -> None:
+    def _get_method(self, value: GetObjectMethod | str) -> None:
         self.set_get_method(value)
 
     # Descriptors
-    def __get__(self, instance: Any, owner: Any | None = None) -> "BaseMethod":
+    def __get__(self, instance: Any, owner: type[Any] | None = None) -> "BaseMethod":
         """When this object is requested by another object as an attribute.
 
         Args:
@@ -93,7 +94,7 @@ class BaseMethod(BaseObject):
         return self._get_method_(instance, owner=owner)
 
     # Callable
-    def __call__(self, *args, **kwargs) -> Any:
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
         """The call magic method for this object.
 
         Args:
@@ -109,8 +110,8 @@ class BaseMethod(BaseObject):
     # Constructors/Destructors
     def construct(
         self,
-        func: Callable | None = None,
-        get_method: Callable | str | None = None,
+        func: AnyCallable | None = None,
+        get_method: GetObjectMethod | str | None = None,
     ) -> None:
         """The constructor for this object.
 
@@ -126,20 +127,36 @@ class BaseMethod(BaseObject):
             self.set_get_method(get_method)
 
     # Descriptor
-    def set_get_method(self, method: Callable | str) -> None:
-        """Sets the __get__ method to another function or a method within this object can be given to select it.
+    @singledispatchmethod
+    def set_get_method(self, method: GetObjectMethod | str) -> None:
+        """Sets the __get__ method to another function or a method name within this object can be given to select it.
 
         Args:
-            method: The function or name to set the __get__ method to.
+            method: The function to set the __get__ method to.
+        """
+        raise NotImplementedError(f"A {type(method)} cannot be used to set a {type(self)} get_method.")
+
+    @set_get_method.register
+    def _(self, method: GetObjectMethod) -> None:
+        """Sets the __get__ method to another function.
+
+        Args:
+            method: The function to set the __get__ method to.
         """
         self._selected_get_method = method
-
-        if isinstance(method, str):
-            method = getattr(self, method)
-
         self._get_method_ = method
 
-    def get_self(self, instance: Any, owner: Any | None = None) -> "BaseMethod":
+    @set_get_method.register
+    def _(self, method: str) -> None:
+        """Sets the __get__ method to a method within this object based on name.
+
+        Args:
+            method: The method name to set the __get__ method to.
+        """
+        self._selected_get_method = method
+        self._get_method_ = getattr(self, method)
+
+    def get_self(self, instance: Any, owner: type[Any] | None = None) -> "BaseMethod":
         """The __get__ method where it returns itself.
 
         Args:
@@ -151,7 +168,7 @@ class BaseMethod(BaseObject):
         """
         return self
 
-    def get_self_bind(self, instance: Any, owner: Any | None = None) -> "BaseMethod":
+    def get_self_bind(self, instance: Any, owner: type[Any] | None = None) -> "BaseMethod":
         """The __get__ method where it binds itself to the other object.
 
         Args:
@@ -168,8 +185,8 @@ class BaseMethod(BaseObject):
     def get_new_bind(
         self,
         instance: Any,
-        owner: Any | None = None,
-        new_binding: str = "get_self_bind",
+        owner: type[Any] | None = None,
+        new_binding: GetObjectMethod | str = "get_self_bind",
     ) -> "BaseMethod":
         """The __get__ method where it binds a new copy to the other object.
 
@@ -189,7 +206,7 @@ class BaseMethod(BaseObject):
             setattr(instance, self.__func__.__name__, bound)
             return bound
 
-    def get_subinstance(self, instance: Any, owner: Any | None = None) -> "BaseMethod":
+    def get_subinstance(self, instance: Any, owner: type[Any] | None = None) -> "BaseMethod":
         """The __get__ method where it binds a registered copy to the other object.
 
         Args:
@@ -208,12 +225,7 @@ class BaseMethod(BaseObject):
             return bound
 
     # Binding
-    def bind(
-        self,
-        instance: Any,
-        name: str | None = None,
-        set_attr: bool = True
-    ) -> None:
+    def bind(self, instance: Any, name: str | None = None, set_attr: bool = True) -> None:
         """Binds this object to another object to give this object method functionality.
 
         Args:
@@ -227,12 +239,7 @@ class BaseMethod(BaseObject):
         elif set_attr:
             setattr(instance, self.__func__.__name__, self)
 
-    def bind_to_new(
-        self,
-        instance: Any,
-        name: str | None = None,
-        set_attr: bool = True
-    ) -> Any:
+    def bind_to_new(self, instance: Any, name: str | None = None, set_attr: bool = True) -> Any:
         """Creates a new instance of this object and binds it to another object.
 
         Args:

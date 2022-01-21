@@ -14,12 +14,14 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
+from collections.abc import Callable, Hashable
 from time import perf_counter
-from typing import Any, Callable, Hashable
+from typing import Any
 
 # Third-Party Packages #
 
 # Local Packages #
+from ...types_ import AnyCallable
 from .basetimedcache import BaseTimedCache
 
 
@@ -65,18 +67,18 @@ class TimedSingleCache(BaseTimedCache):
     # Construction/Destruction
     def __init__(
         self,
-        func: Callable | None = None,
+        func: AnyCallable | None = None,
         typed: bool = False,
         lifetime: int | float | None = None,
-        call_method: Callable | str = "caching_call",
+        call_method: AnyCallable | str = "caching_call",
         collective: bool = True,
         init: bool = True,
     ) -> None:
         # Parent Attributes #
         super().__init__(init=False)
 
-        self._defualt_caching_method: Callable = self.caching
-        self._caching_method: Callable = self.caching
+        self._defualt_caching_method: AnyCallable = self.caching
+        self._caching_method: AnyCallable = self.caching
 
         # New Attributes #
         self.args_key: Hashable | None = None
@@ -93,7 +95,7 @@ class TimedSingleCache(BaseTimedCache):
 
     # Instance Methods #
     # Caching
-    def caching(self, *args, **kwargs) -> Any:
+    def caching(self, *args: Any, **kwargs: Any) -> Any:
         """Caching with no limit on items in the cache.
 
         Args:
@@ -122,9 +124,9 @@ class TimedSingleCache(BaseTimedCache):
 def timed_single_cache(
     typed: bool = False,
     lifetime: int | float | None = None,
-    call_method: Callable | str = "caching_call",
+    call_method: AnyCallable | str = "caching_call",
     collective: bool = True,
-) -> Callable:
+) -> Callable[[AnyCallable], TimedSingleCache]:
     """A factory to be used a decorator that sets the parameters of timed single cache function factory.
 
     Args:
@@ -137,7 +139,7 @@ def timed_single_cache(
         The parameterized timed single cache function factory.
     """
 
-    def timed_single_cache_factory(func: Callable) -> TimedSingleCache:
+    def timed_single_cache_factory(func: AnyCallable) -> TimedSingleCache:
         """A factory for wrapping a function with a TimedSingleCache object.
 
         Args:

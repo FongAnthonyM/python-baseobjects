@@ -15,9 +15,10 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
+from collections.abc import Callable, Iterable
 from abc import abstractmethod
 from builtins import property
-from typing import Any, Callable, Iterable
+from typing import Any
 
 # Third-Party Packages #
 
@@ -36,7 +37,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         _properties_map: Names and functions used to create properties.
     """
 
-    _properties_map: list[str] = []
+    _properties_map: Iterable[str] = []
 
     # Class Methods #
     # Class Construction
@@ -44,7 +45,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
     def _init_class_(
         cls,
         name: str | None = None,
-        bases: tuple[Any, ...] | None = None,
+        bases: tuple[type, ...] | None = None,
         namespace: dict[str, Any] | None = None,
     ) -> None:
         """A method that runs after class creation, creating the properties for this class.
@@ -123,7 +124,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
     # Property Constructors
     @classmethod
-    def _iterable_to_properties(cls, iter_: Iterable, callback_factory: Callable) -> None:
+    def _iterable_to_properties(cls, iter_: Iterable[str], callback_factory: Callable[str, PropertyCallbacks]) -> None:
         """Create properties for this class based on an iterable where the items are the property names.
 
         Args:
@@ -136,7 +137,11 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
                 setattr(cls, name, property(get_, set_, del_))
 
     @classmethod
-    def _dictionary_to_properties(cls, dict_: dict, callback_factory: Callable) -> None:
+    def _dictionary_to_properties(
+            cls,
+            dict_: dict[str, Any],
+            callback_factory: Callable[Any, PropertyCallbacks]
+    ) -> None:
         """Create properties for this class based on a dictionary where the keys are the property names.
 
         Args:
@@ -157,8 +162,9 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         pass
 
     # Properties Constructor
+    # Todo: Make map_ better.
     @classmethod
-    def _construct_properties(cls, map_: list | None = None) -> None:
+    def _construct_properties(cls, map_: Iterable[Iterable[str, Callable, Callable]] | None = None) -> None:
         """Constructs all properties from a list which maps the properties and their functionality.
 
         Args:

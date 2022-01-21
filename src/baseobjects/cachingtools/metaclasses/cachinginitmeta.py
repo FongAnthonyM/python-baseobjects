@@ -37,6 +37,6 @@ class CachingInitMeta(InitMeta, CachingObjectMeta):
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(cls, name: str, bases: tuple[Any, ...], namespace: dict[str, Any]) -> None:
+    def __init__(cls, name: str, bases: tuple[type, ...], namespace: dict[str, Any]) -> None:
         CachingObjectMeta.__init__(cls, name, bases, namespace)
         InitMeta.__init__(cls, name, bases, namespace)

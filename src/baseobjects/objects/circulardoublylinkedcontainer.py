@@ -18,7 +18,7 @@ __email__ = __email__
 # Standard Libraries #
 import copy
 from functools import singledispatchmethod
-from typing import Any
+from typing import Any, Optional
 
 # Third-Party Packages #
 
@@ -49,8 +49,8 @@ class LinkedNode(BaseObject):
     def __init__(
         self,
         data: Any | None = None,
-        previous: "LinkedNode" | None = None,
-        next_: "LinkedNode" | None = None,
+        previous: Optional["LinkedNode"] = None,
+        next_: Optional["LinkedNode"] = None,
         init: bool = True,
     ) -> None:
         # Attributes #
@@ -68,8 +68,8 @@ class LinkedNode(BaseObject):
     def construct(
         self,
         data: Any | None = None,
-        previous: "LinkedNode" | None = None,
-        next_: "LinkedNode" | None = None,
+        previous: Optional["LinkedNode"] = None,
+        next_: Optional["LinkedNode"] = None,
     ) -> None:
         """Constructs this object.
 
@@ -210,7 +210,7 @@ class CircularDoublyLinkedContainer(BaseObject):
         return node
 
     @singledispatchmethod
-    def append(self, data) -> LinkedNode:
+    def append(self, data: Any) -> LinkedNode:
         """Add a new node and data to the end of the container.
 
         Args:

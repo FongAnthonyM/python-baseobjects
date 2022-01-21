@@ -15,12 +15,15 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 import abc
+from collections.abc import Hashable, Iterable
+from functools import singledispatchmethod
 from time import perf_counter
-from typing import Any, Callable, Hashable, Iterable
+from typing import Any
 
 # Third-Party Packages #
 
 # Local Packages #
+from ...types_ import AnyCallable, GetObjectMethod
 from ...bases import BaseObject, BaseMethod
 
 
@@ -41,7 +44,7 @@ class _HashedSeq(list):
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, tuple_: Iterable, hash_: Callable = hash) -> None:
+    def __init__(self, tuple_: Iterable, hash_: AnyCallable = hash) -> None:
         # Attributes #
         self[:] = tuple_
         self.hashvalue = hash_(tuple_)
@@ -123,10 +126,10 @@ class BaseTimedCache(BaseMethod):
     # Construction/Destruction
     def __init__(
         self,
-        func: Callable | None = None,
+        func: AnyCallable | None = None,
         typed: bool = False,
         lifetime: int | float | None = None,
-        call_method: Callable | str = "caching_call",
+        call_method: AnyCallable | str = "caching_call",
         collective: bool = True,
         init: bool = True,
     ) -> None:
@@ -142,10 +145,10 @@ class BaseTimedCache(BaseMethod):
         self.expiration: int | float | None = None
 
         self.cache: Any = None
-        self._defualt_caching_method: Callable = self.no_cache
-        self._caching_method: Callable = self.no_cache
+        self._defualt_caching_method: AnyCallable = self.no_cache
+        self._caching_method: AnyCallable = self.no_cache
 
-        self._call_method: Callable | None = None
+        self._call_method: AnyCallable | None = None
 
         # Object Construction #
         if init:
@@ -174,7 +177,7 @@ class BaseTimedCache(BaseMethod):
         self._is_collective = value
 
     @property
-    def caching_method(self) -> Callable:
+    def caching_method(self) -> AnyCallable:
         """The method that will be used for caching.
 
         When set, any function can be set or the name of a method within this object can be given to select it.
@@ -182,11 +185,11 @@ class BaseTimedCache(BaseMethod):
         return self._caching_method
 
     @caching_method.setter
-    def caching_method(self, value: Callable | str) -> None:
+    def caching_method(self, value: AnyCallable | str) -> None:
         self.set_caching_method(value)
 
     @property
-    def call_method(self) -> Callable:
+    def call_method(self) -> AnyCallable:
         """The method that will be used for the __call__ method.
 
         When set, any function can be set or the name of a method within this object can be given to select it.
@@ -194,7 +197,7 @@ class BaseTimedCache(BaseMethod):
         return self._call_method
 
     @call_method.setter
-    def call_method(self, value: Callable | str) -> None:
+    def call_method(self, value: AnyCallable | str) -> None:
         self.set_call_method(value)
 
     # Callable
@@ -214,10 +217,10 @@ class BaseTimedCache(BaseMethod):
     # Constructors
     def construct(
         self,
-        func: Callable | None = None,
+        func: AnyCallable | None = None,
         typed: bool = False,
         lifetime: int | float | None = None,
-        call_method: Callable | str = "caching_call",
+        call_method: AnyCallable | str = "caching_call",
         collective: bool = True,
     ) -> None:
         """The constructor for this object.
@@ -248,8 +251,8 @@ class BaseTimedCache(BaseMethod):
     def get_new_bind(
         self,
         instance: Any,
-        owner: Any | None = None,
-        new_binding: Callable | None = "get_self",
+        owner: type[Any] | None = None,
+        new_binding: GetObjectMethod | str = "get_self",
     ) -> BaseMethod:
         """The __get__ method where it binds a new copy to the other object. Changed the default parameter.
 
@@ -264,20 +267,43 @@ class BaseTimedCache(BaseMethod):
         return super().get_new_bind(instance, owner=owner, new_binding=new_binding)
 
     # Object Calling
-    def set_call_method(self, method: Callable | str) -> None:
+    @singledispatchmethod
+    def set_call_method(self, method: AnyCallable | str | None) -> None:
+        """Sets the call method to another function or a method within this object can be given to select it.
+
+        Args:
+            method: The function or method name to set the call method to.
+        """
+        raise NotImplementedError(f"A {type(method)} cannot be used to set a {type(self)} call_method.")
+
+    @set_call_method.register
+    def _(self, method: AnyCallable) -> None:
+        """Sets the call method to another function or a method within this object can be given to select it.
+
+        Args:
+            method: The function to set the call method to.
+        """
+        self._call_method = method
+
+    @set_call_method.register
+    def _(self, method: str) -> None:
+        """Sets the call method to another function or a method within this object can be given to select it.
+
+        Args:
+            method: The method name to set the call method to.
+        """
+        self._call_method = getattr(self, method)
+
+    @set_call_method.register
+    def _(self, method: None) -> None:
         """Sets the call method to another function or a method within this object can be given to select it.
 
         Args:
             method: The function or name to set the call method to.
         """
-        if method is None:
-            method = self.__func__
-        elif isinstance(method, str):
-            method = getattr(self, method)
+        self._call_method = self.__func__
 
-        self._call_method = method
-
-    def caching_call(self, *args, **kwargs) -> Any:
+    def caching_call(self, *args: Any, **kwargs: Any) -> Any:
         """Calls the caching function and clears the cache at certain time.
 
         Args:
@@ -292,7 +318,7 @@ class BaseTimedCache(BaseMethod):
 
         return self.caching_method(*args, **kwargs)
 
-    def clearing_call(self, *args, **kwargs) -> Any:
+    def clearing_call(self, *args: Any, **kwargs: Any) -> Any:
         """Clears the cache then calls the caching function.
 
         Args:
@@ -306,7 +332,7 @@ class BaseTimedCache(BaseMethod):
 
         return self.caching_method(*args, **kwargs)
 
-    def clear_condition(self, *args, **kwargs) -> bool:
+    def clear_condition(self, *args: Any, **kwargs: Any) -> bool:
         """The condition used to determine if the cache should be cleared.
 
         Args:
@@ -316,19 +342,10 @@ class BaseTimedCache(BaseMethod):
         Returns:
             Determines if the cache should be cleared.
         """
-        return (
-            self.is_timed
-            and self.lifetime is not None
-            and perf_counter() >= self.expiration
-        )
+        return self.is_timed and self.lifetime is not None and perf_counter() >= self.expiration
 
     # Binding
-    def bind_to_new(
-        self,
-        instance: Any,
-        name: str | None = None,
-        set_attr: bool = True
-    ) -> "BaseTimedCache":
+    def bind_to_new(self, instance: Any, name: str | None = None, set_attr: bool = True) -> "BaseTimedCache":
         """Creates a new instance of this object and binds it to another object.
 
         Args:
@@ -362,9 +379,9 @@ class BaseTimedCache(BaseMethod):
         typed: bool,
         kwd_mark: tuple = (object(),),
         fasttypes: set = {int, str},
-        tuple_: Callable = tuple,
-        type_: Callable = type,
-        len_: Callable = len,
+        tuple_: AnyCallable = tuple,
+        type_: AnyCallable = type,
+        len_: AnyCallable = len,
     ) -> _HashedSeq:
         """Make a cache key from optionally typed positional and keyword arguments.
 
@@ -393,7 +410,34 @@ class BaseTimedCache(BaseMethod):
             return key[0]
         return _HashedSeq(key)
 
-    def no_cache(self, *args, **kwargs) -> Any:
+    @singledispatchmethod
+    def set_caching_method(self, method: AnyCallable | str | None) -> None:
+        """Sets the caching method to another function or a method within this object can be given to select it.
+
+        Args:
+            method: The function or name to set the caching method to.
+        """
+        raise NotImplementedError(f"A {type(method)} cannot be used to set a {type(self)} caching method.")
+
+    @set_caching_method.register
+    def _(self, method: AnyCallable) -> None:
+        """Sets the caching method to another function or a method within this object can be given to select it.
+
+        Args:
+            method: The function or name to set the caching method to.
+        """
+        self._caching_method = method
+
+    @set_caching_method.register
+    def _(self, method: str) -> None:
+        """Sets the caching method to another function or a method within this object can be given to select it.
+
+        Args:
+            method: The function or name to set the caching method to.
+        """
+        self._caching_method = getattr(self, method)
+
+    def no_cache(self, *args: Any, **kwargs: Any) -> Any:
         """A direct call to wrapped function with no caching.
 
         Args:
@@ -404,19 +448,6 @@ class BaseTimedCache(BaseMethod):
             The result of the wrapped function.
         """
         return self.__func__(*args, **kwargs)
-
-    def set_caching_method(self, method: Callable | str | None = None) -> None:
-        """Sets the caching method to another function or a method within this object can be given to select it.
-
-        Args:
-            method: The function or name to set the caching method to.
-        """
-        if isinstance(method, str):
-            method = getattr(self, method)
-        elif method is None:
-            method = self._defualt_caching_method
-
-        self._caching_method = method
 
     @abc.abstractmethod
     def clear_cache(self) -> None:

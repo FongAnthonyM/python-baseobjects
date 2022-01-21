@@ -15,13 +15,15 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
+from collections.abc import Callable
 from time import perf_counter
-from typing import Any, Callable
+from typing import Any
 
 # Third-Party Packages #
 
 # Local Packages #
 from .basetimedcache import BaseTimedCache
+from ...types_ import AnyCallable
 from ...objects import CircularDoublyLinkedContainer
 
 
@@ -74,11 +76,11 @@ class TimedCache(BaseTimedCache):
     # Construction/Destruction
     def __init__(
         self,
-        func: Callable | None = None,
+        func: AnyCallable | None = None,
         maxsize: int | None = None,
         typed: bool = False,
         lifetime: int | float | None = None,
-        call_method: Callable | str = "caching_call",
+        call_method: AnyCallable | str = "caching_call",
         collective: bool = True,
         init: bool = True,
     ) -> None:
@@ -86,8 +88,8 @@ class TimedCache(BaseTimedCache):
         super().__init__(init=False)
 
         self.cache: dict = {}
-        self._defualt_caching_method: Callable = self.unlimited_cache
-        self._caching_method: Callable = self.unlimited_cache
+        self._defualt_caching_method: AnyCallable = self.unlimited_cache
+        self._caching_method: AnyCallable = self.unlimited_cache
 
         # New Attributes #
         self._maxsize: int | None = None
@@ -123,11 +125,11 @@ class TimedCache(BaseTimedCache):
     # Constructors
     def construct(
         self,
-        func: Callable | None = None,
+        func: AnyCallable | None = None,
         maxsize: int | None = None,
         typed: bool = False,
         lifetime: int | float | None = None,
-        call_method: Callable | str = "caching_call",
+        call_method: AnyCallable | str = "caching_call",
         collective: bool = True,
     ) -> None:
         """The constructor for this object.
@@ -152,12 +154,7 @@ class TimedCache(BaseTimedCache):
         )
 
     # Binding
-    def bind_to_new(
-        self,
-        instance: Any,
-        name: str | None = None,
-        set_attr: bool = True
-    ) -> "TimedCache":
+    def bind_to_new(self, instance: Any, name: str | None = None, set_attr: bool = True) -> "TimedCache":
         """Creates a new instance of this object and binds it to another object.
 
         Args:
@@ -208,7 +205,7 @@ class TimedCache(BaseTimedCache):
         """Gets the length of the cache."""
         return self.cache.__len__()
 
-    def unlimited_cache(self, *args, **kwargs) -> Any:
+    def unlimited_cache(self, *args: Any, **kwargs: Any) -> Any:
         """Caching with no limit on items in the cache.
 
         Args:
@@ -228,7 +225,7 @@ class TimedCache(BaseTimedCache):
             self.cache[key] = self.cache_item_type(key=key, result=result)
             return result
 
-    def limited_cache(self, *args, **kwargs) -> Any:
+    def limited_cache(self, *args: Any, **kwargs: Any) -> Any:
         """Caching that does not cache new results when cache is full.
 
         Args:
@@ -262,9 +259,9 @@ def timed_cache(
     maxsize: int | None = None,
     typed: bool = False,
     lifetime: int | float | None = None,
-    call_method: Callable | str = "caching_call",
+    call_method: AnyCallable | str = "caching_call",
     collective: bool = True,
-) -> Callable:
+) -> Callable[[AnyCallable], TimedCache]:
     """A factory to be used a decorator that sets the parameters of timed cache function factory.
 
     Args:
@@ -278,7 +275,7 @@ def timed_cache(
         The parameterized timed cache function factory.
     """
 
-    def timed_cache_factory(func: Callable) -> TimedCache:
+    def timed_cache_factory(func: AnyCallable) -> TimedCache:
         """A factory for wrapping a function with a TimedCache object.
 
         Args:
