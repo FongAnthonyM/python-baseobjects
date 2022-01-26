@@ -4,7 +4,7 @@
 Description: More specific objects for the package.
 """
 # Package Header #
-from ..__header__ import *
+from ..header import *
 
 # Header #
 __author__ = __author__
@@ -16,7 +16,6 @@ __email__ = __email__
 # Imports
 # Local Packages #
 from .automaticproperties import AutomaticProperties
-from .circulardoublylinkedcontainer import LinkedNode, CirularDoublyLinkedContainer
-from .initmeta import InitMeta
+from .circulardoublylinkedcontainer import LinkedNode, CircularDoublyLinkedContainer
 from .timeddict import TimedDict
 from .wrappers import StaticWrapper, DynamicWrapper

@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ timeddict.py
-A dictionary taht clears its contents after a specified time has passed.
+A dictionary that clears its contents after a specified time has passed.
 """
 # Package Header #
-from ..__header__ import *
+from ..header import *
 
 # Header #
 __author__ = __author__
@@ -15,18 +15,21 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from collections import UserDict
+from collections.abc import Callable, Hashable, Iterator
 from contextlib import contextmanager
 from time import perf_counter
+from typing import Any
 
 # Third-Party Packages #
 
 # Local Packages #
-from baseobjects import BaseObject
+from ..bases import BaseObject
+
 
 # Definitions #
 # Classes #
-class TimedDict(UserDict):
-    """A dictionary that clears its contents after a time has eplapsed.
+class TimedDict(UserDict, BaseObject):
+    """A dictionary that clears its contents after a time has elapsed.
 
     Attributes:
         is_timed: Determines if the dictionary will be reset periodically.
@@ -34,63 +37,68 @@ class TimedDict(UserDict):
         expiration: The next time the dictionary will be rest.
 
     Args:
-        dict: The dictrionary to copy into this dictionary.
-        **kwargs: The key words to add to this dictionary.
+        dict_: The dictionary to copy into this dictionary.
+        **kwargs: The keywords to add to this dictionary.
     """
+
+    __slots__ = ["is_timed", "lifetime", "expiration", "_data"]
+
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, dict=None, /, **kwargs):
-        self.is_timed = True
-        self.lifetime = None
-        self.expiration = None
+    def __init__(self, dict_: dict[Hashable, Any] | None = None, /, **kwargs: Any) -> None:
+        # Attributes #
+        self.is_timed: bool = True
+        self.lifetime: int | float | None = None
+        self.expiration: int | float | None = None
 
-        self._data = {}
-        if dict is not None:
-            self.update(dict)
+        self._data: dict[Hashable, Any] = {}
+
+        # Object Construction #
+        if dict_ is not None:
+            self.update(dict_)
         if kwargs:
             self.update(kwargs)
 
     @property
-    def data(self):
-        """The data of the dictionary, """
+    def data(self) -> dict[Hashable, Any]:
+        """The data of the dictionary."""
         self.verify()
         return self._data
 
     # Instance Methods #
     # Mapping
-    def clear(self):
+    def clear(self) -> None:
         """Clears the contents of the dictionary and resets the expiration."""
         self._data.clear()
         self.reset_expiration()
 
     # Time Verification
-    def reset_expiration(self):
+    def reset_expiration(self) -> None:
         """Updates the expiration to a new future time."""
         if self.lifetime is not None:
             self.expiration = perf_counter() + self.lifetime
 
     @contextmanager
-    def pause_timer(self):
+    def pause_timer(self) -> Callable[..., Iterator[None]]:
         """A context manager that will stop clearing the dictionary until it is returned."""
-        left_over = 0
-        if expiration is not None:
+        left_over = 0.0
+        if self.expiration is not None:
             left_over = self.expiration - perf_counter()
             self.expiration = None
         self.is_timed = False
-        yield
+        yield None
         self.expiration = perf_counter() + left_over
         self.is_timed = True
 
-
     @contextmanager
-    def pause_reset_timer(self):
+    def pause_reset_timer(self) -> Callable[..., Iterator[None]]:
         """A context manager that will stop clearing the dictionary until it is returned, resting the expiration."""
         self.is_timed = False
-        yield
+        yield None
         self.is_timed = True
         self.reset_expiration()
 
-    def clear_condition(self, *args, **kwargs):
+    def clear_condition(self, *args: Any, **kwargs: Any) -> bool:
         """The condition used to determine if the dictionary should be cleared.
 
         Args:
@@ -102,8 +110,7 @@ class TimedDict(UserDict):
         """
         return self.is_timed and self.lifetime is not None and perf_counter() >= self.expiration
 
-    def verify(self):
+    def verify(self) -> None:
         """Verifies if the dictionary should be cleared and then clears it."""
         if self.clear_condition():
             self.clear()
-

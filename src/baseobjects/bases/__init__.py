@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ __init__.py
-baseobjects provides several base classes and tools.
+bases provides several base classes.
 """
 # Package Header #
-from .header import *
+from ..header import *
 
 # Header #
 __author__ = __author__
@@ -15,8 +15,6 @@ __email__ = __email__
 
 # Imports #
 # Local Packages #
-from .bases import *
-from .metaclasses import *
-from .objects import *
-from .cachingtools import *
-from .warnings import TimeoutWarning
+from .baseobject import BaseObject, search_sentinel
+from .basemethod import BaseMethod
+from .basemeta import BaseMeta

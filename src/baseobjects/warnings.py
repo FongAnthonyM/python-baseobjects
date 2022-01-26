@@ -4,7 +4,7 @@
 Adds additional Warnings.
 """
 # Package Header #
-from .__header__ import *
+from .header import *
 
 # Header #
 __author__ = __author__
@@ -28,6 +28,6 @@ class TimeoutWarning(Warning):
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, name="A function"):
+    def __init__(self, name: str = "A function") -> None:
         message = f"{name} timed out"
         super().__init__(message)

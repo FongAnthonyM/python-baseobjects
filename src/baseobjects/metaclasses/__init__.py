@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ __init__.py
-Description: Caching tools.
+Description: More specific objects for the package.
 """
 # Package Header #
-from ...__header__ import *
+from ..header import *
 
 # Header #
 __author__ = __author__
@@ -15,5 +15,4 @@ __email__ = __email__
 
 # Imports
 # Local Packages #
-from .cachingobjectmeta import CachingObjectMeta
-from .cachinginitmeta import CachingInitMeta
+from .initmeta import InitMeta

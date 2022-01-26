@@ -30,7 +30,7 @@ access which is not great for most applications.
 Todo: add magic method support for StaticWrapper and DynamicWrapper (requires thorough method resolution handling)
 """
 # Package Header #
-from ..__header__ import *
+from ..header import *
 
 # Header #
 __author__ = __author__
@@ -42,17 +42,19 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from builtins import property
+from typing import Any, Iterable
 
 # Third-Party Packages #
 
 # Local Packages #
-from ..baseobject import BaseObject
-from .initmeta import InitMeta
+from ..bases import BaseObject
+from ..metaclasses import InitMeta
+from ..types_ import PropertyCallbacks
 
 
 # Definitions #
 # Functions #
-def _get_temp_attributes(obj, name):
+def _get_temp_attributes(obj: "StaticWrapper", name: str) -> None:
     """Creates temporary attributes from a wrapped object.
 
     Args:
@@ -68,7 +70,7 @@ def _get_temp_attributes(obj, name):
             continue
 
 
-def _set_temp_attributes(obj, new, name):
+def _set_temp_attributes(obj: "StaticWrapper", new: Any, name: str) -> None:
     """Sets a wrapped object's attributes from temporary attributes.
 
     Args:
@@ -106,101 +108,110 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
     the types or objects in _wrapped_types. The setup will occur immediately after class instantiation.
 
     Class Attributes:
-        __original_dir_set (:obj:`set` of :obj:`str`): The dir of the original wrapper class.
-        _get_previous_wrapped (bool): Determines if temporary attributes should be made from the previous wrapped object
-        _set_next_wrapped (bool): Determines if temporary attributes should be passed to the next wrapped object.
-        _wrapped_types (:obj:`list` of :obj:): A list of either types or objects to setup wrapping for.
-        _wrap_attributes (:obj:`list` of :obj:`str`): The list of attribute names that will contain the objects to wrap
-            where the resolution order is descending inheritance.
-        _exclude_attributes (:obj:`set` of :obj:`str`): The names of the attributes to exclude from wrapping.
-        _wrapped_attributes (:obj:`dict` of :obj:`set` of :obj:`str`): The names of the attributes to wrap.
+        __original_dir_set: The dir of the original wrapper class.
+        _get_previous_wrapped: Determines if temporary attributes should be made from the previous wrapped object
+        _set_next_wrapped: Determines if temporary attributes should be passed to the next wrapped object.
+        _wrapped_types: A list of either types or objects to setup wrapping for.
+        _wrap_attributes: Attribute names that will contain the objects to wrap where the resolution order is descending
+            inheritance.
+        _exclude_attributes: The names of the attributes to exclude from wrapping.
+        _wrapped_attributes: The names of the attributes to wrap.
     """
-    __original_dir_set = None
-    _get_previous_wrapped = False
-    _set_next_wrapped = True
-    _wrapped_types = []
-    _wrap_attributes = []
-    _exclude_attributes = {"__slotnames__"}
-    _wrapped_attributes = {}
+
+    __original_dir_set: set[str] | None = None
+    _get_previous_wrapped: bool = False
+    _set_next_wrapped: bool = True
+    _wrapped_types: list[Any] = []
+    _wrap_attributes: list[str] = []
+    _exclude_attributes: set[str] = {"__slotnames__"}
+    _wrapped_attributes: dict[str, set[str]] = {}
 
     # Class Methods #
     # Class Construction
     @classmethod
-    def _init_class_(cls):
+    def _init_class_(
+        cls,
+        name: str | None = None,
+        bases: tuple[Any, ...] | None = None,
+        namespace: dict[str, Any] | None = None,
+    ) -> None:
         """A method that runs after class creation, creating the original dir as a set and sets up wrapping."""
         cls.__original_dir_set = set(dir(cls))
         cls._class_wrapping_setup()
 
     # Callbacks for Accessing a Wrapped Object
     @classmethod
-    def _get_wrapped(cls, obj, name):
+    def _get_wrapped(cls, obj: Any, name: str) -> Any:
         """Gets a wrapped object from the target object's attribute.
 
         Args:
-            obj (Any): The target object to get the wrapped object from.
-            name (str): The attribute name to get the wrapped object from.
+            obj: The target object to get the wrapped object from.
+            name: The attribute name to get the wrapped object from.
 
         Returns:
-            (Any): The wrapped object.
+            The wrapped object.
         """
         return getattr(obj, name)
 
     @classmethod
-    def _set_wrapped(cls, obj, name, value):
+    def _set_wrapped(cls, obj: Any, name: str, value: Any) -> None:
         """Sets the target object's attribute to be a wrapped object.
 
         Args:
-            obj (Any): The target object to set.
-            name (str): The attribute name to set the wrapped object to.
-            value (Any): The wrapped object.
+            obj: The target object to set.
+            name: The attribute name to set the wrapped object to.
+            value: The wrapped object.
         """
         setattr(obj, name, value)
 
     @classmethod
-    def _del_wrapped(cls, obj, name):
+    def _del_wrapped(cls, obj: Any, name: str) -> None:
         """Deletes the target object's attribute which stores a wrapped object.
 
         Args:
-            obj (Any): The target object to delete.
-            name (str): The attribute name to delete the wrapped object to.
+            obj: The target object to delete.
+            name: The attribute name to delete the wrapped object to.
         """
         delattr(obj, name)
 
     # Callbacks for Accessing a Wrapped Object's Attributes
     @classmethod
-    def _get_attribute(cls, obj, wrap_name, attr_name):
+    def _get_attribute(cls, obj: Any, wrap_name: str, attr_name: str) -> Any:
         """Gets an attribute from a wrapped object.
 
         Args:
-            obj (Any): The target object to get the wrapped object from.
-            wrap_name (str): The attribute name of the wrapped object.
-            attr_name (str): The attribute name of the attribute to get from the wrapped object.
+            obj: The target object to get the wrapped object from.
+            wrap_name: The attribute name of the wrapped object.
+            attr_name: The attribute name of the attribute to get from the wrapped object.
 
         Returns:
-            (Any): The wrapped object.
+            The wrapped object.
         """
         return getattr(getattr(obj, wrap_name), attr_name)
 
     @classmethod
-    def _set_attribute(cls, obj, wrap_name, attr_name, value):
+    def _set_attribute(cls, obj: Any, wrap_name: str, attr_name: str, value: Any) -> None:
         """Sets an attribute in a wrapped object.
 
         Args:
-            obj (Any): The target object to set.
-            wrap_name (str): The attribute name of the wrapped object.
-            attr_name (str): The attribute name of the attribute to set from the wrapped object.
-            value (Any): The object to set the wrapped objects attribute to.
+            obj: The target object to set.
+            wrap_name: The attribute name of the wrapped object.
+            attr_name: The attribute name of the attribute to set from the wrapped object.
+            value: The object to set the wrapped objects attribute to.
         """
         setattr(getattr(obj, wrap_name), attr_name, value)
 
     @classmethod
-    def _del_attribute(cls, obj, wrap_name, attr_name):
+    def _del_attribute(cls, obj: Any, wrap_name: str, attr_name: str) -> None:
         """Deletes an attribute in a wrapped object.
 
         Args:
-            obj (Any): The target object to set.
-            wrap_name (str): The attribute name of the wrapped object.
-            attr_name (str): The attribute name of the attribute to delete from the wrapped object.
+            obj: The target object to set.
+            wrap_name: The attribute name of the wrapped object.
+            attr_name: The attribute name of the attribute to delete from the wrapped object.
+
+        Raises:
+            AttributeError: If the attribute cannot be deleted or does not exist.
         """
         try:
             delattr(getattr(obj, wrap_name), attr_name)
@@ -210,11 +221,11 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
 
     # Callback Factories
     @classmethod
-    def _create_wrapping_functions(cls, wrap_name):
+    def _create_wrapping_functions(cls, wrap_name: str) -> PropertyCallbacks:
         """A factory for creating property modification functions for the wrapped objects.
 
         Args:
-            wrap_name (str): The attribute name of the wrapped object.
+            wrap_name: The attribute name of the wrapped object.
 
         Returns:
             get_: The get function for a property object.
@@ -223,11 +234,11 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         """
         store_name = "_" + wrap_name  # The true name of the attribute where the wrapped object is stored.
 
-        def get_(obj):
+        def get_(obj: Any) -> Any:
             """Gets the wrapped object."""
             return cls._get_wrapped(obj, store_name)
 
-        def set_(obj, value):
+        def set_(obj: Any, value: Any) -> None:
             """Sets the wrapped object, copying the old object's attributes."""
             # Get old attributes
             try:
@@ -245,7 +256,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
 
             cls._set_wrapped(obj, store_name, value)
 
-        def del_(obj):
+        def del_(obj: Any) -> None:
             """Deletes the wrapped object, storing its attributes for the next object."""
             # Get old attributes
             try:
@@ -259,7 +270,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         return get_, set_, del_
 
     @classmethod
-    def _create_attribute_functions(cls, wrap_name, attr_name):
+    def _create_attribute_functions(cls, wrap_name, attr_name) -> PropertyCallbacks:
         """A factory for creating property modification functions for accessing a wrapped objects attributes.
 
         Args:
@@ -301,7 +312,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
 
     # Wrapping
     @classmethod
-    def _class_wrapping_setup(cls):
+    def _class_wrapping_setup(cls) -> None:
         """Sets up the class by wrapping what is in _wrapped_types."""
         if cls._wrapped_types:
             try:
@@ -310,16 +321,16 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
                 raise IndexError("_wrapped_types must be the same length as _wrap_attributes")
 
     @classmethod
-    def _class_wrap(cls, objects):
+    def _class_wrap(cls, objects: list[Any]) -> None:
         """Adds attributes from embedded objects as properties.
 
-         Args:
-            objects: A list of objects or types this object will wrap. Must be in the same order as _wrap_attributes.
+        Args:
+           objects: A list of objects or types this object will wrap. Must be in the same order as _wrap_attributes.
         """
         if len(objects) != len(cls._wrap_attributes):
             raise IndexError("objects must be the same length as _wrap_attributes")
 
-        remove = cls.__original_dir_set | cls._exclude_attributes
+        remove = cls.__original_dir_set.union(cls._exclude_attributes)
         for name, obj in zip(cls._wrap_attributes, objects):
             if obj is not None:
                 # Set wrapped property
@@ -335,14 +346,14 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
                     setattr(cls, attribute, property(get_, set_, del_))
 
     @classmethod
-    def _unwrap(cls):
+    def _unwrap(cls) -> None:
         """Removes all attributes added from other objects."""
         for name in set(dir(cls)) - cls.__original_dir_set:
             if isinstance(getattr(cls, name, None), property):
                 delattr(cls, name)
 
     @classmethod
-    def _class_rewrap(cls, objects):
+    def _class_rewrap(cls, objects: list[Any]) -> None:
         """Removes all the attributes added from other objects then adds attributes from embedded the objects.
 
         Args:
@@ -353,14 +364,14 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
 
     # Instance Methods #
     # Wrapping
-    def _wrap(self):
+    def _wrap(self) -> None:
         """Adds attributes from embedded objects as properties."""
         remove = self.__original_dir_set | self._exclude_attributes
         for name in self._wrap_attributes:
             # Get object to wrap
             try:
                 obj = getattr(self, name)
-                delattr(self, name)             # Delete attribute to be replaced by property
+                delattr(self, name)  # Delete attribute to be replaced by property
             except AttributeError:
                 continue
 
@@ -386,12 +397,12 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
                     get_, set_, del_ = self._create_attribute_functions(name, attribute)
                     setattr(type(self), attribute, property(get_, set_, del_))
 
-    def _rewrap(self):
+    def _rewrap(self) -> None:
         """Removes all the attributes added from other objects then adds attributes from embedded the objects."""
         self._unwrap()
         self._wrap()
 
-    def _get_temp_attributes(self, name):
+    def _get_temp_attributes(self, name: str) -> None:
         """Creates temporary attributes from a wrapped object.
 
         Args:
@@ -405,7 +416,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             except AttributeError:
                 pass
 
-    def _set_temp_attributes(self, new, name):
+    def _set_temp_attributes(self, new: str, name: str) -> None:
         """Sets a wrapped object's attributes from temporary attributes.
 
         Args:
@@ -426,7 +437,7 @@ class DynamicWrapper(BaseObject):
     """An object that can call the attributes/methods of embedded objects, acting as if it is inheriting from them.
 
     When an object of this class has an attribute/method call it will call a listed object's attribute/method. This is
-    similar to what an @Property decorator can do but without having to write a decorator for each attribute. Attribute/
+    similar to what an @property decorator can do but without having to write a decorator for each attribute. Attribute/
     method calling is done dynamically where the objects in the list can change during runtime so the available
     attributes/methods will change based on the objects in the list. Since the available attributes/methods cannot be
     evaluated until runtime, an IDE's auto-complete cannot display all the callable options.
@@ -438,21 +449,25 @@ class DynamicWrapper(BaseObject):
     important to ensure the order of _attribute_as_parents is the order of descending inheritance.
 
     Class Attributes:
-        _wrap_attributes (:obj:`list` of :obj:`str`): The list of attribute names that will contain the objects to
-            dynamically wrap where the order is descending inheritance.
+        _wrap_attributes: The list of attribute names that will contain the objects to dynamically wrap where the order
+            is descending inheritance.
     """
-    _wrap_attributes = []
+
+    _wrap_attributes: list[str] = []
 
     # Magic Methods #
     # Attribute Access
-    def __getattr__(self, name):
-        """Overrides the getattr magic method to get the attribute of another object if that attribute is not present.
+    def __getattr__(self, name: str) -> Any:
+        """Gets the attribute of another object if that attribute is not present in this object.
 
         Args:
-            name (str): The name of the attribute to get.
+            name: The name of the attribute to get.
 
         Returns:
             obj: Whatever the attribute contains.
+
+        Raises:
+            AttributeError: If the requested attribute cannot be returned.
         """
         # Iterate through all object parents to find the attribute
         for attribute in self._wrap_attributes:
@@ -463,12 +478,11 @@ class DynamicWrapper(BaseObject):
 
         raise AttributeError
 
-    def __setattr__(self, name, value):
-        """Overrides the setattr magic method to set the attribute of another object if that attribute name is not
-        present.
+    def __setattr__(self, name: str, value: Any) -> None:
+        """Sets the attribute of another object if that attribute name is not present in this object.
 
         Args:
-            name (str): The name of the attribute to set.
+            name: The name of the attribute to set.
             value: Whatever the attribute will contain.
         """
         # Check if item is in self and if not check in object parents
@@ -483,12 +497,11 @@ class DynamicWrapper(BaseObject):
         # If the item is an attribute in self or not in any indirect parent set as attribute
         object.__setattr__(self, name, value)
 
-    def __delattr__(self, name):
-        """Overrides the delattr magic method to set the attribute of another object if that attribute name is not
-        present.
+    def __delattr__(self, name: str) -> None:
+        """Deletes the attribute of another object if that attribute name is not present in this object.
 
         Args:
-            name (str): The name of the attribute to delete.
+            name: The name of the attribute to delete.
         """
         # Check if item is in self and if not check in object parents
         if name not in self._wrap_attributes and name not in dir(self):
@@ -504,13 +517,13 @@ class DynamicWrapper(BaseObject):
 
     # Instance Methods #
     # Attribute Access
-    def _setattr(self, name, value):
+    def _setattr(self, name: str, value: Any):
         """An override method that will set an attribute of this object without checking its presence in other objects.
 
         This is useful for setting new attributes after class the definition.
 
         Args:
-            name (str): The name of the attribute to set.
+            name: The name of the attribute to set.
             value: Whatever the attribute will contain.
         """
         super().__setattr__(name, value)

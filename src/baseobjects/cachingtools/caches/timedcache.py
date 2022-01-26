@@ -4,7 +4,7 @@
 A cache that periodically resets and include its instantiation decorator function.
 """
 # Package Header #
-from ..__header__ import *
+from ...header import *
 
 # Header #
 __author__ = __author__
@@ -15,19 +15,22 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
+from collections.abc import Callable
 from time import perf_counter
+from typing import Any
 
 # Third-Party Packages #
 
 # Local Packages #
 from .basetimedcache import BaseTimedCache
-from ..objects import CirularDoublyLinkedContainer
+from ...types_ import AnyCallable
+from ...objects import CircularDoublyLinkedContainer
 
 
 # Definitions #
 # Classes #
 class TimedCache(BaseTimedCache):
-    """A cache wrapper object for a function which resets its cache periodically.
+    """A periodically clearing multiple item cache wrapper object for a function.
 
     Class Attributes:
         sentinel: An object used to determine if a value was unsuccessfully found.
@@ -53,6 +56,10 @@ class TimedCache(BaseTimedCache):
 
         _call_method: The function to call when this object is called.
 
+        _maxsize: The number of results the cache will hold before replacing results.
+
+        priority: The object that will control the replacement of cached results.
+
     Args:
         func: The function to wrap.
         maxsize: The max size of the cache.
@@ -62,46 +69,69 @@ class TimedCache(BaseTimedCache):
         collective: Determines if the cache is collective for all method bindings or for each instance.
         init: Determines if this object will construct.
     """
-    priority_queue_type = CirularDoublyLinkedContainer
+
+    priority_queue_type = CircularDoublyLinkedContainer
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, func=None, maxsize=None, typed=False, lifetime=None,
-                 call_method="cache_call", collective=True,  init=True):
+    def __init__(
+        self,
+        func: AnyCallable | None = None,
+        maxsize: int | None = None,
+        typed: bool = False,
+        lifetime: int | float | None = None,
+        call_method: AnyCallable | str = "caching_call",
+        collective: bool = True,
+        init: bool = True,
+    ) -> None:
         # Parent Attributes #
         super().__init__(init=False)
 
-        self.cache = {}
-        self._defualt_caching_method = self.unlimited_cache
-        self._caching_method = self.unlimited_cache
+        self.cache: dict = {}
+        self._defualt_caching_method: AnyCallable = self.unlimited_cache
+        self._caching_method: AnyCallable = self.unlimited_cache
 
         # New Attributes #
-        self._maxsize = None
+        self._maxsize: int | None = None
 
-        self.priority = self.priority_queue_type()
+        self.priority: Any = self.priority_queue_type()
 
         # Object Construction #
         if init:
-            self.construct(func=func, lifetime=lifetime, maxsize=maxsize, typed=typed,
-                           call_method=call_method, collective=collective)
+            self.construct(
+                func=func,
+                lifetime=lifetime,
+                maxsize=maxsize,
+                typed=typed,
+                call_method=call_method,
+                collective=collective,
+            )
 
     @property
-    def maxsize(self):
+    def maxsize(self) -> int:
         """The cache's max size and when updated it changes the cache to its optimal handle function."""
         return self._maxsize
 
     @maxsize.setter
-    def maxsize(self, value):
+    def maxsize(self, value: int) -> None:
         self.set_maxsize(value)
 
     # Container Methods
-    def __len__(self):
+    def __len__(self) -> int:
         """The method that gets this object's length."""
         return self.get_length()
 
     # Instance Methods #
     # Constructors
-    def construct(self, func=None, maxsize=None, typed=None, lifetime=None,  call_method=None, collective=None):
+    def construct(
+        self,
+        func: AnyCallable | None = None,
+        maxsize: int | None = None,
+        typed: bool = False,
+        lifetime: int | float | None = None,
+        call_method: AnyCallable | str = "caching_call",
+        collective: bool = True,
+    ) -> None:
         """The constructor for this object.
 
         Args:
@@ -115,15 +145,22 @@ class TimedCache(BaseTimedCache):
         if maxsize is not None:
             self.maxsize = maxsize
 
-        super().construct(func=func, typed=typed, lifetime=lifetime, call_method=call_method, collective=collective)
+        super().construct(
+            func=func,
+            typed=typed,
+            lifetime=lifetime,
+            call_method=call_method,
+            collective=collective,
+        )
 
     # Binding
-    def bind_to_new(self, instance, name=None):
+    def bind_to_new(self, instance: Any, name: str | None = None, set_attr: bool = True) -> "TimedCache":
         """Creates a new instance of this object and binds it to another object.
 
         Args:
             instance: The object ot bing this object to.
             name: The name of the attribute this object will bind to in the other object.
+            set_attr: Determines if this object will be set as an attribute in the object.
 
         Returns:
             The new bound deepcopy of this object.
@@ -133,13 +170,19 @@ class TimedCache(BaseTimedCache):
         else:
             call_method = self._call_method
 
-        new_obj = type(self)(func=self.__func__, maxsize=self.maxsize, typed=self.typed, lifetime=self.lifetime,
-                             call_method=call_method, collective=self._is_collective)
-        new_obj.bind(instance, name=name)
+        new_obj = type(self)(
+            func=self.__func__,
+            maxsize=self.maxsize,
+            typed=self.typed,
+            lifetime=self.lifetime,
+            call_method=call_method,
+            collective=self._is_collective,
+        )
+        new_obj.bind(instance=instance, name=name, set_attr=set_attr)
         return new_obj
 
     # Caching
-    def set_maxsize(self, value):
+    def set_maxsize(self, value: int) -> None:
         """Change the cache's max size to a new value and updates the cache to its optimal handle function.
 
         Args:
@@ -154,15 +197,15 @@ class TimedCache(BaseTimedCache):
 
         self._maxsize = value
 
-    def poll(self):
+    def poll(self) -> bool:
         """Check if the cache has reached its max size."""
         return self.cache.__len__() <= self._maxsize
 
-    def get_length(self):
+    def get_length(self) -> int:
         """Gets the length of the cache."""
         return self.cache.__len__()
 
-    def unlimited_cache(self, *args, **kwargs):
+    def unlimited_cache(self, *args: Any, **kwargs: Any) -> Any:
         """Caching with no limit on items in the cache.
 
         Args:
@@ -182,7 +225,7 @@ class TimedCache(BaseTimedCache):
             self.cache[key] = self.cache_item_type(key=key, result=result)
             return result
 
-    def limited_cache(self, *args, **kwargs):
+    def limited_cache(self, *args: Any, **kwargs: Any) -> Any:
         """Caching that does not cache new results when cache is full.
 
         Args:
@@ -203,7 +246,7 @@ class TimedCache(BaseTimedCache):
                 self.cache[key] = self.cache_item_type(result=result)
             return result
 
-    def clear_cache(self):
+    def clear_cache(self) -> None:
         """Clear the cache and update the expiration of the cache."""
         self.cache.clear()
         self.priority.clear()
@@ -212,7 +255,13 @@ class TimedCache(BaseTimedCache):
 
 
 # Functions #
-def timed_cache(maxsize=None, typed=False, lifetime=None, call_method="cache_call", collective=True):
+def timed_cache(
+    maxsize: int | None = None,
+    typed: bool = False,
+    lifetime: int | float | None = None,
+    call_method: AnyCallable | str = "caching_call",
+    collective: bool = True,
+) -> Callable[[AnyCallable], TimedCache]:
     """A factory to be used a decorator that sets the parameters of timed cache function factory.
 
     Args:
@@ -226,7 +275,7 @@ def timed_cache(maxsize=None, typed=False, lifetime=None, call_method="cache_cal
         The parameterized timed cache function factory.
     """
 
-    def timed_cache_factory(func):
+    def timed_cache_factory(func: AnyCallable) -> TimedCache:
         """A factory for wrapping a function with a TimedCache object.
 
         Args:
@@ -235,7 +284,13 @@ def timed_cache(maxsize=None, typed=False, lifetime=None, call_method="cache_cal
         Returns:
             The TimeCache object which wraps the given function.
         """
-        return TimedCache(func, maxsize=maxsize, typed=typed, lifetime=lifetime,
-                          call_method=call_method, collective=collective)
+        return TimedCache(
+            func,
+            maxsize=maxsize,
+            typed=typed,
+            lifetime=lifetime,
+            call_method=call_method,
+            collective=collective,
+        )
 
     return timed_cache_factory
