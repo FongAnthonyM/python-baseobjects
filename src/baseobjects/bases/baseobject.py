@@ -4,7 +4,7 @@
 BaseObject is an abstract class which implements some basic methods that all objects should have.
 """
 # Package Header #
-from ..__header__ import *
+from ..header import *
 
 # Header #
 __author__ = __author__
@@ -26,6 +26,7 @@ from copy import (
     Error,
 )
 from copyreg import dispatch_table
+from typing import Any
 
 # Third-Party Packages #
 
@@ -39,7 +40,7 @@ class BaseObject(ABC):
 
     # Magic Methods #
     # Construction/Destruction
-    def __copy__(self) -> "BaseObject":
+    def __copy__(self) -> Any:
         """The copy magic method (shallow).
 
         Returns:
@@ -73,7 +74,7 @@ class BaseObject(ABC):
             return self
         return _reconstruct(self, None, *rv)
 
-    def __deepcopy__(self, memo: dict | None = None, _nil=[]) -> "BaseObject":
+    def __deepcopy__(self, memo: dict | None = None, _nil=[]) -> Any:
         """The deepcopy magic method based on python's deepcopy function.
 
         Args:
@@ -128,7 +129,7 @@ class BaseObject(ABC):
 
     # Instance Methods #
     # Constructors/Destructors
-    def copy(self) -> "BaseObject":
+    def copy(self) -> Any:
         """Creates a shallow copy of this object.
 
         Returns:
@@ -136,7 +137,7 @@ class BaseObject(ABC):
         """
         return self.__copy__()
 
-    def deepcopy(self, memo: dict | None = None) -> "BaseObject":
+    def deepcopy(self, memo: dict | None = None) -> Any:
         """Creates a deep copy of this object.
 
         Args:

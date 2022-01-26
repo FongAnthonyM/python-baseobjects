@@ -30,7 +30,7 @@ access which is not great for most applications.
 Todo: add magic method support for StaticWrapper and DynamicWrapper (requires thorough method resolution handling)
 """
 # Package Header #
-from ..__header__ import *
+from ..header import *
 
 # Header #
 __author__ = __author__

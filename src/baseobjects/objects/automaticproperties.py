@@ -4,7 +4,7 @@
 An abstract class which creates properties for this class automatically.
 """
 # Package Header #
-from ..__header__ import *
+from ..header import *
 
 # Header #
 __author__ = __author__
@@ -124,7 +124,9 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
     # Property Constructors
     @classmethod
-    def _iterable_to_properties(cls, iter_: Iterable[str], callback_factory: Callable[str, PropertyCallbacks]) -> None:
+    def _iterable_to_properties(
+        cls, iter_: Iterable[str], callback_factory: Callable[[str], PropertyCallbacks]
+    ) -> None:
         """Create properties for this class based on an iterable where the items are the property names.
 
         Args:
@@ -138,7 +140,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
     @classmethod
     def _dictionary_to_properties(
-        cls, dict_: dict[str, Any], callback_factory: Callable[Any, PropertyCallbacks]
+        cls, dict_: dict[str, Any], callback_factory: Callable[[Any], PropertyCallbacks]
     ) -> None:
         """Create properties for this class based on a dictionary where the keys are the property names.
 

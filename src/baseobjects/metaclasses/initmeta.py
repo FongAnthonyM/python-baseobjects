@@ -4,7 +4,7 @@
 InitMeta is an abstract metaclass that implements an init class method which allows some setup after a class is created.
 """
 # Package Header #
-from ..__header__ import *
+from ..header import *
 
 # Header #
 __author__ = __author__

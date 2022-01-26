@@ -4,7 +4,7 @@
 A lru cache that periodically resets and include its instantiation decorator function.
 """
 # Package Header #
-from ...__header__ import *
+from ...header import *
 
 # Header #
 __author__ = __author__

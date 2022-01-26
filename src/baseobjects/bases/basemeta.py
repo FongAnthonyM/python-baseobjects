@@ -4,7 +4,7 @@
 BaseMeta is an abstract metaclass that implements some basic methods that all metaclasses objects should have.
 """
 # Package Header #
-from ..__header__ import *
+from ..header import *
 
 # Header #
 __author__ = __author__
@@ -26,6 +26,7 @@ from copy import (
     Error,
 )
 from copyreg import dispatch_table
+from typing import Any
 
 # Third-Party Packages #
 
@@ -39,7 +40,7 @@ class BaseMeta(ABCMeta):
 
     # Magic Methods #
     # Construction/Destruction
-    def __copy__(self) -> "BaseMeta":
+    def __copy__(self) -> Any:
         """The copy magic method (shallow).
 
         Returns:
@@ -73,7 +74,7 @@ class BaseMeta(ABCMeta):
             return self
         return _reconstruct(self, None, *rv)
 
-    def __deepcopy__(self, memo: dict | None = None, _nil=[]) -> "BaseMeta":
+    def __deepcopy__(self, memo: dict | None = None, _nil=[]) -> Any:
         """The deepcopy magic method based on python's deepcopy function.
 
         Args:

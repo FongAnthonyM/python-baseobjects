@@ -4,7 +4,7 @@
 A dictionary that clears its contents after a specified time has passed.
 """
 # Package Header #
-from ..__header__ import *
+from ..header import *
 
 # Header #
 __author__ = __author__
@@ -15,8 +15,10 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from collections import UserDict
+from collections.abc import Callable, Hashable, Iterator
 from contextlib import contextmanager
 from time import perf_counter
+from typing import Any
 
 # Third-Party Packages #
 
@@ -43,13 +45,13 @@ class TimedDict(UserDict, BaseObject):
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, dict_: dict | None = None, /, **kwargs) -> None:
+    def __init__(self, dict_: dict[Hashable, Any] | None = None, /, **kwargs: Any) -> None:
         # Attributes #
         self.is_timed: bool = True
         self.lifetime: int | float | None = None
         self.expiration: int | float | None = None
 
-        self._data: dict = {}
+        self._data: dict[Hashable, Any] = {}
 
         # Object Construction #
         if dict_ is not None:
@@ -58,7 +60,7 @@ class TimedDict(UserDict, BaseObject):
             self.update(kwargs)
 
     @property
-    def data(self) -> dict:
+    def data(self) -> dict[Hashable, Any]:
         """The data of the dictionary."""
         self.verify()
         return self._data
@@ -77,26 +79,26 @@ class TimedDict(UserDict, BaseObject):
             self.expiration = perf_counter() + self.lifetime
 
     @contextmanager
-    def pause_timer(self) -> None:
+    def pause_timer(self) -> Callable[..., Iterator[None]]:
         """A context manager that will stop clearing the dictionary until it is returned."""
-        left_over = 0
+        left_over = 0.0
         if self.expiration is not None:
             left_over = self.expiration - perf_counter()
             self.expiration = None
         self.is_timed = False
-        yield
+        yield None
         self.expiration = perf_counter() + left_over
         self.is_timed = True
 
     @contextmanager
-    def pause_reset_timer(self) -> None:
+    def pause_reset_timer(self) -> Callable[..., Iterator[None]]:
         """A context manager that will stop clearing the dictionary until it is returned, resting the expiration."""
         self.is_timed = False
-        yield
+        yield None
         self.is_timed = True
         self.reset_expiration()
 
-    def clear_condition(self, *args, **kwargs) -> bool:
+    def clear_condition(self, *args: Any, **kwargs: Any) -> bool:
         """The condition used to determine if the dictionary should be cleared.
 
         Args:

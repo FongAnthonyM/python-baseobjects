@@ -4,7 +4,7 @@
 An abstract class for creating timed cahce
 """
 # Package Header #
-from ...__header__ import *
+from ...header import *
 
 # Header #
 __author__ = __author__
@@ -15,7 +15,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 import abc
-from collections.abc import Hashable, Iterable
+from collections.abc import Callable, Hashable, Iterable
 from functools import singledispatchmethod
 from time import perf_counter
 from typing import Any
@@ -50,7 +50,7 @@ class _HashedSeq(list):
         self.hashvalue = hash_(tuple_)
 
     # Representation
-    def __hash__(self) -> Hashable:
+    def __hash__(self) -> int:
         """Get the hash value of this object."""
         return self.hashvalue
 
@@ -276,7 +276,7 @@ class BaseTimedCache(BaseMethod):
         """
         raise NotImplementedError(f"A {type(method)} cannot be used to set a {type(self)} call_method.")
 
-    @set_call_method.register
+    @set_call_method.register(Callable)
     def _(self, method: AnyCallable) -> None:
         """Sets the call method to another function or a method within this object can be given to select it.
 
@@ -419,7 +419,7 @@ class BaseTimedCache(BaseMethod):
         """
         raise NotImplementedError(f"A {type(method)} cannot be used to set a {type(self)} caching method.")
 
-    @set_caching_method.register
+    @set_caching_method.register(Callable)
     def _(self, method: AnyCallable) -> None:
         """Sets the caching method to another function or a method within this object can be given to select it.
 

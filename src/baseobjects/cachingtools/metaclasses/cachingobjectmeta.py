@@ -4,7 +4,7 @@
 Creates a registry for the caching objects with a class.
 """
 # Package Header #
-from ...__header__ import *
+from ...header import *
 
 # Header #
 __author__ = __author__

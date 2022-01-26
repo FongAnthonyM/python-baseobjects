@@ -4,7 +4,7 @@
 A timed cache that only hold a single item and does not create a key from arguments.
 """
 # Package Header #
-from ...__header__ import *
+from ...header import *
 
 # Header #
 __author__ = __author__

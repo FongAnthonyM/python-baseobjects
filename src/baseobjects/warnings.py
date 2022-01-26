@@ -4,7 +4,7 @@
 Adds additional Warnings.
 """
 # Package Header #
-from .__header__ import *
+from .header import *
 
 # Header #
 __author__ = __author__

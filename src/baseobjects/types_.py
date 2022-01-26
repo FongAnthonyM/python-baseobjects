@@ -4,7 +4,7 @@
 Several custom types used in this package.
 """
 # Package Header #
-from .__header__ import *
+from .header import *
 
 # Header #
 __author__ = __author__

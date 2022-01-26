@@ -4,7 +4,7 @@
 Test for the baseobjects package.
 """
 # Package Header #
-from src.baseobjects.__header__ import *
+from src.baseobjects.header import *
 
 # Header #
 __author__ = __author__

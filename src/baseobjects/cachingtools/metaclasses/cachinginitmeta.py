@@ -4,7 +4,7 @@
 A mixin metaclass that implements caching and init functionalities
 """
 # Package Header #
-from ...__header__ import *
+from ...header import *
 
 # Header #
 __author__ = __author__

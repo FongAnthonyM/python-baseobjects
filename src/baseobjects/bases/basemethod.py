@@ -4,7 +4,7 @@
 An abstract class which implements the basic structure for creating methods.
 """
 # Package Header #
-from ..__header__ import *
+from ..header import *
 
 # Header #
 __author__ = __author__
@@ -14,6 +14,7 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
+from collections.abc import Callable
 from functools import update_wrapper, singledispatchmethod
 from typing import Any
 
@@ -136,7 +137,7 @@ class BaseMethod(BaseObject):
         """
         raise NotImplementedError(f"A {type(method)} cannot be used to set a {type(self)} get_method.")
 
-    @set_get_method.register
+    @set_get_method.register(Callable)
     def _(self, method: GetObjectMethod) -> None:
         """Sets the __get__ method to another function.
 

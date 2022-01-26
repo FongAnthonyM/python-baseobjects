@@ -5,7 +5,7 @@ A circular doubly linked container which is a fast and efficient way to store or
 changes size.
 """
 # Package Header #
-from ..__header__ import *
+from ..header import *
 
 # Header #
 __author__ = __author__
