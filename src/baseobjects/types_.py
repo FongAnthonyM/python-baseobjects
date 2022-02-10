@@ -27,6 +27,7 @@ from typing import Any
 # Types #
 # Callables
 AnyCallable = Callable[..., Any]
+AnyCallableType = Callable[..., type[Any]]
 
 # Objects
 GetObjectMethod = Callable[[Any, Any, type[Any] | None, ...], "BaseMethod"]
