@@ -14,21 +14,17 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
-import abc
-import pathlib
 
 # Third-Party Packages #
 import pytest
 
 # Local Packages #
-from .test_bases import ClassTest
-from src.baseobjects.objects.singlekwargdispatchmethod import singlekwargdispatchmethod
+from baseobjects.bases.singlekwargdispatchmethod import singlekwargdispatchmethod
 
 
 # Definitions #
 # Classes #
 class TestSingleKwargDispatchMethod:
-
     class ExampleClass:
         @singlekwargdispatchmethod
         def first_overload(self, a, b=None):
@@ -71,5 +67,5 @@ class TestSingleKwargDispatchMethod:
 
 
 # Main #
-if __name__ == '__main__':
+if __name__ == "__main__":
     pytest.main(["-v", "-s"])

@@ -23,7 +23,7 @@ from typing import Any
 # Local Packages #
 from ..types_ import AnyCallable, GetObjectMethod
 from .baseobject import BaseObject, search_sentinel
-from ..objects.singlekwargdispatchmethod import singlekwargdispatchmethod
+from .singlekwargdispatchmethod import singlekwargdispatchmethod
 
 
 # Definitions #

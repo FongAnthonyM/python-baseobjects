@@ -24,7 +24,7 @@ from typing import Any
 # Local Packages #
 from ...types_ import AnyCallable, GetObjectMethod
 from ...bases import BaseObject, BaseMethod
-from ...objects.singlekwargdispatchmethod import singlekwargdispatchmethod
+from ...bases.singlekwargdispatchmethod import singlekwargdispatchmethod
 
 
 # Definitions #

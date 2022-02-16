@@ -8,7 +8,7 @@ allows the first kwarg to be used for dispatching if no args are provided. Furth
 specified to have the dispatcher use that kwarg instead of the first kwarg.
 """
 # Package Header #
-from ..header import *
+from baseobjects.header import *
 
 # Header #
 __author__ = __author__
@@ -25,7 +25,7 @@ from typing import Any
 # Third-Party Packages #
 
 # Local Packages #
-from ..types_ import AnyCallable, AnyCallableType
+from baseobjects.types_ import AnyCallable, AnyCallableType
 
 
 # Definitions #
@@ -39,7 +39,7 @@ class singlekwargdispatchmethod(singledispatchmethod):
 
     Attributes:
         dispatcher: The single dispatcher to use for this object.
-        method: The method to wrap for single dispatching.
+        func: The method to wrap for single dispatching.
         parse: The method for parsing the args for the class to use for dispatching.
         _kwarg: The name of the kwarg to use of parsing the args for the class to use for dispatching.
 
@@ -47,12 +47,13 @@ class singlekwargdispatchmethod(singledispatchmethod):
         kwarg: Either the name of kwarg to dispatch with or the method to wrap.
         method: The method to wrap.
     """
+
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, kwarg: AnyCallable | str, method: AnyCallable | None = None) -> None:
         # Attributes #
         self.dispatcher: singledispatch | None = None
-        self.method: AnyCallable | None = None
+        self.func: AnyCallable | None = None
         self.parse: AnyCallableType = self.parse_first
         self._kwarg: str | None = None
 
@@ -91,7 +92,7 @@ class singlekwargdispatchmethod(singledispatchmethod):
         _method.__isabstractmethod__ = self.__isabstractmethod__
         _method.register = self.register
         _method.set_kwarg = self.set_kwarg
-        update_wrapper(_method, self.method)
+        update_wrapper(_method, self.func)
         return _method
 
     # Callable
@@ -124,7 +125,7 @@ class singlekwargdispatchmethod(singledispatchmethod):
                 raise TypeError(f"{method!r} is not callable or a descriptor")
 
             self.dispatcher = singledispatch(method)
-            self.method = method
+            self.func = method
 
     def set_kwarg(self, kwarg: str | None) -> None:
         """Sets the name of the kwarg for dispatching and changes the arg parsing to check for the kwarg.

@@ -23,7 +23,7 @@ from typing import Any, Optional
 
 # Local Packages #
 from ..bases import BaseObject
-from .singlekwargdispatchmethod import singlekwargdispatchmethod
+from ..bases.singlekwargdispatchmethod import singlekwargdispatchmethod
 
 
 # Definitions #
