@@ -17,13 +17,13 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 import copy
-from functools import singledispatchmethod
 from typing import Any, Optional
 
 # Third-Party Packages #
 
 # Local Packages #
 from ..bases import BaseObject
+from ..bases.singlekwargdispatchmethod import singlekwargdispatchmethod
 
 
 # Definitions #
@@ -209,7 +209,7 @@ class CircularDoublyLinkedContainer(BaseObject):
 
         return node
 
-    @singledispatchmethod
+    @singlekwargdispatchmethod("data")
     def append(self, data: Any) -> LinkedNode:
         """Add a new node and data to the end of the container.
 
@@ -249,8 +249,8 @@ class CircularDoublyLinkedContainer(BaseObject):
 
         return new_node
 
-    @singledispatchmethod
-    def insert(self, data, index: int) -> LinkedNode:
+    @singlekwargdispatchmethod("data")
+    def insert(self, data: Any, index: int) -> LinkedNode:
         """Add a new node and data at index within the container.
 
         Args:

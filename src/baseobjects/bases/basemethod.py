@@ -15,7 +15,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from collections.abc import Callable
-from functools import update_wrapper, singledispatchmethod
+from functools import update_wrapper
 from typing import Any
 
 # Third-Party Packages #
@@ -23,6 +23,7 @@ from typing import Any
 # Local Packages #
 from ..types_ import AnyCallable, GetObjectMethod
 from .baseobject import BaseObject, search_sentinel
+from .singlekwargdispatchmethod import singlekwargdispatchmethod
 
 
 # Definitions #
@@ -128,7 +129,7 @@ class BaseMethod(BaseObject):
             self.set_get_method(get_method)
 
     # Descriptor
-    @singledispatchmethod
+    @singlekwargdispatchmethod("method")
     def set_get_method(self, method: GetObjectMethod | str) -> None:
         """Sets the __get__ method to another function or a method name within this object can be given to select it.
 
