@@ -16,7 +16,6 @@ __email__ = __email__
 # Standard Libraries #
 import abc
 from collections.abc import Callable, Hashable, Iterable
-from functools import singledispatchmethod
 from time import perf_counter
 from typing import Any
 
@@ -25,6 +24,7 @@ from typing import Any
 # Local Packages #
 from ...types_ import AnyCallable, GetObjectMethod
 from ...bases import BaseObject, BaseMethod
+from ...objects.singlekwargdispatchmethod import singlekwargdispatchmethod
 
 
 # Definitions #
@@ -267,7 +267,7 @@ class BaseTimedCache(BaseMethod):
         return super().get_new_bind(instance, owner=owner, new_binding=new_binding)
 
     # Object Calling
-    @singledispatchmethod
+    @singlekwargdispatchmethod("method")
     def set_call_method(self, method: AnyCallable | str | None) -> None:
         """Sets the call method to another function or a method within this object can be given to select it.
 
@@ -410,7 +410,7 @@ class BaseTimedCache(BaseMethod):
             return key[0]
         return _HashedSeq(key)
 
-    @singledispatchmethod
+    @singlekwargdispatchmethod("method")
     def set_caching_method(self, method: AnyCallable | str | None) -> None:
         """Sets the caching method to another function or a method within this object can be given to select it.
 

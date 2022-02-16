@@ -15,6 +15,7 @@ __email__ = __email__
 
 # Imports
 # Local Packages #
+from .singlekwargdispatchmethod import singlekwargdispatchmethod
 from .automaticproperties import AutomaticProperties
 from .circulardoublylinkedcontainer import LinkedNode, CircularDoublyLinkedContainer
 from .timeddict import TimedDict
