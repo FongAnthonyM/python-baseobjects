@@ -3,16 +3,6 @@
 """ setup.py
 The setup for this package, only present to use in develop mode.
 """
-# Package Header #
-from src.baseobjects.header import *
-
-# Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
-
-
 # Imports #
 # Standard Libraries #
 from glob import glob
