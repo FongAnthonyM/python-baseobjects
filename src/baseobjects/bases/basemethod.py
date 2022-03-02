@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ basemethod.py
 An abstract class which implements the basic structure for creating methods.
 """

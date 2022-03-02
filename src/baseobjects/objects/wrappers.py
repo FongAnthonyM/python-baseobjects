@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ wrappers.py
 Abstract classes for objects that can wrap any objects and make their attributes/methods accessible from the wrapper.
 

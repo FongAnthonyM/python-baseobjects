@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ basemeta.py
 BaseMeta is an abstract metaclass that implements some basic methods that all metaclasses objects should have.
 """

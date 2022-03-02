@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ cachinginitmeta.py
 A mixin metaclass that implements caching and init functionalities
 """

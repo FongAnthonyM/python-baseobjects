@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ automaticproperties.py
 An abstract class which creates properties for this class automatically.
 """

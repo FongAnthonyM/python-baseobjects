@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ basetimedcache.py
 An abstract class for creating timed cahce
 """
@@ -15,7 +13,8 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 import abc
-from collections.abc import Callable, Hashable, Iterable
+from collections.abc import Callable, Hashable, Iterable, Iterator
+from contextlib import contextmanager
 from time import perf_counter
 from typing import Any
 
@@ -145,10 +144,11 @@ class BaseTimedCache(BaseMethod):
         self.expiration: int | float | None = None
 
         self.cache: Any = None
-        self._defualt_caching_method: AnyCallable = self.no_cache
+        self._default_caching_method: AnyCallable = self.no_cache
         self._caching_method: AnyCallable = self.no_cache
 
-        self._call_method: AnyCallable | None = None
+        self._call_method: AnyCallable = self.caching_call
+        self._previous_call_method: AnyCallable = self.caching_call
 
         # Object Construction #
         if init:
@@ -274,7 +274,7 @@ class BaseTimedCache(BaseMethod):
         Args:
             method: The function or method name to set the call method to.
         """
-        raise NotImplementedError(f"A {type(method)} cannot be used to set a {type(self)} call_method.")
+        raise TypeError(f"A {type(method)} cannot be used to set a {type(self)} call_method.")
 
     @set_call_method.register(Callable)
     def _(self, method: AnyCallable) -> None:
@@ -417,7 +417,7 @@ class BaseTimedCache(BaseMethod):
         Args:
             method: The function or name to set the caching method to.
         """
-        raise NotImplementedError(f"A {type(method)} cannot be used to set a {type(self)} caching method.")
+        raise TypeError(f"A {type(method)} cannot be used to set a {type(self)} caching method.")
 
     @set_caching_method.register(Callable)
     def _(self, method: AnyCallable) -> None:
@@ -449,8 +449,24 @@ class BaseTimedCache(BaseMethod):
         """
         return self.__func__(*args, **kwargs)
 
+    # Cache Control
     @abc.abstractmethod
     def clear_cache(self) -> None:
         """Clear the cache and update the expiration of the cache."""
         if self.lifetime is not None:
             self.expiration = perf_counter() + self.lifetime
+
+    def stop_caching(self) -> None:
+        """Stops using the cache, storing the method used."""
+        self._previous_call_method = self._call_method
+        self._call_method = self.__func__
+
+    def resume_caching(self) -> None:
+        """Resumes caching by setting the call method to the previous call method"""
+        self._call_method = self._previous_call_method
+
+    @contextmanager
+    def pause_caching(self) -> Callable[..., Iterator[None]]:
+        self.stop_caching()
+        yield None
+        self.resume_caching()

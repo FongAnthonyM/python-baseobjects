@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ timedsinglecache.py
 A timed cache that only hold a single item.
 """

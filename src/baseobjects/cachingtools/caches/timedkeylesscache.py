@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ timedkeylesscache.py
 A timed cache that only hold a single item and does not create a key from arguments.
 """

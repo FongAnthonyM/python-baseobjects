@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ timedlrucache.py
 A lru cache that periodically resets and include its instantiation decorator function.
 """

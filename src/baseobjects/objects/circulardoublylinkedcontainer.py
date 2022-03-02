@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ circulardoublylinkedcontainer.py
 A circular doubly linked container which is a fast and efficient way to store ordered data, especially if constantly
 changes size.

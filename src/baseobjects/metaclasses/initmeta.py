@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ initmeta.py
 InitMeta is an abstract metaclass that implements an init class method which allows some setup after a class is created.
 """

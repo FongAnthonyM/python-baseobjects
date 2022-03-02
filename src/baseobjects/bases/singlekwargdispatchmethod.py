@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ singlekwargdispatchmethod.py
 Extends singledispaatchermethod to allow kwargs to be used for dispatching.
 
@@ -8,7 +6,7 @@ allows the first kwarg to be used for dispatching if no args are provided. Furth
 specified to have the dispatcher use that kwarg instead of the first kwarg.
 """
 # Package Header #
-from baseobjects.header import *
+from ..header import *
 
 # Header #
 __author__ = __author__
@@ -25,7 +23,7 @@ from typing import Any
 # Third-Party Packages #
 
 # Local Packages #
-from baseobjects.types_ import AnyCallable, AnyCallableType
+from ..types_ import AnyCallable, AnyCallableType
 
 
 # Definitions #
