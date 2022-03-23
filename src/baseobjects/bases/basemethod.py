@@ -33,8 +33,9 @@ class BaseMethod(BaseObject):
         sentinel: An object used to determine if a value was unsuccessfully found.
 
     Attributes:
-        __func__: The original function to wrap.
+        __func__: The function to wrap.
         __self__: The object to bind this object to.
+        _orginal_func: The original function to wrap.
         _selected_get_method: The __get__ method to use as a Callable or a string.
         _get_method_: The method that will be used as the __get__ method.
         _instances: Copies of this object for specific owner instances.
@@ -44,7 +45,6 @@ class BaseMethod(BaseObject):
         get_method: The method that will be used for the __get__ method.
         init: Determines if this object will construct.
     """
-
     sentinel = search_sentinel
 
     # Magic Methods #
@@ -60,6 +60,8 @@ class BaseMethod(BaseObject):
         self.__self__: Any = None
 
         # Attributes #
+        self._orginial_func: AnyCallable | None = None
+
         self._selected_get_method: GetObjectMethod | str = "get_self_bind"
         self._get_method_: GetObjectMethod = self.get_self_bind
         self._instances: dict[Any, "BaseMethod"] = {}
@@ -120,6 +122,7 @@ class BaseMethod(BaseObject):
             get_method: The method that will be used for the __get__ method.
         """
         if func is not None:
+            self._orginial_func = func
             self.__func__ = func
             update_wrapper(self, self.__func__)
 
@@ -134,7 +137,7 @@ class BaseMethod(BaseObject):
         Args:
             method: The function to set the __get__ method to.
         """
-        raise NotImplementedError(f"A {type(method)} cannot be used to set a {type(self)} get_method.")
+        raise TypeError(f"A {type(method)} cannot be used to set a {type(self)} get_method.")
 
     @set_get_method.register(Callable)
     def _(self, method: GetObjectMethod) -> None:
@@ -225,15 +228,23 @@ class BaseMethod(BaseObject):
             return bound
 
     # Binding
-    def bind(self, instance: Any, name: str | None = None, set_attr: bool = True) -> None:
+    def bind(
+        self,
+        instance: Any,
+        owner: type[Any] | None = None,
+        name: str | None = None,
+        set_attr: bool = True,
+    ) -> None:
         """Binds this object to another object to give this object method functionality.
 
         Args:
             instance: The object to bing this object to.
+            owner: The class of the other object requesting this object.
             name: The name of the attribute this object will bind to in the other object.
             set_attr: Determines if this object will be set as an attribute in the object.
         """
         self.__self__ = instance
+        self.__func__ = self._orginial_func.__get__(instance, owner)
         if name is not None:
             setattr(instance, name, self)
         elif set_attr:
@@ -250,6 +261,6 @@ class BaseMethod(BaseObject):
         Returns:
             The new bound deepcopy of this object.
         """
-        new_obj = type(self)(func=self.__func__, get_method=self._selected_get_method)
+        new_obj = type(self)(func=self._orginial_func, get_method=self._selected_get_method)
         new_obj.bind(instance=instance, name=name, set_attr=set_attr)
         return new_obj
