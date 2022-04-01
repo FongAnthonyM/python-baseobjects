@@ -107,6 +107,7 @@ class BaseTimedCache(BaseMethod):
         cache: Contains the results of the wrapped function.
         _defualt_caching_method: The default caching function to use.
         _caching_method: The designated function to handle caching.
+        _previous_caching_method: The previous caching method used.
 
         _call_method: The function to call when this object is called.
 
@@ -146,9 +147,9 @@ class BaseTimedCache(BaseMethod):
         self.cache: Any = None
         self._default_caching_method: AnyCallable = self.no_cache
         self._caching_method: AnyCallable = self.no_cache
+        self._previous_caching_method: AnyCallable = self.no_cache
 
         self._call_method: AnyCallable = self.caching_call
-        self._previous_call_method: AnyCallable = self.caching_call
 
         # Object Construction #
         if init:
@@ -458,12 +459,13 @@ class BaseTimedCache(BaseMethod):
 
     def stop_caching(self) -> None:
         """Stops using the cache, storing the method used."""
-        self._previous_call_method = self._call_method
-        self._call_method = self.__func__
+        self._previous_caching_method = self._caching_method
+        self._caching_method = self.__func__
+        self.clear_cache()
 
     def resume_caching(self) -> None:
         """Resumes caching by setting the call method to the previous call method"""
-        self._call_method = self._previous_call_method
+        self._caching_method = self._previous_caching_method
 
     @contextmanager
     def pause_caching(self) -> Callable[..., Iterator[None]]:

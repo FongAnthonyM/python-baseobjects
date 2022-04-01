@@ -55,7 +55,6 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
                 self.enable_caching()
             else:
                 self.disable_caching()
-            self._is_cache = value
 
     # Instance Methods #
     # Caches Operators
@@ -95,6 +94,8 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         for name in caches:
             getattr(self, name).resume_caching()
 
+        self._is_cache = True
+
     def disable_caching(self, exclude: set[str] | None = None, get_caches: bool = False) -> None:
         """Disables all caches to cache.
 
@@ -115,6 +116,8 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         # Disable caches in the set.
         for name in caches:
             getattr(self, name).stop_caching()
+
+        self._is_cache = False
 
     def timeless_caching(self, exclude: set[str] | None = None, get_caches: bool = False) -> None:
         """Sets all caches to have no expiration time.
@@ -157,6 +160,33 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         # Enable expiration for all caches in the set.
         for name in caches:
             getattr(self, name).is_timed = True
+
+    def set_lifetimes(
+        self,
+        lifetime: int | float | None,
+        exclude: set[str] | None = None,
+        get_caches: bool = False,
+    ) -> None:
+        """Sets all caches to have an specific lifetime.
+
+        Args:
+            lifetime: The lifetime for all the caches to have.
+            exclude: The names of the caches to exclude from caching.
+            get_caches: Determines if get_caches will run before setting the caches.
+        """
+        # Get caches if needed.
+        if not self._caches or get_caches:
+            self.get_caches()
+
+        # Exclude caches if needed.
+        if exclude is not None:
+            caches = self._caches.difference(exclude)
+        else:
+            caches = self._caches
+
+        # Set all the lifetimes
+        for name in caches:
+            getattr(self, name).lifetime = lifetime
 
     def clear_caches(self, exclude: set[str] | None = None, get_caches: bool = False) -> None:
         """Clears all caches in this object.

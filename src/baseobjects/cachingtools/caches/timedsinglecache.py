@@ -77,6 +77,7 @@ class TimedSingleCache(BaseTimedCache):
 
         self._defualt_caching_method: AnyCallable = self.caching
         self._caching_method: AnyCallable = self.caching
+        self._previous_caching_method: AnyCallable = self.caching
 
         # New Attributes #
         self.args_key: Hashable | None = None

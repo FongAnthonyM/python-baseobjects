@@ -88,6 +88,7 @@ class TimedCache(BaseTimedCache):
         self.cache: dict = {}
         self._defualt_caching_method: AnyCallable = self.unlimited_cache
         self._caching_method: AnyCallable = self.unlimited_cache
+        self._previous_caching_method: AnyCallable = self.unlimited_cache
 
         # New Attributes #
         self._maxsize: int | None = None
