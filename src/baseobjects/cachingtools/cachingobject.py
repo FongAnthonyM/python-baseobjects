@@ -81,7 +81,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
             get_caches: Determines if get_caches will run before setting the caches.
         """
         # Get caches if needed.
-        if not self._caches or get_caches:
+        if get_caches:
             self.get_caches()
 
         # Exclude caches if needed.
@@ -104,7 +104,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
             get_caches: Determines if get_caches will run before setting the caches.
         """
         # Get caches if needed.
-        if not self._caches or get_caches:
+        if get_caches:
             self.get_caches()
 
         # Exclude caches if needed.
@@ -127,7 +127,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
             get_caches: Determines if get_caches will run before setting the caches.
         """
         # Get caches if needed.
-        if not self._caches or get_caches:
+        if get_caches:
             self.get_caches()
 
         # Exclude caches if needed.
@@ -148,7 +148,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
             get_caches: Determines if get_caches will run before setting the caches.
         """
         # Get caches if needed.
-        if not self._caches or get_caches:
+        if get_caches:
             self.get_caches()
 
         # Exclude caches if needed.
@@ -175,7 +175,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
             get_caches: Determines if get_caches will run before setting the caches.
         """
         # Get caches if needed.
-        if not self._caches or get_caches:
+        if get_caches:
             self.get_caches()
 
         # Exclude caches if needed.
@@ -196,7 +196,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
             get_caches: Determines if get_caches will run before setting the caches.
         """
         # Get caches if needed.
-        if not self._caches or get_caches:
+        if get_caches:
             self.get_caches()
 
         # Exclude caches if needed.

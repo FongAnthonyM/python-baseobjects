@@ -67,7 +67,7 @@ class TimedCache(BaseTimedCache):
         collective: Determines if the cache is collective for all method bindings or for each instance.
         init: Determines if this object will construct.
     """
-
+    __slots__ = BaseTimedCache.__slots__ | {"_maxsize", "priority"}
     priority_queue_type = CircularDoublyLinkedContainer
 
     # Magic Methods #

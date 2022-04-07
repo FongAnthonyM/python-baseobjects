@@ -119,7 +119,17 @@ class BaseTimedCache(BaseMethod):
         collective: Determines if the cache is collective for all method bindings or for each instance.
         init: Determines if this object will construct.
     """
-
+    __slots__ = BaseMethod.__slots__ | {
+        "_is_collective",
+        "typed",
+        "is_timed",
+        "lifetime",
+        "expiration",
+        "cache",
+        "_default_caching_method",
+        "_caching_method",
+        "_previous_caching_method",
+    }
     cache_item_type = CacheItem
 
     # Magic Methods #
@@ -136,20 +146,21 @@ class BaseTimedCache(BaseMethod):
         # Parent Attributes #
         super().__init__(init=False)
 
+        # Overriden Attributes #
+        self._call_method: AnyCallable = self.caching_call
+
         # New Attributes #
         self._is_collective: bool = True
 
         self.typed: bool = False
         self.is_timed: bool = True
         self.lifetime: int | float | None = None
-        self.expiration: int | float | None = None
+        self.expiration: int | float | None = 0
 
         self.cache: Any = None
         self._default_caching_method: AnyCallable = self.no_cache
         self._caching_method: AnyCallable = self.no_cache
         self._previous_caching_method: AnyCallable = self.no_cache
-
-        self._call_method: AnyCallable = self.caching_call
 
         # Object Construction #
         if init:
@@ -174,7 +185,7 @@ class BaseTimedCache(BaseMethod):
         if value is True:
             self._get_method_ = self.get_self_bind
         else:
-            self._get_method_ = self.get_new_bind
+            self._get_method_ = self.get_copy_bind
         self._is_collective = value
 
     @property
@@ -188,31 +199,6 @@ class BaseTimedCache(BaseMethod):
     @caching_method.setter
     def caching_method(self, value: AnyCallable | str) -> None:
         self.set_caching_method(value)
-
-    @property
-    def call_method(self) -> AnyCallable:
-        """The method that will be used for the __call__ method.
-
-        When set, any function can be set or the name of a method within this object can be given to select it.
-        """
-        return self._call_method
-
-    @call_method.setter
-    def call_method(self, value: AnyCallable | str) -> None:
-        self.set_call_method(value)
-
-    # Callable
-    def __call__(self, *args, **kwargs) -> Any:
-        """The call magic method for this object.
-
-        Args:
-            *args: Arguments for the wrapped function.
-            **kwargs: Keyword arguments for the wrapped function.
-
-        Returns:
-            The results of the wrapped function.
-        """
-        return self.call_method(*args, **kwargs)
 
     # Instance Methods #
     # Constructors
@@ -235,7 +221,6 @@ class BaseTimedCache(BaseMethod):
         """
         if lifetime is not None:
             self.lifetime = lifetime
-        self.expiration = perf_counter()
 
         if typed is not None:
             self.typed = typed
@@ -246,64 +231,49 @@ class BaseTimedCache(BaseMethod):
         if collective is not None:
             self.is_collective = collective
 
-        super().construct(func=func)
+        super().construct(func=func, call_method=call_method)
+
+    def copy(self) -> "BaseTimedCache":
+        """The copy method for this object
+
+        Returns:
+            A copy of this object.
+        """
+        new = super().copy()
+
+        if hasattr(self, self._default_caching_method.__name__):
+            new._default_caching_method = getattr(new, self._default_caching_method.__name__)
+
+        if hasattr(self, self._caching_method.__name__):
+            new._caching_method = getattr(new, self._caching_method.__name__)
+
+        if hasattr(self, self._previous_caching_method.__name__):
+            new._previous_caching_method = getattr(new, self._previous_caching_method.__name__)
+
+        return new
 
     # Binding
-    def get_new_bind(
+    def get_copy_bind(
         self,
-        instance: Any,
+        instance: Any = None,
         owner: type[Any] | None = None,
         new_binding: GetObjectMethod | str = "get_self",
-    ) -> BaseMethod:
-        """The __get__ method where it binds a new copy to the other object. Changed the default parameter.
+        set_attr: bool = True,
+    ) -> "BaseMethod":
+        """The __get__ method where it binds a copy of this object to the other object. Changed default parameters.
 
         Args:
             instance: The other object requesting this object.
             owner: The class of the other object requesting this object.
-            new_binding: The binding method the new object will use.
+            new_binding: The binding method the copied object will use.
+            set_attr: Determines if the new object will be set as an attribute in the object.
 
         Returns:
             Either bound self or a new BaseMethod bound to the instance.
         """
-        return super().get_new_bind(instance, owner=owner, new_binding=new_binding)
+        return super().get_copy_bind(instance, owner=owner, new_binding=new_binding, set_attr=set_attr)
 
     # Object Calling
-    @singlekwargdispatchmethod("method")
-    def set_call_method(self, method: AnyCallable | str | None) -> None:
-        """Sets the call method to another function or a method within this object can be given to select it.
-
-        Args:
-            method: The function or method name to set the call method to.
-        """
-        raise TypeError(f"A {type(method)} cannot be used to set a {type(self)} call_method.")
-
-    @set_call_method.register(Callable)
-    def _(self, method: AnyCallable) -> None:
-        """Sets the call method to another function or a method within this object can be given to select it.
-
-        Args:
-            method: The function to set the call method to.
-        """
-        self._call_method = method
-
-    @set_call_method.register
-    def _(self, method: str) -> None:
-        """Sets the call method to another function or a method within this object can be given to select it.
-
-        Args:
-            method: The method name to set the call method to.
-        """
-        self._call_method = getattr(self, method)
-
-    @set_call_method.register
-    def _(self, method: None) -> None:
-        """Sets the call method to another function or a method within this object can be given to select it.
-
-        Args:
-            method: The function or name to set the call method to.
-        """
-        self._call_method = self.__func__
-
     def caching_call(self, *args: Any, **kwargs: Any) -> Any:
         """Calls the caching function and clears the cache at certain time.
 
@@ -346,11 +316,18 @@ class BaseTimedCache(BaseMethod):
         return self.is_timed and self.lifetime is not None and perf_counter() >= self.expiration
 
     # Binding
-    def bind_to_new(self, instance: Any, name: str | None = None, set_attr: bool = True) -> "BaseTimedCache":
+    def bind_to_new(
+        self,
+        instance: Any,
+        owner: type[Any] | None = None,
+        name: str | None = None,
+        set_attr: bool = True,
+    ) -> "BaseTimedCache":
         """Creates a new instance of this object and binds it to another object.
 
         Args:
             instance: The object ot bing this object to.
+            owner: The class of the other object requesting this object.
             name: The name of the attribute this object will bind to in the other object.
             set_attr: Determines if this object will be set as an attribute in the object.
 
@@ -369,7 +346,7 @@ class BaseTimedCache(BaseMethod):
             call_method=call_method,
             collective=self._is_collective,
         )
-        new_obj.bind(instance=instance, name=name, set_attr=set_attr)
+        new_obj.bind(instance=instance, owner=owner, name=name, set_attr=set_attr)
         return new_obj
 
     # Caching
@@ -411,32 +388,16 @@ class BaseTimedCache(BaseMethod):
             return key[0]
         return _HashedSeq(key)
 
-    @singlekwargdispatchmethod("method")
-    def set_caching_method(self, method: AnyCallable | str | None) -> None:
+    def set_caching_method(self, method: AnyCallable | str) -> None:
         """Sets the caching method to another function or a method within this object can be given to select it.
 
         Args:
             method: The function or name to set the caching method to.
         """
-        raise TypeError(f"A {type(method)} cannot be used to set a {type(self)} caching method.")
-
-    @set_caching_method.register(Callable)
-    def _(self, method: AnyCallable) -> None:
-        """Sets the caching method to another function or a method within this object can be given to select it.
-
-        Args:
-            method: The function or name to set the caching method to.
-        """
-        self._caching_method = method
-
-    @set_caching_method.register
-    def _(self, method: str) -> None:
-        """Sets the caching method to another function or a method within this object can be given to select it.
-
-        Args:
-            method: The function or name to set the caching method to.
-        """
-        self._caching_method = getattr(self, method)
+        if isinstance(method, str):
+            self._caching_method = getattr(self, method)
+        else:
+            self._caching_method = method
 
     def no_cache(self, *args: Any, **kwargs: Any) -> Any:
         """A direct call to wrapped function with no caching.
