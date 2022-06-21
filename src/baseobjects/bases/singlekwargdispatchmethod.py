@@ -17,19 +17,19 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
-from functools import singledispatch, singledispatchmethod, update_wrapper, wraps
+from functools import singledispatch, singledispatchmethod
 from typing import Any
 
 # Third-Party Packages #
 
 # Local Packages #
 from ..types_ import AnyCallable, AnyCallableType
-from .basemethod import BaseMethod
+from .basedecorator import BaseDecorator
 
 
 # Definitions #
 # Classes #
-class singlekwargdispatchmethod(BaseMethod, singledispatchmethod):
+class singlekwargdispatchmethod(BaseDecorator, singledispatchmethod):
     """Extends singledispaatchermethod to allow kwargs to be used for dispatching.
 
     The normal single dispatching requires at least one arg for dispatching. This object retains this functionality, but
@@ -46,18 +46,18 @@ class singlekwargdispatchmethod(BaseMethod, singledispatchmethod):
         kwarg: Either the name of kwarg to dispatch with or the method to wrap.
         method: The method to wrap.
     """
-    __slots__ = BaseMethod.__slots__ | {"dispatcher", "func", "parse", "_kwarg"}
+    __slots__ = BaseDecorator.__slots__ | {"dispatcher", "func", "parse", "_kwarg"}
 
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, kwarg: AnyCallable | str, method: AnyCallable | None = None) -> None:
         # Parent Attributes #
-        BaseMethod.__init__(self, init=False)
+        BaseDecorator.__init__(self, init=False)
 
         # Override Attributes #
         self._call_method = self.construct_call
 
-        # Attributes #
+        # New Attributes #
         self.dispatcher: singledispatch | None = None
         self.func: AnyCallable | None = None
         self.parse: AnyCallableType = self.parse_first
@@ -65,9 +65,9 @@ class singlekwargdispatchmethod(BaseMethod, singledispatchmethod):
 
         # Object Creation #
         if isinstance(kwarg, str):
-            self.construct(kwarg=kwarg, method=method)
+            self.construct(kwarg=kwarg, func=method)
         else:
-            self.construct(method=kwarg)
+            self.construct(func=kwarg)
 
     @property
     def kwarg(self) -> str | None:
@@ -80,42 +80,21 @@ class singlekwargdispatchmethod(BaseMethod, singledispatchmethod):
 
     # Instance Methods #
     # Constructors
-    def construct(self, kwarg: str | None = None, method: AnyCallable | None = None) -> None:
+    def construct(self, kwarg: str | None = None, func: AnyCallable | None = None, **kwargs: Any) -> None:
         """Constructs this object based on the input.
 
         Args:
             kwarg: The name of kwarg to dispatch with.
-            method: The method to wrap.
+            func: The method to wrap.
         """
         if kwarg is not None:
             self.kwarg = kwarg
 
-        if method is not None:
-            if not callable(method) and not hasattr(method, "__get__"):
-                raise TypeError(f"{method!r} is not callable or a descriptor")
-
-            self.dispatcher = singledispatch(method)
-            self._original_func = method
-            self.__func__ = method
-            update_wrapper(self, method)
+        if func is not None:
+            self.dispatcher = singledispatch(func)
             self._call_method = self.method_search
 
-    # Call Methods
-    def construct_call(self, *args: Any, **kwargs: Any) -> "singlekwargdispatchmethod":
-        """A method for constructing this object via this object being called.
-
-        Args:
-            *args: The arguments from the call which can construct this object.
-            **kwargs: The keyword arguments from the call which can construct this object.
-
-        Returns:
-            This object.
-        """
-        if args:
-            self.construct(method=args[0])
-        else:
-            self.construct(**kwargs)
-        return self
+        BaseDecorator.construct(self, func=func, **kwargs)
 
     # Setters
     def set_kwarg(self, kwarg: str | None) -> None:

@@ -83,7 +83,7 @@ class BaseMethod(BaseObject):
 
         # Object Construction #
         if init:
-            self.construct(func=func, get_method=get_method)
+            self.construct(func=func, get_method=get_method, call_method=call_method)
 
     @property
     def _get_method(self) -> GetObjectMethod:
@@ -146,14 +146,12 @@ class BaseMethod(BaseObject):
         """The constructor for this object.
 
         Args:
-            func:  The function to wrap.
+            func: The function to wrap.
             get_method: The method that will be used for the __get__ method.
             call_method: The default call method to use.
         """
         if func is not None:
-            self._original_func = func
-            self.__func__ = func
-            update_wrapper(self, self.__func__)
+            self.set_func(func)
 
         if get_method is not None:
             self.set_get_method(get_method)
@@ -175,6 +173,20 @@ class BaseMethod(BaseObject):
             new._call_method = getattr(new, self._call_method.__name__)
 
         return new
+
+    # Function
+    def set_func(self, func: AnyCallable) -> None:
+        """Sets the function that this class wraps.
+
+        Args:
+            func: The function to wrap.
+        """
+        if not callable(func) and not hasattr(func, "__get__"):
+            raise TypeError(f"{func!r} is not callable or a descriptor")
+
+        self._original_func = func
+        self.__func__ = func
+        update_wrapper(self, func)
 
     # Descriptor
     def set_get_method(self, method: GetObjectMethod | str) -> None:
