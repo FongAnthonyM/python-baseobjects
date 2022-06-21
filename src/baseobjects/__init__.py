@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ __init__.py
 baseobjects provides several base classes and tools.
 """
@@ -16,7 +14,3 @@ __email__ = __email__
 # Imports #
 # Local Packages #
 from .bases import *
-from .metaclasses import *
-from .objects import *
-from .cachingtools import *
-from .warnings import TimeoutWarning

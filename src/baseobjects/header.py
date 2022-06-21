@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ header.py
 Information about this package.
 """
@@ -14,7 +12,7 @@ __email__ = ""
 __copyright__ = "Copyright 2021, Anthony Fong"
 __license__ = "MIT"
 
-__version__ = "1.7.0"
+__version__ = "1.8.0"
 __status__ = "Production/Stable"
 
 __all__ = [

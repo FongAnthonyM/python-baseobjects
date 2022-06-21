@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ baseobject.py
 BaseObject is an abstract class which implements some basic methods that all objects should have.
 """

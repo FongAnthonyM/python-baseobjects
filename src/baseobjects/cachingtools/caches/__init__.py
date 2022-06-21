@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ __init__.py
 Caching tools.
 """
@@ -16,7 +14,7 @@ __email__ = __email__
 # Imports
 # Local Packages #
 from .basetimedcache import BaseTimedCache
-from .timedsinglecache import TimedSingleCache
-from .timedkeylesscache import TimedKeylessCache
+from .timedsinglecache import TimedSingleCache, timed_single_cache
+from .timedkeylesscache import TimedKeylessCache, timed_keyless_cache
 from .timedcache import TimedCache, timed_cache
 from .timedlrucache import TimedLRUCache, timed_lru_cache

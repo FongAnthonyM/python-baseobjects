@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ timedcache.py
 A cache that periodically resets and include its instantiation decorator function.
 """
@@ -69,7 +67,7 @@ class TimedCache(BaseTimedCache):
         collective: Determines if the cache is collective for all method bindings or for each instance.
         init: Determines if this object will construct.
     """
-
+    __slots__ = BaseTimedCache.__slots__ | {"_maxsize", "priority"}
     priority_queue_type = CircularDoublyLinkedContainer
 
     # Magic Methods #
@@ -90,6 +88,7 @@ class TimedCache(BaseTimedCache):
         self.cache: dict = {}
         self._defualt_caching_method: AnyCallable = self.unlimited_cache
         self._caching_method: AnyCallable = self.unlimited_cache
+        self._previous_caching_method: AnyCallable = self.unlimited_cache
 
         # New Attributes #
         self._maxsize: int | None = None

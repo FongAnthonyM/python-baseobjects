@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ timedsinglecache.py
 A timed cache that only hold a single item.
 """
@@ -62,6 +60,7 @@ class TimedSingleCache(BaseTimedCache):
         collective: Determines if the cache is collective for all method bindings or for each instance.
         init: Determines if this object will construct.
     """
+    __slots__ = BaseTimedCache.__slots__ | {"args_key"}
 
     # Magic Methods #
     # Construction/Destruction
@@ -79,6 +78,7 @@ class TimedSingleCache(BaseTimedCache):
 
         self._defualt_caching_method: AnyCallable = self.caching
         self._caching_method: AnyCallable = self.caching
+        self._previous_caching_method: AnyCallable = self.caching
 
         # New Attributes #
         self.args_key: Hashable | None = None

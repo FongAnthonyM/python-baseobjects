@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ cachingobject.py
 An abstract class which creates properties for this class automatically.
 """
@@ -24,93 +22,16 @@ from typing import Any
 from ..types_ import AnyCallable
 from ..bases import BaseObject
 from .metaclasses import CachingObjectMeta
-from .caches import TimedSingleCache, TimedKeylessCache, TimedCache, BaseTimedCache
+from .caches import BaseTimedCache
 
 
 # Definitions #
 # Classes #
-class CachingObjectMethod(BaseTimedCache):
-    """A timed cache wrapper for a method which includes extra control from the object."""
-
-    # Instance Methods #
-    # Object Calling
-    def caching_call(self, *args: Any, **kwargs: Any) -> Any:
-        """Calls the caching function, clears the cache at certain time, and allows the owning object to override.
-
-        Args:
-            *args: Arguments for the wrapped function.
-            **kwargs: Keyword arguments for the wrapped function.
-
-        Returns:
-            The result or the caching_method.
-        """
-        # Get the object to operate on.
-        if self.__self__ is not None:
-            obj = self.__self__
-        else:
-            obj = args[0]
-
-        # Clear cache if condition is met or not caching.
-        if self.clear_condition() or not obj.is_cache:
-            self.clear_cache()
-
-        # Use caching method if allowed.
-        if obj.is_cache:
-            return self.caching_method(obj, *args, **kwargs)
-        # Run normal method if not allowed.
-        else:
-            return self.__func__(obj, *args, **kwargs)
-
-    def clearing_call(self, *args: Any, **kwargs: Any) -> Any:
-        """Clears the cache then calls the caching function and allows the owning object to override.
-
-        Args:
-            *args: Arguments for the wrapped function.
-            **kwargs: Keyword arguments for the wrapped function.
-
-        Returns:
-            The result or the caching_method.
-        """
-        # Get the object to operate on.
-        if self.__self__ is not None:
-            obj = self.__self__
-        else:
-            obj = args[0]
-
-        # Clear Cache
-        self.clear_cache()
-
-        # Use caching method if allowed.
-        if obj.is_cache:
-            return self.caching_method(obj, *args, **kwargs)
-        # Run normal method if not allowed.
-        else:
-            return self.__func__(obj, *args, **kwargs)
-
-
-class TimedSingleCacheMethod(TimedSingleCache, CachingObjectMethod):
-    """A mixin class that implements both TimedSingleCache and CachingObjectMethod"""
-
-    pass
-
-
-class TimedKeylessCacheMethod(TimedKeylessCache, CachingObjectMethod):
-    """A mixin class that implements both TimedKeylessCache and CachingObjectMethod"""
-
-    pass
-
-
-class TimedCacheMethod(TimedCache, CachingObjectMethod):
-    """A mixin class that implements both TimedCache and CachingObjectMethod"""
-
-    pass
-
-
 class CachingObject(BaseObject, metaclass=CachingObjectMeta):
     """An abstract class which is has functionality for methods that are caching.
 
     Attributes:
-        is_cache: Determines if the caching methods of this object will cache.
+        _is_cache: Determines if the caching methods of this object will cache.
         _caches: All the caches within this object.
     """
 
@@ -118,9 +39,22 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
     # Construction/Destruction
     def __init__(self) -> None:
         # Attributes #
-        self.is_cache: bool = True
+        self._is_cache: bool = True
 
         self._caches: set[str] = self._caches_.copy()
+
+    @property
+    def is_cache(self) -> bool:
+        """Determines if the caching methods are enabled and puts them in the correct state when set."""
+        return self._is_cache
+
+    @is_cache.setter
+    def is_cache(self, value: bool) -> None:
+        if value is not self._is_cache:
+            if value:
+                self.enable_caching()
+            else:
+                self.disable_caching()
 
     # Instance Methods #
     # Caches Operators
@@ -147,7 +81,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
             get_caches: Determines if get_caches will run before setting the caches.
         """
         # Get caches if needed.
-        if not self._caches or get_caches:
+        if get_caches:
             self.get_caches()
 
         # Exclude caches if needed.
@@ -158,7 +92,9 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
 
         # Enable caches in the set.
         for name in caches:
-            getattr(self, name).set_caching_method()
+            getattr(self, name).resume_caching()
+
+        self._is_cache = True
 
     def disable_caching(self, exclude: set[str] | None = None, get_caches: bool = False) -> None:
         """Disables all caches to cache.
@@ -168,7 +104,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
             get_caches: Determines if get_caches will run before setting the caches.
         """
         # Get caches if needed.
-        if not self._caches or get_caches:
+        if get_caches:
             self.get_caches()
 
         # Exclude caches if needed.
@@ -179,7 +115,9 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
 
         # Disable caches in the set.
         for name in caches:
-            getattr(self, name).set_caching_method(method="no_cache")
+            getattr(self, name).stop_caching()
+
+        self._is_cache = False
 
     def timeless_caching(self, exclude: set[str] | None = None, get_caches: bool = False) -> None:
         """Sets all caches to have no expiration time.
@@ -189,7 +127,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
             get_caches: Determines if get_caches will run before setting the caches.
         """
         # Get caches if needed.
-        if not self._caches or get_caches:
+        if get_caches:
             self.get_caches()
 
         # Exclude caches if needed.
@@ -210,7 +148,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
             get_caches: Determines if get_caches will run before setting the caches.
         """
         # Get caches if needed.
-        if not self._caches or get_caches:
+        if get_caches:
             self.get_caches()
 
         # Exclude caches if needed.
@@ -223,6 +161,33 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         for name in caches:
             getattr(self, name).is_timed = True
 
+    def set_lifetimes(
+        self,
+        lifetime: int | float | None,
+        exclude: set[str] | None = None,
+        get_caches: bool = False,
+    ) -> None:
+        """Sets all caches to have an specific lifetime.
+
+        Args:
+            lifetime: The lifetime for all the caches to have.
+            exclude: The names of the caches to exclude from caching.
+            get_caches: Determines if get_caches will run before setting the caches.
+        """
+        # Get caches if needed.
+        if get_caches:
+            self.get_caches()
+
+        # Exclude caches if needed.
+        if exclude is not None:
+            caches = self._caches.difference(exclude)
+        else:
+            caches = self._caches
+
+        # Set all the lifetimes
+        for name in caches:
+            getattr(self, name).lifetime = lifetime
+
     def clear_caches(self, exclude: set[str] | None = None, get_caches: bool = False) -> None:
         """Clears all caches in this object.
 
@@ -231,7 +196,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
             get_caches: Determines if get_caches will run before setting the caches.
         """
         # Get caches if needed.
-        if not self._caches or get_caches:
+        if get_caches:
             self.get_caches()
 
         # Exclude caches if needed.
@@ -243,121 +208,3 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         # Clear caches in the set.
         for name in caches:
             getattr(self, name).clear_cache()
-
-
-# Functions #
-def timed_single_cache_method(
-    typed: bool = False,
-    lifetime: int | float | None = None,
-    call_method: AnyCallable | str = "caching_call",
-    collective: bool = True,
-) -> Callable[[AnyCallable], TimedSingleCacheMethod]:
-    """A factory to be used a decorator that sets the parameters of timed single cache method factory.
-
-    Args:
-        typed: Determines if the function's arguments are type sensitive for caching.
-        lifetime: The period between cache resets in seconds.
-        call_method: The default call method to use.
-        collective: Determines if the cache is collective for all method bindings or for each instance.
-
-    Returns:
-        The parameterized timed single cache method factory.
-    """
-
-    def timed_cache_method_factory(func: AnyCallable) -> TimedSingleCacheMethod:
-        """A factory for wrapping a method with a TimedSingleCacheMethod object.
-
-        Args:
-            func: The function to wrap with a TimedSingleCacheMethod.
-
-        Returns:
-            The TimeSingleCacheMethod object which wraps the given function.
-        """
-        return TimedSingleCacheMethod(
-            func,
-            typed=typed,
-            lifetime=lifetime,
-            call_method=call_method,
-            collective=collective,
-        )
-
-    return timed_cache_method_factory
-
-
-def timed_keyless_cache_method(
-    typed: bool = False,
-    lifetime: int | float | None = None,
-    call_method: AnyCallable | str = "caching_call",
-    collective: bool = True,
-) -> Callable[[AnyCallable], TimedKeylessCacheMethod]:
-    """A factory to be used a decorator that sets the parameters of timed keyless cache method factory.
-
-    Args:
-        typed: Determines if the function's arguments are type sensitive for caching.
-        lifetime: The period between cache resets in seconds.
-        call_method: The default call method to use.
-        collective: Determines if the cache is collective for all method bindings or for each instance.
-
-    Returns:
-        The parameterized timed keyless cache method factory.
-    """
-
-    def timed_cache_method_factory(func: AnyCallable) -> TimedKeylessCacheMethod:
-        """A factory for wrapping a method with a TimedKeylessCacheMethod object.
-
-        Args:
-            func: The function to wrap with a TimedKeylessCacheMethod.
-
-        Returns:
-            The TimeKeylessCacheMethod object which wraps the given function.
-        """
-        return TimedKeylessCacheMethod(
-            func,
-            typed=typed,
-            lifetime=lifetime,
-            call_method=call_method,
-            collective=collective,
-        )
-
-    return timed_cache_method_factory
-
-
-def timed_cache_method(
-    maxsize: int | None = None,
-    typed: bool = False,
-    lifetime: int | float | None = None,
-    call_method: AnyCallable | str = "caching_call",
-    collective: bool = True,
-) -> Callable[[AnyCallable], TimedCacheMethod]:
-    """A factory to be used a decorator that sets the parameters of timed cache method factory.
-
-    Args:
-        maxsize: The max size of the cache.
-        typed: Determines if the function's arguments are type sensitive for caching.
-        lifetime: The period between cache resets in seconds.
-        call_method: The default call method to use.
-        collective: Determines if the cache is collective for all method bindings or for each instance.
-
-    Returns:
-        The parameterized timed cache method factory.
-    """
-
-    def timed_cache_method_factory(func: AnyCallable) -> TimedCacheMethod:
-        """A factory for wrapping a method with a TimedCacheMethod object.
-
-        Args:
-            func: The function to wrap with a TimedCacheMethod.
-
-        Returns:
-            The TimeCacheMethod object which wraps the given function.
-        """
-        return TimedCacheMethod(
-            func,
-            maxsize=maxsize,
-            typed=typed,
-            lifetime=lifetime,
-            call_method=call_method,
-            collective=collective,
-        )
-
-    return timed_cache_method_factory

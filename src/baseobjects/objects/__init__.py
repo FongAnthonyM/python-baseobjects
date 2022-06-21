@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ __init__.py
 Description: More specific objects for the package.
 """

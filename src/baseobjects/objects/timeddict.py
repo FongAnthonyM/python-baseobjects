@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ timeddict.py
 A dictionary that clears its contents after a specified time has passed.
 """

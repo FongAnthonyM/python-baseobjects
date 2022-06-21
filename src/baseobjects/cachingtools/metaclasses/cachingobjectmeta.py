@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ cachingobjectmeta.py
 Creates a registry for the caching objects with a class.
 """

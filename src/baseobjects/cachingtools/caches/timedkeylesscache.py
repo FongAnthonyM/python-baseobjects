@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """ timedkeylesscache.py
 A timed cache that only hold a single item and does not create a key from arguments.
 """
@@ -62,7 +60,6 @@ class TimedKeylessCache(TimedSingleCache):
         collective: Determines if the cache is collective for all method bindings or for each instance.
         init: Determines if this object will construct.
     """
-
     # Magic Methods #
     # Construction/Destruction
     def __init__(
