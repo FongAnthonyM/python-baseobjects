@@ -13,7 +13,7 @@ import pathlib
 # Third-Party Packages #
 from setuptools import find_packages
 from setuptools import setup
-import toml
+import tomli as tomllib
 
 
 # Definitions #
@@ -21,7 +21,7 @@ import toml
 def get_pyproject_as_setup():
     file_path = pathlib.Path(__file__).parent.joinpath("pyproject.toml")
     with file_path as file:
-        pyproject = toml.load(file)
+        pyproject = tomllib.load(file)
 
     package_info = pyproject["tool"]["poetry"]
     setup_info = package_info.copy()
