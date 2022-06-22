@@ -56,7 +56,6 @@ class singlekwargdispatchmethod(BaseDecorator, singledispatchmethod):
 
         # Override Attributes #
         self._default_call_method = self.method_search
-        self._call_method = self.construct_call
 
         # New Attributes #
         self.dispatcher: singledispatch | None = None
