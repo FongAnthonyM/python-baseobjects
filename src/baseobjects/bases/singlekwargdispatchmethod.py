@@ -23,7 +23,7 @@ from typing import Any
 # Third-Party Packages #
 
 # Local Packages #
-from ..types_ import AnyCallable, AnyCallableType
+from ..typing import AnyCallable, AnyCallableType
 from .basedecorator import BaseDecorator
 
 

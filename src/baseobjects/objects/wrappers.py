@@ -47,7 +47,7 @@ from typing import Any, Iterable
 # Local Packages #
 from ..bases import BaseObject
 from ..metaclasses import InitMeta
-from ..types_ import PropertyCallbacks
+from ..typing import PropertyCallbacks
 
 
 # Definitions #

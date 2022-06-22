@@ -19,7 +19,7 @@ from typing import Any
 # Third-Party Packages #
 
 # Local Packages #
-from ..types_ import AnyCallable, GetObjectMethod
+from ..typing import AnyCallable, GetObjectMethod
 from .baseobject import BaseObject, search_sentinel
 
 

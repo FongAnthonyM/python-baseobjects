@@ -21,7 +21,7 @@ from typing import Any
 # Third-Party Packages #
 
 # Local Packages #
-from ...types_ import AnyCallable, GetObjectMethod
+from ...typing import AnyCallable, GetObjectMethod
 from ...bases import BaseObject, BaseMethod
 from ...bases.singlekwargdispatchmethod import singlekwargdispatchmethod
 

@@ -4,7 +4,7 @@ meaning of the three number, but the Major number is more significant than the M
 significant than the Patch number. A good example of the tri-number framework can be found at https://semver.org/
 """
 # Package Header #
-from classversioning.header import *
+from ...header import *
 
 # Header #
 __author__ = __author__

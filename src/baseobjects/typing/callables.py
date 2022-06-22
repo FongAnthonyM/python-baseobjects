@@ -1,8 +1,9 @@
-""" types_.py
-Several custom types used in this package.
+""" callables.py
+Type hints for callables.
 """
 # Package Header #
-from .header import *
+from ..header import *
+
 
 # Header #
 __author__ = __author__
@@ -10,15 +11,14 @@ __credits__ = __credits__
 __maintainer__ = __maintainer__
 __email__ = __email__
 
-
 # Imports #
-# Default Libraries #
+# Standard Libraries #
 from collections.abc import Callable
 from typing import Any
 
-# Downloaded Libraries #
+# Third-Party Packages #
 
-# Local Libraries #
+# Local Packages #
 
 
 # Definitions #
@@ -35,3 +35,14 @@ GetterMethod = Callable[[Any], Any]
 SetterMethod = Callable[[Any, str], None]
 DeleteMethod = Callable[[Any], None]
 PropertyCallbacks = tuple[GetterMethod, SetterMethod, DeleteMethod]
+
+# Available Types
+__all__ = [
+    "AnyCallable",
+    "AnyCallableType",
+    "GetObjectMethod",
+    "GetterMethod",
+    "SetterMethod",
+    "DeleteMethod",
+    "PropertyCallbacks",
+]

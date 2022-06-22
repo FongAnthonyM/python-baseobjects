@@ -19,7 +19,7 @@ from typing import Any
 # Third-Party Packages #
 
 # Local Packages #
-from ..types_ import AnyCallable
+from ..typing import AnyCallable
 from ..bases import BaseObject
 from .metaclasses import CachingObjectMeta
 from .caches import BaseTimedCache

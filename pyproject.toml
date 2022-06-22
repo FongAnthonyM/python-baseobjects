@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "baseobjects"
-version = "1.8.0"
+version = "1.9.0"
 description = "Basic object templates."
 authors = ["Anthony Fong <FongAnthonyM@gmail.com>"]
 license = "MIT"
