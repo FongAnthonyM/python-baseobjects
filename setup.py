@@ -23,7 +23,7 @@ except ModuleNotFoundError:
 # Functions #
 def get_pyproject_as_setup():
     file_path = pathlib.Path(__file__).parent.joinpath("pyproject.toml")
-    with file_path as file:
+    with file_path.open(mode="rb") as file:
         pyproject = tomllib.load(file)
 
     package_info = pyproject["tool"]["poetry"]
