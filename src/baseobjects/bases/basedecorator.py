@@ -56,6 +56,25 @@ class BaseDecorator(BaseMethod):
             self.construct(func=func, get_method=get_method, call_method=call_method)
             
     # Instance Methods #
+    # Constructors/Destructors
+    def construct(
+        self,
+        func: AnyCallable | None = None,
+        get_method: GetObjectMethod | str | None = None,
+        call_method: AnyCallable | str | None = None,
+    ) -> None:
+        """The constructor for this object.
+
+        Args:
+            func: The function to wrap.
+            get_method: The method that will be used for the __get__ method.
+            call_method: The default call method to use.
+        """
+        if func is not None:
+            self._call_method = self._default_call_method
+
+        super().construct(func=func, get_method=get_method, call_method=call_method)
+
     # Call Methods
     def construct_call(self, *args: Any, **kwargs: Any) -> "BaseDecorator":
         """A method for constructing this object via this object being called.

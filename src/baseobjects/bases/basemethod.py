@@ -39,6 +39,7 @@ class BaseMethod(BaseObject):
         _selected_get_method: The __get__ method to use as a Callable or a string.
         _get_method_: The method that will be used as the __get__ method.
         _instances: Copies of this object for specific owner instances.
+        _default_call_method: A call method that can be used when a call method is not explicitly given.
         _call_method: The method that will be called when this object is called.
 
     Args:
@@ -79,6 +80,7 @@ class BaseMethod(BaseObject):
         self._get_method_: GetObjectMethod = self.get_copy_bind
         self._instances: dict[Any, "BaseMethod"] = {}
 
+        self._default_call_method: AnyCallable = self.func_call
         self._call_method: AnyCallable = self.func_call
 
         # Object Construction #
@@ -383,6 +385,19 @@ class BaseMethod(BaseObject):
         return new_obj
 
     # Call Methods
+    def set_default_call_method(self, method: AnyCallable | str | None) -> None:
+        """Sets the default call method to another function or a method within this object can be given to select it.
+
+        Args:
+            method: The function or method name to set the call method to.
+        """
+        if method is None:
+            self._default_call_method = self.func_call
+        elif isinstance(method, str):
+            self._default_call_method = getattr(self, method)
+        else:
+            self._default_call_method = method
+
     def set_call_method(self, method: AnyCallable | str | None) -> None:
         """Sets the call method to another function or a method within this object can be given to select it.
 

@@ -55,6 +55,7 @@ class singlekwargdispatchmethod(BaseDecorator, singledispatchmethod):
         BaseDecorator.__init__(self, init=False)
 
         # Override Attributes #
+        self._default_call_method = self.method_search
         self._call_method = self.construct_call
 
         # New Attributes #
@@ -86,13 +87,13 @@ class singlekwargdispatchmethod(BaseDecorator, singledispatchmethod):
         Args:
             kwarg: The name of kwarg to dispatch with.
             func: The method to wrap.
+            **kwargs: The other keyword arguments to construct a BaseMethod.
         """
         if kwarg is not None:
             self.kwarg = kwarg
 
         if func is not None:
             self.dispatcher = singledispatch(func)
-            self._call_method = self.method_search
 
         BaseDecorator.construct(self, func=func, **kwargs)
 
