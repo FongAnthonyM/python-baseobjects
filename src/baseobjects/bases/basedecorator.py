@@ -49,7 +49,8 @@ class BaseDecorator(BaseMethod):
         super().__init__(init=False)
 
         # Override Attributes #
-        self._call_method = self.construct_call
+        self._call_method = self.construct_call  # Allows this decorator to be constructed via being called.
+        # self._default_call_method = self.[method]  # When subclassing this should be changed to the actual call method
 
         # Object Construction #
         if init:
@@ -70,6 +71,7 @@ class BaseDecorator(BaseMethod):
             get_method: The method that will be used for the __get__ method.
             call_method: The default call method to use.
         """
+        # Changes call method to the actual call method to be used during run time when this object can fully construct.
         if func is not None:
             self._call_method = self._default_call_method
 
