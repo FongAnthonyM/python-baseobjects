@@ -13,7 +13,10 @@ import pathlib
 # Third-Party Packages #
 from setuptools import find_packages
 from setuptools import setup
-import tomli as tomllib
+try:
+    import tomllib
+except ModuleNotFoundError:
+    import tomli as tomllib
 
 
 # Definitions #
