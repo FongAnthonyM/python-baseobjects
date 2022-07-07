@@ -18,6 +18,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from functools import singledispatch, singledispatchmethod
+from types import NoneType
 from typing import Any
 
 # Third-Party Packages #
@@ -123,7 +124,10 @@ class singlekwargdispatchmethod(BaseDecorator, singledispatchmethod):
         if args:
             return args[0].__class__
         else:
-            return next(iter(kwargs.values())).__class__
+            try:
+                return next(iter(kwargs.values())).__class__
+            except StopIteration:
+                return NoneType
 
     def parse_kwarg(self, *args: Any, **kwargs: Any) -> type[Any]:
         """Parses input for the first arg or a specific kwarg's class to be used for dispatching.
@@ -138,7 +142,7 @@ class singlekwargdispatchmethod(BaseDecorator, singledispatchmethod):
         if args:
             return args[0].__class__
         else:
-            return kwargs[self._kwarg].__class__
+            return kwargs.get(self._kwarg, None).__class__
 
     # Method Searching
     def method_search(self, *args: Any, **kwargs: Any) -> Any:
