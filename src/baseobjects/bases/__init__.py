@@ -16,5 +16,6 @@ __email__ = __email__
 from .baseobject import BaseObject, search_sentinel
 from .basemeta import BaseMeta
 from .basemethod import BaseMethod
+from .basedict import BaseDict
 from .basedecorator import BaseDecorator
 from .singlekwargdispatchmethod import singlekwargdispatchmethod

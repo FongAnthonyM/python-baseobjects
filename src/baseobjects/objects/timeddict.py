@@ -10,6 +10,7 @@ __credits__ = __credits__
 __maintainer__ = __maintainer__
 __email__ = __email__
 
+
 # Imports #
 # Standard Libraries #
 from collections import UserDict
@@ -21,12 +22,12 @@ from typing import Any
 # Third-Party Packages #
 
 # Local Packages #
-from ..bases import BaseObject
+from ..bases import BaseDict
 
 
 # Definitions #
 # Classes #
-class TimedDict(UserDict, BaseObject):
+class TimedDict(BaseDict):
     """A dictionary that clears its contents after a time has elapsed.
 
     Attributes:
@@ -38,7 +39,6 @@ class TimedDict(UserDict, BaseObject):
         dict_: The dictionary to copy into this dictionary.
         **kwargs: The keywords to add to this dictionary.
     """
-
     __slots__ = ["is_timed", "lifetime", "expiration", "_data"]
 
     # Magic Methods #
