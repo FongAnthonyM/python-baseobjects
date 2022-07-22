@@ -1,5 +1,5 @@
-""" basedict.py
-An abstract class that is a mixin of UserDict and BaseObject.
+""" baselist.py
+An abstract class that is a mixin of UserList and BaseObject.
 """
 # Package Header #
 from ..header import *
@@ -13,7 +13,7 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
-from collections import UserDict
+from collections import UserList
 
 # Third-Party Packages #
 
@@ -23,5 +23,5 @@ from .baseobject import BaseObject
 
 # Definitions #
 # Classes #
-class BaseDict(UserDict, BaseObject):
-    """An abstract class that is a mixin of UserDict and BaseObject."""
+class BaseList(UserList, BaseObject):
+    """An abstract class that is a mixin of UserList and BaseObject."""
