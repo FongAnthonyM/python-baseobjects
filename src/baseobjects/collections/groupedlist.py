@@ -37,7 +37,7 @@ class GroupedList(BaseList):
     """
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, items, parent: Optional["GroupedList"] = None, init: bool = True) -> None:
+    def __init__(self, items: Iterable[Any], parent: Optional["GroupedList"] = None, init: bool = True) -> None:
         # Parent Attributes #
         super().__init__()
 
@@ -180,7 +180,7 @@ class GroupedList(BaseList):
         if group is not None:
             return self.groups[group].get_item(i)
         elif i < 0:
-            data = self.data.reverse()
+            data = reversed(self.data)
             i = - i - 1
             reverse = True
         else:
@@ -210,31 +210,34 @@ class GroupedList(BaseList):
         if group is not None:
             return self.groups[group].set_item(i, value)
         elif i < 0:
-            data = self.data.reverse()
+            self.data.reverse()
             i = - i - 1
             reverse = True
         else:
-            data = self.data
             reverse = False
 
-        for j, item in enumerate(data):
+        for j, item in enumerate(self.data):
             if i <= 0:
                 if isinstance(item, GroupedList) and self.check_if_child(item):
                     i = - i - 1 if reverse else i
-                    return item.set_item(i, value)
+                    item.set_item(i, value)
                 else:
                     index = - j - 1 if reverse else j
-                    return self.data[index]
+                    self.data[index] = value
+                break
             elif isinstance(item, GroupedList) and self.check_if_child(item):
                 n_items = len(item)
                 if i < n_items:
                     i = - i - 1 if reverse else i
-                    return item.set_item(i, value)
+                    item.set_item(i, value)
+                    break
                 else:
                     i - n_items
             else:
                 i -= 1
 
+        if reverse:
+            self.data.reverse()
         raise IndexError("index out of range")
 
 
