@@ -15,3 +15,4 @@ __email__ = __email__
 # Local Packages #
 from .timeddict import TimedDict
 from .circulardoublylinkedcontainer import LinkedNode, CircularDoublyLinkedContainer
+from .groupedlist import GroupedList

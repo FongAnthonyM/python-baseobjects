@@ -23,5 +23,5 @@ from .baseobject import BaseObject
 
 # Definitions #
 # Classes #
-class BaseList(UserList, BaseObject):
+class BaseList(BaseObject, UserList):
     """An abstract class that is a mixin of UserList and BaseObject."""

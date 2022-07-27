@@ -20,6 +20,7 @@ Changelog = "https://github.com/fongant/python-baseobjects/releases"
 
 [tool.poetry.dependencies]
 python = "^3.10"
+bidict = "^0.22.0"
 click = "^8.0.3"
 
 [tool.poetry.dev-dependencies]
