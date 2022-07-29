@@ -67,9 +67,11 @@ class GroupedList(BaseList):
     def __len__(self) -> int:
         return self.get_length()
 
-    def __getitem__(self, i) -> Any | list[Any]:
+    def __getitem__(self, i: int | str | slice) -> Any | list[Any]:
         if isinstance(i, slice):
             return self.get_slice(i)
+        elif isinstance(i, str):
+            return self.groups[i]
         else:
             return self.get_item(i)
 
@@ -197,19 +199,31 @@ class GroupedList(BaseList):
 
     def create_group(self, name: str, items: Iterable | None = None) -> "GroupedList":
         if name not in self.groups:
-            new_group = GroupedList(items, parent=self)
+            new_group = self.__class__(items=items, parent=self)
             self.groups[name] = new_group
             self.data.append(new_group)
             return new_group
         else:
             raise KeyError(f"{name} group already exists.")
 
-    def require_group(self, name: str) -> "GroupedList":
-        new_group = self.groups.get(name, search_sentinel)
+    def require_group(self, name: str | Iterable[str]) -> "GroupedList":
+        if isinstance(name, str):
+            names = [name]
+        else:
+            names = list(name)
+
+        # Require name at this level
+        first = names.pop()
+        new_group = self.groups.get(first, search_sentinel)
         if new_group is search_sentinel:
-            new_group = GroupedList(parent=self)
-            self.groups[name] = new_group
+            new_group = self.__class__(parent=self)
+            self.groups[first] = new_group
             self.data.append(new_group)
+
+        # Recurse if needed
+        if names:
+            new_group = new_group.require_group(names)
+
         return new_group
 
     def remove_group(self, group: Union[str, "GroupedList"]) -> None:
@@ -222,6 +236,22 @@ class GroupedList(BaseList):
         self.data.remove(group)
         group.parents.remove(self)
         del self.groups[name]
+
+    def get_group(self, name: str | Iterable[str]) -> "GroupedList":
+        if isinstance(name, str):
+            names = [name]
+        else:
+            names = list(name)
+
+        # Get name at this level
+        first = names.pop()
+        new_group = self.groups[first]
+
+        # Recurse if needed
+        if names:
+            new_group = new_group.get_group(names)
+
+        return new_group
 
     def add_group(self, group: "GroupedList", name: str) -> None:
         self.data.append(group)
@@ -457,11 +487,13 @@ class GroupedList(BaseList):
     def sort(self, /, *args, **kwds) -> None:
         self.data.sort(*args, **kwds)
 
-    def extend(self, other: Iterable[Any]) -> None:
+    def extend(self, other: Iterable[Any], group: str | None = None) -> None:
         if isinstance(other, GroupedList):
             other.add_parent_to_children(self)
             self.data.extend(other.data)
             self.groups.update(other.groups | self.groups)
+        elif group is not None:
+            self.groups[group].extend(other)
         else:
             self.data.extend(other)
 

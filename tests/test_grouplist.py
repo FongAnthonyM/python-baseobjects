@@ -195,6 +195,7 @@ class TestGroupedList(ClassTest):
         gl_2 = gl.copy()
         assert gl_2 == answer
 
+
 # Main #
 if __name__ == "__main__":
     pytest.main(["-v", "-s"])
