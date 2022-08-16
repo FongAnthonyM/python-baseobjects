@@ -22,7 +22,7 @@ from typing import Any
 # Local Packages #
 from .basetimedcache import BaseTimedCache
 from ...typing import AnyCallable
-from ...objects import CircularDoublyLinkedContainer
+from ...collections import CircularDoublyLinkedContainer
 
 
 # Definitions #
