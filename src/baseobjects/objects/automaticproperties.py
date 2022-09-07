@@ -32,10 +32,11 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
     """An abstract class which creates properties for this class automatically.
 
     Class Attributes:
-        _properties_map: Names and functions used to create properties.
+        _properties_map: The functions used to create properties.
+        _properies: A container that has the names of the properties and some information to build them.
     """
-
     _properties_map: Iterable[str] = []
+    _properties: Any = None
 
     # Class Methods #
     # Class Construction
@@ -68,7 +69,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         Returns:
             The item to return.
         """
-        getattr(obj, name)
+        return getattr(obj, name)
 
     @classmethod
     def _set(cls, obj: Any, name: str, value: Any) -> None:
@@ -77,7 +78,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         Args:
             obj: The target object to set.
             name: The name of the attribute to set.
-            value: The the item to set within the target object.
+            value: The item to set within the target object.
         """
         setattr(obj, name, value)
 
@@ -86,8 +87,8 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         """A generic delete which can be implemented in a subclass.
 
         Args:
-            obj (Any): The target object to delete an attribute from.
-            name (str): The name of attribute to delete in the object.
+            obj: The target object to delete an attribute from.
+            name: The name of attribute to delete in the object.
         """
         delattr(obj, name)
 
@@ -123,7 +124,9 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
     # Property Constructors
     @classmethod
     def _iterable_to_properties(
-        cls, iter_: Iterable[str], callback_factory: Callable[[str], PropertyCallbacks]
+        cls,
+        iter_: Iterable[str],
+        callback_factory: Callable[[str], PropertyCallbacks]
     ) -> None:
         """Create properties for this class based on an iterable where the items are the property names.
 
@@ -138,7 +141,9 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
     @classmethod
     def _dictionary_to_properties(
-        cls, dict_: dict[str, Any], callback_factory: Callable[[Any], PropertyCallbacks]
+        cls,
+        dict_: dict[str, Any],
+        callback_factory: Callable[[Any], PropertyCallbacks]
     ) -> None:
         """Create properties for this class based on a dictionary where the keys are the property names.
 
@@ -153,11 +158,10 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
     # Properties Mapping
     @classmethod
-    @abstractmethod
     def _construct_properties_map(cls) -> None:
         """An abstract method that assigns how properties should be constructed."""
-        # cls._properties_map.append(["name", cls._dictionary_to_properties, cls._default_callback_factory])
-        pass
+        cls._properties_map.append(["_properties", cls._iterable_to_properties, cls._default_callback_factory])
+        # cls._properties_map.append(["_properties", cls._dictionary_to_properties, cls._default_callback_factory])
 
     # Properties Constructor
     # Todo: Make map_ better.
@@ -178,4 +182,4 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
             try:
                 constructor(getattr(cls, map_name), factory)
             except AttributeError:
-                raise AttributeError("An attribute is missing")
+                raise AttributeError("A class attribute is missing")

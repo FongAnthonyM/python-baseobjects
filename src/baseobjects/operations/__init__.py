@@ -15,3 +15,4 @@ __email__ = __email__
 # Local Packages #
 from .updaterecursive import update_recursive
 from .unionrecursive import union_recursive
+from .filetimetodatetime import filetime_to_datetime
