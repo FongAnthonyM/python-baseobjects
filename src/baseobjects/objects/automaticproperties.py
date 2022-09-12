@@ -180,6 +180,8 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
         for map_name, constructor, factory in cls._properties_map:
             try:
-                constructor(getattr(cls, map_name), factory)
+                property_names = getattr(cls, map_name)
+                if property_names is not None:
+                    constructor(property_names, factory)
             except AttributeError:
                 raise AttributeError("A class attribute is missing")
