@@ -35,7 +35,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         _properties_map: The functions used to create properties.
         _properies: A container that has the names of the properties and some information to build them.
     """
-    _properties_map: Iterable[str] = []
+    _properties_map_cls: list[Any] = []
     _properties: Any = None
 
     # Class Methods #
@@ -54,6 +54,8 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
             bases: The parent types of this class.
             namespace: The methods and class attributes of this class.
         """
+        cls._properties_map: list[Any] = cls._properties_map_cls.copy()
+
         cls._construct_properties_map()
         cls._construct_properties()
 
@@ -158,9 +160,9 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
     # Properties Mapping
     @classmethod
+    @abstractmethod
     def _construct_properties_map(cls) -> None:
         """An abstract method that assigns how properties should be constructed."""
-        cls._properties_map.append(["_properties", cls._iterable_to_properties, cls._default_callback_factory])
         # cls._properties_map.append(["_properties", cls._dictionary_to_properties, cls._default_callback_factory])
 
     # Properties Constructor
