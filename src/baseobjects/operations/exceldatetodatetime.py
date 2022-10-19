@@ -13,7 +13,7 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
-import datetime
+from datetime import datetime, timedelta, tzinfo, timezone
 from functools import singledispatch
 
 # Third-Party Packages #
@@ -22,15 +22,16 @@ from functools import singledispatch
 
 
 # Definitions #
-EXCEL_INIT_DATE = datetime.datetime(1899, 12, 30)  # The initial date of Filetime.
+EXCEL_INIT_DATE = datetime(1899, 12, 30)  # The initial date of Filetime.
 
 
 @singledispatch
-def excel_date_to_datetime(timestamp: int | float | str | bytes) -> datetime.datetime:
+def excel_date_to_datetime(timestamp: int | float | str | bytes, tzinfo: tzinfo | None = timezone.utc) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:
         timestamp: The filetime to convert to a datetime.
+        tzinfo: The timezone of the datetime.
 
     Returns:
         The datetime of the filetime.
@@ -40,27 +41,29 @@ def excel_date_to_datetime(timestamp: int | float | str | bytes) -> datetime.dat
 
 @excel_date_to_datetime.register(float)
 @excel_date_to_datetime.register(int)
-def _excel_date_to_datetime(timestamp: float | int) -> datetime.datetime:
+def _excel_date_to_datetime(timestamp: float | int, tzinfo: tzinfo | None = timezone.utc) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:
         timestamp: The filetime to convert to a datetime.
+        tzinfo: The timezone of the datetime.
 
     Returns:
         The datetime of the filetime.
     """
-    return EXCEL_INIT_DATE + datetime.timedelta(days=timestamp)
+    return EXCEL_INIT_DATE.replace(tzinfo=tzinfo) + timedelta(days=timestamp)
 
 
 @excel_date_to_datetime.register(str)
 @excel_date_to_datetime.register(bytes)
-def _excel_date_to_datetime(timestamp: str | bytes) -> datetime.datetime:
+def _excel_date_to_datetime(timestamp: str | bytes, tzinfo: tzinfo | None = timezone.utc) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:
         timestamp: The filetime to convert to a datetime.
+        tzinfo: The timezone of the datetime.
 
     Returns:
         The datetime of the filetime.
     """
-    return EXCEL_INIT_DATE + datetime.timedelta(days=float(timestamp))
+    return EXCEL_INIT_DATE.replace(tzinfo=tzinfo) + timedelta(days=float(timestamp))
