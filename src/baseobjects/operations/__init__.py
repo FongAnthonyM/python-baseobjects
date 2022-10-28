@@ -16,6 +16,7 @@ __email__ = __email__
 from .bytestobin import bytes_to_bin
 from .updaterecursive import update_recursive
 from .unionrecursive import union_recursive
+from .timezoneoffset import timezone_offset
 from .filetimetodatetime import filetime_to_datetime
 from .exceldatetodatetime import excel_date_to_datetime
 from .parseparentheses import parse_parentheses
