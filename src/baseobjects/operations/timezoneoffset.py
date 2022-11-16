@@ -33,4 +33,4 @@ def timezone_offset(tz: tzinfo) -> timedelta:
     Returns:
         The time delta offset of the given timezone.
     """
-    return tzinfo.utcoffset(INIT_DATE)
+    return tz.utcoffset(INIT_DATE)

@@ -14,14 +14,16 @@ __email__ = __email__
 # Standard Libraries #
 from collections.abc import Callable
 from functools import update_wrapper
+from types import MethodType
 from typing import Any
+import weakref
 
 # Third-Party Packages #
 
 # Local Packages #
 from ..typing import AnyCallable, GetObjectMethod
 from .baseobject import BaseObject, search_sentinel
-
+from  .functiondiscri
 
 # Definitions #
 # Classes #
@@ -33,7 +35,7 @@ class BaseMethod(BaseObject):
 
     Attributes:
         __func__: The function to wrap.
-        __self__: The object to bind this object to.
+        _self_: The a weak reference to the object to bind this object to.
         __owner__: The class owner of the object.
         _original_func: The original function to wrap.
         _selected_get_method: The __get__ method to use as a Callable or a string.
@@ -50,7 +52,7 @@ class BaseMethod(BaseObject):
     """
     __slots__ = {
         "__func__",
-        "__self__",
+        "_self_",
         "__owner__",
         "_original_func",
         "_selcted_get_method",
@@ -70,7 +72,7 @@ class BaseMethod(BaseObject):
     ) -> None:
         # Special Attributes #
         self.__func__: AnyCallable | None = None
-        self.__self__: Any = None
+        self._self_: weakref | None = None
         self.__owner__: type[Any] | None = None
 
         # Attributes #
@@ -86,6 +88,18 @@ class BaseMethod(BaseObject):
         # Object Construction #
         if init:
             self.construct(func=func, get_method=get_method, call_method=call_method)
+
+    @property
+    def __self__(self) -> Any:
+        """The object to bind this object to."""
+        try:
+            return self._self_()
+        except TypeError:
+            return None
+
+    @__self__.setter
+    def __self__(self, value: Any) -> None:
+        self._self_ = None if value is None else weakref.ref(value)
 
     @property
     def _get_method(self) -> GetObjectMethod:
@@ -358,7 +372,7 @@ class BaseMethod(BaseObject):
         else:
             call_method = self._call_method
 
-        new_obj = type(self)(func=self._original_func, get_method=self._selected_get_method, call_method=call_method)
+        new_obj = self.__class__(func=self._original_func, get_method=self._selected_get_method, call_method=call_method)
         new_obj.bind(instance=instance, owner=owner, name=name, set_attr=set_attr)
         return new_obj
 
