@@ -147,7 +147,7 @@ class BaseTimedCache(BaseMethod):
         super().__init__(init=False)
 
         # Overriden Attributes #
-        self._call_method: AnyCallable = self.caching_call
+        self._call_method: AnyCallable = self.caching_call.__func__
 
         # New Attributes #
         self._is_collective: bool = True
@@ -158,9 +158,9 @@ class BaseTimedCache(BaseMethod):
         self.expiration: int | float | None = 0
 
         self.cache: Any = None
-        self._default_caching_method: AnyCallable = self.no_cache
-        self._caching_method: AnyCallable = self.no_cache
-        self._previous_caching_method: AnyCallable = self.no_cache
+        self._default_caching_method: AnyCallable = self.no_cache.__func__
+        self._caching_method: AnyCallable = self.no_cache.__func__
+        self._previous_caching_method: AnyCallable = self.no_cache.__func__
 
         # Object Construction #
         if init:
@@ -194,7 +194,7 @@ class BaseTimedCache(BaseMethod):
 
         When set, any function can be set or the name of a method within this object can be given to select it.
         """
-        return self._caching_method
+        return self._caching_method.__get__(self, self.__class__)
 
     @caching_method.setter
     def caching_method(self, value: AnyCallable | str) -> None:
@@ -395,7 +395,7 @@ class BaseTimedCache(BaseMethod):
             method: The function or name to set the caching method to.
         """
         if isinstance(method, str):
-            self._caching_method = getattr(self, method)
+            self._caching_method = getattr(self, method).__func__
         else:
             self._caching_method = method
 

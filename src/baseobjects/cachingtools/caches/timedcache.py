@@ -86,9 +86,9 @@ class TimedCache(BaseTimedCache):
         super().__init__(init=False)
 
         self.cache: dict = {}
-        self._defualt_caching_method: AnyCallable = self.unlimited_cache
-        self._caching_method: AnyCallable = self.unlimited_cache
-        self._previous_caching_method: AnyCallable = self.unlimited_cache
+        self._defualt_caching_method: AnyCallable = self.unlimited_cache.__func__
+        self._caching_method: AnyCallable = self.unlimited_cache.__func__
+        self._previous_caching_method: AnyCallable = self.unlimited_cache.__func__
 
         # New Attributes #
         self._maxsize: int | None = None
@@ -188,11 +188,11 @@ class TimedCache(BaseTimedCache):
             value: The new max size of the cache.
         """
         if value is None:
-            self.caching_method = self.unlimited_cache
+            self._caching_method = self.unlimited_cache.__func__
         elif value == 0:
-            self.caching_method = self.no_cache
+            self._caching_method = self.no_cache.__func__
         else:
-            self.caching_method = self.limited_cache
+            self._caching_method = self.limited_cache.__func__
 
         self._maxsize = value
 

@@ -39,7 +39,7 @@ class TimedDict(BaseDict):
         dict_: The dictionary to copy into this dictionary.
         **kwargs: The keywords to add to this dictionary.
     """
-    __slots__ = ["is_timed", "lifetime", "expiration", "_data"]
+    __slots__ = {"is_timed", "lifetime", "expiration", "_data"}
 
     # Magic Methods #
     # Construction/Destruction

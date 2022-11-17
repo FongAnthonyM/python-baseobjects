@@ -47,7 +47,7 @@ class singlekwargdispatchmethod(BaseDecorator, singledispatchmethod):
         kwarg: Either the name of kwarg to dispatch with or the method to wrap.
         method: The method to wrap.
     """
-    __slots__ = BaseDecorator.__slots__ | {"dispatcher", "func", "parse", "_kwarg"}
+    __slots__ = BaseDecorator.__slots__ | {"dispatcher", "func", "_parse", "_kwarg"}
 
     # Magic Methods #
     # Construction/Destruction
@@ -56,12 +56,12 @@ class singlekwargdispatchmethod(BaseDecorator, singledispatchmethod):
         BaseDecorator.__init__(self, init=False)
 
         # Override Attributes #
-        self._default_call_method = self.method_search
+        self._default_call_method = self.method_search.__func__
 
         # New Attributes #
         self.dispatcher: singledispatch | None = None
         self.func: AnyCallable | None = None
-        self.parse: AnyCallableType = self.parse_first
+        self._parse: AnyCallableType = self.parse_first.__func__
         self._kwarg: str | None = None
 
         # Object Creation #
@@ -78,6 +78,15 @@ class singlekwargdispatchmethod(BaseDecorator, singledispatchmethod):
     @kwarg.setter
     def kwarg(self, value: str | None) -> None:
         self.set_kwarg(kwarg=value)
+
+    @property
+    def parse(self) -> AnyCallableType:
+        """A descriptor to create the bound parse method."""
+        return self._parse.__get__(self, self.__class__)
+
+    @parse.setter
+    def parse(self, value: AnyCallableType) -> None:
+        self._parse = value
 
     # Instance Methods #
     # Constructors
@@ -105,9 +114,9 @@ class singlekwargdispatchmethod(BaseDecorator, singledispatchmethod):
             kwarg: The name of the kwarg or None for checking the first kwarg.
         """
         if kwarg is None:
-            self.parse = self.parse_first
+            self._parse = self.parse_first.__func__
         else:
-            self.parse = self.parse_kwarg
+            self._parse = self.parse_kwarg.__func__
         self._kwarg = kwarg
 
     # Parameter Parsers

@@ -49,7 +49,7 @@ class BaseDecorator(BaseMethod):
         super().__init__(init=False)
 
         # Override Attributes #
-        self._call_method = self.construct_call  # Allows this decorator to be constructed via being called.
+        self._call_method = self.construct_call.__func__  # Allows this decorator to be constructed via being called.
         # self._default_call_method = self.[method]  # When subclassing this should be changed to the actual call method
 
         # Object Construction #

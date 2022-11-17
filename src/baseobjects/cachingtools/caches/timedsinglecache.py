@@ -76,9 +76,9 @@ class TimedSingleCache(BaseTimedCache):
         # Parent Attributes #
         super().__init__(init=False)
 
-        self._defualt_caching_method: AnyCallable = self.caching
-        self._caching_method: AnyCallable = self.caching
-        self._previous_caching_method: AnyCallable = self.caching
+        self._defualt_caching_method: AnyCallable = self.caching.__func__
+        self._caching_method: AnyCallable = self.caching.__func__
+        self._previous_caching_method: AnyCallable = self.caching.__func__
 
         # New Attributes #
         self.args_key: Hashable | None = None

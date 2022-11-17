@@ -23,7 +23,8 @@ import weakref
 # Local Packages #
 from ..typing import AnyCallable, GetObjectMethod
 from .baseobject import BaseObject, search_sentinel
-from  .functiondiscri
+from  .functiondescriptor import FunctionDescriptor
+
 
 # Definitions #
 # Classes #
@@ -79,11 +80,11 @@ class BaseMethod(BaseObject):
         self._original_func: AnyCallable | None = None
 
         self._selected_get_method: GetObjectMethod | str = "get_copy_bind"
-        self._get_method_: GetObjectMethod = self.get_copy_bind
+        self._get_method_: GetObjectMethod = self.get_copy_bind.__func__
         self._instances: dict[Any, "BaseMethod"] = {}
 
-        self._default_call_method: AnyCallable = self.func_call
-        self._call_method: AnyCallable = self.func_call
+        self._default_call_method: AnyCallable = self.func_call.__func__
+        self._call_method: AnyCallable = self.func_call.__func__
 
         # Object Construction #
         if init:
@@ -107,7 +108,7 @@ class BaseMethod(BaseObject):
 
         When set, any function can be set or the name of a method within this object can be given to select it.
         """
-        return self._get_method_
+        return self._get_method_.__get__(self, self.__class__)
 
     @_get_method.setter
     def _get_method(self, value: GetObjectMethod | str) -> None:
@@ -119,7 +120,7 @@ class BaseMethod(BaseObject):
 
         When set, any function can be set or the name of a method within this object can be given to select it.
         """
-        return self._call_method
+        return self._call_method.__get__(self, self.__class__)
 
     @call_method.setter
     def call_method(self, value: AnyCallable | str) -> None:
@@ -212,7 +213,7 @@ class BaseMethod(BaseObject):
             method: The function to set the __get__ method to.
         """
         if isinstance(method, str):
-            self._get_method_ = getattr(self, method)
+            self._get_method_ = getattr(self, method).__func__
             self._selected_get_method = method
         else:
             self._get_method_ = method
@@ -263,7 +264,7 @@ class BaseMethod(BaseObject):
             Either bound self or a new BaseMethod bound to the instance.
         """
         if instance is None and owner is None:
-            return self
+            return self.copy()
         else:
             bound = self.bind_to_new(instance=instance, owner=owner, set_attr=set_attr)
             if instance is not None:
@@ -406,9 +407,9 @@ class BaseMethod(BaseObject):
             method: The function or method name to set the call method to.
         """
         if method is None:
-            self._default_call_method = self.func_call
+            self._default_call_method = self.func_call.__func__
         elif isinstance(method, str):
-            self._default_call_method = getattr(self, method)
+            self._default_call_method = getattr(self, method).__func__
         else:
             self._default_call_method = method
 
@@ -419,9 +420,9 @@ class BaseMethod(BaseObject):
             method: The function or method name to set the call method to.
         """
         if method is None:
-            self._call_method = self.func_call
+            self._call_method = self.func_call.__func__
         elif isinstance(method, str):
-            self._call_method = getattr(self, method)
+            self._call_method = getattr(self, method).__func__
         else:
             self._call_method = method
 
