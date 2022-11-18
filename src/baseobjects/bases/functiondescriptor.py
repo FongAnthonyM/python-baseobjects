@@ -14,6 +14,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from collections.abc import Callable
+from types import MethodType
 from typing import Any
 import weakref
 

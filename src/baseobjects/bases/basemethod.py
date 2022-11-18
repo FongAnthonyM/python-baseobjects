@@ -23,7 +23,6 @@ import weakref
 # Local Packages #
 from ..typing import AnyCallable, GetObjectMethod
 from .baseobject import BaseObject, search_sentinel
-from  .functiondescriptor import FunctionDescriptor
 
 
 # Definitions #
@@ -137,7 +136,7 @@ class BaseMethod(BaseObject):
         Returns:
             The bound BaseMethod which can either self or a new BaseMethod.
         """
-        return self._get_method_(instance=instance, owner=owner)
+        return self._get_method(instance=instance, owner=owner)
 
     # Callable
     def __call__(self, *args, **kwargs) -> Any:
@@ -150,7 +149,7 @@ class BaseMethod(BaseObject):
         Returns:
             The results of the wrapped function.
         """
-        return self._call_method(*args, **kwargs)
+        return self.call_method(*args, **kwargs)
 
     # Instance Methods #
     # Constructors/Destructors
