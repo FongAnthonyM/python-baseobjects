@@ -20,4 +20,4 @@ from .baselist import BaseList
 from .basedict import BaseDict
 from .basedecorator import BaseDecorator
 from .functiondescriptor import FunctionDescriptor
-from .singlekwargdispatchmethod import singlekwargdispatchmethod
+from .singlekwargdispatch import singlekwargdispatch, singlekwargdispatchmethod

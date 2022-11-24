@@ -19,7 +19,7 @@ __email__ = __email__
 import pytest
 
 # Local Packages #
-from baseobjects.bases.singlekwargdispatchmethod import singlekwargdispatchmethod
+from baseobjects.bases.singlekwargdispatch import singlekwargdispatchmethod
 
 
 # Definitions #

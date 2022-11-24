@@ -1,5 +1,5 @@
-""" singlekwargdispatchmethod.py
-Extends singledispaatchermethod to allow kwargs to be used for dispatching.
+""" singlekwargdispatch.py
+Extends singledispatch to allow kwargs to be used for dispatching.
 
 The normal single dispatching requires at least one arg for dispatching. This object retains this functionality, but
 allows the first kwarg to be used for dispatching if no args are provided. Furthermore, a kwarg name can be
@@ -30,8 +30,8 @@ from .basedecorator import BaseDecorator
 
 # Definitions #
 # Classes #
-class singlekwargdispatchmethod(BaseDecorator, singledispatchmethod):
-    """Extends singledispaatchermethod to allow kwargs to be used for dispatching.
+class singlekwargdispatch(BaseDecorator, singledispatchmethod):
+    """Extends singledispatch to allow kwargs to be used for dispatching.
 
     The normal single dispatching requires at least one arg for dispatching. This object retains this functionality, but
     allows the first kwarg to be used for dispatching if no args are provided. Furthermore, a kwarg name can be
@@ -166,3 +166,7 @@ class singlekwargdispatchmethod(BaseDecorator, singledispatchmethod):
         """
         method = self.dispatcher.dispatch(self.parse(*args, **kwargs))
         return method.__get__(self.__self__, self.__owner__)(*args, **kwargs)
+
+
+class singlekwargdispatchmethod(singlekwargdispatch):
+    """The method version of singlekwargdispatch."""

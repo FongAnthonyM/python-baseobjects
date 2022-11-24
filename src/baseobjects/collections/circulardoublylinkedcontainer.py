@@ -22,7 +22,7 @@ import weakref
 
 # Local Packages #
 from ..bases import BaseObject
-from ..bases.singlekwargdispatchmethod import singlekwargdispatchmethod
+from ..bases.singlekwargdispatch import singlekwargdispatchmethod
 
 
 # Definitions #
