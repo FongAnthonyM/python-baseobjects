@@ -164,9 +164,22 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         Returns:
             The return of the found method.
         """
-        method = self.dispatcher.dispatch(self.parse(*args, **kwargs))
-        return method.__get__(self.__self__, self.__owner__)(*args, **kwargs)
+        return self.dispatcher.dispatch(self.parse(*args, **kwargs))(*args, **kwargs)
 
 
 class singlekwargdispatchmethod(singlekwargdispatch):
     """The method version of singlekwargdispatch."""
+
+    # Method Searching
+    def method_search(self, *args: Any, **kwargs: Any) -> Any:
+        """Parses input to decide which method to use in the registry.
+
+        Args:
+            *args: The arguments to pass to the found method.
+            **kwargs: The keyword arguments to pass to the found method.
+
+        Returns:
+            The return of the found method.
+        """
+        method = self.dispatcher.dispatch(self.parse(*args, **kwargs))
+        return method.__get__(self.__self__, self.__owner__)(*args, **kwargs)
