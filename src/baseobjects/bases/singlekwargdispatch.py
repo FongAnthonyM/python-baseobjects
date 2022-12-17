@@ -53,7 +53,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
     # Construction/Destruction
     def __init__(self, kwarg: AnyCallable | str, method: AnyCallable | None = None) -> None:
         # Parent Attributes #
-        BaseDecorator.__init__(self, init=False)
+        super().__init__(init=False)
 
         # Override Attributes #
         self._default_call_method = self.method_search.__func__

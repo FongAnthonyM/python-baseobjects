@@ -37,11 +37,14 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self) -> None:
-        # Attributes #
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        # New Attributes #
         self._is_cache: bool = True
 
         self._caches: set[str] = self._caches_.copy()
+
+        # Parent Attributes #
+        super().__init__(*args, **kwargs)
 
     @property
     def is_cache(self) -> bool:

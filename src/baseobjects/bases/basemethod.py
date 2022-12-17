@@ -69,7 +69,12 @@ class BaseMethod(BaseObject):
         get_method: GetObjectMethod | str | None = None,
         call_method: AnyCallable | str | None = None,
         init: bool | None = True,
+        *args: Any,
+        **kwargs: Any,
     ) -> None:
+        # Parent Attributes #
+        super().__init__(*args, int=init, **kwargs)
+
         # Special Attributes #
         self.__func__: AnyCallable | None = None
         self._self_: weakref | None = None

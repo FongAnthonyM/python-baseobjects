@@ -84,8 +84,12 @@ class Version(BaseObject):
         version: Any | None = None,
         ver_name: str | None = None,
         init: bool = True,
+        *args: Any,
         **kwargs: Any,
     ) -> None:
+        # Parent Attributes #
+        super().__init__(*args, int=init, **kwargs)
+
         # New Attributes #
         self.version_type: VersionType | None = None
 

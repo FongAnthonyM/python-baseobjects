@@ -127,6 +127,9 @@ class BaseObject(ABC):
 
     # Instance Methods #
     # Constructors/Destructors
+    def __init__(self, *args, **kwargs):
+        pass
+
     def copy(self) -> Any:
         """Creates a shallow copy of this object.
 

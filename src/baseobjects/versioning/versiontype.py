@@ -39,7 +39,17 @@ class VersionType(BaseObject):
     __slots__ = ["name", "class_"]
 
     # Construction/Destruction
-    def __init__(self, name: str | None = None, class_: type | None = None, init: bool = True) -> None:
+    def __init__(
+        self,
+        name: str | None = None,
+        class_: type | None = None,
+        init: bool = True,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
+        # Parent Attributes #
+        super().__init__(*args, int=init, **kwargs)
+
         # New Attributes #
         self.name: str | None = None
         self.class_: type | None = None

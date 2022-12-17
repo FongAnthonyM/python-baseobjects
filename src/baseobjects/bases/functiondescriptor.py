@@ -43,7 +43,10 @@ class FunctionDescriptor(BaseObject):
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, func: AnyCallable | None = None) -> None:
+    def __init__(self, func: AnyCallable | None = None, *args: Any, **kwargs: Any) -> None:
+        # Parent Attributes #
+        super().__init__(*args, **kwargs)
+
         # Special Attributes #
         self.__func__: AnyCallable | None = func
 

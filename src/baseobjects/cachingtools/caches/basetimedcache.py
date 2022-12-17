@@ -77,7 +77,12 @@ class CacheItem(BaseObject):
         key: Hashable | None = None,
         result: Any | None = None,
         priority_link: Any | None = None,
+        *args: Any,
+        **kwargs: Any,
     ) -> None:
+        # Parent Attributes #
+        super().__init__(*args, **kwargs)
+
         # Attributes #
         self.priority_link = priority_link
 

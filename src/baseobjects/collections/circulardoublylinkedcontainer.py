@@ -51,7 +51,12 @@ class LinkedNode(BaseObject):
         previous: Optional["LinkedNode"] = None,
         next_: Optional["LinkedNode"] = None,
         init: bool = True,
+        *args: Any,
+        **kwargs: Any,
     ) -> None:
+        # Parent Attributes #
+        super().__init__(*args, int=init, **kwargs)
+
         # Attributes #
         self.previous: weakref.ReferenceType = weakref.ref(self)
         self.next: weakref.ReferenceType = weakref.ref(self)
@@ -95,7 +100,10 @@ class CircularDoublyLinkedContainer(BaseObject):
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        # Parent Attributes #
+        super().__init__(*args, **kwargs)
+
         # Attributes #
         self.first_node: LinkedNode | None = None
         self.nodes: set[LinkedNode] = set()
