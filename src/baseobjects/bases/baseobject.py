@@ -38,6 +38,9 @@ class BaseObject(ABC):
 
     # Magic Methods #
     # Construction/Destruction
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        pass
+
     def __copy__(self) -> Any:
         """The copy magic method (shallow).
 
@@ -127,7 +130,13 @@ class BaseObject(ABC):
 
     # Instance Methods #
     # Constructors/Destructors
-    def __init__(self, *args, **kwargs):
+    def construct(self, *args: Any, **kwargs: Any) -> None:
+        """Constructs this object.
+
+        Args:
+            args: Arguments for inheritance.
+            kwargs: Keyword arguments for inheritance.
+        """
         pass
 
     def copy(self) -> Any:
