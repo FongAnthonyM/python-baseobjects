@@ -134,8 +134,8 @@ class BaseObject(ABC):
         """Constructs this object.
 
         Args:
-            args: Arguments for inheritance.
-            kwargs: Keyword arguments for inheritance.
+            *args: Arguments for inheritance.
+            **kwargs: Keyword arguments for inheritance.
         """
         pass
 

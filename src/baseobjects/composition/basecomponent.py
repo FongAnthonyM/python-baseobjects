@@ -1,4 +1,4 @@
-""" component.py
+""" basecomponent.py
 
 """
 # Package Header #
@@ -19,12 +19,13 @@ import weakref
 # Third-Party Packages #
 
 # Local Packages #
-from .composite import BaseObject
+from ..bases import BaseObject
+from .basecomposite import BaseComposite
 
 
 # Definitions #
 # Classes #
-class Component(BaseObject):
+class BaseComponent(BaseObject):
     """A basic component object.
 
     Attributes:
@@ -33,25 +34,25 @@ class Component(BaseObject):
     Args:
         composite: The object which this object is a component of.
         init: Determines if this object will construct.
+        **kwargs: Keyword arguments for inheritance.
     """
     # Magic Methods #
     # Construction/Destruction
     def __init__(
         self,
         composite: Any = None,
-        init: bool =True,
-        *args: Any,
+        init: bool = True,
         **kwargs: Any,
     ) -> None:
         # New Attributes #
-        self._composite: Any = None
+        self._composite: BaseComposite | None = None
 
         # Parent Attributes #
-        super().__init__(*args, init=init, **kwargs)
+        super().__init__(init=False)
 
         # Object Construction #
         if init:
-            self.construct(composite=composite)
+            self.construct(composite=composite, **kwargs)
 
     @property
     def composite(self) -> Any:
@@ -67,11 +68,12 @@ class Component(BaseObject):
 
     # Instance Methods #
     # Constructors/Destructors
-    def construct(self, composite: Any = None, **kwargs) -> None:
+    def construct(self, composite: Any = None, **kwargs: Any) -> None:
         """Constructs this object.
 
         Args:
             composite: The object which this object is a component of.
+            **kwargs: Keyword arguments for inheritance.
         """
         if composite is not None:
             self.composite = composite
