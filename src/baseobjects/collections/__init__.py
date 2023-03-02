@@ -14,5 +14,6 @@ __email__ = __email__
 # Imports #
 # Local Packages #
 from .timeddict import TimedDict
+from .orderabledict import OrderableDict
 from .circulardoublylinkedcontainer import LinkedNode, CircularDoublyLinkedContainer
 from .groupedlist import GroupedList

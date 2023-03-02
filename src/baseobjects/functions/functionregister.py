@@ -48,7 +48,7 @@ class FunctionRegister(BaseDict):
         **kwargs: Any,
     ) -> None:
         # Parent Attributes #
-        super().__init__(*args, init=False, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # Object Construction #
         if init:

@@ -126,7 +126,6 @@ class CircularDoublyLinkedContainer(BaseObject):
         first_node: The first linked node in this container.
         nodes: The set of nodes in this container.
     """
-
     __slots__: str | Iterable[str] = ("first_node", "nodes")
 
     # Magic Methods #
@@ -188,6 +187,14 @@ class CircularDoublyLinkedContainer(BaseObject):
         """
         return self.get_item(item)
 
+    def __iter__(self) -> Iterable:
+        """Returns an iterable representation of this object.
+
+        Returns:
+            The iterable representation of this of object.
+        """
+        return self.forward_iter()
+
     # Bitwise Operators
     def __lshift__(self, other: int) -> None:
         """Shifts the start of nodes to the left by an amount.
@@ -213,15 +220,7 @@ class CircularDoublyLinkedContainer(BaseObject):
         Returns:
             The number of nodes in this object.
         """
-        if self.is_empty:
-            return 0
-        else:
-            length = 1
-            node = self.first_node.next()
-            while node is not self.first_node:
-                node = node.next()
-                length += 1
-            return length
+        len(self.nodes)
 
     def get_item(self, index: int) -> LinkedNode:
         """Gets a node based on its index from the start node.
@@ -233,19 +232,16 @@ class CircularDoublyLinkedContainer(BaseObject):
             The node based on the index.
         """
         node = self.first_node
-        i = 0
 
         # Forward Indexing
         if index > 0:
-            while i < index:
+            for i in range(index):
                 node = node.next()
-                i += 1
         # Reverse Indexing
         elif index < 0:
             index *= -1
-            while i < index:
+            for i in range(index):
                 node = node.previous()
-                i += 1
 
         return node
 
@@ -341,6 +337,29 @@ class CircularDoublyLinkedContainer(BaseObject):
 
         return data
 
+    def remove_node(self, node: LinkedNode) -> None:
+        """Removes a node from the container.
+
+        Args:
+            node: The node to move.
+        """
+        node.next.previous = node.previous
+        node.previous.next = node.next
+        self.nodes.remove(node)
+
+    def pop(self, index: int = -1) -> LinkedNode:
+        """Removes a node at the index within the container and return it.
+
+        Args:
+            index: The index of the node to pop.
+
+        Returns
+            The LinkedNode removed from the container.
+        """
+        node = self.get_item(index=index)
+        self.remove_node(node)
+        return node
+
     def clear(self) -> None:
         """Clears this container by removing the first node."""
         self.nodes.clear()
@@ -411,3 +430,48 @@ class CircularDoublyLinkedContainer(BaseObject):
             while i <= value:
                 self.first_node = self.first_node.previous
                 i += 1
+
+    # Iteration
+    def forward_iter(self) -> Iterable:
+        """Creates an iterable which iterates through the nodes from first to last.
+
+        Returns:
+            The forward iterable.
+        """
+        node = yield self.first_node
+        node = node.next
+        while node is not self.first_node:
+            yield node
+            node = node.next
+
+    def reverse_iter(self) -> Iterable:
+        """Creates an iterable which iterates through the nodes from last to first.
+
+        Returns:
+            The reverse iterable.
+        """
+        node = yield self.last_node
+        node = node.previous
+        while node is not self.last_node:
+            yield node
+            node = node.previous
+
+    def forward_cycle(self) -> Iterable:
+        """Creates an iterable which cycles through the nodes from first to last.
+
+        Returns:
+            The forward cycle.
+        """
+        node = yield self.first_node
+        while True:
+            node = yield node.next
+
+    def reverse_cycle(self) -> Iterable:
+        """Creates an iterable which cycles through the nodes from last to first.
+
+        Returns:
+            The reverse cycle.
+        """
+        node = yield self.last_node
+        while True:
+            node = yield node.previous
