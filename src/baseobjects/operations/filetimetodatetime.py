@@ -22,7 +22,7 @@ from functools import singledispatch
 
 
 # Definitions #
-FILETIME_INIT_DATE = datetime(1601, 1, 1)  # The initial date of Filetime.
+FILETIME_INIT_DATE = datetime(1601, 1, 1, tzinfo=timezone.utc)  # The initial date of Filetime.
 
 
 @singledispatch
@@ -40,7 +40,7 @@ def filetime_to_datetime(timestamp: int | float | str | bytes, tzinfo: tzinfo | 
 
 
 @filetime_to_datetime.register
-def _filetime_to_datetime(timestamp: int, tzinfo: tzinfo | None = timezone.utc) -> datetime:
+def _filetime_to_datetime(timestamp: int, tzinfo: tzinfo | None = None) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:
@@ -50,12 +50,15 @@ def _filetime_to_datetime(timestamp: int, tzinfo: tzinfo | None = timezone.utc) 
     Returns:
         The datetime of the filetime.
     """
-    return FILETIME_INIT_DATE.replace(tzinfo=tzinfo) + timedelta(microseconds=timestamp)
+    if tzinfo is None:
+        return FILETIME_INIT_DATE.replace(tzinfo=tzinfo) + timedelta(microseconds=timestamp)
+    else:
+        return (FILETIME_INIT_DATE + timedelta(microseconds=timestamp)).astimezone(tz=tzinfo)
 
 
 @filetime_to_datetime.register(float)
 @filetime_to_datetime.register(str)
-def _filetime_to_datetime(timestamp: float | str, tzinfo: tzinfo | None = timezone.utc) -> datetime:
+def _filetime_to_datetime(timestamp: float | str, tzinfo: tzinfo | None = None) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:
@@ -65,11 +68,14 @@ def _filetime_to_datetime(timestamp: float | str, tzinfo: tzinfo | None = timezo
     Returns:
         The datetime of the filetime.
     """
-    return FILETIME_INIT_DATE.replace(tzinfo=tzinfo) + timedelta(microseconds=int(timestamp) / 10)
+    if tzinfo is None:
+        return FILETIME_INIT_DATE.replace(tzinfo=tzinfo) + timedelta(microseconds=int(timestamp) / 10)
+    else:
+        return (FILETIME_INIT_DATE + timedelta(microseconds=int(timestamp) / 10)).astimezone(tz=tzinfo)
 
 
 @filetime_to_datetime.register(bytes)
-def _filetime_to_datetime(timestamp: bytes, tzinfo: tzinfo | None = timezone.utc) -> datetime:
+def _filetime_to_datetime(timestamp: bytes, tzinfo: tzinfo | None = None) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:
@@ -79,4 +85,8 @@ def _filetime_to_datetime(timestamp: bytes, tzinfo: tzinfo | None = timezone.utc
     Returns:
         The datetime of the filetime.
     """
-    return FILETIME_INIT_DATE.replace(tzinfo=tzinfo) + timedelta(microseconds=int.from_bytes(timestamp, "little") / 10)
+    delta = timedelta(microseconds=int.from_bytes(timestamp, "little") / 10)
+    if tzinfo is None:
+        return FILETIME_INIT_DATE.replace(tzinfo=tzinfo) + delta
+    else:
+        return (FILETIME_INIT_DATE + delta).astimezone(tz=tzinfo)
