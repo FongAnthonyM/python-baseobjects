@@ -16,9 +16,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 import datetime
-
 import time
-
 
 # Third-Party Packages #
 import pytest
@@ -43,7 +41,7 @@ class TestCachingObject(ClassTest):
         def proxy(self):
             return self.get_proxy.caching_call()
 
-        @timed_keyless_cache(lifetime=2, call_method="clearing_call", collective=False)
+        @timed_keyless_cache(lifetime=2, call_method="clearing_call", local=True)
         def get_proxy(self):
             return datetime.datetime.now()
 
@@ -54,13 +52,19 @@ class TestCachingObject(ClassTest):
             print(self.a)
 
     def test_lru_cache(self):
-        @timed_lru_cache(lifetime=1)
+        @timed_lru_cache(lifetime=2)
         def add_one(number=0):
+            time.sleep(1)
             return number + 1
 
-        n = add_one(number=1)
+        first = add_one(number=1)
 
-        assert n == 2
+        s_time = time.perf_counter()
+        second = add_one(number=1)
+        t_time = time.perf_counter() - s_time
+
+        assert first == second == 2
+        assert t_time < 1
 
     def test_lru_cache_original_func(self):
         @timed_lru_cache(lifetime=1)
@@ -80,16 +84,20 @@ class TestCachingObject(ClassTest):
         time.sleep(2)
         third = cacher.proxy
 
-        assert (second - first == self.zero_time) and (third - first != self.zero_time)
+        assert second == first
+        assert third > first
 
     def test_object_cache_reset(self):
         cacher = TestCachingObject.CachingTestObject()
 
         first = cacher.proxy
+        time.sleep(1)
         second = cacher.get_proxy()
+        time.sleep(1)
         third = cacher.proxy
 
-        assert (second - first != self.zero_time) and (third - second == self.zero_time)
+        assert second > first
+        assert third == second
 
     def test_object_cache_instances(self):
         cacher = TestCachingObject.CachingTestObject()

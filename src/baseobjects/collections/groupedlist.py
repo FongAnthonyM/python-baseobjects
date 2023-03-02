@@ -1,5 +1,5 @@
 """ groupedlist.py
-
+A list which contains any item, but nested GroupLists' contents are treated as if they are elements of this list.
 """
 # Package Header #
 from ..header import *
@@ -27,14 +27,17 @@ from ..bases import BaseList, search_sentinel
 # Definitions #
 # Classes #
 class GroupedList(BaseList):
-    """
-
-    Class Attributes:
+    """A list which contains any item, but nested GroupLists' contents are treated as if they are elements of this list.
 
     Attributes:
+        parents: The parent and the ancestor GroupLists which this GroupList was created from.
+        groups: The named GroupLists within this GroupList.
 
     Args:
-
+        items: The items to add to this GroupList.
+        parent: The parent GroupList of this GroupList.
+        parents: The parent and ancestors of this GroupList
+        init: Determines if this object will construct.
     """
     # Magic Methods #
     # Construction/Destruction
@@ -45,13 +48,13 @@ class GroupedList(BaseList):
         parents: Iterable["GroupedList"] | None = None,
         init: bool = True,
     ) -> None:
-        # Parent Attributes #
-        super().__init__()
-
         # New Attributes #
         self.parents: set[GroupedList] = set()
 
         self.groups: bidict.bidict = bidict.bidict()
+
+        # Parent Attributes #
+        super().__init__()
 
         # Object Construction #
         if init:
@@ -154,6 +157,13 @@ class GroupedList(BaseList):
         parent: Optional["GroupedList"] = None,
         parents: Iterable["GroupedList"] | None = None,
     ) -> None:
+        """Constructs this object.
+
+        Args:
+            items: The items to add to this GroupList.
+            parent: The parent GroupList of this GroupList.
+            parents: The parent and ancestors of this GroupList
+        """
         if parent is not None:
             self.parents.add(parent)
 
@@ -522,8 +532,18 @@ class GroupedList(BaseList):
         return self
 
     def as_flat_tuple(self) -> tuple[Any]:
+        """Return the contents of this GroupList as a flat tuple.
+
+        Returns:
+            A tuple with the contents of this GroupList.
+        """
         return tuple(iter(self))
     
     def as_flat_list(self) -> list[Any]:
+        """Return the contents of this GroupList as a flat list.
+
+        Returns:
+            A list with the contents of this GroupList.
+        """
         return list(iter(self))
     

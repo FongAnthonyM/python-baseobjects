@@ -19,14 +19,14 @@ __email__ = __email__
 import pytest
 
 # Local Packages #
-from baseobjects.bases.singlekwargdispatch import singlekwargdispatchmethod
+from baseobjects.functions import singlekwargdispatch
 
 
 # Definitions #
 # Classes #
 class TestSingleKwargDispatchMethod:
     class ExampleClass:
-        @singlekwargdispatchmethod
+        @singlekwargdispatch
         def first_overload(self, a, b=None):
             return None
 
@@ -38,7 +38,7 @@ class TestSingleKwargDispatchMethod:
         def _(self, a: str):
             return True
 
-        @singlekwargdispatchmethod(kwarg="a")
+        @singlekwargdispatch(kwarg="a")
         def second_overload(self, a, b=None):
             return None
 

@@ -20,51 +20,14 @@ from typing import Any
 
 # Local Packages #
 from ...typing import AnyCallable
-from .timedcache import TimedCache
+from ...bases import search_sentinel
+from .timedcache import TimedCacheCallable, TimedCacheMethod, TimedCache
 
 
 # Definitions #
 # Classes #
-class TimedLRUCache(TimedCache):
-    """A periodically clearing Least Recently Used (LRU) cache wrapper object for a function.
-
-    Class Attributes:
-        sentinel: An object used to determine if a value was unsuccessfully found.
-        cache_item_type = The class that will create the cache items.
-        priority_queue_type = The type of priority queue to hold cache item priorities.
-
-    Attributes:
-        __func__: The original function to wrap.
-        __self__: The object to bind this object to.
-        _is_collective: Determines if the cache is collective for all method bindings or for each instance.
-        _instances: Copies of this object for specific owner instances.
-
-        _maxsize: The max size of the lru_cache.
-        typed: Determines if the function's arguments are type sensitive for caching.
-        is_timed: Determines if the cache will be reset periodically.
-        lifetime: The period between cache resets in seconds.
-        expiration: The next time the cache will be rest.
-
-        priority: A container that keeps track of cache deletion priority.
-        cache: Contains the results of the wrapped function.
-        _defualt_caching_method: The default caching function to use.
-        _caching_method: The designated function to handle caching.
-
-        _call_method: The function to call when this object is called.
-
-        _maxsize: The number of results the cache will hold before replacing results.
-
-        priority: The object that will control the replacement of cached results.
-
-    Args:
-        func: The function to wrap.
-        maxsize: The max size of the cache.
-        typed: Determines if the function's arguments are type sensitive for caching.
-        lifetime: The period between cache resets in seconds.
-        call_method: The default call method to use.
-        collective: Determines if the cache is collective for all method bindings or for each instance.
-        init: Determines if this object will construct.
-    """
+class TimedLRUCache(TimedCacheCallable):
+    """A periodically clearing Least Recently Used (LRU) cache wrapper object for a function."""
 
     # Instance Methods #
     # LRU Caching
@@ -79,14 +42,14 @@ class TimedLRUCache(TimedCache):
             The result of the wrapped function.
         """
         key = self.create_key(args, kwargs, self.typed)
-        cache_item = self.cache.get(key, self.sentinel)
+        cache_item = self.cache_container.get(key, search_sentinel)
 
-        if cache_item is not self.sentinel:
+        if cache_item is not search_sentinel:
             self.priority.move_node_start(cache_item.priority_link)
             return cache_item.result
         else:
             result = self.__func__(*args, **kwargs)
-            self.cache[key] = item = self.cache_item_type(key=key, result=result)
+            self.cache_container[key] = item = self.cache_item_type(key=key, result=result)
             priority_link = self.priority.insert(item, 0)
             item.priority_link = priority_link
             return result
@@ -102,15 +65,15 @@ class TimedLRUCache(TimedCache):
             The result of the wrapped function.
         """
         key = self.create_key(args, kwargs, self.typed)
-        cache_item = self.cache.get(key, self.sentinel)
+        cache_item = self.cache_container.get(key, search_sentinel)
 
-        if cache_item is not self.sentinel:
+        if cache_item is not search_sentinel:
             self.priority.move_node_start(cache_item.priority_link)
             return cache_item.result
         else:
             result = self.__func__(*args, **kwargs)
-            if self.cache.__len__() <= self._maxsize:
-                self.cache[key] = item = self.cache_item_type(key=key, result=result)
+            if self.cache_container.__len__() <= self._maxsize:
+                self.cache_container[key] = item = self.cache_item_type(key=key, result=result)
                 priority_link = self.priority.insert(item, 0)
                 item.priority_link = priority_link
             else:
@@ -121,11 +84,20 @@ class TimedLRUCache(TimedCache):
                 priority_link.data = item
 
                 del cache_item[old_key]
-                self.cache[key] = item
+                self.cache_container[key] = item
 
                 self.priority.shift_right()
 
             return result
+
+
+class TimedLRUCacheMethod(TimedLRUCache, TimedCacheMethod):
+    """A method class for TimeLRUCache."""
+
+
+class TimedLRUCache(TimedLRUCache, TimedCache):
+    """A function class for TimedLRUCache."""
+    method_type: type[TimedLRUCacheMethod] = TimedLRUCacheMethod
 
 
 # Functions #
@@ -133,8 +105,8 @@ def timed_lru_cache(
     maxsize: int | None = None,
     typed: bool = False,
     lifetime: int | float | None = None,
-    call_method: AnyCallable | str = "caching_call",
-    collective: bool = True,
+    call_method: str | None = None,
+    local: bool = False,
 ) -> Callable[[AnyCallable], TimedLRUCache]:
     """A factory to be used a decorator that sets the parameters of timed lru cache function factory.
 
@@ -143,7 +115,7 @@ def timed_lru_cache(
         typed: Determines if the function's arguments are type sensitive for caching.
         lifetime: The period between cache resets in seconds.
         call_method: The default call method to use.
-        collective: Determines if the cache is collective for all method bindings or for each instance.
+        local: Determines if the cache is local for all method bindings or for each instance.
 
     Returns:
         The parameterized timed lru cache function factory.
@@ -164,7 +136,7 @@ def timed_lru_cache(
             typed=typed,
             lifetime=lifetime,
             call_method=call_method,
-            collective=collective,
+            local=local,
         )
 
     return timed_lru_cache_factory

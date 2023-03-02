@@ -1,5 +1,5 @@
 """ dynamicwrapper.py
-DynamicWrapper calls wrapped attribute methods by changing the __getattribute__ method to check the wrapped classes
+DynamicWrapper calls wrapped attribute functions by changing the __getattribute__ method to check the wrapped classes
 after checking itself. This makes DynamicWrapper very flexible with its wrapped objects. DynamicWrapper does not have
 any usage limitation, but it is significantly slower than normal object attribute/method access, because it handles
 every get, set, and delete. Performance would be better if DynamicWrapper was written in C.
@@ -27,16 +27,16 @@ from ..bases import BaseObject
 # Definitions #
 # Classes #
 class DynamicWrapper(BaseObject):
-    """An object that can call the attributes/methods of embedded objects, acting as if it is inheriting from them.
+    """An object that can call the attributes/functions of embedded objects, acting as if it is inheriting from them.
 
     When an object of this class has an attribute/method call it will call a listed object's attribute/method. This is
     similar to what an @property decorator can do but without having to write a decorator for each attribute. Attribute/
     method calling is done dynamically where the objects in the list can change during runtime so the available
-    attributes/methods will change based on the objects in the list. Since the available attributes/methods cannot be
+    attributes/functions will change based on the objects in the list. Since the available attributes/functions cannot be
     evaluated until runtime, an IDE's auto-complete cannot display all the callable options.
 
     _attribute_as_parents is the list of attributes of this object that contains the objects that will be used for the
-    dynamic calling. This class and subclasses can still have its own defined attributes and methods that are called.
+    dynamic calling. This class and subclasses can still have its own defined attributes and functions that are called.
     Which attribute/method is used for the call is handled in the same manner as inheritance where it will check if the
     attribute/method is present in this object, if not it will check in the next object in the list. Therefore, it is
     important to ensure the order of _attribute_as_parents is the order of descending inheritance.
@@ -45,7 +45,6 @@ class DynamicWrapper(BaseObject):
         _wrap_attributes: The list of attribute names that will contain the objects to dynamically wrap where the order
             is descending inheritance.
     """
-
     _wrap_attributes: list[str] = []
 
     # Magic Methods #

@@ -2,7 +2,7 @@
 An abstract class that is a mixin of UserDict and BaseObject.
 """
 # Package Header #
-from ..header import *
+from ...header import *
 
 # Header #
 __author__ = __author__
@@ -14,18 +14,20 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from collections import UserDict
+from collections.abc import Iterable
 from typing import Any
 
 # Third-Party Packages #
 
 # Local Packages #
-from .baseobject import BaseObject
+from ..baseobject import BaseObject
 
 
 # Definitions #
 # Classes #
 class BaseDict(BaseObject, UserDict):
     """An abstract class that is a mixin of UserDict and BaseObject."""
+    __slots__: str | Iterable[str] = {"data"}
 
     # Magic Methods #
     # Construction/Destruction

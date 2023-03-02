@@ -1,5 +1,5 @@
 """ basemeta.py
-BaseMeta is an abstract metaclass that implements some basic methods that all metaclasses objects should have.
+BaseMeta is an abstract metaclass that implements some basic functions that all metaclasses objects should have.
 """
 # Package Header #
 from ..header import *
@@ -34,7 +34,7 @@ from typing import Any
 # Definitions #
 # Classes #
 class BaseMeta(ABCMeta):
-    """An abstract metaclass that implements some basic methods that all metaclasses objects should have."""
+    """An abstract metaclass that implements some basic functions that all metaclasses objects should have."""
 
     # Magic Methods #
     # Construction/Destruction

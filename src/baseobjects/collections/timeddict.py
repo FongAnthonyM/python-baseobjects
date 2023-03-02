@@ -13,7 +13,6 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
-from collections import UserDict
 from collections.abc import Callable, Hashable, Iterator
 from contextlib import contextmanager
 from time import perf_counter

@@ -52,7 +52,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         Args:
             name: The name of this class.
             bases: The parent types of this class.
-            namespace: The methods and class attributes of this class.
+            namespace: The functions and class attributes of this class.
         """
         cls._properties_map: list[Any] = cls._properties_map_cls.copy()
 

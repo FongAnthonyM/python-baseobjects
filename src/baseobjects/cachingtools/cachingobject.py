@@ -13,13 +13,11 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
-from collections.abc import Callable
 from typing import Any
 
 # Third-Party Packages #
 
 # Local Packages #
-from ..typing import AnyCallable
 from ..bases import BaseObject
 from .metaclasses import CachingObjectMeta
 from .caches import BaseTimedCache
@@ -28,10 +26,10 @@ from .caches import BaseTimedCache
 # Definitions #
 # Classes #
 class CachingObject(BaseObject, metaclass=CachingObjectMeta):
-    """An abstract class which is has functionality for methods that are caching.
+    """An abstract class which is has functionality for functions that are caching.
 
     Attributes:
-        _is_cache: Determines if the caching methods of this object will cache.
+        _is_cache: Determines if the caching functions of this object will cache.
         _caches: All the caches within this object.
     """
 
@@ -48,7 +46,7 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
 
     @property
     def is_cache(self) -> bool:
-        """Determines if the caching methods are enabled and puts them in the correct state when set."""
+        """Determines if the caching functions are enabled and puts them in the correct state when set."""
         return self._is_cache
 
     @is_cache.setter

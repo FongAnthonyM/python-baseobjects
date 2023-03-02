@@ -1,9 +1,9 @@
 """ __init__.py
-Abstract classes for objects that can wrap any objects and make their attributes/methods accessible from the wrapper.
+Abstract classes for objects that can wrap any objects and make their attributes/functions accessible from the wrapper.
 
 StaticWrapper and DynamicWrapper are solutions for two different case. StaticWrapper should be used when
 if the application is within the limitations StaticWrapper. DynamicWrapper would be used if the application involves
-wrapping various indeterminate object types and/or if the objects change available attributes/methods frequently.
+wrapping various indeterminate object types and/or if the objects change available attributes/functions frequently.
 
 Here are some tested relative performance metrics to highlight those differences: let normal attribute access be 1, when
 StaticWrapper accesses a wrapped attribute it takes about 1.7 while DynamicWrapper takes about 4.4. StaticWrapper's

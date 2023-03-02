@@ -30,7 +30,7 @@ class CachingInitMeta(InitMeta, CachingObjectMeta):
     Args:
         name: The name of this class.
         bases: The parent types of this class.
-        namespace: The methods and class attributes of this class.
+        namespace: The functions and class attributes of this class.
     """
 
     # Magic Methods #

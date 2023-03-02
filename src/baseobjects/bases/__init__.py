@@ -15,9 +15,5 @@ __email__ = __email__
 # Local Packages #
 from .baseobject import BaseObject, search_sentinel
 from .basemeta import BaseMeta
-from .basemethod import BaseMethod
-from .baselist import BaseList
-from .basedict import BaseDict
-from .basedecorator import BaseDecorator
-from .functiondescriptor import FunctionDescriptor
-from .singlekwargdispatch import singlekwargdispatch, singlekwargdispatchmethod
+from .basecallable import BaseCallable, BaseMethod, BaseFunction
+from .collections import *

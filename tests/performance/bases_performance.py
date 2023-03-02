@@ -86,6 +86,7 @@ class ClassPerformanceTest(abc.ABC):
     class_ = None
     timeit_runs = 100000
     speed_tolerance = 200
+    call_speed = timeit.timeit(lambda: None, number=10000000) / 10000000 * 1000000
 
     def test_instance_creation(self):
         pass

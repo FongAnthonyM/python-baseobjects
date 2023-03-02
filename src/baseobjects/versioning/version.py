@@ -88,7 +88,7 @@ class Version(BaseObject):
         **kwargs: Any,
     ) -> None:
         # Parent Attributes #
-        super().__init__(*args, int=init, **kwargs)
+        super().__init__(*args, init=False, **kwargs)
 
         # New Attributes #
         self.version_type: VersionType | None = None

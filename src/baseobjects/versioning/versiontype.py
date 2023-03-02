@@ -14,6 +14,7 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
+from collections.abc import Iterable
 from typing import Any
 
 # Third-Party Packages #
@@ -36,7 +37,7 @@ class VersionType(BaseObject):
         class_ : The class of the version.
         init: Determines if this object will construct.
     """
-    __slots__ = ["name", "class_"]
+    __slots__: str | Iterable[str] = ("name", "class_")
 
     # Construction/Destruction
     def __init__(
@@ -48,7 +49,7 @@ class VersionType(BaseObject):
         **kwargs: Any,
     ) -> None:
         # Parent Attributes #
-        super().__init__(*args, int=init, **kwargs)
+        super().__init__(*args, init=False, **kwargs)
 
         # New Attributes #
         self.name: str | None = None

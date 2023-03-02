@@ -1,12 +1,12 @@
 """ staticwrapper.py
-StaticWrapper calls wrapped attributes/methods by creating property descriptor objects for each of the wrapped objects'
-attributes/methods. There some limitations to how StaticWapper can be used. First, for any given subclass of
+StaticWrapper calls wrapped attributes/functions by creating property descriptor objects for each of the wrapped objects'
+attributes/functions. There some limitations to how StaticWapper can be used. First, for any given subclass of
 StaticWrapper all object instances must contain the same wrapped object types because descriptor are handled at the
 class scope. Second, creating property descriptors does not happen automatically, creation must be invoked though the
 _wrap method. This means a subclass must call _wrap to initialize at some point. Also, if the wrapped objects create new
-attributes/methods afterwards, then _wrap or _rewrap must be called to add the new attributes/methods. Overall, this
+attributes/functions afterwards, then _wrap or _rewrap must be called to add the new attributes/functions. Overall, this
 means subclasses should be designed to wrap the same objects and be used to wrap objects that do not create new
-attributes/methods after initialization. These limitation are strict, but it leads to great performance preservation
+attributes/functions after initialization. These limitation are strict, but it leads to great performance preservation
 when compared to normal object attribute/method access.
 """
 # Package Header #
@@ -70,19 +70,19 @@ def _set_temp_attributes(obj: "StaticWrapper", new: Any, name: str) -> None:
 
 # Classes #
 class StaticWrapper(BaseObject, metaclass=InitMeta):
-    """An object that can call the attributes/methods of embedded objects, acting as if it is inheriting from them.
+    """An object that can call the attributes/functions of embedded objects, acting as if it is inheriting from them.
 
     Attribute/method resolution of this object will first look with the object itself then it look within the wrapped
-    objects' attributes/methods. The resolution order of the wrapped objects is based on _wrap_attributes, first element
+    objects' attributes/functions. The resolution order of the wrapped objects is based on _wrap_attributes, first element
     to last.
 
     This object does not truly use method resolution, but instead creates property descriptors that call the
-    attributes/methods of the wrapped objects. To create the property descriptors the _wrap method must be called after
+    attributes/functions of the wrapped objects. To create the property descriptors the _wrap method must be called after
     the objects to wrap are store in this object. Keep in mind, all objects of this class must have the same type of
     wrapped objects, because descriptors are on the class scope. Additionally, this object cannot detect when wrapped
-    objects create new or delete attributes/methods. Therefore, subclasses or the user must decide when to call _wrap to
-    ensure all the attributes/methods are present. This object is best used to wrap frozen objects or ones that do not
-    create or delete attributes/methods after initialization.
+    objects create new or delete attributes/functions. Therefore, subclasses or the user must decide when to call _wrap to
+    ensure all the attributes/functions are present. This object is best used to wrap frozen objects or ones that do not
+    create or delete attributes/functions after initialization.
 
     If the objects to wrap can be defined during class instantiation then this class can setup the wrapping by listing
     the types or objects in _wrapped_types. The setup will occur immediately after class instantiation.
@@ -97,7 +97,6 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         _exclude_attributes: The names of the attributes to exclude from wrapping.
         _wrapped_attributes: The names of the attributes to wrap.
     """
-
     __original_dir_set: set[str] | None = None
     _get_previous_wrapped: bool = False
     _set_next_wrapped: bool = True

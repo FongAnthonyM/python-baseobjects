@@ -1,5 +1,5 @@
 """ basetimedcache.py
-An abstract class for creating timed cahce
+An abstract class for creating timed cache.
 """
 # Package Header #
 from ...header import *
@@ -9,6 +9,7 @@ __author__ = __author__
 __credits__ = __credits__
 __maintainer__ = __maintainer__
 __email__ = __email__
+
 
 # Imports #
 # Standard Libraries #
@@ -21,9 +22,9 @@ from typing import Any
 # Third-Party Packages #
 
 # Local Packages #
-from ...typing import AnyCallable, GetObjectMethod
-from ...bases import BaseObject, BaseMethod
-from ...bases.singlekwargdispatch import singlekwargdispatchmethod
+from ...typing import AnyCallable
+from ...bases import BaseObject
+from ...functions import MethodMultiplexer, DynamicCallable, DynamicMethod, DynamicFunction
 
 
 # Definitions #
@@ -39,7 +40,7 @@ class _HashedSeq(list):
         hash_: The function that will create hash value.
     """
 
-    __slots__ = "hashvalue"
+    __slots__: str | Iterable[str] = "hashvalue"
 
     # Magic Methods #
     # Construction/Destruction
@@ -68,7 +69,7 @@ class CacheItem(BaseObject):
         priority_link: The object that represents this item's priority.
     """
 
-    __slots__ = ["key", "result", "priority_link"]
+    __slots__: str | Iterable[str] = ("key", "result", "priority_link")
 
     # Magic Methods #
     # Construction/Destruction
@@ -90,51 +91,37 @@ class CacheItem(BaseObject):
         self.result = result
 
 
-class BaseTimedCache(BaseMethod):
+class BaseTimedCacheCallable(DynamicCallable):
     """A base cache wrapper object for a function which resets its cache periodically.
 
     Class Attributes:
-        sentinel: An object used to determine if a value was unsuccessfully found.
         cache_item_type = The class that will create the cache items.
 
     Attributes:
-        __func__: The original function to wrap.
-        __self__: The object to bind this object to.
-        _is_collective: Determines if the cache is collective for all method bindings or for each instance.
-        _instances: Copies of this object for specific owner instances.
+        _is_local: Determines if the cache is local to each instance or all instances.
 
-        _maxsize: The max size of the lru_cache.
         typed: Determines if the function's arguments are type sensitive for caching.
         is_timed: Determines if the cache will be reset periodically.
         lifetime: The period between cache resets in seconds.
         expiration: The next time the cache will be rest.
 
-        cache: Contains the results of the wrapped function.
-        _defualt_caching_method: The default caching function to use.
-        _caching_method: The designated function to handle caching.
-        _previous_caching_method: The previous caching method used.
-
-        _call_method: The function to call when this object is called.
+        cache_container: Contains the results of the wrapped function.
+        _cache_method: The name of the caching method.
+        _previous_cache_method: The previous caching method used.
+        cache: The multiplexer which control the caching method being use.
 
     Args:
         func: The function to wrap.
         typed: Determines if the function's arguments are type sensitive for caching.
         lifetime: The period between cache resets in seconds.
         call_method: The default call method to use.
-        collective: Determines if the cache is collective for all method bindings or for each instance.
+        local: Determines if the cache is local to each instance or all instances.
+        *args: Arguments for inheritance.
         init: Determines if this object will construct.
+        **kwargs: Keyword arguments for inheritance.
     """
-    __slots__ = BaseMethod.__slots__ | {
-        "_is_collective",
-        "typed",
-        "is_timed",
-        "lifetime",
-        "expiration",
-        "cache",
-        "_default_caching_method",
-        "_caching_method",
-        "_previous_caching_method",
-    }
+    default_call_method: str = "caching_call"
+    default_cache_method: str = "__func__"
     cache_item_type = CacheItem
 
     # Magic Methods #
@@ -142,30 +129,29 @@ class BaseTimedCache(BaseMethod):
     def __init__(
         self,
         func: AnyCallable | None = None,
-        typed: bool = False,
+        typed: bool | None = None,
         lifetime: int | float | None = None,
-        call_method: AnyCallable | str = "caching_call",
-        collective: bool = True,
+        call_method: str | None = None,
+        local: bool | None = None,
+        *args: Any,
         init: bool = True,
+        **kwargs: Any,
     ) -> None:
-        # Parent Attributes #
-        super().__init__(init=False)
-
-        # Overriden Attributes #
-        self._call_method: AnyCallable = self.caching_call.__func__
-
         # New Attributes #
-        self._is_collective: bool = True
+        self._is_local: bool = False
 
         self.typed: bool = False
         self.is_timed: bool = True
         self.lifetime: int | float | None = None
         self.expiration: int | float | None = 0
 
-        self.cache: Any = None
-        self._default_caching_method: AnyCallable = self.no_cache.__func__
-        self._caching_method: AnyCallable = self.no_cache.__func__
-        self._previous_caching_method: AnyCallable = self.no_cache.__func__
+        self.cache_container: Any = None
+        self._cache_method: str | None = self.default_cache_method
+        self._previous_cache_method: str = self.cache_method
+        self.cache: MethodMultiplexer = MethodMultiplexer(instance=self, select=self.cache_method)
+
+        # Parent Attributes #
+        super().__init__(*args, init=False, **kwargs)
 
         # Object Construction #
         if init:
@@ -174,46 +160,41 @@ class BaseTimedCache(BaseMethod):
                 lifetime=lifetime,
                 typed=typed,
                 call_method=call_method,
-                collective=collective,
+                local=local,
+                *args,
+                **kwargs,
             )
 
     @property
-    def is_collective(self) -> bool:
-        """Determines if the cache is collective for all method bindings or for each instance.
+    def is_local(self) -> bool:
+        """Determines if the cache is local for all method bindings or for each instance."""
+        return self._is_local
 
-        When set, the __get__ method will be changed to match the chosen style.
-        """
-        return self._is_collective
-
-    @is_collective.setter
-    def is_collective(self, value: bool) -> None:
-        if value is True:
-            self._get_method_ = self.get_self_bind
-        else:
-            self._get_method_ = self.get_copy_bind
-        self._is_collective = value
+    @is_local.setter
+    def is_local(self, value: bool) -> None:
+        self._is_local = value
 
     @property
-    def caching_method(self) -> AnyCallable:
-        """The method that will be used for caching.
+    def cache_method(self) -> str:
+        """The name of the method used when caching."""
+        return self._cache_method
 
-        When set, any function can be set or the name of a method within this object can be given to select it.
-        """
-        return self._caching_method.__get__(self, self.__class__)
-
-    @caching_method.setter
-    def caching_method(self, value: AnyCallable | str) -> None:
-        self.set_caching_method(value)
+    @cache_method.setter
+    def cache_method(self, value: str) -> None:
+        self.cache.select(value)
+        self._cache_method = value
 
     # Instance Methods #
     # Constructors
     def construct(
         self,
         func: AnyCallable | None = None,
-        typed: bool = False,
+        typed: bool | None = None,
         lifetime: int | float | None = None,
-        call_method: AnyCallable | str = "caching_call",
-        collective: bool = True,
+        call_method: str | None = None,
+        local: bool | None = None,
+        *args: Any,
+        **kwargs: Any,
     ) -> None:
         """The constructor for this object.
 
@@ -222,7 +203,9 @@ class BaseTimedCache(BaseMethod):
             typed: Determines if the function's arguments are type sensitive for caching.
             lifetime: The period between cache resets in seconds.
             call_method: The default call method to use.
-            collective: Determines if the cache is collective for all method bindings or for each instance.
+            local: Determines if the cache is local to each instance or all instances.
+            *args: Arguments for inheritance.
+            **kwargs: Keyword arguments for inheritance.
         """
         if lifetime is not None:
             self.lifetime = lifetime
@@ -231,130 +214,14 @@ class BaseTimedCache(BaseMethod):
             self.typed = typed
 
         if call_method is not None:
-            self.set_call_method(call_method)
+            self.call_method = call_method
 
-        if collective is not None:
-            self.is_collective = collective
+        if local is not None:
+            self.is_local = local
 
-        super().construct(func=func, call_method=call_method)
+        super().construct(func=func, *args, **kwargs)
 
-    def copy(self) -> "BaseTimedCache":
-        """The copy method for this object
-
-        Returns:
-            A copy of this object.
-        """
-        new = super().copy()
-
-        if hasattr(self, self._default_caching_method.__name__):
-            new._default_caching_method = getattr(new, self._default_caching_method.__name__)
-
-        if hasattr(self, self._caching_method.__name__):
-            new._caching_method = getattr(new, self._caching_method.__name__)
-
-        if hasattr(self, self._previous_caching_method.__name__):
-            new._previous_caching_method = getattr(new, self._previous_caching_method.__name__)
-
-        return new
-
-    # Binding
-    def get_copy_bind(
-        self,
-        instance: Any = None,
-        owner: type[Any] | None = None,
-        new_binding: GetObjectMethod | str = "get_self",
-        set_attr: bool = True,
-    ) -> "BaseMethod":
-        """The __get__ method where it binds a copy of this object to the other object. Changed default parameters.
-
-        Args:
-            instance: The other object requesting this object.
-            owner: The class of the other object requesting this object.
-            new_binding: The binding method the copied object will use.
-            set_attr: Determines if the new object will be set as an attribute in the object.
-
-        Returns:
-            Either bound self or a new BaseMethod bound to the instance.
-        """
-        return super().get_copy_bind(instance, owner=owner, new_binding=new_binding, set_attr=set_attr)
-
-    # Object Calling
-    def caching_call(self, *args: Any, **kwargs: Any) -> Any:
-        """Calls the caching function and clears the cache at certain time.
-
-        Args:
-            *args: Arguments for the wrapped function.
-            **kwargs: Keyword arguments for the wrapped function.
-
-        Returns:
-            The result or the caching_method.
-        """
-        if self.clear_condition():
-            self.clear_cache()
-
-        return self.caching_method(*args, **kwargs)
-
-    def clearing_call(self, *args: Any, **kwargs: Any) -> Any:
-        """Clears the cache then calls the caching function.
-
-        Args:
-            *args: Arguments for the wrapped function.
-            **kwargs: Keyword arguments for the wrapped function.
-
-        Returns:
-            The result or the caching_method.
-        """
-        self.clear_cache()
-
-        return self.caching_method(*args, **kwargs)
-
-    def clear_condition(self, *args: Any, **kwargs: Any) -> bool:
-        """The condition used to determine if the cache should be cleared.
-
-        Args:
-            *args: Arguments that could be used to determine if the cache should be cleared.
-            **kwargs: Keyword arguments that could be used to determine if the cache should be cleared.
-
-        Returns:
-            Determines if the cache should be cleared.
-        """
-        return self.is_timed and self.lifetime is not None and perf_counter() >= self.expiration
-
-    # Binding
-    def bind_to_new(
-        self,
-        instance: Any,
-        owner: type[Any] | None = None,
-        name: str | None = None,
-        set_attr: bool = True,
-    ) -> "BaseTimedCache":
-        """Creates a new instance of this object and binds it to another object.
-
-        Args:
-            instance: The object ot bing this object to.
-            owner: The class of the other object requesting this object.
-            name: The name of the attribute this object will bind to in the other object.
-            set_attr: Determines if this object will be set as an attribute in the object.
-
-        Returns:
-            The new bound deepcopy of this object.
-        """
-        if hasattr(self, self._call_method.__name__):
-            call_method = self._call_method.__name__
-        else:
-            call_method = self._call_method
-
-        new_obj = type(self)(
-            func=self.__func__,
-            typed=self.typed,
-            lifetime=self.lifetime,
-            call_method=call_method,
-            collective=self._is_collective,
-        )
-        new_obj.bind(instance=instance, owner=owner, name=name, set_attr=set_attr)
-        return new_obj
-
-    # Caching
+    # Cache Control
     def create_key(
         self,
         args: tuple,
@@ -393,30 +260,18 @@ class BaseTimedCache(BaseMethod):
             return key[0]
         return _HashedSeq(key)
 
-    def set_caching_method(self, method: AnyCallable | str) -> None:
-        """Sets the caching method to another function or a method within this object can be given to select it.
+    def clear_condition(self, *args: Any, **kwargs: Any) -> bool:
+        """The condition used to determine if the cache should be cleared.
 
         Args:
-            method: The function or name to set the caching method to.
-        """
-        if isinstance(method, str):
-            self._caching_method = getattr(self, method).__func__
-        else:
-            self._caching_method = method
-
-    def no_cache(self, *args: Any, **kwargs: Any) -> Any:
-        """A direct call to wrapped function with no caching.
-
-        Args:
-            *args: Arguments of the wrapped function.
-            **kwargs: Keyword Arguments of the wrapped function.
+            *args: Arguments that could be used to determine if the cache should be cleared.
+            **kwargs: Keyword arguments that could be used to determine if the cache should be cleared.
 
         Returns:
-            The result of the wrapped function.
+            Determines if the cache should be cleared.
         """
-        return self.__func__(*args, **kwargs)
+        return self.is_timed and self.lifetime is not None and perf_counter() >= self.expiration
 
-    # Cache Control
     @abc.abstractmethod
     def clear_cache(self) -> None:
         """Clear the cache and update the expiration of the cache."""
@@ -425,16 +280,187 @@ class BaseTimedCache(BaseMethod):
 
     def stop_caching(self) -> None:
         """Stops using the cache, storing the method used."""
-        self._previous_caching_method = self._caching_method
-        self._caching_method = self.__func__
+        self._previous_cache_method = self.caching_method.selected
+        self.caching_method.select("__func__")
         self.clear_cache()
 
     def resume_caching(self) -> None:
         """Resumes caching by setting the call method to the previous call method"""
-        self._caching_method = self._previous_caching_method
+        self.caching_method.select(self._previous_cache_method)
 
     @contextmanager
     def pause_caching(self) -> Callable[..., Iterator[None]]:
         self.stop_caching()
         yield None
         self.resume_caching()
+
+    # Calling
+    def caching_call(self, *args: Any, **kwargs: Any) -> Any:
+        """Calls the caching function and clears the cache at certain time.
+
+        Args:
+            *args: Arguments for the wrapped function.
+            **kwargs: Keyword arguments for the wrapped function.
+
+        Returns:
+            The result or the caching_method.
+        """
+        if self.clear_condition():
+            self.clear_cache()
+
+        return self.cache(*args, **kwargs)
+
+    def clearing_call(self, *args: Any, **kwargs: Any) -> Any:
+        """Clears the cache then calls the caching function.
+
+        Args:
+            *args: Arguments for the wrapped function.
+            **kwargs: Keyword arguments for the wrapped function.
+
+        Returns:
+            The result or the caching_method.
+        """
+        self.clear_cache()
+
+        return self.cache(*args, **kwargs)
+
+
+class BaseTimedCacheMethod(BaseTimedCacheCallable, DynamicMethod):
+    """An abstract method class for timed caches."""
+    @property
+    def is_local(self) -> bool:
+        """Determines if the cache is local for all method bindings or for each instance.
+
+        When set, the __call__ method will be changed to match the chosen style.
+        """
+        return self._is_local
+
+    @is_local.setter
+    def is_local(self, value: bool) -> None:
+        if value:
+            self.call_multiplexer.select(self.call_method)
+        else:
+            self.call_multiplexer.select("call")
+        self._is_local = value
+
+    @abc.abstractmethod
+    def clear_cache(self) -> None:
+        """Clear the cache and update the expiration of the cache."""
+        if self.lifetime is not None:
+            self.expiration = perf_counter() + self.lifetime
+
+    # Calling
+    def caching_call(self, *args: Any, **kwargs: Any) -> Any:
+        """Calls the caching function and clears the cache at certain time.
+
+        Args:
+            *args: Arguments for the wrapped function.
+            **kwargs: Keyword arguments for the wrapped function.
+
+        Returns:
+            The result or the caching_method.
+        """
+        if self.clear_condition():
+            self.clear_cache()
+
+        return self.cache(self.__self__, *args, **kwargs)
+
+    def clearing_call(self, *args: Any, **kwargs: Any) -> Any:
+        """Clears the cache then calls the caching function.
+
+        Args:
+            *args: Arguments for the wrapped function.
+            **kwargs: Keyword arguments for the wrapped function.
+
+        Returns:
+            The result or the caching_method.
+        """
+        self.clear_cache()
+
+        return self.cache(self.__self__, *args, **kwargs)
+
+
+class BaseTimedCache(BaseTimedCacheCallable, DynamicFunction):
+    """An abstract function class for timed caches."""
+    method_type: type[DynamicMethod] = BaseTimedCacheMethod
+    default_bind_method: str = "bind"
+
+    # Magic Methods #
+    # Construction/Destruction
+    @property
+    def is_local(self) -> bool:
+        """Determines if the cache is local for all method bindings or for each instance.
+
+        When set, the __get__ method will be changed to match the chosen style.
+        """
+        return self._is_local
+
+    @is_local.setter
+    def is_local(self, value: bool) -> None:
+        if value:
+            self.call_multiplexer.select("call")
+            self.bind_multiplexer.select("bind_to_attribute")
+        else:
+            self.call_multiplexer.select(self.call_method)
+            self.bind_multiplexer.select("bind")
+        self._is_local = value
+
+    # Instance Methods #
+    # Binding
+    def bind(self, instance: Any = None, owner: type[Any] | None = None) -> BaseTimedCacheMethod:
+        """Creates a method of this function which is bound to another object.
+
+        Args:
+            instance: The object to bind the method to.
+            owner: The class of the object being bound to.
+
+        Returns:
+            The bound method of this function.
+        """
+        return self.method_type(
+            func=self,
+            instance=instance,
+            owner=owner,
+            typed=self.typed,
+            lifetime=self.lifetime,
+            call_method=self.call_method,
+            local=self.is_local,
+        )
+
+    def bind_to_attribute(
+        self,
+        instance: Any = None,
+        owner: type[Any] | None = None,
+        name: str | None = None,
+    ) -> BaseTimedCacheMethod:
+        """Creates a method of this function which is bound to another object and sets the method an attribute.
+
+        Args:
+            instance: The object to bind the method to.
+            owner: The class of the object being bound to.
+            name: The name of the attribute to set the method to. Default is the function name.
+
+        Returns:
+            The bound method of this function.
+        """
+        if name is None:
+            name = self.__func__.__name__
+
+        method = self.method_type(
+            func=self,
+            instance=instance,
+            owner=owner,
+            typed=self.typed,
+            lifetime=self.lifetime,
+            call_method=self.call_method,
+            local=self.is_local,
+        )
+        setattr(instance, name, method)
+
+        return method
+
+    @abc.abstractmethod
+    def clear_cache(self) -> None:
+        """Clear the cache and update the expiration of the cache."""
+        if self.lifetime is not None:
+            self.expiration = perf_counter() + self.lifetime
