@@ -47,7 +47,8 @@ class singlekwargdispatchmethod(DynamicMethod):
         Returns:
             The output of the wrapped function.
         """
-        return self.__func__.dispatcher.dispatch(self.__func__.parse(*args, **kwargs))(self.__self__, *args, **kwargs)
+        method = self.__func__.dispatcher.dispatch(self.__func__.parse(*args, **kwargs))
+        return method.__get__(self.__self__, self.__owner__)(*args, **kwargs)
 
 
 class singlekwargdispatch(BaseDecorator, singledispatchmethod):

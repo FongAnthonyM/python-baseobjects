@@ -185,4 +185,4 @@ class MethodMultiplexer(CallableMultiplexer):
         Returns:
             The output of the wrapped function.
         """
-        return self.__func__(self.__self__, *args, **kwargs)
+        return self.__func__.__get__(self.__self__, self.__owner__)(*args, **kwargs)

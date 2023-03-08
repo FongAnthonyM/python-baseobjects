@@ -121,7 +121,7 @@ class BaseTimedCacheCallable(DynamicCallable):
         **kwargs: Keyword arguments for inheritance.
     """
     default_call_method: str = "caching_call"
-    default_cache_method: str = "__func__"
+    default_cache_method: str = "no_cah"
     cache_item_type = CacheItem
 
     # Magic Methods #
@@ -221,6 +221,19 @@ class BaseTimedCacheCallable(DynamicCallable):
 
         super().construct(func=func, *args, **kwargs)
 
+    # Caching Methods
+    def no_cache(self, *args: Any, **kwargs: Any) -> Any:
+        """No caching is done, the function is evaluated.
+
+        Args:
+            *args: Arguments of the wrapped function.
+            **kwargs: Keyword Arguments of the wrapped function.
+
+        Returns:
+            The result of the wrapped function.
+        """
+        return self.__func__(*args, **kwargs)
+    
     # Cache Control
     def create_key(
         self,
@@ -280,13 +293,13 @@ class BaseTimedCacheCallable(DynamicCallable):
 
     def stop_caching(self) -> None:
         """Stops using the cache, storing the method used."""
-        self._previous_cache_method = self.caching_method.selected
-        self.caching_method.select("__func__")
+        self._previous_cache_method = self.cache.selected
+        self.cache.select("no_cache")
         self.clear_cache()
 
     def resume_caching(self) -> None:
         """Resumes caching by setting the call method to the previous call method"""
-        self.caching_method.select(self._previous_cache_method)
+        self.cache.select(self._previous_cache_method)
 
     @contextmanager
     def pause_caching(self) -> Callable[..., Iterator[None]]:
@@ -303,7 +316,7 @@ class BaseTimedCacheCallable(DynamicCallable):
             **kwargs: Keyword arguments for the wrapped function.
 
         Returns:
-            The result or the caching_method.
+            The result or the cache.
         """
         if self.clear_condition():
             self.clear_cache()
@@ -318,7 +331,7 @@ class BaseTimedCacheCallable(DynamicCallable):
             **kwargs: Keyword arguments for the wrapped function.
 
         Returns:
-            The result or the caching_method.
+            The result or the cache.
         """
         self.clear_cache()
 
@@ -358,7 +371,7 @@ class BaseTimedCacheMethod(BaseTimedCacheCallable, DynamicMethod):
             **kwargs: Keyword arguments for the wrapped function.
 
         Returns:
-            The result or the caching_method.
+            The result or the cache.
         """
         if self.clear_condition():
             self.clear_cache()
@@ -373,7 +386,7 @@ class BaseTimedCacheMethod(BaseTimedCacheCallable, DynamicMethod):
             **kwargs: Keyword arguments for the wrapped function.
 
         Returns:
-            The result or the caching_method.
+            The result or the cache.
         """
         self.clear_cache()
 

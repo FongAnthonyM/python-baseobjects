@@ -21,7 +21,7 @@ from typing import Any
 # Third-Party Packages #
 
 # Local Packages #
-from ...bases import singlekwargdispatchmethod
+from ...functions import singlekwargdispatch
 from ..version import Version
 
 
@@ -222,7 +222,7 @@ class TriNumberVersion(Version):
 
         super().construct(ver_name)
 
-    @singlekwargdispatchmethod("version")
+    @singlekwargdispatch("version")
     def set_version(
         self,
         version: Iterable[int] | str | int | None = None,

@@ -202,7 +202,7 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         if value is None:
             self.cache_method = "unlimited_cache"
         elif value == 0:
-            self.cache_method = "__func__"
+            self.cache_method = "no_cache"
         else:
             self.cache_method = "limited_cache"
 
