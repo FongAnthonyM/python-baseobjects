@@ -27,11 +27,10 @@ from ..baseobject import BaseObject
 # Classes #
 class BaseDict(BaseObject, UserDict):
     """An abstract class that is a mixin of UserDict and BaseObject."""
-    __slots__: str | Iterable[str] = {"data"}
-
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, dict: Any = None, /, *args: Any, **kwargs: Any) -> None:
         # Parent Attributes #
         super().__init__(*args, **kwargs)
-        UserDict.__init__(self)
+        UserDict.__init__(self, dict, **kwargs)
+        

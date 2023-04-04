@@ -13,6 +13,7 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
+from asyncio import iscoroutinefunction
 from typing import Any
 
 # Third-Party Packages #
@@ -28,10 +29,10 @@ from .functionregister import FunctionRegister
 class CallableMultiplexer(BaseMethod):
     """A callable which select between either functions or methods to be used as the call method.
 
-    The CallableMultiplexer has a register which it uses to store the functions/functions to be multiplexed. Additionally,
-    an object can be assigned and its methods will part of multiplex. Having the object being directly multiplexed
-    allows more dynamic interaction as the object's methods may change during runtime. Note that the register's
-    functions/methods take priority in selection.
+    The CallableMultiplexer has a register which it uses to store the functions/functions to be multiplexed. 
+    Additionally, an object can be assigned and its methods will be part of the multiplex. Having the object being 
+    directly multiplexed allows more dynamic interaction as the object's methods may change during runtime. Note that 
+    the register's functions/methods take priority in selection.
 
     Attributes:
         register: The function register to use for selecting a function/method.
@@ -65,6 +66,7 @@ class CallableMultiplexer(BaseMethod):
         self._selected: str | None = None
 
         self.is_binding: bool = True
+        self.is_coroutine: bool = False
 
         # Parent Attributes #
         super().__init__(*args, init=False, **kwargs)
@@ -101,7 +103,7 @@ class CallableMultiplexer(BaseMethod):
         Returns:
             The output of the wrapped function.
         """
-        return self.__func__(self.__self__, *args, **kwargs) if self.is_binding else self.__func__( *args, **kwargs)
+        return self.__func__(self.__self__, *args, **kwargs) if self.is_binding else self.__func__(*args, **kwargs)
 
     # Instance Methods #
     # Constructors/Destructors
@@ -142,6 +144,25 @@ class CallableMultiplexer(BaseMethod):
     def build_register(self) -> None:
         """Creates the register this object will use for function/method selection."""
         self.register = FunctionRegister()
+        
+    # Register
+    def add_function(self, name: str, func: BaseCallable) -> None:
+        """Adds a function to the register.
+
+        Args:
+            name: The name of the function being added.
+            func: The function to add to the register.
+        """
+        self.register[name] = func
+
+    def add_method(self, name: str, method: BaseCallable) -> None:
+        """Adds a method to the register.
+
+        Args:
+            name: The name of the method being added.
+            method: The method to add to the register.
+        """
+        self.register[name] = getattr(method, "__func__")
 
     # Callable Selection
     def select(self, name: str) -> None:
@@ -152,6 +173,7 @@ class CallableMultiplexer(BaseMethod):
         """
         func = self.register.get(name, None)
         self.__func__ = getattr(self.__self__, name).__func__ if func is None else func
+        self.is_coroutine = iscoroutinefunction(self.__func__)
         self._selected = name
         
     def add_select_function(self, name: str, func: BaseCallable) -> None:
@@ -161,7 +183,19 @@ class CallableMultiplexer(BaseMethod):
             name: The name of the function being added.
             func: The function to add to the register.
         """
-        self.register[name] = self.__func__ = getattr(func, "__func__", func)
+        self.register[name] = self.__func__ = func
+        self.is_coroutine = iscoroutinefunction(func)
+        self._selected = name
+        
+    def add_select_method(self, name: str, method: BaseCallable) -> None:
+        """Adds a method to the register and selects it.
+
+        Args:
+            name: The name of the method being added.
+            method: The method to add to the register.
+        """
+        self.register[name] = self.__func__ = getattr(method, "__func__")
+        self.is_coroutine = iscoroutinefunction(method)
         self._selected = name
 
 
