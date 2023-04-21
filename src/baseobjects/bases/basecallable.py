@@ -1,5 +1,5 @@
 """ basecallable.py
-An abstract class which implements the basic structure for creating functions and functions.
+An abstract class which implements the basic structure for creating functions and methods.
 """
 # Package Header #
 from ..header import *
@@ -113,7 +113,7 @@ class BaseCallable(BaseObject):
 
 
 class BaseMethod(BaseCallable):
-    """An abstract class which implements the basic structure for creating functions.
+    """An abstract class which implements the basic structure for creating methods.
 
     Attributes:
         _self_: A weak reference to the object to bind this object to.

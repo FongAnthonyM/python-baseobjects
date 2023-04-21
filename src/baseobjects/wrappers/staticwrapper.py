@@ -22,6 +22,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from builtins import property
+from types import MethodDescriptorType
 from typing import Any
 
 # Third-Party Packages #
@@ -29,7 +30,7 @@ from typing import Any
 # Local Packages #
 from ..bases import BaseObject
 from ..metaclasses import InitMeta
-from ..typing import PropertyCallbacks
+from ..typing import AnyCallable, PropertyCallbacks
 
 
 # Definitions #
@@ -198,6 +199,22 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             if not hasattr(obj, wrap_name):
                 raise error
 
+    @classmethod
+    def _evaluate_method(cls, obj: Any, wrap_name: str, method_name: str, args: Any, kwargs: dict[str, Any]) -> Any:
+        """Evaluates a method from a wrapped object.
+
+        Args:
+            obj: The target object to get the wrapped object from.
+            wrap_name: The attribute name of the wrapped object.
+            method_name: The method name of the method to get from the wrapped object.
+            args: The args of the method to evaluate.
+            kwargs: The keyword arguments of the method to evaluate.
+
+        Returns:
+            The wrapped object.
+        """
+        return getattr(getattr(obj, wrap_name), method_name)(*args, **kwargs)
+
     # Callback Factories
     @classmethod
     def _create_wrapping_functions(cls, wrap_name: str) -> PropertyCallbacks:
@@ -249,8 +266,8 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         return get_, set_, del_
 
     @classmethod
-    def _create_attribute_functions(cls, wrap_name, attr_name) -> PropertyCallbacks:
-        """A factory for creating property modification functions for accessing a wrapped objects attributes.
+    def _create_attribute_functions(cls, wrap_name: str, attr_name: str) -> PropertyCallbacks:
+        """A factory for creating property modification functions for accessing a wrapped objects' attributes.
 
         Args:
             wrap_name (str): The attribute name of the wrapped object.
@@ -289,6 +306,25 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
 
         return get_, set_, del_
 
+    @classmethod
+    def _create_method_function(cls, wrap_name: str, attr_name: str) -> AnyCallable:
+        """A factory for creating method functions for accessing a wrapped objects' methods.
+
+        Args:
+            wrap_name: The attribute name of the wrapped object.
+            attr_name: The attribute name of the attribute to modify from the wrapped object.
+
+        Returns:
+            The function for a method.
+        """
+        store_name = "_" + wrap_name  # The true name of the attribute where the wrapped object is stored.
+
+        def func_(obj, *args, **kwargs):
+            """Evaluates the wrapped object's method."""
+            return cls._get_method(obj, store_name, attr_name, args, kwargs)
+
+        return func_
+
     # Wrapping
     @classmethod
     def _class_wrapping_setup(cls) -> None:
@@ -321,8 +357,11 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
                 cls._wrapped_attributes[name] = add_dir = obj_set - remove
                 remove = obj_set | remove
                 for attribute in add_dir:
-                    get_, set_, del_ = cls._create_attribute_functions(name, attribute)
-                    setattr(cls, attribute, property(get_, set_, del_))
+                    if isinstance(getattr(obj, attribute), MethodDescriptorType):
+                        item = cls._create_method_function(name, attribute)
+                    else:
+                        item = property(*cls._create_attribute_functions(name, attribute))
+                    setattr(cls, attribute, item)
 
     @classmethod
     def _unwrap(cls) -> None:
