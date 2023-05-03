@@ -17,5 +17,5 @@ from .basedecorator import BaseDecorator
 from .singlekwargdispatch import singlekwargdispatch
 from .functionregister import FunctionRegister
 from .methodregister import MethodRegister
-from .callablemultiplexer import CallableMultiplexer, MethodMultiplexer
+from .callablemultiplexer import CallableMultiplexer, MethodMultiplexer, MethodMultiplexItem, MethodMultiplexObject
 from .dynamiccallable import DynamicCallable, DynamicMethod, DynamicFunction

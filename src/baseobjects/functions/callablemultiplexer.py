@@ -14,14 +14,14 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from asyncio import iscoroutinefunction
-from typing import Any
+from typing import Any, NamedTuple
 from warnings import warn
 
 # Third-Party Packages #
 
 # Local Packages #
 from ..typing import AnyCallable
-from ..bases import BaseCallable, BaseMethod
+from ..bases import BaseObject, BaseCallable, BaseMethod
 from .functionregister import FunctionRegister
 
 
@@ -96,7 +96,7 @@ class CallableMultiplexer(BaseMethod):
     # Pickling
     def __getstate__(self) -> dict[str, Any]:
         state = self.__dict__.copy()
-        del start["_self_"]
+        del state["_self_"]
         warn("MethodMultiplexer Weak reference deleted for pickle, may not work as intended.")
     
     # Calling
@@ -227,3 +227,40 @@ class MethodMultiplexer(CallableMultiplexer):
             The output of the wrapped function.
         """
         return self.__func__.__get__(self.__self__, self.__owner__)(*args, **kwargs)
+
+
+class MethodMultiplexItem(NamedTuple):
+    """A NamedTuple with specifications for a pickled MethodMultiplexer."""
+    register: dict
+    selected: str
+
+
+class MethodMultiplexObject(BaseObject):
+    """An object which can be subclassed to allow MethodMultiplexer to be pickled."""
+    # Magic Methods #
+    # Pickling
+    def __getstate__(self) -> dict[str, Any]:
+        """Creates a dictionary of attributes which can be used to rebuild this object
+
+        Returns:
+            A dictionary of this object's attributes.
+        """
+        state = {}
+        for k, i in self.__dict__.items():
+            if isinstance(i, MethodMultiplexer):
+                state[k] = MethodMultiplexItem(i.register, i.selected)
+            else:
+                state[k] = i
+
+        return state
+
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        """Builds this object based on a dictionary of corresponding attributes.
+
+        Args:
+            state: The attributes to build this object from.
+        """
+        self.__dict__.update(state)
+        for k, i in state.items():
+            if isinstance(i, MethodMultiplexItem):
+                self.__dict__[k] = MethodMultiplexer(instance=self, select=i.selected, register=i.register)
