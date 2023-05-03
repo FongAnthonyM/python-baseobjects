@@ -15,6 +15,7 @@ __email__ = __email__
 # Standard Libraries #
 from asyncio import iscoroutinefunction
 from typing import Any
+from warnings import warn
 
 # Third-Party Packages #
 
@@ -92,6 +93,12 @@ class CallableMultiplexer(BaseMethod):
     def selected(self, value: str) -> None:
         self.select(value)
 
+    # Pickling
+    def __getstate__(self) -> dict[str, Any]:
+        state = self.__dict__.copy()
+        del start["_self_"]
+        warn("MethodMultiplexer Weak reference deleted for pickle, may not work as intended.")
+    
     # Calling
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
         """Calls the wrapped function with the instance as an argument if is_binding is True.

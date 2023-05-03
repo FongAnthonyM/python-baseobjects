@@ -57,6 +57,15 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
             else:
                 self.disable_caching()
 
+    # Pickling
+    def __getstate__(self) -> dict[Any]:
+        """Delete all cache methods for pickling."""
+        state = self.__dict__.copy()            
+        for name in self.get_caches():
+            if name in state:
+                del state[name]
+        return state 
+
     # Instance Methods #
     # Caches Operators
     def get_caches(self) -> set[str]:

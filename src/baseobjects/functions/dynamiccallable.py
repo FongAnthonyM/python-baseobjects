@@ -70,6 +70,27 @@ class DynamicCallable(BaseCallable):
         self.call_multiplexer.select(value)
         self._call_method = value
 
+    # Pickling
+    def __getstate__(self) -> dict[str, Any]:
+        """Creates a dictionary of attributes which can be used to rebuild this object
+
+        Returns:
+            A dictionary of this object's attributes.
+        """
+        state = self.__dict__.copy()
+        state["call_multiplexer"] = (self.call_multiplexer.register, self.call_multiplexer.selected)
+        return state
+
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        """Builds this object based on a dictionary of corresponding attributes.
+
+        Args:
+            state: The attributes to build this object from.
+        """
+        self.__dict__.update(state)
+        s, r = state["call_multiplexer"]
+        self.call_multiplexer = MethodMultiplexer(instance=self, select=s, register=r)
+
     # Calling
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
         """This call delegates callback to a MethodMultiplexer.
@@ -162,6 +183,27 @@ class DynamicFunction(DynamicCallable, BaseFunction):
     def bind_method(self, value: str) -> None:
         self.bind_multiplexer.select(value)
         self._bind_method = value
+
+    # Pickling
+    def __getstate__(self) -> dict[str, Any]:
+        """Creates a dictionary of attributes which can be used to rebuild this object
+
+        Returns:
+            A dictionary of this object's attributes.
+        """
+        state = super().__getstate__()
+        state["bind_multiplexer"] = (self.bind_multiplexer.register, self.bind_multiplexer.selected)
+        return state
+
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        """Builds this object based on a dictionary of corresponding attributes.
+
+        Args:
+            state: The attributes to build this object from.
+        """
+        super().__setstate__(state)
+        s, r = state["bind_multiplexer"]
+        self.bind_multiplexer = MethodMultiplexer(instance=self, select=s, register=r)
 
     # Descriptor
     def __get__(self, *args: Any, **kwargs: Any) -> Any:

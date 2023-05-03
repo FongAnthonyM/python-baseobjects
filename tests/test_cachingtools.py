@@ -16,6 +16,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 import datetime
+import pickle
 import time
 
 # Third-Party Packages #
@@ -50,6 +51,13 @@ class TestCachingObject(ClassTest):
 
         def printer(self):
             print(self.a)
+
+    def test_pickling(self):
+        cacher = TestCachingObject.CachingTestObject()
+
+        pickle_jar = pickle.dumps(cacher)
+        new_obj = pickle.loads(pickle_jar)
+        assert set(dir(new_obj)) == set(dir(cacher))
 
     def test_lru_cache(self):
         @timed_lru_cache(lifetime=2)
