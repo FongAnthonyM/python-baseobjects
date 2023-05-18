@@ -66,6 +66,18 @@ class BaseComponent(BaseObject):
     def composite(self, value: Any) -> None:
         self._composite = None if value is None else weakref.ref(value)
 
+    # Pickling
+    def __getstate__(self) -> dict[str, Any]:
+        """Creates a dictionary of attributes which can be used to rebuild this object
+
+        Returns:
+            dict: A dictionary of this object's attributes.
+        """
+        state = self.__dict__.copy()
+        state["_composite"] = None
+        return state
+
+
     # Instance Methods #
     # Constructors/Destructors
     def construct(self, composite: Any = None, **kwargs: Any) -> None:

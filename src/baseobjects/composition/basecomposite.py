@@ -13,6 +13,7 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
+from collections.abc import Mapping
 from typing import Any
 
 # Third-Party Packages #
@@ -64,6 +65,17 @@ class BaseComposite(BaseObject):
                 components=components,
                 **kwargs,
             )
+
+    # Pickling
+    def __setstate__(self, state: Mapping[str, Any]) -> None:
+        """Builds this object based on a dictionary of corresponding attributes.
+
+        Args:
+            state: The attributes to build this object from.
+        """
+        self.__dict__.update(state)
+        for component in self.components.values():
+            component.composite = self
 
     # Instance Methods #
     # Constructors/Destructors

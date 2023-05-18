@@ -203,7 +203,7 @@ class DynamicFunction(DynamicCallable, BaseFunction):
         """
         super().__setstate__(state)
         s, r = state["bind_multiplexer"]
-        self.bind_multiplexer = MethodMultiplexer(instance=self, select=s, register=r)
+        self.bind_multiplexer = CallableMultiplexer(instance=self, select=s, register=r)
 
     # Descriptor
     def __get__(self, *args: Any, **kwargs: Any) -> Any:
