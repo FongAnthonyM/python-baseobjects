@@ -37,13 +37,14 @@ class VersionType(BaseObject):
         class_ : The class of the version.
         init: Determines if this object will construct.
     """
-    __slots__: str | Iterable[str] = ("name", "class_")
+    __slots__: str | Iterable[str] = ("name", "class_", "head_class")
 
     # Construction/Destruction
     def __init__(
         self,
         name: str | None = None,
         class_: type | None = None,
+        head_class: type | None = None,
         init: bool = True,
         *args: Any,
         **kwargs: Any,
@@ -54,10 +55,11 @@ class VersionType(BaseObject):
         # New Attributes #
         self.name: str | None = None
         self.class_: type | None = None
+        self.head_class: type | None = None
 
         # Object Construction #
         if init:
-            self.construct(name=name, class_=class_)
+            self.construct(name=name, class_=class_, head_class=head_class)
 
     # Representation
     def __hash__(self) -> int:
@@ -111,7 +113,7 @@ class VersionType(BaseObject):
             return super().__ne__(other)
 
     # Methods
-    def construct(self, name: str | None = None, class_: type | None = None) -> None:
+    def construct(self, name: str | None = None, class_: type | None = None, head_class: type | None = None) -> None:
         """Constructs the version type object based on inputs.
 
         Args:
@@ -122,3 +124,5 @@ class VersionType(BaseObject):
             self.name = name
         if class_ is not None:
             self.class_ = class_
+        if head_class is not None:
+            self.head_class = head_class
