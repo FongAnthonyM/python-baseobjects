@@ -39,13 +39,28 @@ baseobjects
 Features
 --------
 
-* TODO
+This package contains useful base objects meant for inheritance and helper functions.
 
+* bases: Low level base classes.
+
+* cachingtools: Objects and decorators for local caching.
+* collections: Objects for storing other objects.
+* composition: Objects for creating compositions style objects.
+* dataclasses: Objects for storing information efficiently.
+* functions: Objects for creating function and method objects.
+* metaclasses: Base metaclasses.
+* objects: Uncategorized base objects.
+* operations: An assortment functions for doing specific.
+* typing: Objects to be used when adding typing to python code.
+* versioning: Objects for tracking versions.
+* wrappers: Objects for wrapping other objects.
 
 Requirements
 ------------
 
-* TODO
+* Python 3.10 or later
+* bidict
+* click
 
 
 Installation
