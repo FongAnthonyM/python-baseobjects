@@ -1,4 +1,4 @@
-""" exceldatetodatetime.py
+"""exceldatetodatetime.py
 A function to convert an excel date to a datetime.
 """
 # Package Header #

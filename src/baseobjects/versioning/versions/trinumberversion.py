@@ -1,4 +1,4 @@
-""" trinumberversion.py
+"""trinumberversion.py
 TriNumberVersion is a versioning system which is defined by three numbers. This class does not enforce any special
 meaning of the three number, but the Major number is more significant than the Minor number which is more
 significant than the Patch number. A good example of the tri-number framework can be found at https://semver.org/
@@ -46,6 +46,7 @@ class TriNumberVersion(Version):
         ver_name : The name of the version type being used.
         init: Determines if this object will construct.
     """
+
     default_version_name: str = "TriNumber"
     __slots__ = ["major", "minor", "patch"]
 
@@ -261,7 +262,7 @@ class TriNumberVersion(Version):
             version: The version as a string.
             **kwargs: Addition keyword argumnets for setting the version.
         """
-        ranks = version.split('.')
+        ranks = version.split(".")
         for i, r in enumerate(ranks):
             ranks[i] = int(r)
         self.major, self.minor, self.patch = ranks

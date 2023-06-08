@@ -1,4 +1,4 @@
-""" timedsinglecache.py
+"""timedsinglecache.py
 A timed cache that only hold a single item.
 """
 # Package Header #
@@ -42,6 +42,7 @@ class TimedSingleCacheCallable(BaseTimedCacheCallable):
         init: Determines if this object will construct.
         **kwargs: Keyword arguments for inheritance.
     """
+
     default_cache_method: str = "caching"
 
     # Magic Methods #
@@ -106,8 +107,10 @@ class TimedSingleCacheCallable(BaseTimedCacheCallable):
 class TimedSingleCacheMethod(TimedSingleCacheCallable, BaseTimedCacheMethod):
     """A method class for TimedSingleCache."""
 
+
 class TimedSingleCache(TimedSingleCacheCallable, BaseTimedCache):
     """A function class for TimedSingleCache."""
+
     method_type: type[BaseTimedCacheMethod] = TimedSingleCacheCallable
 
 

@@ -1,4 +1,4 @@
-""" __init__.py
+"""__init__.py
 bases provides several base classes.
 """
 # Package Header #

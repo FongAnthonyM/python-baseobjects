@@ -1,4 +1,4 @@
-""" __init__.py
+"""__init__.py
 Various, widely used versions.
 """
 # Package Header #

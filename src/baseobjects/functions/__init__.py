@@ -1,4 +1,4 @@
-""" __init__.py
+"""__init__.py
 functions provides classes for functions and methods.
 """
 # Package Header #

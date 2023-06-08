@@ -1,4 +1,4 @@
-""" unionrecursive.py
+"""unionrecursive.py
 Unions a mapping object and its contained mappings with another mapping.
 """
 # Package Header #

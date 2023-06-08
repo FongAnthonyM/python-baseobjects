@@ -98,10 +98,9 @@ class TestBaseObject(BaseBaseObjectTest):
         assert id(new.mutable) != id(test_object.mutable)
 
 
-# Base Method
-class TestBaseMethod(BaseBaseObjectTest):
-    class_ = BaseMethod
-    get_names = ["get_self", "get_self_bind", "get_new_bind", "get_subinstance"]
+# Base Function
+class TestBaseFunction(BaseBaseObjectTest):
+    class_ = BaseFunction
 
     @pytest.fixture
     def generic_function(self):
@@ -111,32 +110,62 @@ class TestBaseMethod(BaseBaseObjectTest):
         return generic()
 
     @pytest.fixture
-    def test_method(self, request=None):
+    def generate_function(self, request=None):
         def generic(*args, **kwargs):
             return args[0]
 
         if request is None:
             return self.class_(func=generic)
         else:
-            return self.class_(func=generic, get_method=request.param)
+            return self.class_(func=generic, get_function=request.param)
 
-    def test_method_function_call(self, test_method):
-        assert test_method(True)
+    def test_function_call(self, generate_function):
+        assert generate_function(5) == 5
 
-    @pytest.mark.parametrize("test_method", get_names, indirect=True)
-    def test_binding(self, test_method):
+    def test_binding(self, generate_function):
         obj = BaseObject()
-        test_method.bind(instance=obj)
-        assert obj.generic == test_method
+        method = generate_function.bind(instance=obj)
+        assert method() == obj
 
-    @pytest.mark.parametrize("get_method", get_names)
-    def test_set_get_method(self, test_method, get_method):
-        test_method.set_get_method(get_method)
-        assert getattr(test_method, get_method) == test_method._get_method
+    def test_binding_to_attribute(self, generate_function):
+        obj = BaseObject()
+        generate_function.bind_to_attribute(instance=obj)
+        assert isinstance(obj.generic, BaseMethod)
 
-    @pytest.mark.parametrize("test_method", get_names, indirect=True)
-    def test_(self, test_method):
-        pass
+
+# Base Method
+class TestBaseMethod(BaseBaseObjectTest):
+    class_ = BaseMethod
+
+    @pytest.fixture
+    def generic_function(self):
+        def generic(*args, **kwargs):
+            return True
+
+        return generic()
+
+    @pytest.fixture
+    def generate_method(self, request=None):
+        def generic(*args, **kwargs):
+            return args[0]
+
+        if request is None:
+            return self.class_(func=generic, instance=self)
+        else:
+            return self.class_(func=generic, instance=self, get_method=request.param)
+
+    def test_method_call(self, generate_method):
+        assert self == generate_method()
+
+    def test_binding(self, generate_method):
+        obj = BaseObject()
+        generate_method.bind(instance=obj)
+        assert obj == generate_method()
+
+    def test_binding_to_attribute(self, generate_method):
+        obj = BaseObject()
+        generate_method.bind_to_attribute(instance=obj)
+        assert obj.generic == generate_method
 
 
 # Main #

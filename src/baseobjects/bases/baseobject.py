@@ -1,4 +1,4 @@
-""" baseobject.py
+"""baseobject.py
 BaseObject is an abstract class which implements some basic functions that all objects should have.
 """
 # Package Header #

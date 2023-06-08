@@ -1,4 +1,4 @@
-""" timedlrucache.py
+"""timedlrucache.py
 A lru cache that periodically resets and include its instantiation decorator function.
 """
 # Package Header #
@@ -97,6 +97,7 @@ class TimedLRUCacheMethod(TimedLRUCache, TimedCacheMethod):
 
 class TimedLRUCache(TimedLRUCache, TimedCache):
     """A function class for TimedLRUCache."""
+
     method_type: type[TimedLRUCacheMethod] = TimedLRUCacheMethod
 
 

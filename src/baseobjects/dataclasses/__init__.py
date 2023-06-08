@@ -1,4 +1,4 @@
-""" __init__.py
+"""__init__.py
 Base and/or common dataclasses.
 """
 # Package Header #

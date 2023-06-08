@@ -1,4 +1,4 @@
-""" __init__.py
+"""__init__.py
 Types to be used for type hints.
 """
 # Package Header #

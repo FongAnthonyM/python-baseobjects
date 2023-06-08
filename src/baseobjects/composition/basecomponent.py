@@ -1,4 +1,4 @@
-""" basecomponent.py
+"""basecomponent.py
 
 """
 # Package Header #
@@ -36,6 +36,7 @@ class BaseComponent(BaseObject):
         init: Determines if this object will construct.
         **kwargs: Keyword arguments for inheritance.
     """
+
     # Magic Methods #
     # Construction/Destruction
     def __init__(
@@ -76,7 +77,6 @@ class BaseComponent(BaseObject):
         state = self.__dict__.copy()
         state["_composite"] = None
         return state
-
 
     # Instance Methods #
     # Constructors/Destructors

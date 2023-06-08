@@ -1,4 +1,4 @@
-""" header.py
+"""header.py
 Information about this package.
 """
 # Header #

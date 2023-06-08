@@ -1,4 +1,4 @@
-""" staticwrapper.py
+"""staticwrapper.py
 StaticWrapper calls wrapped attributes/functions by creating property descriptor objects for each of the wrapped objects'
 attributes/functions. There some limitations to how StaticWapper can be used. First, for any given subclass of
 StaticWrapper all object instances must contain the same wrapped object types because descriptor are handled at the
@@ -98,6 +98,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         _exclude_attributes: The names of the attributes to exclude from wrapping.
         _wrapped_attributes: The names of the attributes to wrap.
     """
+
     __original_dir_set: set[str] | None = None
     _get_previous_wrapped: bool = False
     _set_next_wrapped: bool = True

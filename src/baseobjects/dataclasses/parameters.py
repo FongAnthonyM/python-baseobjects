@@ -1,4 +1,4 @@
-""" parameters.py
+"""parameters.py
 A dataclass (NamedTuple) that holds parameters for any function.
 """
 # Package Header #
@@ -25,5 +25,6 @@ from typing import Any, NamedTuple
 # Classes #
 class Parameters(NamedTuple):
     """A named tuple for holding the parameters of a function."""
+
     args: Iterable[Any] = tuple()
     kwargs: Mapping[str, Any] = dict()

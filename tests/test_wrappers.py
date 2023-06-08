@@ -21,7 +21,7 @@ import pickle
 import pytest
 
 # Local Packages #
-from src.baseobjects.objects import StaticWrapper, DynamicWrapper
+from src.baseobjects.wrappers import StaticWrapper, DynamicWrapper
 from .test_bases import BaseBaseObjectTest
 
 

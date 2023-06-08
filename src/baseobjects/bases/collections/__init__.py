@@ -1,4 +1,4 @@
-""" __init__.py
+"""__init__.py
 bases.collections provides base objects for collection objects.
 """
 # Package Header #

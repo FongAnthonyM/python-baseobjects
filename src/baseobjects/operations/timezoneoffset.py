@@ -1,4 +1,4 @@
-""" timezoneoffset.py
+"""timezoneoffset.py
 A function that gets the offset of a give timezone.
 """
 # Package Header #

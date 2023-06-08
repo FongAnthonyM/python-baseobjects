@@ -1,4 +1,4 @@
-""" cachingobject.py
+"""cachingobject.py
 An abstract class which creates properties for this class automatically.
 """
 # Package Header #
@@ -60,11 +60,11 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
     # Pickling
     def __getstate__(self) -> dict[Any]:
         """Delete all cache methods for pickling."""
-        state = self.__dict__.copy()            
+        state = self.__dict__.copy()
         for name in self.get_caches():
             if name in state:
                 del state[name]
-        return state 
+        return state
 
     # Instance Methods #
 

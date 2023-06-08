@@ -1,4 +1,4 @@
-""" cachinginitmeta.py
+"""cachinginitmeta.py
 A mixin metaclass that implements caching and init functionalities
 """
 # Package Header #

@@ -1,4 +1,4 @@
-""" basedecorator.py
+"""basedecorator.py
 An abstract class which implements the basic structure for creating decorators.
 """
 # Package Header #
@@ -26,6 +26,7 @@ from .dynamiccallable import DynamicFunction
 # Classes #
 class BaseDecorator(DynamicFunction):
     """An abstract class which implements the basic structure for creating decorators."""
+
     default_call_method: str = "construct_call"
 
     # Instance Methods #

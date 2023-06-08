@@ -1,4 +1,4 @@
-""" basecomposite.py
+"""basecomposite.py
 A basic composite object which is composed of component objects.
 """
 # Package Header #
@@ -39,6 +39,7 @@ class BaseComposite(BaseObject):
         components: Components to add.
         **kwargs: Keyword arguments for inheritance.
     """
+
     default_component_types: dict[str, tuple[type, dict[str, Any]]] = {}
 
     # Magic Methods #

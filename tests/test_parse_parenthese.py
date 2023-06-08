@@ -34,6 +34,7 @@ def tmp_dir(tmpdir):
 # Classes #
 class ClassTest(abc.ABC):
     """Default class tests that all classes should pass."""
+
     class_ = None
     timeit_runs = 100000
     speed_tolerance = 200
@@ -43,7 +44,6 @@ class ClassTest(abc.ABC):
 
 
 class TestParseParentheses:
-
     def test_string_parse_parentheses(self):
         string = "((first(inner))(second)(wrong(thing)))"
         out = parse_parentheses(string)
@@ -56,5 +56,5 @@ class TestParseParentheses:
 
 
 # Main #
-if __name__ == '__main__':
+if __name__ == "__main__":
     pytest.main(["-v", "-s"])

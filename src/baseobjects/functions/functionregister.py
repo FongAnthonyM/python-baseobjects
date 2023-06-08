@@ -1,4 +1,4 @@
-""" functionregister.py
+"""functionregister.py
 A register which holds functions.
 """
 # Package Header #
@@ -27,7 +27,7 @@ from ..bases import BaseDict
 # Classes #
 class FunctionRegister(BaseDict):
     """A register which holds functions.
-    
+
     Args:
         functions: The functions and their keys to add to the register.
         object_: An object whose functions will be added to the register.
@@ -36,8 +36,9 @@ class FunctionRegister(BaseDict):
         init: Determines if this object will construct.
         **kwargs: Keyword arguments for inheritance.
     """
+
     # Magic Methods #
-    # Construction/Destruction 
+    # Construction/Destruction
     def __init__(
         self,
         functions: dict[str, AnyCallable] | None = None,
@@ -53,7 +54,7 @@ class FunctionRegister(BaseDict):
         # Object Construction #
         if init:
             self.construct(functions=functions, object_=object_, objects=objects, *args, **kwargs)
-            
+
     # Instance Methods #
     # Constructors/Destructors
     def construct(
@@ -96,7 +97,7 @@ class FunctionRegister(BaseDict):
             if func is not None:
                 self.data[name] = func
 
-    def update_from_objects(self, *args: Any):
+    def update_from_objects(self, *args: Any) -> None:
         """Updates the register with objects whose functions will be added to the register.
 
         Args:

@@ -1,4 +1,4 @@
-""" timeddict.py
+"""timeddict.py
 A dictionary that clears its contents after a specified time has passed.
 """
 # Package Header #
@@ -38,6 +38,7 @@ class TimedDict(BaseDict):
         dict_: The dictionary to copy into this dictionary.
         **kwargs: The keywords to add to this dictionary.
     """
+
     __slots__ = {"is_timed", "lifetime", "expiration", "_data"}
 
     # Magic Methods #

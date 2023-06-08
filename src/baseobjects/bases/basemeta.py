@@ -1,4 +1,4 @@
-""" basemeta.py
+"""basemeta.py
 BaseMeta is an abstract metaclass that implements some basic functions that all metaclasses objects should have.
 """
 # Package Header #

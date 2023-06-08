@@ -1,4 +1,4 @@
-""" timedcache.py
+"""timedcache.py
 A cache that periodically resets and include its instantiation decorator function.
 """
 # Package Header #
@@ -50,6 +50,7 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         init: Determines if this object will construct.
         **kwargs: Keyword arguments for inheritance.
     """
+
     default_cache_method: str = "unlimited_cache"
     priority_queue_type: type[CircularDoublyLinkedContainer] = CircularDoublyLinkedContainer
 
@@ -71,7 +72,7 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         self._maxsize: int | None = None
 
         self.priority: Any = self.priority_queue_type()
-        
+
         # Parent Attributes #
         super().__init__(*args, init=False, **kwargs)
 
@@ -223,6 +224,7 @@ class TimedCacheMethod(TimedCacheCallable, BaseTimedCacheMethod):
 
 class TimedCache(TimedCacheCallable, BaseTimedCache):
     """A function class for TimedCache."""
+
     method_type: type[BaseTimedCacheMethod] = TimedCacheMethod
 
     # Instance Methods #

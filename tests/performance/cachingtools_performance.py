@@ -72,7 +72,9 @@ class TestCachingObject(ClassPerformanceTest):
         percent = (overhead / mean_old) * 100
         new_c_units = overhead / self.call_speed
 
-        print(f"\nOverhead {new_c_units:.3f} cu or {overhead:.3f} μs took {percent:.3f}% of the time of the old function.")
+        print(
+            f"\nOverhead {new_c_units:.3f} cu or {overhead:.3f} μs took {percent:.3f}% of the time of the old function."
+        )
         assert True
 
     def test_cache_bypass_speed(self):
@@ -89,7 +91,9 @@ class TestCachingObject(ClassPerformanceTest):
         mean_old = timeit.timeit(old_eval, number=self.timeit_runs) / self.timeit_runs * 1000000
         percent = (mean_new / mean_old) * 100
 
-        print(f"\nNew speed {new_c_units:.3f} cu or {mean_new:.3f} μs took {percent:.3f}% of the time of the old function.")
+        print(
+            f"\nNew speed {new_c_units:.3f} cu or {mean_new:.3f} μs took {percent:.3f}% of the time of the old function."
+        )
         assert True
 
     def test_cached_speed(self):
@@ -109,7 +113,9 @@ class TestCachingObject(ClassPerformanceTest):
         percent = (mean_new / mean_old) * 100
 
         print(self.call_speed)
-        print(f"\nNew speed {new_c_units:.3f} cu or {mean_new:.3f} μs took {percent:.3f}% of the time of the old function.")
+        print(
+            f"\nNew speed {new_c_units:.3f} cu or {mean_new:.3f} μs took {percent:.3f}% of the time of the old function."
+        )
         assert percent < self.speed_tolerance
 
     def test_cached_profile(self):

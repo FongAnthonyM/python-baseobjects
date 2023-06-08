@@ -1,4 +1,4 @@
-""" cachingobjectmeta.py
+"""cachingobjectmeta.py
 Creates a registry for the caching objects with a class.
 """
 # Package Header #

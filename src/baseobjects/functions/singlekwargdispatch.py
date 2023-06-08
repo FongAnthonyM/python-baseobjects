@@ -1,4 +1,4 @@
-""" singlekwargdispatch.py
+"""singlekwargdispatch.py
 Extends singledispatch to allow kwargs to be used for dispatching.
 
 The normal single dispatching requires at least one arg for dispatching. This object retains this functionality, but
@@ -34,6 +34,7 @@ from .callablemultiplexer import MethodMultiplexer
 # Classes #
 class singlekwargdispatchmethod(DynamicMethod):
     """A wrapper for a bound singlekwargsipatch."""
+
     default_call_method: str = "search_call"
 
     # Calling
@@ -71,6 +72,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         init: Determines if this object will construct.
         **kwargs: Keyword arguments for inheritance.
     """
+
     method_type: type[DynamicMethod] = singlekwargdispatchmethod
 
     # Magic Methods #
@@ -130,7 +132,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
 
     # Instance Methods #
     # Constructors
-    def construct(self, kwarg: str | None = None, func: AnyCallable | None = None, *args:Any, **kwargs: Any) -> None:
+    def construct(self, kwarg: str | None = None, func: AnyCallable | None = None, *args: Any, **kwargs: Any) -> None:
         """Constructs this object based on the input.
 
         Args:

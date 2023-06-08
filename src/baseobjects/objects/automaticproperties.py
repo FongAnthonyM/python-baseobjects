@@ -1,4 +1,4 @@
-""" automaticproperties.py
+"""automaticproperties.py
 An abstract class which creates properties for this class automatically.
 """
 # Package Header #
@@ -35,6 +35,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         _properties_map: The functions used to create properties.
         _properies: A container that has the names of the properties and some information to build them.
     """
+
     _properties_map_cls: list[Any] = []
     _properties: Any = None
 
@@ -126,9 +127,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
     # Property Constructors
     @classmethod
     def _iterable_to_properties(
-        cls,
-        iter_: Iterable[str],
-        callback_factory: Callable[[str], PropertyCallbacks]
+        cls, iter_: Iterable[str], callback_factory: Callable[[str], PropertyCallbacks]
     ) -> None:
         """Create properties for this class based on an iterable where the items are the property names.
 
@@ -143,9 +142,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
     @classmethod
     def _dictionary_to_properties(
-        cls,
-        dict_: dict[str, Any],
-        callback_factory: Callable[[Any], PropertyCallbacks]
+        cls, dict_: dict[str, Any], callback_factory: Callable[[Any], PropertyCallbacks]
     ) -> None:
         """Create properties for this class based on a dictionary where the keys are the property names.
 

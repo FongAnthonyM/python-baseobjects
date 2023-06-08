@@ -81,7 +81,9 @@ class TestGroupedList(ClassTest):
         child = gl.create_group("name", [4, 5, 6])
         assert child.check_if_parent(gl)
 
-    def test_add_parent_to_children(self,):
+    def test_add_parent_to_children(
+        self,
+    ):
         gl = GroupedList([0, 1, 2, 3])
         first = gl.create_group("first", [4, 5, 6])
         second = gl.create_group("second", [7, 8, 9, 10])
@@ -89,7 +91,9 @@ class TestGroupedList(ClassTest):
         gl.add_parent_to_children(new)
         assert first.check_if_parent(new) and second.check_if_parent(new)
 
-    def test_remove_parent_from_children(self,):
+    def test_remove_parent_from_children(
+        self,
+    ):
         gl = GroupedList([0, 1, 2, 3])
         first = gl.create_group("first", [4, 5, 6])
         second = gl.create_group("second", [7, 8, 9, 10])

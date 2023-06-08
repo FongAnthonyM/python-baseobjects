@@ -1,4 +1,4 @@
-""" bytestobin.py
+"""bytestobin.py
 A function to convert bytes to a tuple of binary values.
 """
 # Package Header #
@@ -23,6 +23,7 @@ from typing import Any
 # Definitions #
 big_array = (128, 64, 32, 16, 8, 4, 2, 1)
 little_array = (8, 4, 2, 1, 128, 64, 32, 16)
+
 
 def bytes_to_bin(bytes_: bytes, byteorder: str = "big", out_type: type = int) -> tuple[Any]:
     """Converts bytes to a tuple of binary values.

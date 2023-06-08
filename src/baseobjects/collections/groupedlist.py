@@ -1,4 +1,4 @@
-""" groupedlist.py
+"""groupedlist.py
 A list which contains any item, but nested GroupLists' contents are treated as if they are elements of this list.
 """
 # Package Header #
@@ -39,6 +39,7 @@ class GroupedList(BaseList):
         parents: The parent and ancestors of this GroupList
         init: Determines if this object will construct.
     """
+
     # Magic Methods #
     # Construction/Destruction
     def __init__(
@@ -272,7 +273,7 @@ class GroupedList(BaseList):
             return self.groups[group].get_item(i)
         elif i < 0:
             data = reversed(self.data)
-            i = - i - 1
+            i = -i - 1
             reverse = True
         else:
             data = self.data
@@ -281,14 +282,14 @@ class GroupedList(BaseList):
         for item in data:
             if i <= 0:
                 if isinstance(item, GroupedList) and self.check_if_child(item):
-                    i = - i - 1 if reverse else i
+                    i = -i - 1 if reverse else i
                     return item.get_item(i)
                 else:
                     return item
             elif isinstance(item, GroupedList) and self.check_if_child(item):
                 n_items = len(item)
                 if i < n_items:
-                    i = - i - 1 if reverse else i
+                    i = -i - 1 if reverse else i
                     return item.get_item(i)
                 else:
                     i -= n_items
@@ -308,7 +309,7 @@ class GroupedList(BaseList):
             return self.groups[group].set_item(i, value)
         elif i < 0:
             self.data.reverse()
-            i = - i - 1
+            i = -i - 1
             reverse = True
         else:
             reverse = False
@@ -316,7 +317,7 @@ class GroupedList(BaseList):
         for j, item in enumerate(self.data):
             if i <= 0:
                 if isinstance(item, GroupedList) and self.check_if_child(item):
-                    i = - i - 1 if reverse else i
+                    i = -i - 1 if reverse else i
                     item.set_item(i, value)
                 else:
                     self.data[j] = value
@@ -328,7 +329,7 @@ class GroupedList(BaseList):
             elif isinstance(item, GroupedList) and self.check_if_child(item):
                 n_items = len(item)
                 if i < n_items:
-                    i = - i - 1 if reverse else i
+                    i = -i - 1 if reverse else i
                     item.set_item(i, value)
                     if reverse:
                         self.data.reverse()
@@ -345,7 +346,7 @@ class GroupedList(BaseList):
             return self.groups[group].delete_item(i)
         elif i < 0:
             self.data.reverse()
-            i = - i - 1
+            i = -i - 1
             reverse = True
         else:
             reverse = False
@@ -353,7 +354,7 @@ class GroupedList(BaseList):
         for j, item in enumerate(self.data):
             if i <= 0:
                 if isinstance(item, GroupedList) and self.check_if_child(item):
-                    i = - i - 1 if reverse else i
+                    i = -i - 1 if reverse else i
                     item.delete_item(i)
                 else:
                     del self.data[j]
@@ -365,7 +366,7 @@ class GroupedList(BaseList):
             elif isinstance(item, GroupedList) and self.check_if_child(item):
                 n_items = len(item)
                 if i < n_items:
-                    i = - i - 1 if reverse else i
+                    i = -i - 1 if reverse else i
                     item.delete_item(i)
                     if reverse:
                         self.data.reverse()
@@ -389,7 +390,7 @@ class GroupedList(BaseList):
             return self.data.insert(i, item)
         elif i < 0:
             self.data.reverse()
-            i = - i - 1
+            i = -i - 1
             reverse = True
         else:
             reverse = False
@@ -397,10 +398,10 @@ class GroupedList(BaseList):
         for j, contained_item in enumerate(self.data):
             if i <= 0:
                 if isinstance(contained_item, GroupedList) and self.check_if_child(contained_item):
-                    i = - i - 1 if reverse else i
+                    i = -i - 1 if reverse else i
                     contained_item.set_item(i, item)
                 else:
-                    index = - j - 1 if reverse else j
+                    index = -j - 1 if reverse else j
                     self.data.insert(index, item)
 
                 if reverse:
@@ -410,7 +411,7 @@ class GroupedList(BaseList):
             elif isinstance(contained_item, GroupedList) and self.check_if_child(contained_item):
                 n_items = len(contained_item)
                 if i < n_items:
-                    i = - i - 1 if reverse else i
+                    i = -i - 1 if reverse else i
                     contained_item.insert(i, item)
                     if reverse:
                         self.data.reverse()
@@ -429,7 +430,7 @@ class GroupedList(BaseList):
             return self.groups[group].delete_item(i)
         elif i < 0:
             self.data.reverse()
-            i = - i - 1
+            i = -i - 1
             reverse = True
         else:
             reverse = False
@@ -437,10 +438,10 @@ class GroupedList(BaseList):
         for j, item in enumerate(self.data):
             if i <= 0:
                 if isinstance(item, GroupedList) and self.check_if_child(item):
-                    i = - i - 1 if reverse else i
+                    i = -i - 1 if reverse else i
                     result = item.pop(i)
                 else:
-                    index = - j - 1 if reverse else j
+                    index = -j - 1 if reverse else j
                     result = self.data[index]
                     del self.data[index]
 
@@ -451,7 +452,7 @@ class GroupedList(BaseList):
             elif isinstance(item, GroupedList) and self.check_if_child(item):
                 n_items = len(item)
                 if i < n_items:
-                    i = - i - 1 if reverse else i
+                    i = -i - 1 if reverse else i
                     if reverse:
                         self.data.reverse()
                     return item.pop(i)
@@ -538,7 +539,7 @@ class GroupedList(BaseList):
             A tuple with the contents of this GroupList.
         """
         return tuple(iter(self))
-    
+
     def as_flat_list(self) -> list[Any]:
         """Return the contents of this GroupList as a flat list.
 
@@ -546,4 +547,3 @@ class GroupedList(BaseList):
             A list with the contents of this GroupList.
         """
         return list(iter(self))
-    

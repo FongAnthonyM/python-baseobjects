@@ -1,4 +1,4 @@
-""" basetimedcache.py
+"""basetimedcache.py
 An abstract class for creating timed cache.
 """
 # Package Header #
@@ -120,6 +120,7 @@ class BaseTimedCacheCallable(DynamicCallable):
         init: Determines if this object will construct.
         **kwargs: Keyword arguments for inheritance.
     """
+
     default_call_method: str = "caching_call"
     default_cache_method: str = "no_cah"
     cache_item_type = CacheItem
@@ -233,7 +234,7 @@ class BaseTimedCacheCallable(DynamicCallable):
             The result of the wrapped function.
         """
         return self.__func__(*args, **kwargs)
-    
+
     # Cache Control
     def create_key(
         self,
@@ -340,6 +341,7 @@ class BaseTimedCacheCallable(DynamicCallable):
 
 class BaseTimedCacheMethod(BaseTimedCacheCallable, DynamicMethod):
     """An abstract method class for timed caches."""
+
     @property
     def is_local(self) -> bool:
         """Determines if the cache is local for all method bindings or for each instance.
@@ -395,6 +397,7 @@ class BaseTimedCacheMethod(BaseTimedCacheCallable, DynamicMethod):
 
 class BaseTimedCache(BaseTimedCacheCallable, DynamicFunction):
     """An abstract function class for timed caches."""
+
     method_type: type[DynamicMethod] = BaseTimedCacheMethod
     default_bind_method: str = "bind"
 

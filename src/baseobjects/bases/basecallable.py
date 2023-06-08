@@ -1,4 +1,4 @@
-""" basecallable.py
+"""basecallable.py
 An abstract class which implements the basic structure for creating functions and methods.
 """
 # Package Header #
@@ -39,6 +39,7 @@ class BaseCallable(BaseObject):
         init: Determines if this object will construct.
         **kwargs: Keyword arguments for inheritance.
     """
+
     # Magic Methods #
     # Construction/Destruction
     def __init__(
@@ -127,6 +128,7 @@ class BaseMethod(BaseCallable):
         init: Determines if this object will construct.
         **kwargs: Keyword arguments for inheritance.
     """
+
     # Magic Methods #
     # Construction/Destruction
     def __init__(
@@ -250,6 +252,7 @@ class BaseFunction(BaseCallable):
     Class Attributes:
         method_type: The type of method to create when binding.
     """
+
     method_type: type[BaseMethod] = BaseMethod
 
     # Instance Methods #

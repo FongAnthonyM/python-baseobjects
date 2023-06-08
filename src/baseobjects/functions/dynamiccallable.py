@@ -1,4 +1,4 @@
-""" dynamiccallable.py
+"""dynamiccallable.py
 Abstract classes for creating callable classes that has multiplexed callback.
 """
 # Package Header #
@@ -38,6 +38,7 @@ class DynamicCallable(BaseCallable):
         init: Determines if this object will construct.
         **kwargs: Keyword arguments for inheritance.
     """
+
     default_call_method: str | None = None
 
     # Magic Methods #
@@ -121,6 +122,7 @@ class DynamicCallable(BaseCallable):
 
 class DynamicMethod(DynamicCallable, BaseMethod):
     """An abstract method class that has multiplexed callback."""
+
     default_call_method: str | None = "call"
 
     # Instance Methods #
@@ -151,6 +153,7 @@ class DynamicFunction(DynamicCallable, BaseFunction):
         init: Determines if this object will construct.
         **kwargs: Keyword arguments for inheritance.
     """
+
     method_type: type[BaseMethod] = DynamicMethod
     default_bind_method: str | None = "bind"
 

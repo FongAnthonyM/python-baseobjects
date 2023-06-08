@@ -1,4 +1,4 @@
-""" baselist.py
+"""baselist.py
 An abstract class that is a mixin of UserList and BaseObject.
 """
 # Package Header #
@@ -27,6 +27,7 @@ from ..baseobject import BaseObject
 # Classes #
 class BaseList(BaseObject, UserList):
     """An abstract class that is a mixin of UserList and BaseObject."""
+
     __slots__: str | Iterable[str] = {"data"}
 
     # Magic Methods #

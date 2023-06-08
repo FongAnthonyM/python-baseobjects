@@ -1,4 +1,4 @@
-""" parseparentheses.py
+"""parseparentheses.py
 
 """
 # Package Header #
@@ -16,6 +16,7 @@ __email__ = __email__
 from collections import deque
 from functools import singledispatch
 import re
+from typing import Any, Generator, Iterable
 
 # Third-Party Packages #
 
@@ -24,9 +25,9 @@ import re
 
 # Definitions #
 # Classes #
-def parentheses_iter(string: str):
-    opens = re.finditer('\(', string)
-    closes = re.finditer('\)', string)
+def parentheses_iter(string: str) -> Generator[tuple[str, bool], None, None]:
+    opens = re.finditer("\(", string)
+    closes = re.finditer("\)", string)
     any_opens = True
     any_closes = True
 
@@ -44,7 +45,7 @@ def parentheses_iter(string: str):
 
     while any_opens or any_closes:
         if not any_opens or (any_closes and close_ < open_):
-            yield (close_, False)
+            yield close_, False
 
             try:
                 close_ = next(closes).start()
@@ -53,7 +54,7 @@ def parentheses_iter(string: str):
                 any_closes = False
 
         else:
-            yield (open_, True)
+            yield open_, True
 
             try:
                 open_ = next(opens).start()
@@ -62,7 +63,7 @@ def parentheses_iter(string: str):
                 any_opens = False
 
 
-def decode_str_parentheses(string, iter_, start=0):
+def decode_str_parentheses(string: str, iter_: Iterable, start: int = 0) -> tuple[deque, int]:
     items = deque()
     previous = start
 
@@ -81,37 +82,37 @@ def decode_str_parentheses(string, iter_, start=0):
     return items, -1
 
 
-def decode_bytes_parentheses(iter_):
+def decode_bytes_parentheses(iter_: Iterable) -> tuple[deque, bool]:
     items = deque()
     b_item = b""
-    ignor = False
+    ignore = False
     temp = None
 
     for b_as_i in iter_:
         if b_as_i in {34, 39}:
-            if not ignor:
-                ignor = True
+            if not ignore:
+                ignore = True
                 temp = b_as_i
             elif b_as_i == temp:
-                ignor = False
+                ignore = False
                 temp = None
 
-        if not ignor and b_as_i == 40:
+        if not ignore and b_as_i == 40:
             if b_item:
                 items.append(b_item)
                 b_item = b""
-            
+
             item, closed = decode_bytes_parentheses(iter_)
-            
+
             if not closed:
                 raise ValueError("unbalanced expression")
-            
+
             items.append(item)
-        elif not ignor and b_as_i == 41:
+        elif not ignore and b_as_i == 41:
             if b_item:
                 items.append(b_item)
                 b_item = b""
-                
+
             return items, True
         else:
             b_item += b_as_i.to_bytes(1, "little")
@@ -119,20 +120,21 @@ def decode_bytes_parentheses(iter_):
 
 
 @singledispatch
-def parse_parentheses(expression: str | bytes):
+def parse_parentheses(expression: str | bytes) -> dict[str, Any]:
     # Catch the general case for any unregistered types
     raise ValueError(f"{expression} is an invailid type")
 
 
 @parse_parentheses.register
-def _parse_parentheses(expression: str):
+def _parse_parentheses(expression: str) -> dict[str, Any]:
     items, flag = decode_str_parentheses(expression, parentheses_iter(expression))
     if flag != -1:
         raise ValueError("unbalanced expression")
     return items
 
+
 @parse_parentheses.register
-def _parse_parentheses(expression: bytes):
+def _parse_parentheses(expression: bytes) -> dict[str, Any]:
     items, flag = decode_bytes_parentheses(iter(expression))
     if flag:
         raise ValueError("unbalanced expression")

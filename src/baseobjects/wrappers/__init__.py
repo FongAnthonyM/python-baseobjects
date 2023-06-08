@@ -1,4 +1,4 @@
-""" __init__.py
+"""__init__.py
 Abstract classes for objects that can wrap any objects and make their attributes/functions accessible from the wrapper.
 
 StaticWrapper and DynamicWrapper are solutions for two different case. StaticWrapper should be used when

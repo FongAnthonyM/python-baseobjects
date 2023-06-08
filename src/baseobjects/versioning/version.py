@@ -1,4 +1,4 @@
-""" version.py
+"""version.py
 Version is an abstract class which versions of different types can be defined from.
 """
 # Package Header #
@@ -40,6 +40,7 @@ class Version(BaseObject):
         init: Determines if this object will construct.
         **kwargs: More keyword arguments for constructing this object
     """
+
     default_version_name: str = "default"
 
     # Class Methods

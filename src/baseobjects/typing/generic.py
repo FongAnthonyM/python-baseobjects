@@ -1,5 +1,5 @@
-""" generic.py
-
+"""generic.py
+Generic types.
 """
 # Package Header #
 from ..header import *

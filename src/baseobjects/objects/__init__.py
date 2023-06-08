@@ -1,4 +1,4 @@
-""" __init__.py
+"""__init__.py
 More specific objects for the package.
 """
 # Package Header #

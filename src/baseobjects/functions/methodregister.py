@@ -1,4 +1,4 @@
-""" methodregister.py
+"""methodregister.py
 A register which holds Methods.
 """
 # Package Header #
@@ -28,7 +28,7 @@ from .functionregister import FunctionRegister
 # Classes #
 class BaseMethodRegister(FunctionRegister):
     """An abstract register which holds methods.
-    
+
     Args:
         methods: The functions and their keys to add to the register.
         object_: An object whose functions will be added to the register.
@@ -37,8 +37,9 @@ class BaseMethodRegister(FunctionRegister):
         init: Determines if this object will construct.
         **kwargs: Keyword arguments for inheritance.
     """
+
     # Magic Methods #
-    # Construction/Destruction 
+    # Construction/Destruction
     def __init__(
         self,
         methods: dict[str, AnyCallable] | None = None,
@@ -66,7 +67,7 @@ class BaseMethodRegister(FunctionRegister):
     @__func__.setter
     def __func__(self, value: FunctionRegister) -> None:
         self.data = value
-            
+
     # Instance Methods #
     # Constructors/Destructors
     def construct(
@@ -168,6 +169,7 @@ class BoundMethodRegister(BaseMethodRegister):
 
 class MethodRegister(BaseMethodRegister):
     """A register which holds functions and binds appropriately."""
+
     # Magic Methods #
     # Descriptor
     def __get__(self, instance: Any, owner: type[Any] | None = None) -> BoundMethodRegister:

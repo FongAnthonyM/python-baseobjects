@@ -1,4 +1,4 @@
-""" callablemultiplexer.py
+"""callablemultiplexer.py
 Callables which select between either functions or methods to be used as the call method.
 """
 # Package Header #
@@ -30,9 +30,9 @@ from .functionregister import FunctionRegister
 class CallableMultiplexer(BaseMethod):
     """A callable which select between either functions or methods to be used as the call method.
 
-    The CallableMultiplexer has a register which it uses to store the functions/functions to be multiplexed. 
-    Additionally, an object can be assigned and its methods will be part of the multiplex. Having the object being 
-    directly multiplexed allows more dynamic interaction as the object's methods may change during runtime. Note that 
+    The CallableMultiplexer has a register which it uses to store the functions/functions to be multiplexed.
+    Additionally, an object can be assigned and its methods will be part of the multiplex. Having the object being
+    directly multiplexed allows more dynamic interaction as the object's methods may change during runtime. Note that
     the register's functions/methods take priority in selection.
 
     Attributes:
@@ -49,6 +49,7 @@ class CallableMultiplexer(BaseMethod):
         init: Determines if this object will construct.
         **kwargs: Keyword arguments for inheritance.
     """
+
     # Magic Methods #
     # Construction/Destruction
     def __init__(
@@ -80,7 +81,7 @@ class CallableMultiplexer(BaseMethod):
                 owner=owner,
                 select=select,
                 binding=binding,
-                *args, 
+                *args,
                 **kwargs,
             )
 
@@ -88,7 +89,7 @@ class CallableMultiplexer(BaseMethod):
     def selected(self) -> str | None:
         """The name of the selected function/method."""
         return self._selected
-    
+
     @selected.setter
     def selected(self, value: str) -> None:
         self.select(value)
@@ -98,7 +99,7 @@ class CallableMultiplexer(BaseMethod):
         state = self.__dict__.copy()
         del state["_self_"]
         warn("MethodMultiplexer Weak reference deleted for pickle, may not work as intended.")
-    
+
     # Calling
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
         """Calls the wrapped function with the instance as an argument if is_binding is True.
@@ -144,14 +145,14 @@ class CallableMultiplexer(BaseMethod):
             self.is_binding = binding
 
         super().construct(instance=instance, owner=owner, *args, **kwargs)
-        
+
         if select is not None:
             self.select(select)
-        
+
     def build_register(self) -> None:
         """Creates the register this object will use for function/method selection."""
         self.register = FunctionRegister()
-        
+
     # Register
     def add_function(self, name: str, func: BaseCallable) -> None:
         """Adds a function to the register.
@@ -182,7 +183,7 @@ class CallableMultiplexer(BaseMethod):
         self.__func__ = getattr(self.__self__, name).__func__ if func is None else func
         self.is_coroutine = iscoroutinefunction(self.__func__)
         self._selected = name
-        
+
     def add_select_function(self, name: str, func: BaseCallable) -> None:
         """Adds a function to the register and selects it.
 
@@ -193,7 +194,7 @@ class CallableMultiplexer(BaseMethod):
         self.register[name] = self.__func__ = func
         self.is_coroutine = iscoroutinefunction(func)
         self._selected = name
-        
+
     def add_select_method(self, name: str, method: BaseCallable) -> None:
         """Adds a method to the register and selects it.
 
@@ -214,6 +215,7 @@ class MethodMultiplexer(CallableMultiplexer):
     dynamic interaction as the object's methods may change during runtime. Note that the register's methods take
     priority in selection.
     """
+
     # Magic Methods #
     # Calling
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
@@ -231,12 +233,14 @@ class MethodMultiplexer(CallableMultiplexer):
 
 class MethodMultiplexItem(NamedTuple):
     """A NamedTuple with specifications for a pickled MethodMultiplexer."""
+
     register: dict
     selected: str
 
 
 class MethodMultiplexObject(BaseObject):
     """An object which can be subclassed to allow MethodMultiplexer to be pickled."""
+
     # Magic Methods #
     # Pickling
     def __getstate__(self) -> dict[str, Any]:

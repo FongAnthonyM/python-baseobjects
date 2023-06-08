@@ -1,4 +1,4 @@
-""" basedict.py
+"""basedict.py
 An abstract class that is a mixin of UserDict and BaseObject.
 """
 # Package Header #
@@ -27,10 +27,10 @@ from ..baseobject import BaseObject
 # Classes #
 class BaseDict(BaseObject, UserDict):
     """An abstract class that is a mixin of UserDict and BaseObject."""
+
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, dict: Any = None, /, *args: Any, **kwargs: Any) -> None:
         # Parent Attributes #
         super().__init__(*args, **kwargs)
         UserDict.__init__(self, dict, **kwargs)
-        

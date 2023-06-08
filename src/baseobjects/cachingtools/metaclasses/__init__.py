@@ -1,4 +1,4 @@
-""" __init__.py
+"""__init__.py
 Meta classes for caching.
 """
 # Package Header #

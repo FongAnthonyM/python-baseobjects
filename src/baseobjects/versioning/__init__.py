@@ -1,4 +1,4 @@
-""" __init__.py
+"""__init__.py
 Objects that can be used for versioning.
 """
 # Package Header #

@@ -1,4 +1,4 @@
-""" timedkeylesscache.py
+"""timedkeylesscache.py
 A timed cache that only hold a single item and does not create a key from arguments.
 """
 # Package Header #
@@ -38,6 +38,7 @@ class TimedKeylessCacheCallable(TimedSingleCacheCallable):
         init: Determines if this object will construct.
         **kwargs: Keyword arguments for inheritance.
     """
+
     # Magic Methods #
     # Construction/Destruction
     def __init__(
@@ -90,11 +91,13 @@ class TimedKeylessCacheCallable(TimedSingleCacheCallable):
 
 class TimedKeylessCacheMethod(TimedKeylessCacheCallable, TimedSingleCacheMethod):
     """A method class for TimedKeylessCache."""
+
     default_call_method: str = "caching"
 
 
 class TimedKeylessCache(TimedKeylessCacheCallable, TimedSingleCache):
     """A function class for TimedKeylessCache."""
+
     method_type: type[TimedSingleCacheMethod] = TimedKeylessCacheMethod
     default_bind_method: str = "bind_to_attribute"
 

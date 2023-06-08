@@ -1,4 +1,4 @@
-""" dynamicwrapper.py
+"""dynamicwrapper.py
 DynamicWrapper calls wrapped attribute functions by changing the __getattribute__ method to check the wrapped classes
 after checking itself. This makes DynamicWrapper very flexible with its wrapped objects. DynamicWrapper does not have
 any usage limitation, but it is significantly slower than normal object attribute/method access, because it handles
@@ -45,6 +45,7 @@ class DynamicWrapper(BaseObject):
         _wrap_attributes: The list of attribute names that will contain the objects to dynamically wrap where the order
             is descending inheritance.
     """
+
     _wrap_attributes: list[str] = []
 
     # Magic Methods #

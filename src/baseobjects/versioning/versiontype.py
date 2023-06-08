@@ -1,4 +1,4 @@
-""" versiontype.py
+"""versiontype.py
 A dataclass like object that contains a string name and associated class for a version. See versions for examples of
 implementation.
 """
@@ -37,6 +37,7 @@ class VersionType(BaseObject):
         class_ : The class of the version.
         init: Determines if this object will construct.
     """
+
     __slots__: str | Iterable[str] = ("name", "class_", "head_class")
 
     # Construction/Destruction

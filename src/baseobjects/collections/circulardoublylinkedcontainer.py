@@ -1,4 +1,4 @@
-""" circulardoublylinkedcontainer.py
+"""circulardoublylinkedcontainer.py
 A circular doubly linked container which is a fast and efficient way to store ordered data, especially if constantly
 changes size.
 """
@@ -41,6 +41,7 @@ class LinkedNode(BaseObject):
         previous: The previous node.
         next_: The next node.
     """
+
     __slots__: str | Iterable[str] = ("_previous", "_next", "data")
 
     # Magic Methods #
@@ -126,6 +127,7 @@ class CircularDoublyLinkedContainer(BaseObject):
         first_node: The first linked node in this container.
         nodes: The set of nodes in this container.
     """
+
     __slots__: str | Iterable[str] = ("first_node", "nodes")
 
     # Magic Methods #

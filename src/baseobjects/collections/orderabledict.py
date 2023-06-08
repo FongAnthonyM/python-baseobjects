@@ -1,4 +1,4 @@
-""" orderabledict.py
+"""orderabledict.py
 A dictionary with an adjustable order and additional supporting methods.
 """
 # Package Header #
@@ -40,6 +40,7 @@ class OrderableDict(BaseDict):
         *args: Arguments for creating a dictionary.
         **kwargs: Keyword arguments for creating a dictionary.
     """
+
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, dict_: Any = None, /, *args: Any, **kwargs: Any) -> None:
