@@ -12,8 +12,8 @@ __email__ = ""
 __copyright__ = "Copyright 2021, Anthony Fong"
 __license__ = "MIT"
 
-__version__ = "1.9.0"
-__status__ = "Production/Stable"
+__version__ = "1.10.0"
+__status__ = "Beta"
 
 __all__ = [
     "__package_name__",
