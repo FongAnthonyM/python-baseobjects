@@ -1,4 +1,4 @@
-""" initmeta.py
+"""initmeta.py
 InitMeta is an abstract metaclass that implements an init class method which allows some setup after a class is created.
 """
 # Package Header #
@@ -29,7 +29,7 @@ class InitMeta(BaseMeta):
     Args:
         name: The name of this class.
         bases: The parent types of this class.
-        namespace: The methods and class attributes of this class.
+        namespace: The functions and class attributes of this class.
     """
 
     # Magic Methods #

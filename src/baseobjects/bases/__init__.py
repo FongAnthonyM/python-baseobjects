@@ -1,4 +1,4 @@
-""" __init__.py
+"""__init__.py
 bases provides several base classes.
 """
 # Package Header #
@@ -14,6 +14,6 @@ __email__ = __email__
 # Imports #
 # Local Packages #
 from .baseobject import BaseObject, search_sentinel
-from .singlekwargdispatchmethod import singlekwargdispatchmethod
-from .basemethod import BaseMethod
 from .basemeta import BaseMeta
+from .basecallable import BaseCallable, BaseMethod, BaseFunction
+from .collections import *

@@ -1,5 +1,5 @@
-""" baseobject.py
-BaseObject is an abstract class which implements some basic methods that all objects should have.
+"""baseobject.py
+BaseObject is an abstract class which implements some basic functions that all objects should have.
 """
 # Package Header #
 from ..header import *
@@ -32,12 +32,19 @@ from typing import Any
 
 
 # Definitions #
+# Names #
+search_sentinel = object()
+
+
 # Classes #
 class BaseObject(ABC):
-    """An abstract class that implements some basic methods that all objects should have."""
+    """An abstract class that implements some basic functions that all objects should have."""
 
     # Magic Methods #
     # Construction/Destruction
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        pass
+
     def __copy__(self) -> Any:
         """The copy magic method (shallow).
 
@@ -127,6 +134,15 @@ class BaseObject(ABC):
 
     # Instance Methods #
     # Constructors/Destructors
+    def construct(self, *args: Any, **kwargs: Any) -> None:
+        """Constructs this object.
+
+        Args:
+            *args: Arguments for inheritance.
+            **kwargs: Keyword arguments for inheritance.
+        """
+        pass
+
     def copy(self) -> Any:
         """Creates a shallow copy of this object.
 
@@ -145,7 +161,3 @@ class BaseObject(ABC):
             A deep copy of this object.
         """
         return self.__deepcopy__(memo=memo)
-
-
-# Names #
-search_sentinel = object()

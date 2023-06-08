@@ -1,5 +1,5 @@
-""" __init__.py
-Description: More specific objects for the package.
+"""__init__.py
+More specific objects for the package.
 """
 # Package Header #
 from ..header import *
@@ -14,6 +14,3 @@ __email__ = __email__
 # Imports
 # Local Packages #
 from .automaticproperties import AutomaticProperties
-from .circulardoublylinkedcontainer import LinkedNode, CircularDoublyLinkedContainer
-from .timeddict import TimedDict
-from .wrappers import StaticWrapper, DynamicWrapper

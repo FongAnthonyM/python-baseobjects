@@ -1,4 +1,4 @@
-""" cachingobject.py
+"""cachingobject.py
 An abstract class which creates properties for this class automatically.
 """
 # Package Header #
@@ -13,13 +13,11 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
-from collections.abc import Callable
 from typing import Any
 
 # Third-Party Packages #
 
 # Local Packages #
-from ..types_ import AnyCallable
 from ..bases import BaseObject
 from .metaclasses import CachingObjectMeta
 from .caches import BaseTimedCache
@@ -28,24 +26,27 @@ from .caches import BaseTimedCache
 # Definitions #
 # Classes #
 class CachingObject(BaseObject, metaclass=CachingObjectMeta):
-    """An abstract class which is has functionality for methods that are caching.
+    """An abstract class which is has functionality for functions that are caching.
 
     Attributes:
-        _is_cache: Determines if the caching methods of this object will cache.
+        _is_cache: Determines if the caching functions of this object will cache.
         _caches: All the caches within this object.
     """
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self) -> None:
-        # Attributes #
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        # New Attributes #
         self._is_cache: bool = True
 
         self._caches: set[str] = self._caches_.copy()
 
+        # Parent Attributes #
+        super().__init__(*args, **kwargs)
+
     @property
     def is_cache(self) -> bool:
-        """Determines if the caching methods are enabled and puts them in the correct state when set."""
+        """Determines if the caching functions are enabled and puts them in the correct state when set."""
         return self._is_cache
 
     @is_cache.setter
@@ -56,7 +57,17 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
             else:
                 self.disable_caching()
 
+    # Pickling
+    def __getstate__(self) -> dict[Any]:
+        """Delete all cache methods for pickling."""
+        state = self.__dict__.copy()
+        for name in self.get_caches():
+            if name in state:
+                del state[name]
+        return state
+
     # Instance Methods #
+
     # Caches Operators
     def get_caches(self) -> set[str]:
         """Get all the caches in this object.

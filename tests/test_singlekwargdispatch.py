@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" test_singlekwargdispatchmethod.py
+""" test_singlekwargdispatch.py
 Tests singlekwargdispatchmethod
 """
 # Package Header #
@@ -14,19 +14,20 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
+import pickle
 
 # Third-Party Packages #
 import pytest
 
 # Local Packages #
-from baseobjects.bases.singlekwargdispatchmethod import singlekwargdispatchmethod
+from baseobjects.functions import singlekwargdispatch
 
 
 # Definitions #
 # Classes #
 class TestSingleKwargDispatchMethod:
     class ExampleClass:
-        @singlekwargdispatchmethod
+        @singlekwargdispatch
         def first_overload(self, a, b=None):
             return None
 
@@ -38,7 +39,7 @@ class TestSingleKwargDispatchMethod:
         def _(self, a: str):
             return True
 
-        @singlekwargdispatchmethod(kwarg="a")
+        @singlekwargdispatch(kwarg="a")
         def second_overload(self, a, b=None):
             return None
 
@@ -54,6 +55,14 @@ class TestSingleKwargDispatchMethod:
         example = self.ExampleClass()
         assert example.first_overload(1) == 2
         assert example.first_overload("Any")
+
+    def test_pickling(self):
+        test_object = self.ExampleClass()
+        pickle_jar = pickle.dumps(test_object)
+        new_obj = pickle.loads(pickle_jar)
+        assert set(dir(new_obj)) == set(dir(test_object))
+        assert new_obj.first_overload(1) == 2
+        assert new_obj.first_overload("Any")
 
     def test_first_kwarg(self):
         example = self.ExampleClass()

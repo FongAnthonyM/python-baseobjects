@@ -1,4 +1,4 @@
-""" automaticproperties.py
+"""automaticproperties.py
 An abstract class which creates properties for this class automatically.
 """
 # Package Header #
@@ -23,7 +23,7 @@ from typing import Any
 # Local Packages #
 from ..bases import BaseObject
 from ..metaclasses import InitMeta
-from ..types_ import PropertyCallbacks
+from ..typing import PropertyCallbacks
 
 
 # Definitions #
@@ -32,10 +32,12 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
     """An abstract class which creates properties for this class automatically.
 
     Class Attributes:
-        _properties_map: Names and functions used to create properties.
+        _properties_map: The functions used to create properties.
+        _properies: A container that has the names of the properties and some information to build them.
     """
 
-    _properties_map: Iterable[str] = []
+    _properties_map_cls: list[Any] = []
+    _properties: Any = None
 
     # Class Methods #
     # Class Construction
@@ -51,8 +53,10 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         Args:
             name: The name of this class.
             bases: The parent types of this class.
-            namespace: The methods and class attributes of this class.
+            namespace: The functions and class attributes of this class.
         """
+        cls._properties_map: list[Any] = cls._properties_map_cls.copy()
+
         cls._construct_properties_map()
         cls._construct_properties()
 
@@ -68,7 +72,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         Returns:
             The item to return.
         """
-        getattr(obj, name)
+        return getattr(obj, name)
 
     @classmethod
     def _set(cls, obj: Any, name: str, value: Any) -> None:
@@ -77,7 +81,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         Args:
             obj: The target object to set.
             name: The name of the attribute to set.
-            value: The the item to set within the target object.
+            value: The item to set within the target object.
         """
         setattr(obj, name, value)
 
@@ -86,8 +90,8 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         """A generic delete which can be implemented in a subclass.
 
         Args:
-            obj (Any): The target object to delete an attribute from.
-            name (str): The name of attribute to delete in the object.
+            obj: The target object to delete an attribute from.
+            name: The name of attribute to delete in the object.
         """
         delattr(obj, name)
 
@@ -156,8 +160,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
     @abstractmethod
     def _construct_properties_map(cls) -> None:
         """An abstract method that assigns how properties should be constructed."""
-        # cls._properties_map.append(["name", cls._dictionary_to_properties, cls._default_callback_factory])
-        pass
+        # cls._properties_map.append(["_properties", cls._dictionary_to_properties, cls._default_callback_factory])
 
     # Properties Constructor
     # Todo: Make map_ better.
@@ -176,6 +179,8 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
         for map_name, constructor, factory in cls._properties_map:
             try:
-                constructor(getattr(cls, map_name), factory)
+                properties = getattr(cls, map_name)
+                if properties is not None:
+                    constructor(properties, factory)
             except AttributeError:
-                raise AttributeError("An attribute is missing")
+                raise AttributeError("A class attribute is missing")
