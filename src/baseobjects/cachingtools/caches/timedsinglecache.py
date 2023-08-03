@@ -96,8 +96,13 @@ class TimedSingleCacheCallable(BaseTimedCacheCallable):
         return self.cache_container
 
     # Cache Control
+    def refresh_expiration(self):
+        """Refreshes the expiration to be a lifetime later than now."""
+        if self.lifetime is not None:
+            self.expiration = perf_counter() + self.lifetime
+
     def clear_cache(self) -> None:
-        """Clear the cache and update the expiration of the cache."""
+        """Clears the cache and update the expiration of the cache."""
         self.cache_container = None
         self.args_key = None
         if self.lifetime is not None:
