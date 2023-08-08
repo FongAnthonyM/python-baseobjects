@@ -79,10 +79,6 @@ class BaseCallable(BaseObject):
             else:
                 setattr(self, attr, value)
 
-    @property
-    def __isabstractmethod__(self):
-        return getattr(self._func_, '__isabstractmethod__', False)
-
     # Calling
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
         """Calls the wrapped function with the instance as an argument.

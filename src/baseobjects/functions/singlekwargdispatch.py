@@ -217,9 +217,9 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
             method = self.dispatcher.dispatch(self.parse(*args, **kwargs))
             return method.__get__(instance, owner)(*args, **kwargs)
 
-        dispatch_method.__isabstractmethod__ = self.__isabstractmethod__
+        dispatch_method.__isabstractmethod__ = getattr(self._func_, '__isabstractmethod__', False)
         dispatch_method.register = self.register
-        update_wrapper(dispatch_method, self.func)
+        update_wrapper(dispatch_method, self._func_)
         return dispatch_method
 
     # Method Dispatching
