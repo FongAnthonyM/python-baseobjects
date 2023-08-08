@@ -17,7 +17,7 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
-from functools import singledispatch, singledispatchmethod
+from functools import singledispatch, singledispatchmethod, update_wrapper
 from types import NoneType
 from typing import Any
 
@@ -35,11 +35,11 @@ from .callablemultiplexer import MethodMultiplexer
 class singlekwargdispatchmethod(DynamicMethod):
     """A wrapper for a bound singlekwargsipatch."""
 
-    default_call_method: str = "search_call"
+    default_call_method: str = "dispatch_call"
 
     # Calling
-    def search_call(self, *args: Any, **kwargs: Any) -> Any:
-        """Calls the wrapped function's search methods and returns the result.
+    def dispatch_call(self, *args: Any, **kwargs: Any) -> Any:
+        """Calls the wrapped function's dispatch methods and returns the result.
 
         Args:
             *args: The arguments of the wrapped function.
@@ -150,7 +150,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         super().construct(self, *args, **kwargs)
 
         if self.dispatcher is not None:
-            self.call_method = "search_call"
+            self.call_method = "dispatch_call"
 
     # Setters
     def set_kwarg(self, kwarg: str | None) -> None:
@@ -196,8 +196,29 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         """
         return args[0].__class__ if args else kwargs.get(self._kwarg, None).__class__
 
-    # Method Searching
-    def search_call(self, *args: Any, **kwargs: Any) -> Any:
+    # Binding
+    def bind_method_dispatcher(self, instance: Any = None, owner: type[Any] | None = None) -> AnyCallable:
+        """Creates function which dispatches the correct bound method based on the input.
+
+        Args:
+            instance: The object to bind this object to.
+            owner: The class of the object being bound to.
+
+        Returns:
+            A function which dispatches the correct bound method.
+        """
+
+        def dispatch_method(*args, **kwargs):
+            method = self.dispatcher.dispatch(self.parse(*args, **kwargs))
+            return method.__get__(instance, owner)(*args, **kwargs)
+
+        dispatch_method.__isabstractmethod__ = self.__isabstractmethod__
+        dispatch_method.register = self.register
+        update_wrapper(dispatch_method, self.func)
+        return dispatch_method
+
+    # Method Dispatching
+    def dispatch_call(self, *args: Any, **kwargs: Any) -> Any:
         """Parses input to decide which method to use in the registry.
 
         Args:
