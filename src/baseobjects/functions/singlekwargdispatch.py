@@ -59,6 +59,9 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
     allows the first kwarg to be used for dispatching if no args are provided. Furthermore, a kwarg name can be
     specified to have the dispatcher use that kwarg instead of the first kwarg.
 
+    Class Attributes:
+        default_parse_method: The default method for parsing the args for the class to use for dispatching.
+
     Attributes:
         dispatcher: The single dispatcher to use for this object.
         func: The original method to wrap for single dispatching.
@@ -73,7 +76,9 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         **kwargs: Keyword arguments for inheritance.
     """
 
+    default_bind_method: str = "bind_method_dispatcher"
     method_type: type[DynamicMethod] = singlekwargdispatchmethod
+    default_parse_method: str = "parse_first"
 
     # Magic Methods #
     # Construction/Destruction
@@ -87,7 +92,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
     ) -> None:
         # New Attributes #
         self.dispatcher: singledispatch | None = None
-        self.parse: MethodMultiplexer = MethodMultiplexer(instance=self, select="parse_first")
+        self.parse: MethodMultiplexer = MethodMultiplexer(instance=self, select=self.default_parse_method)
         self._kwarg: str | None = None
 
         # Parent Attributes #
