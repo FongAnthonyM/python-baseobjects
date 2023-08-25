@@ -45,7 +45,7 @@ class Version(BaseObject):
 
     # Class Methods
     @classmethod
-    def cast(cls, other: Any, pass_: bool = False) -> "Version" | Any:
+    def cast(cls, other: Any, pass_: bool = False) -> Any:
         """A cast method that optionally returns the original object rather than raise an error
 
         Args:

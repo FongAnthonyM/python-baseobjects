@@ -67,7 +67,6 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         return state
 
     # Instance Methods #
-
     # Caches Operators
     def get_caches(self) -> set[str]:
         """Get all the caches in this object.
