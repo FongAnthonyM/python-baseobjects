@@ -30,7 +30,7 @@ from .functionregister import FunctionRegister
 class CallableMultiplexer(BaseMethod):
     """A callable which select between either functions or methods to be used as the call method.
 
-    The CallableMultiplexer has a register which it uses to store the functions/functions to be multiplexed.
+    The CallableMultiplexer has a register which it uses to store the functions/methods to be multiplexed.
     Additionally, an object can be assigned and its methods will be part of the multiplex. Having the object being
     directly multiplexed allows more dynamic interaction as the object's methods may change during runtime. Note that
     the register's functions/methods take priority in selection.
