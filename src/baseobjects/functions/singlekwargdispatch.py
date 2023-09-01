@@ -224,7 +224,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
 
     # Method Dispatching
     def dispatch_call(self, *args: Any, **kwargs: Any) -> Any:
-        """Parses input to decide which method to use in the registry.
+        """Parses input to decide which method to use in the register.
 
         Args:
             *args: The arguments to pass to the found method.

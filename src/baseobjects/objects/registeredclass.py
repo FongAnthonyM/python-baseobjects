@@ -30,14 +30,14 @@ class RegisteredClass(BaseObject):
         head_class: The root class of the registered classes.
         namespace: The namespace of the subclass.
         name: The name of which the subclass will be registered as.
-        registry: A registry of all subclasses of this class.
-        registration: Determines if this class/subclass will be added to the registry.
+        register: A register of all subclasses of this class.
+        registration: Determines if this class/subclass will be added to the register.
     """
 
     head_class: Optional["RegisteredClass"] = None
     namespace: str | None = None
     name: str | None = None
-    registry: dict[str, dict[str, type]] | None = None
+    register: dict[str, dict[str, type]] | None = None
     registration: bool = False
 
     # Class Methods #
@@ -50,17 +50,17 @@ class RegisteredClass(BaseObject):
         """
         super().__init_subclass__(**kwargs)
 
-        # Add subclass to the registry.
+        # Add subclass to the register.
         if cls.registration:
-            if cls.registry is None:
-                raise NotImplementedError("The root registered class must create a registry.")
+            if cls.register is None:
+                raise NotImplementedError("The root registered class must create a register.")
 
-            if not cls.registry:
+            if not cls.register:
                 cls.head_class = cls
 
             cls.register_class(namespace=cls.namespace, name=cls.name)
 
-    # Registry
+    # Register
     @classmethod
     def register_class(cls, namespace: str | None = None, name: str | None = None) -> None:
         """Registers this class with the given namespace and name.
@@ -73,15 +73,15 @@ class RegisteredClass(BaseObject):
         cls.namespace = namespace[4:] if namespace.split(".")[0] == "src" else namespace
         cls.name = cls.__name__ if name is None else name
 
-        namespace_types = cls.registry.get(cls.namespace, None)
+        namespace_types = cls.register.get(cls.namespace, None)
         if namespace_types is not None:
             namespace_types[cls.name] = cls
         else:
-            cls.registry[cls.namespace] = {cls.name: cls}
+            cls.register[cls.namespace] = {cls.name: cls}
 
     @classmethod
     def get_registered_class(cls, namespace: str, name: str) -> Optional["RegisteredClass"]:
-        """Gets a subclass from the registry.
+        """Gets a subclass from the register.
 
         Args:
             namespace: The namespace of the subclass.
@@ -90,5 +90,5 @@ class RegisteredClass(BaseObject):
         Returns:
             The requested subclass.
         """
-        namespace_types = cls.registry.get(namespace, None)
+        namespace_types = cls.register.get(namespace, None)
         return None if namespace_types is None else namespace_types.get(name, None)

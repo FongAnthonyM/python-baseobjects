@@ -30,8 +30,8 @@ class DispatchableClass(RegisteredClass):
         head_class: The root class of the registered classes.
         namespace: The namespace of the subclass.
         name: The name of which the subclass will be registered as.
-        registry: A registry of all subclasses of this class.
-        registration: Determines if this class/subclass will be added to the registry.
+        register: A register of all subclasses of this class.
+        registration: Determines if this class/subclass will be added to the register.
     """
     # Class Methods #
     @classmethod
