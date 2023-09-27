@@ -27,9 +27,9 @@ class DispatchableClass(RegisteredClass):
     """An abstract class which registers subclasses, allowing subclass dispatching.
 
     Class Attributes:
-        head_class: The root class of the registered classes.
-        namespace: The namespace of the subclass.
-        name: The name of which the subclass will be registered as.
+        register_head_class: The root class of the registered classes.
+        register_namespace: The namespace of the subclass.
+        register_name: The name of which the subclass will be registered as.
         register: A register of all subclasses of this class.
         registration: Determines if this class/subclass will be added to the register.
     """
@@ -51,8 +51,8 @@ class DispatchableClass(RegisteredClass):
     # Construction/Destruction
     def __new__(cls, *args: Any, **kwargs: Any) -> RegisteredClass:
         """With given input, will return the correct subclass."""
-        if cls is cls.head_class and (kwargs or args):
+        if cls is cls.register_head_class and (kwargs or args):
             class_ = cls.get_registered_class(*cls.get_class_information(*args, **kwargs))
-            if class_ is not None and class_ is not cls.head_class:
+            if class_ is not None and class_ is not cls.register_head_class:
                 return class_(*args, **kwargs)
         return super().__new__(cls)
