@@ -213,14 +213,14 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
             A function which dispatches the correct bound method.
         """
 
-        def dispatch_method(*args, **kwargs):
+        def dispatch_function(self_, *args, **kwargs):
             method = self.dispatcher.dispatch(self.parse(*args, **kwargs))
-            return method.__get__(instance, owner)(*args, **kwargs)
+            return method.__get__(self_)(*args, **kwargs)
 
-        dispatch_method.__isabstractmethod__ = getattr(self._func_, '__isabstractmethod__', False)
-        dispatch_method.register = self.register
-        update_wrapper(dispatch_method, self._func_)
-        return dispatch_method
+        dispatch_function.__isabstractmethod__ = getattr(self._func_, '__isabstractmethod__', False)
+        dispatch_function.register = self.register
+        update_wrapper(dispatch_function, self._func_)
+        return dispatch_function.__get__(instance, owner)
 
     # Method Dispatching
     def dispatch_call(self, *args: Any, **kwargs: Any) -> Any:
