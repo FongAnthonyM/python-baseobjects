@@ -152,7 +152,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         if func is not None:
             self.dispatcher = singledispatch(func)
 
-        super().construct(self, *args, **kwargs)
+        super().construct(func=func, *args, **kwargs)
 
         if self.dispatcher is not None:
             self.call_method = "dispatch_call"
@@ -203,7 +203,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
 
     # Binding
     def bind_method_dispatcher(self, instance: Any = None, owner: type[Any] | None = None) -> AnyCallable:
-        """Creates function which dispatches the correct bound method based on the input.
+        """Creates a function which dispatches the correct bound method based on the input.
 
         Args:
             instance: The object to bind this object to.
@@ -212,14 +212,20 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         Returns:
             A function which dispatches the correct bound method.
         """
-
-        def dispatch_function(self_, *args, **kwargs):
-            method = self.dispatcher.dispatch(self.parse(*args, **kwargs))
-            return method.__get__(self_)(*args, **kwargs)
+        if isinstance(self._func_, classmethod):
+            def dispatch_function(self_, *args, **kwargs):
+                method = self.dispatcher.dispatch(self.parse(*args, **kwargs))
+                return method.__get__(None, self_)(*args, **kwargs)
+        else:
+            def dispatch_function(self_, *args, **kwargs):
+                method = self.dispatcher.dispatch(self.parse(*args, **kwargs))
+                return method.__get__(self_)(*args, **kwargs)
 
         dispatch_function.__isabstractmethod__ = getattr(self._func_, '__isabstractmethod__', False)
         dispatch_function.register = self.register
         update_wrapper(dispatch_function, self._func_)
+        if isinstance(self._func_, classmethod):
+            dispatch_function = classmethod(dispatch_function)
         return dispatch_function.__get__(instance, owner)
 
     # Method Dispatching

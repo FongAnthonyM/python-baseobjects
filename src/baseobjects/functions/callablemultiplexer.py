@@ -113,9 +113,9 @@ class CallableMultiplexer(BaseMethod):
             The output of the wrapped function.
         """
         if self.is_self_bound or self.is_binding:
-            return self.__func__.__get__(self.__self__, self.__owner__)(*args, **kwargs)
+            return self._func_.__get__(self._self_(), self.__owner__)(*args, **kwargs)
         else:
-            return self.__func__(*args, **kwargs)
+            return self._func_(*args, **kwargs)
 
     # Instance Methods #
     # Constructors/Destructors
@@ -185,11 +185,11 @@ class CallableMultiplexer(BaseMethod):
         """
         if (func := self.register.get(name, None)) is not None:
             self.is_self_bound = False
-        elif self.__self__ is not None:
-            func = getattr(self.__self__, name)
+        elif self._self_() is not None:
+            func = getattr(self._self_(), name)
             self.is_self_bound = True
         self.__func__ = func
-        self.is_coroutine = iscoroutinefunction(self.__func__)
+        self.is_coroutine = iscoroutinefunction(func)
         self._selected = name
 
     def add_select_function(self, name: str, func: BaseCallable) -> None:
@@ -236,7 +236,7 @@ class MethodMultiplexer(CallableMultiplexer):
         Returns:
             The output of the wrapped function.
         """
-        return self.__func__.__get__(self.__self__, self.__owner__)(*args, **kwargs)
+        return self._func_.__get__(self._self_(), self.__owner__)(*args, **kwargs)
 
 
 class CallableMultiplexItem(NamedTuple):
@@ -266,7 +266,7 @@ class CallableMultiplexObject(BaseObject):
         state = {}
         for k, i in self.__dict__.items():
             if isinstance(i, CallableMultiplexer):
-                state[k] = CallableMultiplexItem(i.register, i.selected, i.__name__)
+                state[k] = CallableMultiplexItem(i.register, i.selected, i.__class__.__name__)
             else:
                 state[k] = i
 

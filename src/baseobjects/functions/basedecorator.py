@@ -31,18 +31,17 @@ class BaseDecorator(DynamicFunction):
 
     # Instance Methods #
     # Calling
-    def construct_call(self, *args: Any, **kwargs: Any) -> "BaseDecorator":
+    def construct_call(self, func: AnyCallable | None = None, *args: Any, **kwargs: Any) -> "BaseDecorator":
         """A method for constructing this object via this object being called.
 
         Args:
+            func: The function or method to wrap.
             *args: The arguments from the call which can construct this object.
             **kwargs: The keyword arguments from the call which can construct this object.
 
         Returns:
             This object.
         """
-        if args:
-            self.construct(func=args[0])
-        else:
-            self.construct(**kwargs)
-        return self
+        self.construct(func=func, *args, **kwargs)
+        instance = getattr(func, "__self__", None)
+        return self if instance is None else self.__get__(instance, instance.__class__)
