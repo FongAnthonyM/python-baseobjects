@@ -14,3 +14,5 @@ __email__ = __email__
 # Imports
 # Local Packages #
 from .automaticproperties import AutomaticProperties
+from .registeredclass import RegisteredClass
+from .dispatchableclass import DispatchableClass

@@ -30,7 +30,7 @@ from .functionregister import FunctionRegister
 class CallableMultiplexer(BaseMethod):
     """A callable which select between either functions or methods to be used as the call method.
 
-    The CallableMultiplexer has a register which it uses to store the functions/functions to be multiplexed.
+    The CallableMultiplexer has a register which it uses to store the functions/methods to be multiplexed.
     Additionally, an object can be assigned and its methods will be part of the multiplex. Having the object being
     directly multiplexed allows more dynamic interaction as the object's methods may change during runtime. Note that
     the register's functions/methods take priority in selection.
@@ -41,8 +41,8 @@ class CallableMultiplexer(BaseMethod):
 
     Args:
         register: The function register to use for selecting a function/method.
-        instance: An object to wrap which will be used to find functions/functions.
-        owner: The class of the object used for finding functions/functions.
+        instance: An object to wrap which will be used to find functions/methods.
+        owner: The class of the object used for finding functions/methods.
         select: The name of the function/method to select for use.
         binding: Determines if this object will bind the selected function as a method.
         *args: Arguments for inheritance.
@@ -58,7 +58,7 @@ class CallableMultiplexer(BaseMethod):
         instance: Any = None,
         owner: type[Any] | None = None,
         select: str | None = None,
-        binding: bool = True,
+        binding: bool = False,
         *args: Any,
         init: bool = True,
         **kwargs: Any,
@@ -67,7 +67,8 @@ class CallableMultiplexer(BaseMethod):
         self.register: FunctionRegister | None = None
         self._selected: str | None = None
 
-        self.is_binding: bool = True
+        self.is_binding: bool = False
+        self.is_self_bound: bool = False
         self.is_coroutine: bool = False
 
         # Parent Attributes #
@@ -98,7 +99,7 @@ class CallableMultiplexer(BaseMethod):
     def __getstate__(self) -> dict[str, Any]:
         state = self.__dict__.copy()
         del state["_self_"]
-        warn("MethodMultiplexer Weak reference deleted for pickle, may not work as intended.")
+        warn("CallableMultiplexer Weak reference deleted for pickle, may not work as intended.")
 
     # Calling
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
@@ -111,7 +112,10 @@ class CallableMultiplexer(BaseMethod):
         Returns:
             The output of the wrapped function.
         """
-        return self.__func__(self.__self__, *args, **kwargs) if self.is_binding else self.__func__(*args, **kwargs)
+        if self.is_self_bound or self.is_binding:
+            return self._func_.__get__(self._self_(), self.__owner__)(*args, **kwargs)
+        else:
+            return self._func_(*args, **kwargs)
 
     # Instance Methods #
     # Constructors/Destructors
@@ -129,8 +133,8 @@ class CallableMultiplexer(BaseMethod):
 
         Args:
             register: The function register to use for selecting a function/method.
-            instance: An object to wrap which will be used to find functions/functions.
-            owner: The class of the object used for finding functions/functions.
+            instance: An object to wrap which will be used to find functions/methods.
+            owner: The class of the object used for finding functions/methods.
             select: The name of the function/method to select for use.
             binding: Determines if this object will bind the selected function as a method.
             *args: Arguments for inheritance.
@@ -179,9 +183,13 @@ class CallableMultiplexer(BaseMethod):
         Args:
             name: The name of function/method in the register or object to use.
         """
-        func = self.register.get(name, None)
-        self.__func__ = getattr(self.__self__, name).__func__ if func is None else func
-        self.is_coroutine = iscoroutinefunction(self.__func__)
+        if (func := self.register.get(name, None)) is not None:
+            self.is_self_bound = False
+        elif self._self_() is not None:
+            func = getattr(self._self_(), name)
+            self.is_self_bound = True
+        self.__func__ = func
+        self.is_coroutine = iscoroutinefunction(func)
         self._selected = name
 
     def add_select_function(self, name: str, func: BaseCallable) -> None:
@@ -228,18 +236,24 @@ class MethodMultiplexer(CallableMultiplexer):
         Returns:
             The output of the wrapped function.
         """
-        return self.__func__.__get__(self.__self__, self.__owner__)(*args, **kwargs)
+        return self._func_.__get__(self._self_(), self.__owner__)(*args, **kwargs)
 
 
-class MethodMultiplexItem(NamedTuple):
+class CallableMultiplexItem(NamedTuple):
     """A NamedTuple with specifications for a pickled MethodMultiplexer."""
 
     register: dict
     selected: str
+    type: str
 
 
-class MethodMultiplexObject(BaseObject):
+class CallableMultiplexObject(BaseObject):
     """An object which can be subclassed to allow MethodMultiplexer to be pickled."""
+
+    _callable_multiplexers: dict[str, type[CallableMultiplexer]] = {
+        CallableMultiplexer.__name__: CallableMultiplexer,
+        MethodMultiplexer.__name__: MethodMultiplexer,
+    }
 
     # Magic Methods #
     # Pickling
@@ -251,8 +265,8 @@ class MethodMultiplexObject(BaseObject):
         """
         state = {}
         for k, i in self.__dict__.items():
-            if isinstance(i, MethodMultiplexer):
-                state[k] = MethodMultiplexItem(i.register, i.selected)
+            if isinstance(i, CallableMultiplexer):
+                state[k] = CallableMultiplexItem(i.register, i.selected, i.__class__.__name__)
             else:
                 state[k] = i
 
@@ -266,5 +280,9 @@ class MethodMultiplexObject(BaseObject):
         """
         self.__dict__.update(state)
         for k, i in state.items():
-            if isinstance(i, MethodMultiplexItem):
-                self.__dict__[k] = MethodMultiplexer(instance=self, select=i.selected, register=i.register)
+            if isinstance(i, CallableMultiplexItem):
+                self.__dict__[k] = self._callable_multiplexers[i.type](
+                    register=i.register,
+                    instance=self,
+                    select=i.selected,
+                )

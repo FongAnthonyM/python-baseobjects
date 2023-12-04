@@ -42,6 +42,21 @@ class BaseCallable(BaseObject):
 
     # Magic Methods #
     # Construction/Destruction
+    def __new__(cls, func: AnyCallable | None = None, *args: Any, **kwargs: Any) -> "BaseCallable":
+        """Dispatches either an unbound instance or a bound instance if the given function is a method.
+
+        Args:
+            func: The function or method to wrap.
+            *args: The arguments for building an instance.
+            **kwargs: The keyword arguments for build an instance.
+        """
+        new_callable = super().__new__(cls)
+        instance = getattr(func, "__self__", None)
+        if instance is not None:
+            new_callable = new_callable.__get__(instance, instance.__class__)
+
+        return new_callable
+
     def __init__(
         self,
         func: AnyCallable | None = None,
@@ -60,7 +75,7 @@ class BaseCallable(BaseObject):
             self.construct(func=func, *args, **kwargs)
 
     @property
-    def __func__(self):
+    def __func__(self) -> AnyCallable:
         """The function which this callable wraps."""
         return self._func_
 
@@ -78,6 +93,11 @@ class BaseCallable(BaseObject):
                 pass
             else:
                 setattr(self, attr, value)
+
+    @property
+    def __name__(self) -> str:
+        """The name of the function this object is wrapping."""
+        return self._func_.__name__
 
     # Calling
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
@@ -237,7 +257,7 @@ class BaseMethod(BaseCallable):
             This object.
         """
         if name is None:
-            name = self.__func__.__name__
+            name = self._func_.__name__
 
         self.__self__ = instance
         self.__owner__ = owner
@@ -286,7 +306,7 @@ class BaseFunction(BaseCallable):
             The bound method of this function.
         """
         if name is None:
-            name = self.__func__.__name__
+            name = self._func_.__name__
 
         method = self.method_type(func=self, instance=instance, owner=owner)
         setattr(instance, name, method)

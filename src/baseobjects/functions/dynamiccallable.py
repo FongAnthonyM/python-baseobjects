@@ -137,7 +137,7 @@ class DynamicMethod(DynamicCallable, BaseMethod):
         Returns:
             The output of the wrapped function.
         """
-        return self.__func__.__get__(self.__self__, self.__owner__)(*args, **kwargs)
+        return self._func_.__get__(self._self_(), self.__owner__)(*args, **kwargs)
 
 
 class DynamicFunction(DynamicCallable, BaseFunction):
