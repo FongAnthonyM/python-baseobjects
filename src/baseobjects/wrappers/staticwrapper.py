@@ -117,12 +117,8 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         namespace: dict[str, Any] | None = None,
     ) -> None:
         """A method that runs after class creation, creating the original dir as a set and sets up wrapping."""
-        # New Init
         cls.__original_dir_set = set(dir(cls))
         cls._class_wrapping_setup()
-
-        # Parent Init
-        super().__init_subclass__(name=name, bases=bases, namespace=namespace)
 
     # Callbacks for Accessing a Wrapped Object
     @classmethod
