@@ -122,7 +122,7 @@ class BaseTimedCacheCallable(DynamicCallable):
     """
 
     default_call_method: str = "caching_call"
-    default_cache_method: str = "no_cah"
+    default_cache_method: str = "no_cache"
     cache_item_type = CacheItem
 
     # Magic Methods #
@@ -399,7 +399,7 @@ class BaseTimedCache(BaseTimedCacheCallable, DynamicFunction):
     """An abstract function class for timed caches."""
 
     method_type: type[DynamicMethod] = BaseTimedCacheMethod
-    default_bind_method: str = "bind"
+    _bind_method: str = "bind"
 
     # Magic Methods #
     # Construction/Destruction

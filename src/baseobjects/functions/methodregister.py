@@ -102,28 +102,11 @@ class BoundMethodRegister(BaseMethodRegister):
         **kwargs: Keyword arguments for inheritance.
     """
 
-    # Magic Methods #
-    # Construction/Destruction
-    def __init__(
-        self,
-        register: BaseMethodRegister | None = None,
-        instance: Any = None,
-        owner: type[Any] | None = None,
-        *args: Any,
-        init: bool = True,
-        **kwargs: Any,
-    ) -> None:
-        # Special Attributes #
-        self._self_: weakref.ref | None = None
-        self.__owner__: type[Any] | None = None
+    # Attributes #
+    _self_: weakref.ref | None = None
+    __owner__: type[Any] | None = None
 
-        # Parent Attributes #
-        super().__init__(*args, init=False, **kwargs)
-
-        # Object Construction #
-        if init:
-            self.construct(register=register, instance=instance, owner=owner, *args, **kwargs)
-
+    # Properties #
     @property
     def __self__(self) -> Any:
         """The object to bind this object to."""
@@ -135,6 +118,24 @@ class BoundMethodRegister(BaseMethodRegister):
     @__self__.setter
     def __self__(self, value: Any) -> None:
         self._self_ = None if value is None else weakref.ref(value)
+
+    # Magic Methods #
+    # Construction/Destruction
+    def __init__(
+        self,
+        register: BaseMethodRegister | None = None,
+        instance: Any = None,
+        owner: type[Any] | None = None,
+        *args: Any,
+        init: bool = True,
+        **kwargs: Any,
+    ) -> None:
+        # Parent Attributes #
+        super().__init__(*args, init=False, **kwargs)
+
+        # Object Construction #
+        if init:
+            self.construct(register=register, instance=instance, owner=owner, *args, **kwargs)
 
     # Instance Methods #
     # Constructors/Destructors

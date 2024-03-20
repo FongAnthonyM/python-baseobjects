@@ -14,7 +14,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from asyncio import iscoroutinefunction
-from typing import Any, NamedTuple
+from typing import Any, NamedTuple, ClassVar
 from warnings import warn
 
 # Third-Party Packages #
@@ -38,6 +38,9 @@ class CallableMultiplexer(BaseMethod):
     Attributes:
         register: The function register to use for selecting a function/method.
         _selected: The name of the function/method to select for use.
+        is_binding: Determines if this callable will bind the selected function to a different object.
+        is_self_bound: Determines if this callable will bind the selected function to the contained object, self.
+        is_coroutine: Checks if this callable is a coroutine.
 
     Args:
         register: The function register to use for selecting a function/method.
@@ -49,6 +52,24 @@ class CallableMultiplexer(BaseMethod):
         init: Determines if this object will construct.
         **kwargs: Keyword arguments for inheritance.
     """
+
+    # Attributes #
+    register: FunctionRegister | None = None
+    _selected: str | None = None
+
+    is_binding: bool = False
+    is_self_bound: bool = False
+    is_coroutine: bool = False
+
+    # Properties #
+    @property
+    def selected(self) -> str | None:
+        """The name of the selected function/method."""
+        return self._selected
+
+    @selected.setter
+    def selected(self, value: str) -> None:
+        self.select(value)
 
     # Magic Methods #
     # Construction/Destruction
@@ -63,14 +84,6 @@ class CallableMultiplexer(BaseMethod):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        # New Attributes #
-        self.register: FunctionRegister | None = None
-        self._selected: str | None = None
-
-        self.is_binding: bool = False
-        self.is_self_bound: bool = False
-        self.is_coroutine: bool = False
-
         # Parent Attributes #
         super().__init__(*args, init=False, **kwargs)
 
@@ -86,20 +99,12 @@ class CallableMultiplexer(BaseMethod):
                 **kwargs,
             )
 
-    @property
-    def selected(self) -> str | None:
-        """The name of the selected function/method."""
-        return self._selected
-
-    @selected.setter
-    def selected(self, value: str) -> None:
-        self.select(value)
-
     # Pickling
     def __getstate__(self) -> dict[str, Any]:
         state = self.__dict__.copy()
         del state["_self_"]
         warn("CallableMultiplexer Weak reference deleted for pickle, may not work as intended.")
+        return state
 
     # Calling
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
@@ -119,6 +124,7 @@ class CallableMultiplexer(BaseMethod):
 
     # Instance Methods #
     # Constructors/Destructors
+    @cython.ccall
     def construct(
         self,
         register: AnyCallable | None = None,
@@ -250,7 +256,8 @@ class CallableMultiplexItem(NamedTuple):
 class CallableMultiplexObject(BaseObject):
     """An object which can be subclassed to allow MethodMultiplexer to be pickled."""
 
-    _callable_multiplexers: dict[str, type[CallableMultiplexer]] = {
+    # Class Attributes #
+    _callable_multiplexers: ClassVar[dict[str, type[CallableMultiplexer]]] = {
         CallableMultiplexer.__name__: CallableMultiplexer,
         MethodMultiplexer.__name__: MethodMultiplexer,
     }

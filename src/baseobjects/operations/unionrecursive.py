@@ -24,7 +24,7 @@ from .updaterecursive import update_recursive
 
 
 # Definitions #
-# Fuctions #
+# Functions #
 def union_recursive(d: Mapping, other: Mapping) -> Mapping:
     """Unions a mapping object and its contained mappings withon another mapping.
 

@@ -40,6 +40,36 @@ class BaseCallable(BaseObject):
         **kwargs: Keyword arguments for inheritance.
     """
 
+    # Attributes #
+    _func_: AnyCallable | None = None
+
+    # Properties #
+    @property
+    def __func__(self) -> AnyCallable:
+        """The function which this callable wraps."""
+        return self._func_
+
+    @__func__.setter
+    def __func__(self, value: AnyCallable | None) -> None:
+        if not callable(value) and not hasattr(value, "__get__"):
+            raise TypeError(f"{value!r} is not callable or a descriptor")
+
+        self._func_ = value
+        self.__call__ = value
+        # Assign documentation from warped function to this object.
+        for attr in WRAPPER_ASSIGNMENTS:
+            try:
+                value = getattr(value, attr)
+            except AttributeError:
+                pass
+            else:
+                setattr(self, attr, value)
+
+    @property
+    def __name__(self) -> str:
+        """The name of the function this object is wrapping."""
+        return self._func_.__name__
+
     # Magic Methods #
     # Construction/Destruction
     def __new__(cls, func: AnyCallable | None = None, *args: Any, **kwargs: Any) -> "BaseCallable":
@@ -64,40 +94,12 @@ class BaseCallable(BaseObject):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        # Special Attributes #
-        self._func_: AnyCallable | None = None
-
         # Parent Attributes #
         super().__init__(*args, init=False, **kwargs)
 
         # Object Construction #
         if init:
             self.construct(func=func, *args, **kwargs)
-
-    @property
-    def __func__(self) -> AnyCallable:
-        """The function which this callable wraps."""
-        return self._func_
-
-    @__func__.setter
-    def __func__(self, value: AnyCallable | None) -> None:
-        if not callable(value) and not hasattr(value, "__get__"):
-            raise TypeError(f"{value!r} is not callable or a descriptor")
-
-        self._func_ = value
-        # Assign documentation from warped function to this object.
-        for attr in WRAPPER_ASSIGNMENTS:
-            try:
-                value = getattr(value, attr)
-            except AttributeError:
-                pass
-            else:
-                setattr(self, attr, value)
-
-    @property
-    def __name__(self) -> str:
-        """The name of the function this object is wrapping."""
-        return self._func_.__name__
 
     # Calling
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
@@ -110,7 +112,7 @@ class BaseCallable(BaseObject):
         Returns:
             The output of the wrapped function.
         """
-        return self.__func__(*args, **kwargs)
+        return self._func_(*args, **kwargs)
 
     # Instance Methods #
     # Constructors/Destructors
@@ -139,6 +141,7 @@ class BaseMethod(BaseCallable):
     Attributes:
         _self_: A weak reference to the object to bind this object to.
         __owner__: The class owner of the object.
+        _binding: Determines if this callable will bind the function to the contained object.
 
     Args:
         func: The function to wrap.
@@ -149,30 +152,13 @@ class BaseMethod(BaseCallable):
         **kwargs: Keyword arguments for inheritance.
     """
 
-    # Magic Methods #
-    # Construction/Destruction
-    def __init__(
-        self,
-        func: AnyCallable | None = None,
-        instance: Any = None,
-        owner: type[Any] | None = None,
-        *args: Any,
-        init: bool = True,
-        **kwargs: Any,
-    ) -> None:
-        # Special Attributes #
-        self._self_: weakref.ref | None = None
-        self.__owner__: type[Any] | None = None
+    # Attributes #
+    _self_: weakref.ref | None = None
+    __owner__: type[Any] | None = None
 
-        self._binding: bool = True
+    _binding: bool = True
 
-        # Parent Attributes #
-        super().__init__(*args, init=False, **kwargs)
-
-        # Object Construction #
-        if init:
-            self.construct(func=func, instance=instance, owner=owner, *args, **kwargs)
-
+    # Properties #
     @property
     def __self__(self) -> Any:
         """The object to bind this object to."""
@@ -196,7 +182,25 @@ class BaseMethod(BaseCallable):
         Returns:
             The output of the wrapped function.
         """
-        return self.__func__(self.__self__, *args, **kwargs)
+        return self._func_(self._self_(), *args, **kwargs)
+
+    # Magic Methods #
+    # Construction/Destruction
+    def __init__(
+        self,
+        func: AnyCallable | None = None,
+        instance: Any = None,
+        owner: type[Any] | None = None,
+        *args: Any,
+        init: bool = True,
+        **kwargs: Any,
+    ) -> None:
+        # Parent Attributes #
+        super().__init__(*args, init=False, **kwargs)
+
+        # Object Construction #
+        if init:
+            self.construct(func=func, instance=instance, owner=owner, *args, **kwargs)
 
     # Instance Methods #
     # Constructors/Destructors
@@ -269,10 +273,11 @@ class BaseMethod(BaseCallable):
 class BaseFunction(BaseCallable):
     """An abstract class which implements the basic structure for creating functions.
 
-    Class Attributes:
+    Attributes:
         method_type: The type of method to create when binding.
     """
 
+    # Attributes #
     method_type: type[BaseMethod] = BaseMethod
 
     # Instance Methods #

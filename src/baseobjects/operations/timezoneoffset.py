@@ -21,9 +21,11 @@ from datetime import datetime, timedelta, tzinfo
 
 
 # Definitions #
+# Constants
 INIT_DATE = datetime(1970, 1, 1)
 
 
+# Functions #
 def timezone_offset(tz: tzinfo) -> timedelta:
     """Gets the offset of the given timezone.
 

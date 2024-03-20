@@ -21,10 +21,12 @@ from typing import Any
 
 
 # Definitions #
+# Constants #
 big_array = (128, 64, 32, 16, 8, 4, 2, 1)
 little_array = (8, 4, 2, 1, 128, 64, 32, 16)
 
 
+# Functions #
 def bytes_to_bin(bytes_: bytes, byteorder: str = "big", out_type: type = int) -> tuple[Any]:
     """Converts bytes to a tuple of binary values.
 

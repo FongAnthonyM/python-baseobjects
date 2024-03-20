@@ -99,7 +99,7 @@ class TimedKeylessCache(TimedKeylessCacheCallable, TimedSingleCache):
     """A function class for TimedKeylessCache."""
 
     method_type: type[TimedSingleCacheMethod] = TimedKeylessCacheMethod
-    default_bind_method: str = "bind_to_attribute"
+    _bind_method: str = "bind_to_attribute"
 
 
 # Functions #

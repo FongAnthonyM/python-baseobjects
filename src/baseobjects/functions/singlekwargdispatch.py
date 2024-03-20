@@ -35,7 +35,8 @@ from .callablemultiplexer import MethodMultiplexer
 class singlekwargdispatchmethod(DynamicMethod):
     """A wrapper for a bound singlekwargsipatch."""
 
-    default_call_method: str = "dispatch_call"
+    # Attributes #
+    _call_method: str = "dispatch_call"
 
     # Calling
     def dispatch_call(self, *args: Any, **kwargs: Any) -> Any:
@@ -59,14 +60,11 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
     allows the first kwarg to be used for dispatching if no args are provided. Furthermore, a kwarg name can be
     specified to have the dispatcher use that kwarg instead of the first kwarg.
 
-    Class Attributes:
-        default_parse_method: The default method for parsing the args for the class to use for dispatching.
-
     Attributes:
-        dispatcher: The single dispatcher to use for this object.
-        func: The original method to wrap for single dispatching.
-        parse: The method for parsing the args for the class to use for dispatching.
         _kwarg: The name of the kwarg to use of parsing the args for the class to use for dispatching.
+        _parse_method: The default method for parsing the args for the class to use for dispatching.
+        parse: The method for parsing the args for the class to use for dispatching.
+        dispatcher: The single dispatcher to use for this object.
 
     Args:
         kwarg: Either the name of kwarg to dispatch with or the method to wrap.
@@ -76,9 +74,24 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         **kwargs: Keyword arguments for inheritance.
     """
 
-    default_bind_method: str = "bind_method_dispatcher"
+    # Attributes #
     method_type: type[DynamicMethod] = singlekwargdispatchmethod
-    default_parse_method: str = "parse_first"
+    _bind_method: str = "bind_method_dispatcher"
+
+    _kwarg: str | None = None
+    _parse_method: str = "parse_first"
+    parse: MethodMultiplexer
+    dispatcher: AnyCallable | None = None
+
+    # Properties #
+    @property
+    def kwarg(self) -> str | None:
+        """The name of the kwarg to get the class for the dispatching."""
+        return self._kwarg
+
+    @kwarg.setter
+    def kwarg(self, value: str | None) -> None:
+        self.set_kwarg(kwarg=value)
 
     # Magic Methods #
     # Construction/Destruction
@@ -91,9 +104,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         **kwargs: Any,
     ) -> None:
         # New Attributes #
-        self.dispatcher: singledispatch | None = None
-        self.parse: MethodMultiplexer = MethodMultiplexer(instance=self, select=self.default_parse_method)
-        self._kwarg: str | None = None
+        self.parse: MethodMultiplexer = MethodMultiplexer(instance=self, select=self._parse_method)
 
         # Parent Attributes #
         super().__init__(*args, init=False, **kwargs)
@@ -104,15 +115,6 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
                 self.construct(kwarg=kwarg, func=func)
             else:
                 self.construct(func=kwarg)
-
-    @property
-    def kwarg(self) -> str | None:
-        """The name of the kwarg to get the class for the dispatching."""
-        return self._kwarg
-
-    @kwarg.setter
-    def kwarg(self, value: str | None) -> None:
-        self.set_kwarg(kwarg=value)
 
     # Pickling
     def __getstate__(self) -> dict[str, Any]:

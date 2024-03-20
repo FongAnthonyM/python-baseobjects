@@ -27,9 +27,42 @@ from .dynamiccallable import DynamicFunction
 class BaseDecorator(DynamicFunction):
     """An abstract class which implements the basic structure for creating decorators."""
 
-    default_call_method: str = "construct_call"
+    # Attributes #
+    _call_method: str = "construct_call"
+    _wrapper_method: str = "call"
+
+    # Properties
+    @property
+    def wrapper_method(self) -> str | None:
+        """The name of the method which will act as the wrapper for this decorator."""
+        return self._wrapper_method
+
+    @wrapper_method.setter
+    def wrapper_method(self, value: str) -> None:
+        if self.call_method == self._wrapper_method:
+            self.call_method = value
+        self._wrapper_method = value
 
     # Instance Methods #
+    # Constructors/Destructors
+    def construct(
+        self,
+        func: AnyCallable | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
+        """The constructor for this object.
+
+        Args:
+            func: The function to wrap.
+            *args: Arguments for inheritance.
+            **kwargs: Keyword arguments for inheritance.
+        """
+        if func is not None:
+            self.call_method = self._wrapper_method
+
+        super().construct(func, *args, **kwargs)
+
     # Calling
     def construct_call(self, func: AnyCallable | None = None, *args: Any, **kwargs: Any) -> "BaseDecorator":
         """A method for constructing this object via this object being called.

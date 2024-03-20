@@ -20,3 +20,4 @@ from .timezoneoffset import timezone_offset
 from .filetimetodatetime import filetime_to_datetime
 from .exceldatetodatetime import excel_date_to_datetime
 from .parseparentheses import parse_parentheses
+from .methodnames import iter_method_names, iter_public_method_names, get_method_names, get_public_method_names

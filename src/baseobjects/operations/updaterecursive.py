@@ -22,7 +22,7 @@ from typing import Any
 
 
 # Definitions #
-# Fuctions #
+# Functions #
 def update_recursive(d: Mapping, updates: Mapping) -> Mapping:
     """Updates a mapping object and its contained mappings based on another mapping.
 

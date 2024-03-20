@@ -22,9 +22,11 @@ from functools import singledispatch
 
 
 # Definitions #
+# Constants #
 EXCEL_INIT_DATE = datetime(1899, 12, 30)  # The initial date of Filetime.
 
 
+# Functions #
 @singledispatch
 def excel_date_to_datetime(timestamp: int | float | str | bytes, tzinfo: tzinfo | None = timezone.utc) -> datetime:
     """Converts a filetime to a datetime object.
