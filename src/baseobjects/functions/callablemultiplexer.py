@@ -124,7 +124,6 @@ class CallableMultiplexer(BaseMethod):
 
     # Instance Methods #
     # Constructors/Destructors
-    @cython.ccall
     def construct(
         self,
         register: AnyCallable | None = None,
@@ -271,7 +270,7 @@ class CallableMultiplexObject(BaseObject):
             A dictionary of this object's attributes.
         """
         state = {}
-        for k, i in self.__dict__.items():
+        for k, i in super().__getstate__().items():
             if isinstance(i, CallableMultiplexer):
                 state[k] = CallableMultiplexItem(i.register, i.selected, i.__class__.__name__)
             else:
@@ -285,7 +284,7 @@ class CallableMultiplexObject(BaseObject):
         Args:
             state: The attributes to build this object from.
         """
-        self.__dict__.update(state)
+        super().__setstate__(state)
         for k, i in state.items():
             if isinstance(i, CallableMultiplexItem):
                 self.__dict__[k] = self._callable_multiplexers[i.type](

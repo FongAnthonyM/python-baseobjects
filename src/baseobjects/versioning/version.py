@@ -127,7 +127,7 @@ class Version(BaseObject):
         Returns:
             True if the other object or version number is equivalent.
         """
-        return super().__ne__(other)
+        return super().__eq__(other)
 
     @abstractmethod
     def __ne__(self, other: Any) -> bool:

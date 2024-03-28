@@ -13,6 +13,7 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
+from asyncio.coroutines import iscoroutinefunction, _is_coroutine
 from collections.abc import Iterable
 from functools import WRAPPER_ASSIGNMENTS
 from typing import Any
@@ -42,6 +43,7 @@ class BaseCallable(BaseObject):
 
     # Attributes #
     _func_: AnyCallable | None = None
+    _is_coroutine: object | None = None
 
     # Properties #
     @property
@@ -56,6 +58,7 @@ class BaseCallable(BaseObject):
 
         self._func_ = value
         self.__call__ = value
+        self._is_coroutine = _is_coroutine if iscoroutinefunction(value) else None
         # Assign documentation from warped function to this object.
         for attr in WRAPPER_ASSIGNMENTS:
             try:
@@ -83,6 +86,7 @@ class BaseCallable(BaseObject):
         new_callable = super().__new__(cls)
         instance = getattr(func, "__self__", None)
         if instance is not None:
+            new_callable.__init__(func, *args, **kwargs)
             new_callable = new_callable.__get__(instance, instance.__class__)
 
         return new_callable
@@ -268,6 +272,10 @@ class BaseMethod(BaseCallable):
         setattr(instance, name, self)
 
         return self
+
+    # Method Overrides #
+    # Special method overriding which leads to less overhead.
+    __get__: GetObjectMethod = bind
 
 
 class BaseFunction(BaseCallable):

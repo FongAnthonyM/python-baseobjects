@@ -100,6 +100,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         kwarg: AnyCallable | str | None = None,
         func: AnyCallable | None = None,
         *args: Any,
+        wrapper_method: str | None = None,
         init: bool = True,
         **kwargs: Any,
     ) -> None:
@@ -112,9 +113,9 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         # Object Creation #
         if init:
             if isinstance(kwarg, str):
-                self.construct(kwarg=kwarg, func=func)
+                self.construct(kwarg=kwarg, func=func, wrapper_method=wrapper_method)
             else:
-                self.construct(func=kwarg)
+                self.construct(func=kwarg, wrapper_method=wrapper_method)
 
     # Pickling
     def __getstate__(self) -> dict[str, Any]:
@@ -139,13 +140,20 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
 
     # Instance Methods #
     # Constructors
-    def construct(self, kwarg: str | None = None, func: AnyCallable | None = None, *args: Any, **kwargs: Any) -> None:
-        """Constructs this object based on the input.
+    def construct(
+        self,
+        kwarg: AnyCallable | str | None = None,
+        func: AnyCallable | None = None,
+        *args: Any,
+        wrapper_method: str | None = None,
+        **kwargs: Any,
+    ) -> None:
+        """The constructor for this object.
 
         Args:
-            kwarg: The name of kwarg to dispatch with.
             func: The function to wrap.
             *args: Arguments for inheritance.
+            wrapper_method: The name of the method which will act as the wrapper for this decorator.
             **kwargs: Keyword arguments for inheritance.
         """
         if kwarg is not None:
