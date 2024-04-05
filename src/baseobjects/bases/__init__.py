@@ -13,6 +13,7 @@ __email__ = __email__
 
 # Imports #
 # Local Packages #
+from .sentinelobject import SentinelObject
 from .baseobject import BaseObject, search_sentinel
 from .basemeta import BaseMeta
 from .basecallable import BaseCallable, BaseMethod, BaseFunction
