@@ -14,13 +14,14 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from typing import Any
+from types import FunctionType, MethodType
 
 # Third-Party Packages #
 
 # Local Packages #
 from ..typing import AnyCallable
 from ..bases import BaseCallable, BaseFunction, BaseMethod
-from .callablemultiplexer import MethodMultiplexer
+from .callablemultiplexer import CallableMultiplexer, MethodMultiplexer
 
 
 # Definitions #
@@ -40,6 +41,7 @@ class DynamicCallable(BaseCallable):
     """
 
     # Attributes #
+    _cast_excluded: set = BaseCallable._cast_excluded | {"call_multiplexer"}
     _call_method: str = "call"
     call_multiplexer: MethodMultiplexer
 
@@ -80,7 +82,7 @@ class DynamicCallable(BaseCallable):
         Returns:
             A dictionary of this object's attributes.
         """
-        state = self.__dict__.copy()
+        state = super().__getstate__()
         state["call_multiplexer"] = (self.call_multiplexer.register, self.call_multiplexer.selected)
         return state
 
@@ -91,8 +93,8 @@ class DynamicCallable(BaseCallable):
             state: The attributes to build this object from.
         """
         self.__dict__.update(state)
-        s, r = state["call_multiplexer"]
-        self.call_multiplexer = MethodMultiplexer(instance=self, select=s, register=r)
+        register, selected = state["call_multiplexer"]
+        self.call_multiplexer = MethodMultiplexer(register, instance=self, select=selected)
 
     # Calling
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
@@ -119,7 +121,7 @@ class DynamicCallable(BaseCallable):
         Returns:
             The output of the wrapped function.
         """
-        return self._func_(*args, **kwargs)
+        return self.__wrapped__(*args, **kwargs)
 
 
 class DynamicMethod(DynamicCallable, BaseMethod):
@@ -140,7 +142,7 @@ class DynamicMethod(DynamicCallable, BaseMethod):
         Returns:
             The output of the wrapped function.
         """
-        return self._func_(self._self_(), *args, **kwargs)
+        return self.__wrapped__(self._self_(), *args, **kwargs)
 
 
 class DynamicFunction(DynamicCallable, BaseFunction):
@@ -158,6 +160,7 @@ class DynamicFunction(DynamicCallable, BaseFunction):
     """
 
     # Attributes #
+    _cast_excluded: set = DynamicCallable._cast_excluded | {"bind_multiplexer"}
     method_type: type[BaseMethod] = DynamicMethod
 
     _bind_method: str = "bind"
@@ -211,8 +214,8 @@ class DynamicFunction(DynamicCallable, BaseFunction):
             state: The attributes to build this object from.
         """
         super().__setstate__(state)
-        s, r = state["bind_multiplexer"]
-        self.bind_multiplexer = MethodMultiplexer(instance=self, select=s, register=r)
+        register, selected = state["bind_multiplexer"]
+        self.bind_multiplexer = MethodMultiplexer(register, instance=self, select=selected)
 
     # Descriptor
     def __get__(self, *args: Any, **kwargs: Any) -> Any:
@@ -226,3 +229,17 @@ class DynamicFunction(DynamicCallable, BaseFunction):
             The output of the wrapped function.
         """
         return self.bind_multiplexer(*args, **kwargs)
+
+    # Instance Methods #
+    # Binding
+    def bind_builtin_bypass(self, instance: Any = None, owner: type[Any] | None = None) -> BaseCallable | MethodType:
+        """Creates a method of the selected function which is bound to another object using the builtin method.
+
+        Args:
+            instance: The object to bind the method to.
+            owner: The class of the object being bound to.
+
+        Returns:
+            The bound method of this function.
+        """
+        return self if instance is None else MethodType(self.__wrapped__, instance)

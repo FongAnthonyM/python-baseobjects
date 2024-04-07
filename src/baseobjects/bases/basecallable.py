@@ -17,6 +17,7 @@ from asyncio.coroutines import iscoroutinefunction, _is_coroutine
 from collections.abc import Iterable
 from functools import WRAPPER_ASSIGNMENTS
 from typing import Any
+from types import FunctionType, MethodType
 import weakref
 
 # Third-Party Packages #
@@ -32,7 +33,7 @@ class BaseCallable(BaseObject):
     """An abstract class which implements the basic structure for creating a callable.
 
     Attributes:
-        _func_: The function to wrap.
+        __wrapped__: The function to wrap.
 
     Args:
         func: The function to wrap.
@@ -42,23 +43,25 @@ class BaseCallable(BaseObject):
     """
 
     # Attributes #
-    _func_: AnyCallable | None = None
+    __wrapped__: AnyCallable | None = None
     _is_coroutine: object | None = None
+    _cast_excluded: set = {"__call__"}
 
     # Properties #
     @property
     def __func__(self) -> AnyCallable:
         """The function which this callable wraps."""
-        return self._func_
+        return self.__wrapped__
 
     @__func__.setter
     def __func__(self, value: AnyCallable | None) -> None:
         if not callable(value) and not hasattr(value, "__get__"):
             raise TypeError(f"{value!r} is not callable or a descriptor")
 
-        self._func_ = value
+        self.__wrapped__ = value
         self.__call__ = value
         self._is_coroutine = _is_coroutine if iscoroutinefunction(value) else None
+        self.__dict__.update(value.__dict__)
         # Assign documentation from warped function to this object.
         for attr in WRAPPER_ASSIGNMENTS:
             try:
@@ -71,7 +74,7 @@ class BaseCallable(BaseObject):
     @property
     def __name__(self) -> str:
         """The name of the function this object is wrapping."""
-        return self._func_.__name__
+        return self.__wrapped__.__name__
 
     # Magic Methods #
     # Construction/Destruction
@@ -116,7 +119,7 @@ class BaseCallable(BaseObject):
         Returns:
             The output of the wrapped function.
         """
-        return self._func_(*args, **kwargs)
+        return self.__wrapped__(*args, **kwargs)
 
     # Instance Methods #
     # Constructors/Destructors
@@ -137,6 +140,35 @@ class BaseCallable(BaseObject):
             self.__func__ = func
 
         super().construct(*args, **kwargs)
+
+    # Casting
+    def as_function(self) -> FunctionType:
+        """Creates a wrapper function of this class."""
+        if self._is_coroutine:
+            async def wrapper_function(*args: Any, **kwargs: Any) -> Any:
+                """A function which wraps a callable."""
+                return await self(*args, **kwargs)
+        else:
+            def wrapper_function(*args: Any, **kwargs: Any) -> Any:
+                """A function which wraps a callable."""
+                return self(*args, **kwargs)
+
+        for attr in WRAPPER_ASSIGNMENTS:
+            try:
+                value = getattr(self, attr)
+            except AttributeError:
+                pass
+            else:
+                setattr(wrapper_function, attr, value)
+
+        wrapper_function.__dict__.update(self.__dict__)
+        wrapper_function.__wrapped__ = self
+
+        wrapper_dict =  wrapper_function.__dict__
+        for n in (n for n in self._cast_excluded if n in wrapper_dict):
+            del wrapper_dict[n]
+
+        return wrapper_function
 
 
 class BaseMethod(BaseCallable):
@@ -186,7 +218,7 @@ class BaseMethod(BaseCallable):
         Returns:
             The output of the wrapped function.
         """
-        return self._func_(self._self_(), *args, **kwargs)
+        return self.__wrapped__(self._self_(), *args, **kwargs)
 
     # Magic Methods #
     # Construction/Destruction
@@ -244,8 +276,10 @@ class BaseMethod(BaseCallable):
         Returns:
             This object.
         """
-        self.__self__ = instance
-        self.__owner__ = owner
+        if instance is not None:
+            self.__self__ = instance
+        if owner is not None:
+            self.__owner__ = owner
         return self
 
     def bind_to_attribute(
@@ -265,10 +299,12 @@ class BaseMethod(BaseCallable):
             This object.
         """
         if name is None:
-            name = self._func_.__name__
+            name = self.__wrapped__.__name__
 
-        self.__self__ = instance
-        self.__owner__ = owner
+        if instance is not None:
+            self.__self__ = instance
+        if owner is not None:
+            self.__owner__ = owner
         setattr(instance, name, self)
 
         return self
@@ -286,11 +322,11 @@ class BaseFunction(BaseCallable):
     """
 
     # Attributes #
-    method_type: type[BaseMethod] = BaseMethod
+    method_type: type[BaseMethod] | None = BaseMethod
 
     # Instance Methods #
     # Binding
-    def bind(self, instance: Any = None, owner: type[Any] | None = None) -> BaseMethod:
+    def bind(self, instance: Any = None, owner: type[Any] | None = None) -> BaseCallable | BaseMethod:
         """Creates a method of this function which is bound to another object.
 
         Args:
@@ -300,14 +336,26 @@ class BaseFunction(BaseCallable):
         Returns:
             The bound method of this function.
         """
-        return self.method_type(func=self, instance=instance, owner=owner)
+        return self if instance is None else self.method_type(func=self, instance=instance, owner=owner)
+
+    def bind_builtin(self, instance: Any = None, owner: type[Any] | None = None) -> BaseCallable | MethodType:
+        """Creates a method of this function which is bound to another object using the builtin method.
+
+        Args:
+            instance: The object to bind the method to.
+            owner: The class of the object being bound to.
+
+        Returns:
+            The bound method of this function.
+        """
+        return self if instance is None else MethodType(self, instance)
 
     def bind_to_attribute(
         self,
         instance: Any = None,
         owner: type[Any] | None = None,
         name: str | None = None,
-    ) -> BaseMethod:
+    ) -> BaseCallable | BaseMethod:
         """Creates a method of this function which is bound to another object and sets the method an attribute.
 
         Args:
@@ -318,8 +366,11 @@ class BaseFunction(BaseCallable):
         Returns:
             The bound method of this function.
         """
+        if instance is None:
+            return self
+
         if name is None:
-            name = self._func_.__name__
+            name = self.__wrapped__.__name__
 
         method = self.method_type(func=self, instance=instance, owner=owner)
         setattr(instance, name, method)

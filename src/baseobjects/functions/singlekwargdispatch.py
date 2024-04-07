@@ -124,7 +124,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         Returns:
             A dictionary of this object's attributes.
         """
-        state = self.__dict__.copy()
+        state = super().__getstate__()
         state["parse"] = (self.parse.register, self.parse.selected)
         return state
 
@@ -222,7 +222,10 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         Returns:
             A function which dispatches the correct bound method.
         """
-        if isinstance(self._func_, classmethod):
+        if instance is None:
+            return self
+
+        if isinstance(self.__wrapped__, classmethod):
             def dispatch_function(self_, *args, **kwargs):
                 method = self.dispatcher.dispatch(self.parse(*args, **kwargs))
                 return method.__get__(None, self_)(*args, **kwargs)
@@ -231,10 +234,10 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
                 method = self.dispatcher.dispatch(self.parse(*args, **kwargs))
                 return method.__get__(self_)(*args, **kwargs)
 
-        dispatch_function.__isabstractmethod__ = getattr(self._func_, '__isabstractmethod__', False)
+        dispatch_function.__isabstractmethod__ = getattr(self.__wrapped__, '__isabstractmethod__', False)
         dispatch_function.register = self.register
-        update_wrapper(dispatch_function, self._func_)
-        if isinstance(self._func_, classmethod):
+        update_wrapper(dispatch_function, self.__wrapped__)
+        if isinstance(self.__wrapped__, classmethod):
             dispatch_function = classmethod(dispatch_function)
         return dispatch_function.__get__(instance, owner)
 

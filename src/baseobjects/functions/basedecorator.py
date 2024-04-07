@@ -28,6 +28,7 @@ class BaseDecorator(DynamicFunction):
     """An abstract class which implements the basic structure for creating decorators."""
 
     # Attributes #
+    _bind_method: str = "bind_builtin"
     _call_method: str = "construct_call"
     _wrapper_method: str = "call"
 

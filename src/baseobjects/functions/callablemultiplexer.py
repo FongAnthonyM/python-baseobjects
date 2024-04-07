@@ -15,12 +15,13 @@ __email__ = __email__
 # Standard Libraries #
 from asyncio import iscoroutinefunction
 from typing import Any, NamedTuple, ClassVar
+from types import MethodType
 from warnings import warn
 
 # Third-Party Packages #
 
 # Local Packages #
-from ..typing import AnyCallable
+from ..typing import AnyCallable, GetObjectMethod
 from ..bases import BaseObject, BaseCallable, BaseMethod
 from .functionregister import FunctionRegister
 
@@ -118,9 +119,9 @@ class CallableMultiplexer(BaseMethod):
             The output of the wrapped function.
         """
         if self.is_self_bound or self.is_binding:
-            return self._func_.__get__(self._self_(), self.__owner__)(*args, **kwargs)
+            return self.__wrapped__.__get__(self._self_(), self.__owner__)(*args, **kwargs)
         else:
-            return self._func_(*args, **kwargs)
+            return self.__wrapped__(*args, **kwargs)
 
     # Instance Methods #
     # Constructors/Destructors
@@ -180,6 +181,18 @@ class CallableMultiplexer(BaseMethod):
             method: The method to add to the register.
         """
         self.register[name] = getattr(method, "__func__")
+
+    def bind_builtin_bypass(self, instance: Any = None, owner: type[Any] | None = None) -> BaseCallable | MethodType:
+        """Creates a method of the selected function which is bound to another object using the builtin method.
+
+        Args:
+            instance: The object to bind the method to.
+            owner: The class of the object being bound to.
+
+        Returns:
+            The bound method of this function.
+        """
+        return self if instance is None else MethodType(self.__wrapped__, instance)
 
     # Callable Selection
     def select(self, name: str) -> None:
@@ -241,7 +254,7 @@ class MethodMultiplexer(CallableMultiplexer):
         Returns:
             The output of the wrapped function.
         """
-        return self._func_.__get__(self._self_(), self.__owner__)(*args, **kwargs)
+        return self.__wrapped__.__get__(self._self_(), self.__owner__)(*args, **kwargs)
 
 
 class CallableMultiplexItem(NamedTuple):
