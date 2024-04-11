@@ -102,7 +102,7 @@ class CallableMultiplexer(BaseMethod):
 
     # Pickling
     def __getstate__(self) -> dict[str, Any]:
-        state = self.__dict__.copy()
+        state = super().__getstate__()
         del state["_self_"]
         warn("CallableMultiplexer Weak reference deleted for pickle, may not work as intended.")
         return state

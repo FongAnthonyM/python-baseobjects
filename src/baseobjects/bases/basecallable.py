@@ -87,8 +87,7 @@ class BaseCallable(BaseObject):
             **kwargs: The keyword arguments for build an instance.
         """
         new_callable = super().__new__(cls)
-        instance = getattr(func, "__self__", None)
-        if instance is not None:
+        if (instance := getattr(func, "__self__", None)) is not None:
             new_callable.__init__(func, *args, **kwargs)
             new_callable = new_callable.__get__(instance, instance.__class__)
 
@@ -237,6 +236,12 @@ class BaseMethod(BaseCallable):
         # Object Construction #
         if init:
             self.construct(func=func, instance=instance, owner=owner, *args, **kwargs)
+
+    # Pickling
+    def __getstate__(self) -> dict[str, Any]:
+        state = super().__getstate__()
+        state["_self_"] = self.__self__
+        return state
 
     # Instance Methods #
     # Constructors/Destructors
