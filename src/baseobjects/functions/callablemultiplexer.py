@@ -60,7 +60,6 @@ class CallableMultiplexer(BaseMethod):
 
     is_binding: bool = False
     is_self_bound: bool = False
-    is_coroutine: bool = False
 
     # Properties #
     @property
@@ -195,19 +194,20 @@ class CallableMultiplexer(BaseMethod):
         return self if instance is None else MethodType(self.__wrapped__, instance)
 
     # Callable Selection
-    def select(self, name: str) -> None:
+    def select(self, name: str | None) -> None:
         """Selects a function/method to use within the register or the wrapped object.
 
         Args:
             name: The name of function/method in the register or object to use.
         """
-        if (func := self.register.get(name, None)) is not None:
+        if name is None:
+            func = None
+        elif (func := self.register.get(name, None)) is not None:
             self.is_self_bound = False
         elif self._self_() is not None:
             func = getattr(self._self_(), name)
             self.is_self_bound = True
         self.__func__ = func
-        self.is_coroutine = iscoroutinefunction(func)
         self._selected = name
 
     def add_select_function(self, name: str, func: BaseCallable) -> None:
@@ -218,7 +218,6 @@ class CallableMultiplexer(BaseMethod):
             func: The function to add to the register.
         """
         self.register[name] = self.__func__ = func
-        self.is_coroutine = iscoroutinefunction(func)
         self._selected = name
 
     def add_select_method(self, name: str, method: BaseCallable) -> None:
@@ -229,7 +228,6 @@ class CallableMultiplexer(BaseMethod):
             method: The method to add to the register.
         """
         self.register[name] = self.__func__ = getattr(method, "__func__")
-        self.is_coroutine = iscoroutinefunction(method)
         self._selected = name
 
 

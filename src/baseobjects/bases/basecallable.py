@@ -55,26 +55,34 @@ class BaseCallable(BaseObject):
 
     @__func__.setter
     def __func__(self, value: AnyCallable | None) -> None:
-        if not callable(value) and not hasattr(value, "__get__"):
+        if value is not None and not callable(value) and not hasattr(value, "__get__"):
             raise TypeError(f"{value!r} is not callable or a descriptor")
 
         self.__wrapped__ = value
-        self.__call__ = value
-        self._is_coroutine = _is_coroutine if iscoroutinefunction(value) else None
-        self.__dict__.update(value.__dict__)
-        # Assign documentation from warped function to this object.
-        for attr in WRAPPER_ASSIGNMENTS:
-            try:
-                value = getattr(value, attr)
-            except AttributeError:
-                pass
-            else:
-                setattr(self, attr, value)
+
+        if value is None:
+            self._is_coroutine = None
+        else:
+            self._is_coroutine = _is_coroutine if iscoroutinefunction(value) else None
+            self.__dict__.update(value.__dict__)
+            # Assign documentation from warped function to this object.
+            for attr in WRAPPER_ASSIGNMENTS:
+                try:
+                    value = getattr(value, attr)
+                except AttributeError:
+                    pass
+                else:
+                    setattr(self, attr, value)
 
     @property
     def __name__(self) -> str:
         """The name of the function this object is wrapping."""
         return self.__wrapped__.__name__
+
+    @property
+    def is_coroutine(self) -> bool:
+        """Determines if the wrapped function is a coroutine."""
+        return self._is_coroutine is not None
 
     # Magic Methods #
     # Construction/Destruction
