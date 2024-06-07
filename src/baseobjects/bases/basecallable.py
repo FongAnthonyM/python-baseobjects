@@ -64,7 +64,9 @@ class BaseCallable(BaseObject):
             self._is_coroutine = None
         else:
             self._is_coroutine = _is_coroutine if iscoroutinefunction(value) else None
-            self.__dict__.update(value.__dict__)
+            d_copy = value.__dict__.copy()
+            d_copy.pop("__wrapped__", None)
+            self.__dict__.update(d_copy)
             # Assign documentation from warped function to this object.
             for attr in WRAPPER_ASSIGNMENTS:
                 try:
