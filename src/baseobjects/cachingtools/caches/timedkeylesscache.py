@@ -83,7 +83,7 @@ class TimedKeylessCacheCallable(TimedSingleCacheCallable):
             The result of the wrapped function.
         """
         if not self.args_key:
-            self.cache_container = self.__func__(*args, **kwargs)
+            self.cache_container = self.__wrapped__(*args, **kwargs)
             self.args_key = True
 
         return self.cache_container
@@ -91,8 +91,6 @@ class TimedKeylessCacheCallable(TimedSingleCacheCallable):
 
 class TimedKeylessCacheMethod(TimedKeylessCacheCallable, TimedSingleCacheMethod):
     """A method class for TimedKeylessCache."""
-
-    default_call_method: str = "caching"
 
 
 class TimedKeylessCache(TimedKeylessCacheCallable, TimedSingleCache):

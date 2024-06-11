@@ -65,8 +65,12 @@ class BaseCallable(BaseObject):
         else:
             self._is_coroutine = _is_coroutine if iscoroutinefunction(value) else None
             d_copy = value.__dict__.copy()
-            d_copy.pop("__wrapped__", None)
-            self.__dict__.update(d_copy)
+            # Copy all attributes from the wrapped function to this object.
+            if d_copy:
+                exlcuded = set(dir(self))
+                for k, v in d_copy.items():
+                    if k not in exlcuded:
+                        setattr(self, k, v)
             # Assign documentation from warped function to this object.
             for attr in WRAPPER_ASSIGNMENTS:
                 try:
@@ -79,7 +83,7 @@ class BaseCallable(BaseObject):
     @property
     def __name__(self) -> str:
         """The name of the function this object is wrapping."""
-        return self.__wrapped__.__name__
+        return "" if self.__wrapped__ is None else self.__wrapped__.__name__
 
     @property
     def is_coroutine(self) -> bool:

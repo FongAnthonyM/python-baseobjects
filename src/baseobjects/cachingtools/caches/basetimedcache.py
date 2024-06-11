@@ -121,7 +121,7 @@ class BaseTimedCacheCallable(DynamicCallable):
         **kwargs: Keyword arguments for inheritance.
     """
 
-    default_call_method: str = "caching_call"
+    _call_method: str = "caching_call"
     default_cache_method: str = "no_cache"
     cache_item_type = CacheItem
 
@@ -399,7 +399,6 @@ class BaseTimedCache(BaseTimedCacheCallable, DynamicFunction):
     """An abstract function class for timed caches."""
 
     method_type: type[DynamicMethod] = BaseTimedCacheMethod
-    _bind_method: str = "bind"
 
     # Magic Methods #
     # Construction/Destruction

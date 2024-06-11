@@ -116,7 +116,7 @@ class TimedSingleCacheMethod(TimedSingleCacheCallable, BaseTimedCacheMethod):
 class TimedSingleCache(TimedSingleCacheCallable, BaseTimedCache):
     """A function class for TimedSingleCache."""
 
-    method_type: type[BaseTimedCacheMethod] = TimedSingleCacheCallable
+    method_type: type[BaseTimedCacheMethod] = TimedSingleCacheMethod
 
 
 # Functions #
