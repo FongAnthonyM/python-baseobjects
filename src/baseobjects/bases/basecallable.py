@@ -64,7 +64,7 @@ class BaseCallable(BaseObject):
             self._is_coroutine = None
         else:
             self._is_coroutine = _is_coroutine if iscoroutinefunction(value) else None
-            d_copy = value.__dict__.copy()
+            d_copy = getattr(value, "__dict__", {}).copy()
             # Copy all attributes from the wrapped function to this object.
             if d_copy:
                 exlcuded = set(dir(self))
