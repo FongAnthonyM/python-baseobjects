@@ -14,7 +14,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from collections.abc import Mapping
-from typing import Any
+from typing import ClassVar, Any
 
 # Third-Party Packages #
 
@@ -29,6 +29,7 @@ class BaseComposite(BaseObject):
 
     Class Attributes:
         default_component_types: The default component classes and their keyword arguments for this object.
+        default_components: The default components for this object.
 
     Attributes:
         components: The components of this object.
@@ -40,7 +41,12 @@ class BaseComposite(BaseObject):
         **kwargs: Keyword arguments for inheritance.
     """
 
-    default_component_types: dict[str, tuple[type, dict[str, Any]]] = {}
+    # Class Attributes #
+    default_component_types: ClassVar[dict[str, tuple[type, dict[str, Any]]]] = {}
+    default_components: ClassVar[dict[str, Any]] = {}
+
+    # Attributes #
+    components: dict[str, Any]
 
     # Magic Methods #
     # Construction/Destruction
@@ -53,7 +59,7 @@ class BaseComposite(BaseObject):
         **kwargs: Any
     ) -> None:
         # New Attributes #
-        self.components: dict[str, Any] = {}
+        self.components: dict[str, Any] = self.default_components.copy()
 
         # Parent Attributes #
         super().__init__(init=False)
@@ -74,7 +80,7 @@ class BaseComposite(BaseObject):
         Args:
             state: The attributes to build this object from.
         """
-        self.__dict__.update(state)
+        super().__setstate__(state)
         for component in self.components.values():
             component.composite = self
 
