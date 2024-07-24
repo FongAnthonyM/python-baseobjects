@@ -14,7 +14,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from typing import Any
-import weakref
+from weakref import ref
 
 # Third-Party Packages #
 
@@ -38,7 +38,7 @@ class BaseComponent(BaseObject):
     """
 
     # Attributes #
-    _composite: BaseComposite | None = None
+    _composite: ref[BaseComposite] | None = None
 
     # Properties #
     @property
@@ -51,7 +51,7 @@ class BaseComponent(BaseObject):
 
     @composite.setter
     def composite(self, value: Any) -> None:
-        self._composite = None if value is None else weakref.ref(value)
+        self._composite = None if value is None else ref(value)
 
     # Magic Methods #
     # Construction/Destruction
