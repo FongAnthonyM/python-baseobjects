@@ -43,10 +43,9 @@ class BaseComposite(BaseObject):
 
     # Class Attributes #
     default_component_types: ClassVar[dict[str, tuple[type, dict[str, Any]]]] = {}
-    default_components: ClassVar[dict[str, Any]] = {}
 
     # Attributes #
-    components: dict[str, Any]
+    components: dict[str, Any] = {}
 
     # Magic Methods #
     # Construction/Destruction
@@ -59,7 +58,7 @@ class BaseComposite(BaseObject):
         **kwargs: Any
     ) -> None:
         # New Attributes #
-        self.components: dict[str, Any] = self.default_components.copy()
+        self.components: dict[str, Any] = self.components.copy()
 
         # Parent Attributes #
         super().__init__(init=False)
