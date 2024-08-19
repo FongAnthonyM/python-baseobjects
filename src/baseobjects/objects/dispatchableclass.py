@@ -33,6 +33,7 @@ class DispatchableClass(RegisteredClass):
         register: A register of all subclasses of this class.
         registration: Determines if this class/subclass will be added to the register.
     """
+
     # Class Methods #
     @classmethod
     def get_class_information(cls, *args: Any, **kwargs: Any) -> tuple[str, str]:

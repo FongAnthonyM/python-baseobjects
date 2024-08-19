@@ -13,8 +13,7 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
-from collections.abc import Mapping
-from typing import Any
+from collections.abc import Mapping, Iterable
 
 # Third-Party Packages #
 
@@ -23,19 +22,38 @@ from typing import Any
 
 # Definitions #
 # Functions #
-def update_recursive(d: Mapping, updates: Mapping) -> Mapping:
+def _update_recursive(d: Mapping, updates: Mapping) -> Mapping:
     """Updates a mapping object and its contained mappings based on another mapping.
 
     Args:
-        d: The mapping type to update revursively.
+        d: The mapping type to update recursively.
         updates: The mapping updates.
 
     Returns:
-        The orginal mapping that has been updated.
+        The original mapping that has been updated.
     """
-    for key, value in updates.items():
-        if isinstance(value, Mapping):
-            d[key] = update_recursive(d.get(key, {}), value)
-        else:
-            d[key] = value
+    d.update(
+        (key, update_recursive(d.get(key, {}), value) if isinstance(value, Mapping) else value)
+        for key, value in updates.items()
+    )
+    return d
+
+
+def update_recursive(d: Mapping, updates: Iterable | Mapping) -> Mapping:
+    """Updates a mapping object and its contained mappings based on another mapping.
+
+    Args:
+        d: The mapping type to update recursively.
+        updates: The mapping updates.
+
+    Returns:
+        The original mapping that has been updated.
+    """
+    if isinstance(updates, Mapping):
+        updates = updates.items()
+
+    d.update(
+        (key, _update_recursive(d.get(key, {}), value) if isinstance(value, Mapping) else value)
+        for key, value in updates
+    )
     return d

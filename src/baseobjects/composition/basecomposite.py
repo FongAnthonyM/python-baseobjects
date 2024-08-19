@@ -14,6 +14,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from collections.abc import Mapping
+from itertools import chain
 from typing import ClassVar, Any
 
 # Third-Party Packages #
@@ -121,7 +122,16 @@ class BaseComposite(BaseObject):
             component_types: Component class and their keyword arguments to instantiate.
             components: Components to add.
         """
-        temp_types = self.default_component_types | {} if component_types is None else component_types
         new_kwargs = {} if component_kwargs is None else component_kwargs
-        default_components = {n: c(composite=self, **(k | new_kwargs.get(n, {}))) for n, (c, k) in temp_types.items()}
-        self.components.update(default_components | self.components | {} if components is None else components)
+        if components is None:
+            components = {}
+
+        # Check for overriding components, and remove redundant construction
+        temp_types = self.default_component_types | ({} if component_types is None else component_types)
+        type_names = set(temp_types.keys()) - set(components.keys()) - set(self.components.keys())
+
+        # Create Construction Iterator #
+        type_iter = ((n, temp_types[n]) for n in type_names)
+        default_components_iter = ((n, c(composite=self, **(k | new_kwargs.get(n, {})))) for n, (c, k) in type_iter)
+
+        self.components.update(chain(default_components_iter, ((n, c) for n, c in components.items())))

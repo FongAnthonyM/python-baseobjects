@@ -13,7 +13,7 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
-from typing import Any, Optional
+from typing import ClassVar, Any, Optional
 
 # Third-Party Packages #
 
@@ -34,11 +34,12 @@ class RegisteredClass(BaseObject):
         registration: Determines if this class/subclass will be added to the register.
     """
 
-    register_head_class: Optional["RegisteredClass"] = None
-    register_namespace: str | None = None
-    register_name: str | None = None
-    register: dict[str, dict[str, type]] | None = None
-    registration: bool = False
+    # Class Attributes #
+    register_head_class: ClassVar[Optional["RegisteredClass"]] = None
+    register_namespace: ClassVar[str | None] = None
+    register_name: ClassVar[str | None] = None
+    register: ClassVar[dict[str, dict[str, type]] | None] = None
+    registration: ClassVar[bool] = False
 
     # Class Methods #
     # Construction/Destruction
@@ -69,7 +70,9 @@ class RegisteredClass(BaseObject):
             namespace: The namespace of the subclass.
             name: The name of the subclass.
         """
-        namespace = cls.__module__ if namespace is None else namespace
+        if namespace is None:
+            namespace = cls.__module__
+
         cls.register_namespace = namespace[4:] if namespace.split(".")[0] == "src" else namespace
         cls.register_name = cls.__name__ if name is None else name
 

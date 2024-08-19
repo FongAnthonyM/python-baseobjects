@@ -13,7 +13,6 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
-from typing import Any
 
 # Third-Party Packages #
 
@@ -58,7 +57,7 @@ class SentinelObject:
 
     # Comparison
     def __eq__(self, other: "SentinelObject") -> bool:
-        """Expands on equals comparison to include comparing the version number.
+        """Expands on equals comparison to include comparing the ID number.
 
         Args:
             other: The object to compare to this object.
@@ -67,3 +66,7 @@ class SentinelObject:
             True if the other sentinel is equivalent.
         """
         return isinstance(other, SentinelObject) and self.id_number == other.id_number
+
+
+# Names #
+search_sentinel = SentinelObject("search_sentinel")

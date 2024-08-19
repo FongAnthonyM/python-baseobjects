@@ -32,10 +32,6 @@ from typing import Any
 
 
 # Definitions #
-# Names #
-search_sentinel = object()
-
-
 # Classes #
 class BaseObject(ABC):
     """An abstract class that implements some basic functions that all objects should have."""
