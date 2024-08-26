@@ -48,11 +48,11 @@ class ClassNamespaceRegister(BaseDict):
         init: bool = True,
         **kwargs: Any
     ) -> None:
-        # New Attributes #
-        self.data.update(((n, deepcopy(ns)) for n, ns in self.default_classes.items()))
-
         # Parent Attributes #
         super().__init__(init=False)
+
+        # New Attributes #
+        self.data.update(((n, deepcopy(ns)) for n, ns in self.default_classes.items()))
 
         # Object Construction #
         if init:

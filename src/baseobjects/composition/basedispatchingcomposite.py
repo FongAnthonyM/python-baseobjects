@@ -1,5 +1,5 @@
 """basedispatchingcomposite.py
-A basic composite object which is composed of component objects.
+A composite object which includes methods for dispatching component objects during instantiation.
 """
 # Package Header #
 from ..header import *
@@ -17,7 +17,7 @@ from typing import Any
 
 # Third-Party Packages #
 
-# Local Packages #
+# Local Packages
 from ..objects import ClassNamespaceRegister
 from .basecomposite import BaseComposite
 
@@ -25,13 +25,13 @@ from .basecomposite import BaseComposite
 # Definitions #
 # Classes #
 class BaseDispatchingComposite(BaseComposite):
-    """A basic composite object which is composed of component objects.
+    """A composite object which includes methods for dispatching component objects during instantiation.
 
     Class Attributes:
         default_component_types: The default component classes and their keyword arguments for this object.
-        default_components: The default components for this object.
 
     Attributes:
+        component_types_register: A register of component classes and their keyword arguments.
         components: The components of this object.
 
     Args:
@@ -41,22 +41,21 @@ class BaseDispatchingComposite(BaseComposite):
         **kwargs: Keyword arguments for inheritance.
     """
 
-    # Class Attributes #
-    component_types_register: ClassNamespaceRegister = ClassNamespaceRegister()
+    # Attributes #
+    component_types_register: ClassNamespaceRegister
 
-    # Class Methods #
-    @classmethod
-    def get_component_types(cls, *args: Any, **kwargs: Any) -> dict[str, tuple[type, dict[str, Any]]]:
-        """Gets a class namespace, name, and keyword arguments from a given set of arguments.
+    # Methods #
+    def dispatch_component_types(self, *args: Any, **kwargs: Any) -> dict[str, tuple[type, dict[str, Any]]]:
+        """An abstract method that dispatches component types using the given arguments.
 
         Args:
-            *args: The arguments to get the namespace and name from.
-            **kwargs: The keyword arguments to get the namespace and name from.
+            *args: The arguments to use in dispatching.
+            **kwargs: The keyword arguments to use in dispatching.
 
         Returns:
-            The namespace and name of the class.
+            A dictionary of the names of the components, their types, and their keyword arguments.
         """
-        raise NotImplementedError("This method needs to be set to dispatch components.")
+        raise NotImplementedError("This method needs to be set to dispatch component types.")
 
     # Instance Methods #
     # Constructors/Destructors
@@ -76,9 +75,7 @@ class BaseDispatchingComposite(BaseComposite):
     #         components: Components to add.
     #         **kwargs: Keyword arguments for inheritance.
     #     """
-    #     component_types = self.load_component_types(**load_kwargs) | component_types
-    #
-    #     self.construct_components
+    #     component_types = self.get_component_types(**load_kwargs) | component_types
     #
     #     super().construct(
     #         component_kwargs=component_kwargs,
