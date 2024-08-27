@@ -56,30 +56,3 @@ class BaseDispatchingComposite(BaseComposite):
             A dictionary of the names of the components, their types, and their keyword arguments.
         """
         raise NotImplementedError("This method needs to be set to dispatch component types.")
-
-    # Instance Methods #
-    # Constructors/Destructors
-    # def construct(
-    #     self,
-    #     component_kwargs: dict[str, dict[str, Any]] | None = None,
-    #     component_types: dict[str, tuple[type, dict[str, Any]]] | None = None,
-    #     components: dict[str, Any] | None = None,
-    #     load_kwargs: dict[str, Any] | None = None,
-    #     **kwargs: Any
-    # ) -> None:
-    #     """Constructs this object.
-    #
-    #     Args:
-    #         component_kwargs: Keyword arguments for creating the components.
-    #         component_types: Component classes and their keyword arguments to instantiate.
-    #         components: Components to add.
-    #         **kwargs: Keyword arguments for inheritance.
-    #     """
-    #     component_types = self.get_component_types(**load_kwargs) | component_types
-    #
-    #     super().construct(
-    #         component_kwargs=component_kwargs,
-    #         component_types=component_types,
-    #         components=components,
-    #         **kwargs,
-    #     )

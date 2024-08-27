@@ -50,7 +50,7 @@ class ExampleComposite(BaseComposite):
         number (int): A number attribute managed by the composite.
     """
     # Class Attributes #
-    default_component_types = {"printing": PrintingComponent, "adding": AddingComponent}
+    default_component_types = {"printing": (PrintingComponent, {}), "adding": (AddingComponent, {})}
 
     # Attributes #
     number: int = 0
