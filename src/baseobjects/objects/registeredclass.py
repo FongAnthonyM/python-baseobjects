@@ -76,7 +76,7 @@ class RegisteredClass(BaseObject):
         """
         if "class_register_namespace" not in cls.__dict__ or namespace is not None:
             if namespace is None:
-                namespace = cls._module_ if "_module_" in cls.__dict__ else cls.__module__
+                namespace = cls.__dict__.get("_module_", cls.__module__)
             cls.class_register_namespace = namespace[4:] if namespace.split(".")[0] == "src" else namespace
 
         if "class_register_name" not in cls.__dict__ or name is not None:

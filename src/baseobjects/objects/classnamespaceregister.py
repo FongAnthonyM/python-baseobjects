@@ -49,7 +49,7 @@ class ClassNamespaceRegister(BaseDict):
         **kwargs: Any
     ) -> None:
         # Parent Attributes #
-        super().__init__(init=False)
+        super().__init__()
 
         # New Attributes #
         self.data.update(((n, deepcopy(ns)) for n, ns in self.default_classes.items()))
@@ -98,7 +98,7 @@ class ClassNamespaceRegister(BaseDict):
             class_kwargs: The keyword arguments for creating the class.
         """
         if namespace is None:
-            namespace = cls.__module__
+            namespace = cls.__dict__.get("_module_", cls.__module__)
 
         if namespace.split(".")[0] == "src":
             namespace = namespace[4:]
