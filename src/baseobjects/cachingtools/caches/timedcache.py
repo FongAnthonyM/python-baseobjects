@@ -51,8 +51,21 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         **kwargs: Keyword arguments for inheritance.
     """
 
-    default_cache_method: str = "unlimited_cache"
+    # Attributes #
+    _cache_method: str = "unlimited_cache"
+    _maxsize: int | None = None
     priority_queue_type: type[CircularDoublyLinkedContainer] = CircularDoublyLinkedContainer
+    priority: Any
+
+    # Properties #
+    @property
+    def maxsize(self) -> int:
+        """The cache's max size and when updated it changes the cache to its optimal handle function."""
+        return self._maxsize
+
+    @maxsize.setter
+    def maxsize(self, value: int) -> None:
+        self.set_maxsize(value)
 
     # Magic Methods #
     # Construction/Destruction
@@ -69,8 +82,6 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         **kwargs: Any,
     ) -> None:
         # New Attributes #
-        self._maxsize: int | None = None
-
         self.priority: Any = self.priority_queue_type()
 
         # Parent Attributes #
@@ -91,15 +102,6 @@ class TimedCacheCallable(BaseTimedCacheCallable):
                 *args,
                 **kwargs,
             )
-
-    @property
-    def maxsize(self) -> int:
-        """The cache's max size and when updated it changes the cache to its optimal handle function."""
-        return self._maxsize
-
-    @maxsize.setter
-    def maxsize(self, value: int) -> None:
-        self.set_maxsize(value)
 
     # Container Methods
     def __len__(self) -> int:
@@ -225,6 +227,7 @@ class TimedCacheMethod(TimedCacheCallable, BaseTimedCacheMethod):
 class TimedCache(TimedCacheCallable, BaseTimedCache):
     """A function class for TimedCache."""
 
+    # Attributes #
     method_type: type[BaseTimedCacheMethod] = TimedCacheMethod
 
     # Instance Methods #

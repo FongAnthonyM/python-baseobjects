@@ -26,5 +26,6 @@ from typing import Any, NamedTuple
 class Parameters(NamedTuple):
     """A named tuple for holding the parameters of a function."""
 
+    # Attributes #
     args: Iterable[Any] = tuple()
     kwargs: Mapping[str, Any] = dict()

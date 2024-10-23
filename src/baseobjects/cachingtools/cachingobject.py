@@ -33,17 +33,11 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         _caches: All the caches within this object.
     """
 
-    # Magic Methods #
-    # Construction/Destruction
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        # New Attributes #
-        self._is_cache: bool = True
+    # Attributes #
+    _is_cache: bool = True
+    _caches: set[str]
 
-        self._caches: set[str] = self._caches_.copy()
-
-        # Parent Attributes #
-        super().__init__(*args, **kwargs)
-
+    # Properties #
     @property
     def is_cache(self) -> bool:
         """Determines if the caching functions are enabled and puts them in the correct state when set."""
@@ -56,6 +50,15 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
                 self.enable_caching()
             else:
                 self.disable_caching()
+
+    # Magic Methods #
+    # Construction/Destruction
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        # Attributes #
+        self._caches = self._caches_.copy()
+
+        # Parent Attributes #
+        super().__init__(*args, **kwargs)
 
     # Pickling
     def __getstate__(self) -> dict[Any]:

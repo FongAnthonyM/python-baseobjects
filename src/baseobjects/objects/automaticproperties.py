@@ -36,6 +36,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         _properies: A container that has the names of the properties and some information to build them.
     """
 
+    # Class Attributes #
     _properties_map_cls: list[Any] = []
     _properties: Any = None
 

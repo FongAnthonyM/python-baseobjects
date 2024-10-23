@@ -41,6 +41,9 @@ class OrderableDict(BaseDict):
         **kwargs: Keyword arguments for creating a dictionary.
     """
 
+    # Attributes #
+    order: list[KeyType, ...]
+
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, dict_: Any = None, /, *args: Any, **kwargs: Any) -> None:

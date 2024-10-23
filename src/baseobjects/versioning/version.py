@@ -41,7 +41,9 @@ class Version(BaseObject):
         **kwargs: More keyword arguments for constructing this object
     """
 
+    # Attributes #
     default_version_name: str = "default"
+    version_type: VersionType | None = None
 
     # Class Methods
     @classmethod
@@ -79,7 +81,6 @@ class Version(BaseObject):
 
     # Matic Methods
     # Construction/Destruction
-    @abstractmethod
     def __init__(
         self,
         version: Any | None = None,
@@ -90,9 +91,6 @@ class Version(BaseObject):
     ) -> None:
         # Parent Attributes #
         super().__init__(*args, init=False, **kwargs)
-
-        # New Attributes #
-        self.version_type: VersionType | None = None
 
         # Object Construction #
         if init:

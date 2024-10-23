@@ -31,50 +31,11 @@ class TimedSingleCacheCallable(BaseTimedCacheCallable):
 
     Attributes:
         args_key: The generated argument key of the current cached result.
-
-    Args:
-        func: The function to wrap.
-        typed: Determines if the function's arguments are type sensitive for caching.
-        lifetime: The period between cache resets in seconds.
-        call_method: The default call method to use.
-        local: Determines if the cache is local to each instance or all instances.
-        *args: Arguments for inheritance.
-        init: Determines if this object will construct.
-        **kwargs: Keyword arguments for inheritance.
     """
 
-    default_cache_method: str = "caching"
-
-    # Magic Methods #
-    # Construction/Destruction
-    def __init__(
-        self,
-        func: AnyCallable | None = None,
-        typed: bool | None = None,
-        lifetime: int | float | None = None,
-        call_method: str | None = None,
-        local: bool | None = None,
-        *args: Any,
-        init: bool = True,
-        **kwargs: Any,
-    ) -> None:
-        # New Attributes #
-        self.args_key: Hashable | None = None
-
-        # Parent Attributes #
-        super().__init__(*args, init=False, **kwargs)
-
-        # Object Construction #
-        if init:
-            self.construct(
-                func=func,
-                lifetime=lifetime,
-                typed=typed,
-                call_method=call_method,
-                local=local,
-                *args,
-                **kwargs,
-            )
+    # Attributes #
+    _cache_method: str = "caching"
+    args_key: Hashable | None = None
 
     # Instance Methods #
     # Caching Methods
@@ -96,7 +57,7 @@ class TimedSingleCacheCallable(BaseTimedCacheCallable):
         return self.cache_container
 
     # Cache Control
-    def refresh_expiration(self):
+    def refresh_expiration(self) -> None:
         """Refreshes the expiration to be a lifetime later than now."""
         if self.lifetime is not None:
             self.expiration = perf_counter() + self.lifetime
@@ -116,6 +77,7 @@ class TimedSingleCacheMethod(TimedSingleCacheCallable, BaseTimedCacheMethod):
 class TimedSingleCache(TimedSingleCacheCallable, BaseTimedCache):
     """A function class for TimedSingleCache."""
 
+    # Attributes #
     method_type: type[BaseTimedCacheMethod] = TimedSingleCacheMethod
 
 

@@ -98,6 +98,7 @@ class TimedLRUCacheMethod(TimedLRUCache, TimedCacheMethod):
 class TimedLRUCache(TimedLRUCache, TimedCache):
     """A function class for TimedLRUCache."""
 
+    # Attributes #
     method_type: type[TimedLRUCacheMethod] = TimedLRUCacheMethod
 
 
