@@ -39,16 +39,24 @@ class TimedDict(BaseDict):
         **kwargs: The keywords to add to this dictionary.
     """
 
-    __slots__ = {"is_timed", "lifetime", "expiration", "_data"}
+    # Attributes #
+    is_timed: bool = True
+    lifetime: int | float | None = None
+    expiration: int | float | None = None
+
+    _data: dict[Hashable, Any]
+
+    # Properties #
+    @property
+    def data(self) -> dict[Hashable, Any]:
+        """The data of the dictionary."""
+        self.verify()
+        return self._data
 
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, dict_: dict[Hashable, Any] | None = None, /, **kwargs: Any) -> None:
         # Attributes #
-        self.is_timed: bool = True
-        self.lifetime: int | float | None = None
-        self.expiration: int | float | None = None
-
         self._data: dict[Hashable, Any] = {}
 
         # Object Construction #
@@ -56,12 +64,6 @@ class TimedDict(BaseDict):
             self.update(dict_)
         if kwargs:
             self.update(kwargs)
-
-    @property
-    def data(self) -> dict[Hashable, Any]:
-        """The data of the dictionary."""
-        self.verify()
-        return self._data
 
     # Instance Methods #
     # Mapping

@@ -43,6 +43,10 @@ class TestCachingObject(ClassPerformanceTest):
             super().__init__()
             self.a = a
 
+        @functools.lru_cache
+        def functools_cache(self):
+            return [i for i in range(77)]
+
         @property
         def proxy(self):
             return self.get_proxy.caching_call()
@@ -134,7 +138,7 @@ class TestCachingObject(ClassPerformanceTest):
         ps.print_stats()
         print(s.getvalue())
 
-    def test_functool_speed(self):
+    def test_functool_bypass_speed(self):
         x = 1
 
         @functools.lru_cache
@@ -147,13 +151,39 @@ class TestCachingObject(ClassPerformanceTest):
             proxy()
 
         def old_access():
-            x
+            return x
 
         mean_new = timeit.timeit(new_access, number=self.timeit_runs) / self.timeit_runs * 1000000
         mean_old = timeit.timeit(old_access, number=self.timeit_runs) / self.timeit_runs * 1000000
+        overhead = mean_new - mean_old
+        new_c_units = overhead / self.call_speed
         percent = (mean_new / mean_old) * 100
 
-        print(f"\nNew speed {mean_new:.3f} μs took {percent:.3f}% of the time of the old function.")
+        print(
+            f"\nOverhead {new_c_units:.3f} cu or {overhead:.3f} μs took {percent:.3f}% of the time of the old function."
+        )
+        assert percent < self.speed_tolerance
+
+    def test_functool_speed(self):
+        cacher = TestCachingObject.CachingTestObject()
+
+        cacher.functools_cache()
+
+        def new_eval():
+            cacher.functools_cache()
+
+        def old_eval():
+            cacher.normal()
+
+        mean_new = timeit.timeit(new_eval, number=self.timeit_runs) / self.timeit_runs * 1000000
+        new_c_units = mean_new / self.call_speed
+        mean_old = timeit.timeit(old_eval, number=self.timeit_runs) / self.timeit_runs * 1000000
+        percent = (mean_new / mean_old) * 100
+
+        print(self.call_speed)
+        print(
+            f"\nNew speed {new_c_units:.3f} cu or {mean_new:.3f} μs took {percent:.3f}% of the time of the old function."
+        )
         assert percent < self.speed_tolerance
 
     def test_functool_profile(self):

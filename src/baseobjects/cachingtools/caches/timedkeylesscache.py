@@ -28,47 +28,12 @@ from .timedsinglecache import TimedSingleCacheCallable, TimedSingleCacheMethod, 
 class TimedKeylessCacheCallable(TimedSingleCacheCallable):
     """A periodically clearing cache wrapper object for a function that only has one result.
 
-    Args:
-        func: The function to wrap.
-        typed: Determines if the function's arguments are type sensitive for caching.
-        lifetime: The period between cache resets in seconds.
-        call_method: The default call method to use.
-        local: Determines if the cache is local to each instance or all instances.
-        *args: Arguments for inheritance.
-        init: Determines if this object will construct.
-        **kwargs: Keyword arguments for inheritance.
+    Attributes:
+        args_key: The generated argument key of the current cached result.
     """
 
-    # Magic Methods #
-    # Construction/Destruction
-    def __init__(
-        self,
-        func: AnyCallable | None = None,
-        typed: bool | None = None,
-        lifetime: int | float | None = None,
-        call_method: str | None = None,
-        local: bool | None = None,
-        *args: Any,
-        init: bool = True,
-        **kwargs: Any,
-    ) -> None:
-        # Parent Attributes #
-        super().__init__(init=False)
-
-        # Override Attributes #
-        self.args_key: bool | None = None
-
-        # Object Construction #
-        if init:
-            self.construct(
-                func=func,
-                lifetime=lifetime,
-                typed=typed,
-                call_method=call_method,
-                local=local,
-                *args,
-                **kwargs,
-            )
+    # Attributes #
+    args_key: bool | None = None
 
     # Instance Methods #
     # Caching
@@ -83,7 +48,7 @@ class TimedKeylessCacheCallable(TimedSingleCacheCallable):
             The result of the wrapped function.
         """
         if not self.args_key:
-            self.cache_container = self.__func__(*args, **kwargs)
+            self.cache_container = self.__wrapped__(*args, **kwargs)
             self.args_key = True
 
         return self.cache_container
@@ -92,14 +57,13 @@ class TimedKeylessCacheCallable(TimedSingleCacheCallable):
 class TimedKeylessCacheMethod(TimedKeylessCacheCallable, TimedSingleCacheMethod):
     """A method class for TimedKeylessCache."""
 
-    default_call_method: str = "caching"
-
 
 class TimedKeylessCache(TimedKeylessCacheCallable, TimedSingleCache):
     """A function class for TimedKeylessCache."""
 
+    # Attributes #
     method_type: type[TimedSingleCacheMethod] = TimedKeylessCacheMethod
-    default_bind_method: str = "bind_to_attribute"
+    _bind_method: str = "bind_to_attribute"
 
 
 # Functions #

@@ -35,7 +35,8 @@ from .callablemultiplexer import MethodMultiplexer
 class singlekwargdispatchmethod(DynamicMethod):
     """A wrapper for a bound singlekwargsipatch."""
 
-    default_call_method: str = "dispatch_call"
+    # Attributes #
+    _call_method: str = "dispatch_call"
 
     # Calling
     def dispatch_call(self, *args: Any, **kwargs: Any) -> Any:
@@ -59,14 +60,11 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
     allows the first kwarg to be used for dispatching if no args are provided. Furthermore, a kwarg name can be
     specified to have the dispatcher use that kwarg instead of the first kwarg.
 
-    Class Attributes:
-        default_parse_method: The default method for parsing the args for the class to use for dispatching.
-
     Attributes:
-        dispatcher: The single dispatcher to use for this object.
-        func: The original method to wrap for single dispatching.
-        parse: The method for parsing the args for the class to use for dispatching.
         _kwarg: The name of the kwarg to use of parsing the args for the class to use for dispatching.
+        _parse_method: The default method for parsing the args for the class to use for dispatching.
+        parse: The method for parsing the args for the class to use for dispatching.
+        dispatcher: The single dispatcher to use for this object.
 
     Args:
         kwarg: Either the name of kwarg to dispatch with or the method to wrap.
@@ -76,35 +74,16 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         **kwargs: Keyword arguments for inheritance.
     """
 
-    default_bind_method: str = "bind_method_dispatcher"
+    # Attributes #
     method_type: type[DynamicMethod] = singlekwargdispatchmethod
-    default_parse_method: str = "parse_first"
+    _bind_method: str = "bind_method_dispatcher"
 
-    # Magic Methods #
-    # Construction/Destruction
-    def __init__(
-        self,
-        kwarg: AnyCallable | str | None = None,
-        func: AnyCallable | None = None,
-        *args: Any,
-        init: bool = True,
-        **kwargs: Any,
-    ) -> None:
-        # New Attributes #
-        self.dispatcher: singledispatch | None = None
-        self.parse: MethodMultiplexer = MethodMultiplexer(instance=self, select=self.default_parse_method)
-        self._kwarg: str | None = None
+    _kwarg: str | None = None
+    _parse_method: str = "parse_first"
+    parse: MethodMultiplexer
+    dispatcher: AnyCallable | None = None
 
-        # Parent Attributes #
-        super().__init__(*args, init=False, **kwargs)
-
-        # Object Creation #
-        if init:
-            if isinstance(kwarg, str):
-                self.construct(kwarg=kwarg, func=func)
-            else:
-                self.construct(func=kwarg)
-
+    # Properties #
     @property
     def kwarg(self) -> str | None:
         """The name of the kwarg to get the class for the dispatching."""
@@ -114,6 +93,30 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
     def kwarg(self, value: str | None) -> None:
         self.set_kwarg(kwarg=value)
 
+    # Magic Methods #
+    # Construction/Destruction
+    def __init__(
+        self,
+        kwarg: AnyCallable | str | None = None,
+        func: AnyCallable | None = None,
+        *args: Any,
+        wrapper_method: str | None = None,
+        init: bool = True,
+        **kwargs: Any,
+    ) -> None:
+        # New Attributes #
+        self.parse: MethodMultiplexer = MethodMultiplexer(instance=self, select=self._parse_method)
+
+        # Parent Attributes #
+        super().__init__(*args, init=False, **kwargs)
+
+        # Object Creation #
+        if init:
+            if isinstance(kwarg, str):
+                self.construct(kwarg=kwarg, func=func, wrapper_method=wrapper_method)
+            else:
+                self.construct(func=kwarg, wrapper_method=wrapper_method)
+
     # Pickling
     def __getstate__(self) -> dict[str, Any]:
         """Creates a dictionary of attributes which can be used to rebuild this object
@@ -121,7 +124,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         Returns:
             A dictionary of this object's attributes.
         """
-        state = self.__dict__.copy()
+        state = super().__getstate__()
         state["parse"] = (self.parse.register, self.parse.selected)
         return state
 
@@ -137,13 +140,20 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
 
     # Instance Methods #
     # Constructors
-    def construct(self, kwarg: str | None = None, func: AnyCallable | None = None, *args: Any, **kwargs: Any) -> None:
-        """Constructs this object based on the input.
+    def construct(
+        self,
+        kwarg: AnyCallable | str | None = None,
+        func: AnyCallable | None = None,
+        *args: Any,
+        wrapper_method: str | None = None,
+        **kwargs: Any,
+    ) -> None:
+        """The constructor for this object.
 
         Args:
-            kwarg: The name of kwarg to dispatch with.
             func: The function to wrap.
             *args: Arguments for inheritance.
+            wrapper_method: The name of the method which will act as the wrapper for this decorator.
             **kwargs: Keyword arguments for inheritance.
         """
         if kwarg is not None:
@@ -212,7 +222,10 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         Returns:
             A function which dispatches the correct bound method.
         """
-        if isinstance(self._func_, classmethod):
+        if instance is None:
+            return self
+
+        if isinstance(self.__wrapped__, classmethod):
             def dispatch_function(self_, *args, **kwargs):
                 method = self.dispatcher.dispatch(self.parse(*args, **kwargs))
                 return method.__get__(None, self_)(*args, **kwargs)
@@ -221,10 +234,10 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
                 method = self.dispatcher.dispatch(self.parse(*args, **kwargs))
                 return method.__get__(self_)(*args, **kwargs)
 
-        dispatch_function.__isabstractmethod__ = getattr(self._func_, '__isabstractmethod__', False)
+        dispatch_function.__isabstractmethod__ = getattr(self.__wrapped__, '__isabstractmethod__', False)
         dispatch_function.register = self.register
-        update_wrapper(dispatch_function, self._func_)
-        if isinstance(self._func_, classmethod):
+        update_wrapper(dispatch_function, self.__wrapped__)
+        if isinstance(self.__wrapped__, classmethod):
             dispatch_function = classmethod(dispatch_function)
         return dispatch_function.__get__(instance, owner)
 

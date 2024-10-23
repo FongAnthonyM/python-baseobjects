@@ -212,7 +212,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             kwargs: The keyword arguments of the method to evaluate.
 
         Returns:
-            The wrapped object.
+            The return of the wrapped object's method.
         """
         return getattr(getattr(obj, wrap_name), method_name)(*args, **kwargs)
 
@@ -322,7 +322,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
 
         def func_(obj, *args, **kwargs):
             """Evaluates the wrapped object's method."""
-            return cls._get_method(obj, store_name, attr_name, args, kwargs)
+            return cls._evaluate_method(obj, store_name, attr_name, args, kwargs)
 
         return func_
 

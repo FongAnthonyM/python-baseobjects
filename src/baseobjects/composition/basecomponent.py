@@ -14,7 +14,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from typing import Any
-import weakref
+from weakref import ref
 
 # Third-Party Packages #
 
@@ -37,24 +37,10 @@ class BaseComponent(BaseObject):
         **kwargs: Keyword arguments for inheritance.
     """
 
-    # Magic Methods #
-    # Construction/Destruction
-    def __init__(
-        self,
-        composite: Any = None,
-        init: bool = True,
-        **kwargs: Any,
-    ) -> None:
-        # New Attributes #
-        self._composite: BaseComposite | None = None
+    # Attributes #
+    _composite: ref[BaseComposite] | None = None
 
-        # Parent Attributes #
-        super().__init__(init=False)
-
-        # Object Construction #
-        if init:
-            self.construct(composite=composite, **kwargs)
-
+    # Properties #
     @property
     def composite(self) -> Any:
         """The composite object which this object is a component of."""
@@ -65,7 +51,22 @@ class BaseComponent(BaseObject):
 
     @composite.setter
     def composite(self, value: Any) -> None:
-        self._composite = None if value is None else weakref.ref(value)
+        self._composite = None if value is None else ref(value)
+
+    # Magic Methods #
+    # Construction/Destruction
+    def __init__(
+        self,
+        composite: Any = None,
+        init: bool = True,
+        **kwargs: Any,
+    ) -> None:
+        # Parent Attributes #
+        super().__init__(init=False)
+
+        # Object Construction #
+        if init:
+            self.construct(composite=composite, **kwargs)
 
     # Pickling
     def __getstate__(self) -> dict[str, Any]:
@@ -74,7 +75,7 @@ class BaseComponent(BaseObject):
         Returns:
             dict: A dictionary of this object's attributes.
         """
-        state = self.__dict__.copy()
+        state = super().__getstate__()
         state["_composite"] = None
         return state
 

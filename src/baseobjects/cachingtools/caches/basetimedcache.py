@@ -69,7 +69,10 @@ class CacheItem(BaseObject):
         priority_link: The object that represents this item's priority.
     """
 
-    __slots__: str | Iterable[str] = ("key", "result", "priority_link")
+    # Attributes #
+    priority_link: Hashable | None
+    key: Hashable | None
+    result: Any | None
 
     # Magic Methods #
     # Construction/Destruction
@@ -94,9 +97,6 @@ class CacheItem(BaseObject):
 class BaseTimedCacheCallable(DynamicCallable):
     """A base cache wrapper object for a function which resets its cache periodically.
 
-    Class Attributes:
-        cache_item_type = The class that will create the cache items.
-
     Attributes:
         _is_local: Determines if the cache is local to each instance or all instances.
 
@@ -105,6 +105,7 @@ class BaseTimedCacheCallable(DynamicCallable):
         lifetime: The period between cache resets in seconds.
         expiration: The next time the cache will be rest.
 
+        cache_item_type = The class that will create the cache items.
         cache_container: Contains the results of the wrapped function.
         _cache_method: The name of the caching method.
         _previous_cache_method: The previous caching method used.
@@ -121,51 +122,22 @@ class BaseTimedCacheCallable(DynamicCallable):
         **kwargs: Keyword arguments for inheritance.
     """
 
-    default_call_method: str = "caching_call"
-    default_cache_method: str = "no_cah"
+    # Attributes #
+    _is_local: bool = False
+
+    typed: bool = False
+    is_timed: bool = True
+    lifetime: int | float | None = None
+    expiration: int | float | None = 0
+
     cache_item_type = CacheItem
+    cache_container: Any = None
+    _call_method: str = "caching_call"
+    _cache_method: str = "no_cache"
+    _previous_cache_method: str = "no_cache"
+    cache: MethodMultiplexer
 
-    # Magic Methods #
-    # Construction/Destruction
-    def __init__(
-        self,
-        func: AnyCallable | None = None,
-        typed: bool | None = None,
-        lifetime: int | float | None = None,
-        call_method: str | None = None,
-        local: bool | None = None,
-        *args: Any,
-        init: bool = True,
-        **kwargs: Any,
-    ) -> None:
-        # New Attributes #
-        self._is_local: bool = False
-
-        self.typed: bool = False
-        self.is_timed: bool = True
-        self.lifetime: int | float | None = None
-        self.expiration: int | float | None = 0
-
-        self.cache_container: Any = None
-        self._cache_method: str | None = self.default_cache_method
-        self._previous_cache_method: str = self.cache_method
-        self.cache: MethodMultiplexer = MethodMultiplexer(instance=self, select=self.cache_method)
-
-        # Parent Attributes #
-        super().__init__(*args, init=False, **kwargs)
-
-        # Object Construction #
-        if init:
-            self.construct(
-                func=func,
-                lifetime=lifetime,
-                typed=typed,
-                call_method=call_method,
-                local=local,
-                *args,
-                **kwargs,
-            )
-
+    # Properties #
     @property
     def is_local(self) -> bool:
         """Determines if the cache is local for all method bindings or for each instance."""
@@ -184,6 +156,38 @@ class BaseTimedCacheCallable(DynamicCallable):
     def cache_method(self, value: str) -> None:
         self.cache.select(value)
         self._cache_method = value
+
+    # Magic Methods #
+    # Construction/Destruction
+    def __init__(
+        self,
+        func: AnyCallable | None = None,
+        typed: bool | None = None,
+        lifetime: int | float | None = None,
+        call_method: str | None = None,
+        local: bool | None = None,
+        *args: Any,
+        init: bool = True,
+        **kwargs: Any,
+    ) -> None:
+        # New Attributes #
+        self._previous_cache_method: str = self.cache_method
+        self.cache: MethodMultiplexer = MethodMultiplexer(instance=self, select=self.cache_method)
+
+        # Parent Attributes #
+        super().__init__(*args, init=False, **kwargs)
+
+        # Object Construction #
+        if init:
+            self.construct(
+                func=func,
+                lifetime=lifetime,
+                typed=typed,
+                call_method=call_method,
+                local=local,
+                *args,
+                **kwargs,
+            )
 
     # Instance Methods #
     # Constructors
@@ -342,6 +346,7 @@ class BaseTimedCacheCallable(DynamicCallable):
 class BaseTimedCacheMethod(BaseTimedCacheCallable, DynamicMethod):
     """An abstract method class for timed caches."""
 
+    # Properties #
     @property
     def is_local(self) -> bool:
         """Determines if the cache is local for all method bindings or for each instance.
@@ -398,11 +403,10 @@ class BaseTimedCacheMethod(BaseTimedCacheCallable, DynamicMethod):
 class BaseTimedCache(BaseTimedCacheCallable, DynamicFunction):
     """An abstract function class for timed caches."""
 
+    # Attributes #
     method_type: type[DynamicMethod] = BaseTimedCacheMethod
-    default_bind_method: str = "bind"
 
-    # Magic Methods #
-    # Construction/Destruction
+    # Properties #
     @property
     def is_local(self) -> bool:
         """Determines if the cache is local for all method bindings or for each instance.

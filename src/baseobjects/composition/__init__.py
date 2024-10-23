@@ -15,3 +15,5 @@ __email__ = __email__
 # Local Packages #
 from .basecomposite import BaseComposite
 from .basecomponent import BaseComponent
+from .basedispatchingcomposite import BaseDispatchingComposite
+from .dispatchablecomposite import DispatchableComposite

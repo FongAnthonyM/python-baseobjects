@@ -14,6 +14,7 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from typing import Any
+from types import FunctionType, MethodType
 
 # Third-Party Packages #
 
@@ -39,7 +40,21 @@ class DynamicCallable(BaseCallable):
         **kwargs: Keyword arguments for inheritance.
     """
 
-    default_call_method: str | None = None
+    # Attributes #
+    _cast_excluded: set = BaseCallable._cast_excluded | {"call_multiplexer"}
+    _call_method: str = "call"
+    call_multiplexer: MethodMultiplexer
+
+    # Properties #
+    @property
+    def call_method(self) -> str | None:
+        """The name of the method used when this object is called."""
+        return self._call_method
+
+    @call_method.setter
+    def call_method(self, value: str) -> None:
+        self.call_multiplexer.select(value)
+        self._call_method = value
 
     # Magic Methods #
     # Construction/Destruction
@@ -51,8 +66,7 @@ class DynamicCallable(BaseCallable):
         **kwargs: Any,
     ) -> None:
         # New Attributes #
-        self._call_method: str = self.default_call_method
-        self.call_multiplexer: MethodMultiplexer = MethodMultiplexer(instance=self, select=self.call_method)
+        self.call_multiplexer: MethodMultiplexer = MethodMultiplexer(instance=self, select=self._call_method)
 
         # Parent Attributes #
         super().__init__(*args, init=False, **kwargs)
@@ -61,16 +75,6 @@ class DynamicCallable(BaseCallable):
         if init:
             self.construct(func=func, *args, **kwargs)
 
-    @property
-    def call_method(self) -> str | None:
-        """The name of the method used when this object is called."""
-        return self._call_method
-
-    @call_method.setter
-    def call_method(self, value: str) -> None:
-        self.call_multiplexer.select(value)
-        self._call_method = value
-
     # Pickling
     def __getstate__(self) -> dict[str, Any]:
         """Creates a dictionary of attributes which can be used to rebuild this object
@@ -78,7 +82,7 @@ class DynamicCallable(BaseCallable):
         Returns:
             A dictionary of this object's attributes.
         """
-        state = self.__dict__.copy()
+        state = super().__getstate__()
         state["call_multiplexer"] = (self.call_multiplexer.register, self.call_multiplexer.selected)
         return state
 
@@ -89,8 +93,8 @@ class DynamicCallable(BaseCallable):
             state: The attributes to build this object from.
         """
         self.__dict__.update(state)
-        s, r = state["call_multiplexer"]
-        self.call_multiplexer = MethodMultiplexer(instance=self, select=s, register=r)
+        register, selected = state["call_multiplexer"]
+        self.call_multiplexer = MethodMultiplexer(register, instance=self, select=selected)
 
     # Calling
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
@@ -117,13 +121,14 @@ class DynamicCallable(BaseCallable):
         Returns:
             The output of the wrapped function.
         """
-        return self.__func__(*args, **kwargs)
+        return self.__wrapped__(*args, **kwargs)
 
 
 class DynamicMethod(DynamicCallable, BaseMethod):
     """An abstract method class that has multiplexed callback."""
 
-    default_call_method: str | None = "call"
+    # Attributes #
+    _call_method: str = "call"
 
     # Instance Methods #
     # Calling
@@ -137,7 +142,7 @@ class DynamicMethod(DynamicCallable, BaseMethod):
         Returns:
             The output of the wrapped function.
         """
-        return self._func_.__get__(self._self_(), self.__owner__)(*args, **kwargs)
+        return self.__wrapped__(self._self_(), *args, **kwargs)
 
 
 class DynamicFunction(DynamicCallable, BaseFunction):
@@ -154,8 +159,23 @@ class DynamicFunction(DynamicCallable, BaseFunction):
         **kwargs: Keyword arguments for inheritance.
     """
 
+    # Attributes #
+    _cast_excluded: set = DynamicCallable._cast_excluded | {"bind_multiplexer"}
     method_type: type[BaseMethod] = DynamicMethod
-    default_bind_method: str | None = "bind"
+
+    _bind_method: str = "bind"
+    bind_multiplexer: MethodMultiplexer
+
+    # Properties #
+    @property
+    def bind_method(self) -> str | None:
+        """The name of the method used when binding this object."""
+        return self._bind_method
+
+    @bind_method.setter
+    def bind_method(self, value: str) -> None:
+        self.bind_multiplexer.select(value)
+        self._bind_method = value
 
     # Magic Methods #
     # Construction/Destruction
@@ -167,8 +187,7 @@ class DynamicFunction(DynamicCallable, BaseFunction):
         **kwargs: Any,
     ) -> None:
         # New Attributes #
-        self._bind_method: str = self.default_bind_method
-        self.bind_multiplexer: CallableMultiplexer = CallableMultiplexer(instance=self, select=self.bind_method)
+        self.bind_multiplexer = MethodMultiplexer(instance=self, select=self._bind_method)
 
         # Parent Attributes #
         super().__init__(*args, init=False, **kwargs)
@@ -176,16 +195,6 @@ class DynamicFunction(DynamicCallable, BaseFunction):
         # Object Construction #
         if init:
             self.construct(func=func, *args, **kwargs)
-
-    @property
-    def bind_method(self) -> str | None:
-        """The name of the method used when binding this object."""
-        return self._bind_method
-
-    @bind_method.setter
-    def bind_method(self, value: str) -> None:
-        self.bind_multiplexer.select(value)
-        self._bind_method = value
 
     # Pickling
     def __getstate__(self) -> dict[str, Any]:
@@ -205,8 +214,8 @@ class DynamicFunction(DynamicCallable, BaseFunction):
             state: The attributes to build this object from.
         """
         super().__setstate__(state)
-        s, r = state["bind_multiplexer"]
-        self.bind_multiplexer = CallableMultiplexer(instance=self, select=s, register=r)
+        register, selected = state["bind_multiplexer"]
+        self.bind_multiplexer = MethodMultiplexer(register, instance=self, select=selected)
 
     # Descriptor
     def __get__(self, *args: Any, **kwargs: Any) -> Any:
@@ -220,3 +229,17 @@ class DynamicFunction(DynamicCallable, BaseFunction):
             The output of the wrapped function.
         """
         return self.bind_multiplexer(*args, **kwargs)
+
+    # Instance Methods #
+    # Binding
+    def bind_builtin_bypass(self, instance: Any = None, owner: type[Any] | None = None) -> BaseCallable | MethodType:
+        """Creates a method of the selected function which is bound to another object using the builtin method.
+
+        Args:
+            instance: The object to bind the method to.
+            owner: The class of the object being bound to.
+
+        Returns:
+            The bound method of this function.
+        """
+        return self if instance is None else MethodType(self.__wrapped__, instance)

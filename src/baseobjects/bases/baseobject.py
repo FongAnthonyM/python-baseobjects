@@ -32,10 +32,6 @@ from typing import Any
 
 
 # Definitions #
-# Names #
-search_sentinel = object()
-
-
 # Classes #
 class BaseObject(ABC):
     """An abstract class that implements some basic functions that all objects should have."""
@@ -131,6 +127,23 @@ class BaseObject(ABC):
             _keep_alive(self, memo)  # Make sure x lives at least as long as d
 
         return y
+
+    # Pickling
+    def __getstate__(self) -> dict[str, Any]:
+        """Creates a dictionary of attributes which can be used to rebuild this object
+
+        Returns:
+            A dictionary of this object's attributes.
+        """
+        return self.__dict__.copy()
+
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        """Builds this object based on a dictionary of corresponding attributes.
+
+        Args:
+            state: The attributes to build this object from.
+        """
+        self.__dict__.update(state)
 
     # Instance Methods #
     # Constructors/Destructors

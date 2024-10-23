@@ -47,8 +47,11 @@ class TriNumberVersion(Version):
         init: Determines if this object will construct.
     """
 
+    # Attributes #
     default_version_name: str = "TriNumber"
-    __slots__ = ["major", "minor", "patch"]
+    major: int = 0
+    minor: int = 0
+    patch: int = 0
 
     # Magic Methods
     # Construction/Destruction
@@ -63,11 +66,6 @@ class TriNumberVersion(Version):
     ) -> None:
         # Parent Attributes #
         super().__init__(init=False)
-
-        # New Attributes #
-        self.major: int = 0
-        self.minor: int = 0
-        self.patch: int = 0
 
         # Object Construction #
         if init:

@@ -14,13 +14,14 @@ __email__ = __email__
 # Imports #
 # Standard Libraries #
 from asyncio import iscoroutinefunction
-from typing import Any, NamedTuple
+from typing import Any, NamedTuple, ClassVar
+from types import MethodType
 from warnings import warn
 
 # Third-Party Packages #
 
 # Local Packages #
-from ..typing import AnyCallable
+from ..typing import AnyCallable, GetObjectMethod
 from ..bases import BaseObject, BaseCallable, BaseMethod
 from .functionregister import FunctionRegister
 
@@ -38,6 +39,9 @@ class CallableMultiplexer(BaseMethod):
     Attributes:
         register: The function register to use for selecting a function/method.
         _selected: The name of the function/method to select for use.
+        is_binding: Determines if this callable will bind the selected function to a different object.
+        is_self_bound: Determines if this callable will bind the selected function to the contained object, self.
+        is_coroutine: Checks if this callable is a coroutine.
 
     Args:
         register: The function register to use for selecting a function/method.
@@ -49,6 +53,23 @@ class CallableMultiplexer(BaseMethod):
         init: Determines if this object will construct.
         **kwargs: Keyword arguments for inheritance.
     """
+
+    # Attributes #
+    register: FunctionRegister | None = None
+    _selected: str | None = None
+
+    is_binding: bool = False
+    is_self_bound: bool = False
+
+    # Properties #
+    @property
+    def selected(self) -> str | None:
+        """The name of the selected function/method."""
+        return self._selected
+
+    @selected.setter
+    def selected(self, value: str) -> None:
+        self.select(value)
 
     # Magic Methods #
     # Construction/Destruction
@@ -63,14 +84,6 @@ class CallableMultiplexer(BaseMethod):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        # New Attributes #
-        self.register: FunctionRegister | None = None
-        self._selected: str | None = None
-
-        self.is_binding: bool = False
-        self.is_self_bound: bool = False
-        self.is_coroutine: bool = False
-
         # Parent Attributes #
         super().__init__(*args, init=False, **kwargs)
 
@@ -86,20 +99,12 @@ class CallableMultiplexer(BaseMethod):
                 **kwargs,
             )
 
-    @property
-    def selected(self) -> str | None:
-        """The name of the selected function/method."""
-        return self._selected
-
-    @selected.setter
-    def selected(self, value: str) -> None:
-        self.select(value)
-
     # Pickling
     def __getstate__(self) -> dict[str, Any]:
-        state = self.__dict__.copy()
+        state = super().__getstate__()
         del state["_self_"]
         warn("CallableMultiplexer Weak reference deleted for pickle, may not work as intended.")
+        return state
 
     # Calling
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
@@ -113,9 +118,9 @@ class CallableMultiplexer(BaseMethod):
             The output of the wrapped function.
         """
         if self.is_self_bound or self.is_binding:
-            return self._func_.__get__(self._self_(), self.__owner__)(*args, **kwargs)
+            return self.__wrapped__.__get__(self._self_(), self.__owner__)(*args, **kwargs)
         else:
-            return self._func_(*args, **kwargs)
+            return self.__wrapped__(*args, **kwargs)
 
     # Instance Methods #
     # Constructors/Destructors
@@ -176,20 +181,33 @@ class CallableMultiplexer(BaseMethod):
         """
         self.register[name] = getattr(method, "__func__")
 
+    def bind_builtin_bypass(self, instance: Any = None, owner: type[Any] | None = None) -> BaseCallable | MethodType:
+        """Creates a method of the selected function which is bound to another object using the builtin method.
+
+        Args:
+            instance: The object to bind the method to.
+            owner: The class of the object being bound to.
+
+        Returns:
+            The bound method of this function.
+        """
+        return self if instance is None else MethodType(self.__wrapped__, instance)
+
     # Callable Selection
-    def select(self, name: str) -> None:
+    def select(self, name: str | None) -> None:
         """Selects a function/method to use within the register or the wrapped object.
 
         Args:
             name: The name of function/method in the register or object to use.
         """
-        if (func := self.register.get(name, None)) is not None:
+        if name is None:
+            func = None
+        elif (func := self.register.get(name, None)) is not None:
             self.is_self_bound = False
         elif self._self_() is not None:
             func = getattr(self._self_(), name)
             self.is_self_bound = True
         self.__func__ = func
-        self.is_coroutine = iscoroutinefunction(func)
         self._selected = name
 
     def add_select_function(self, name: str, func: BaseCallable) -> None:
@@ -200,7 +218,6 @@ class CallableMultiplexer(BaseMethod):
             func: The function to add to the register.
         """
         self.register[name] = self.__func__ = func
-        self.is_coroutine = iscoroutinefunction(func)
         self._selected = name
 
     def add_select_method(self, name: str, method: BaseCallable) -> None:
@@ -211,7 +228,6 @@ class CallableMultiplexer(BaseMethod):
             method: The method to add to the register.
         """
         self.register[name] = self.__func__ = getattr(method, "__func__")
-        self.is_coroutine = iscoroutinefunction(method)
         self._selected = name
 
 
@@ -236,7 +252,7 @@ class MethodMultiplexer(CallableMultiplexer):
         Returns:
             The output of the wrapped function.
         """
-        return self._func_.__get__(self._self_(), self.__owner__)(*args, **kwargs)
+        return self.__wrapped__.__get__(self._self_(), self.__owner__)(*args, **kwargs)
 
 
 class CallableMultiplexItem(NamedTuple):
@@ -250,7 +266,8 @@ class CallableMultiplexItem(NamedTuple):
 class CallableMultiplexObject(BaseObject):
     """An object which can be subclassed to allow MethodMultiplexer to be pickled."""
 
-    _callable_multiplexers: dict[str, type[CallableMultiplexer]] = {
+    # Class Attributes #
+    _callable_multiplexers: ClassVar[dict[str, type[CallableMultiplexer]]] = {
         CallableMultiplexer.__name__: CallableMultiplexer,
         MethodMultiplexer.__name__: MethodMultiplexer,
     }
@@ -264,7 +281,7 @@ class CallableMultiplexObject(BaseObject):
             A dictionary of this object's attributes.
         """
         state = {}
-        for k, i in self.__dict__.items():
+        for k, i in super().__getstate__().items():
             if isinstance(i, CallableMultiplexer):
                 state[k] = CallableMultiplexItem(i.register, i.selected, i.__class__.__name__)
             else:
@@ -278,7 +295,7 @@ class CallableMultiplexObject(BaseObject):
         Args:
             state: The attributes to build this object from.
         """
-        self.__dict__.update(state)
+        super().__setstate__(state)
         for k, i in state.items():
             if isinstance(i, CallableMultiplexItem):
                 self.__dict__[k] = self._callable_multiplexers[i.type](

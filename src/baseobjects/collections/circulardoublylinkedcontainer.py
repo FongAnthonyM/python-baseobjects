@@ -42,32 +42,13 @@ class LinkedNode(BaseObject):
         next_: The next node.
     """
 
-    __slots__: str | Iterable[str] = ("_previous", "_next", "data")
+    # Attributes #
+    _previous: weakref.ReferenceType
+    _next: weakref.ReferenceType
 
-    # Magic Methods #
-    # Construction/Destruction
-    def __init__(
-        self,
-        data: Any | None = None,
-        previous: Optional["LinkedNode"] = None,
-        next_: Optional["LinkedNode"] = None,
-        *args: Any,
-        init: bool = True,
-        **kwargs: Any,
-    ) -> None:
-        # New Attributes #
-        self._previous: weakref.ReferenceType = weakref.ref(self)
-        self._next: weakref.ReferenceType = weakref.ref(self)
+    data: Any | None = None
 
-        self.data: Any | None = None
-
-        # Parent Attributes #
-        super().__init__(*args, init=False, **kwargs)
-
-        # Object Construction #
-        if init:
-            self.construct(data=data, previous=previous, next_=next_)
-
+    # Properties #
     @property
     def previous(self) -> Any:
         """The previous node."""
@@ -91,6 +72,28 @@ class LinkedNode(BaseObject):
     @next.setter
     def next(self, value: Any) -> None:
         self._next = None if value is None else weakref.ref(value)
+
+    # Magic Methods #
+    # Construction/Destruction
+    def __init__(
+        self,
+        data: Any | None = None,
+        previous: Optional["LinkedNode"] = None,
+        next_: Optional["LinkedNode"] = None,
+        *args: Any,
+        init: bool = True,
+        **kwargs: Any,
+    ) -> None:
+        # New Attributes #
+        self._previous: weakref.ReferenceType = weakref.ref(self)
+        self._next: weakref.ReferenceType = weakref.ref(self)
+
+        # Parent Attributes #
+        super().__init__(*args, init=False, **kwargs)
+
+        # Object Construction #
+        if init:
+            self.construct(data=data, previous=previous, next_=next_)
 
     # Instance Methods #
     # Constructors
@@ -128,18 +131,11 @@ class CircularDoublyLinkedContainer(BaseObject):
         nodes: The set of nodes in this container.
     """
 
-    __slots__: str | Iterable[str] = ("first_node", "nodes")
+    # Attributes #
+    first_node: LinkedNode | None = None
+    nodes: set[LinkedNode] = set()
 
-    # Magic Methods #
-    # Construction/Destruction
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        # Parent Attributes #
-        super().__init__(*args, **kwargs)
-
-        # Attributes #
-        self.first_node: LinkedNode | None = None
-        self.nodes: set[LinkedNode] = set()
-
+    # Properties #
     @property
     def is_empty(self) -> bool:
         """Determines if this container is empty."""
@@ -149,6 +145,15 @@ class CircularDoublyLinkedContainer(BaseObject):
     def last_node(self) -> LinkedNode:
         """The last node in this container."""
         return self.first_node.previous
+
+    # Magic Methods #
+    # Construction/Destruction
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        # Parent Attributes #
+        super().__init__(*args, **kwargs)
+
+        # Attributes #
+        self.nodes: set[LinkedNode] = set()
 
     def __deepcopy__(self, memo: dict | None = None, _nil=[]) -> "CircularDoublyLinkedContainer":
         """Creates a deep copy of this object.

@@ -80,13 +80,18 @@ class StatsMicro(Stats):
         print(func_std_string(func), file=self.stream)
 
 
-class ClassPerformanceTest(abc.ABC):
-    """Default class tests that all classes should pass."""
+class PerformanceTest(abc.ABC):
+    """Default tests that all classes should pass."""
 
-    class_ = None
     timeit_runs = 100000
     speed_tolerance = 200
     call_speed = timeit.timeit(lambda: None, number=10000000) / 10000000 * 1000000
+
+
+class ClassPerformanceTest(PerformanceTest):
+    """Default class tests that all classes should pass."""
+
+    class_ = None
 
     def test_instance_creation(self):
         pass

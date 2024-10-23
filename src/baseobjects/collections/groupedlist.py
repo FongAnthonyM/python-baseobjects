@@ -40,6 +40,11 @@ class GroupedList(BaseList):
         init: Determines if this object will construct.
     """
 
+    # Attributes #
+    # New Attributes #
+    parents: set["GroupedList"]
+    groups: bidict.bidict
+
     # Magic Methods #
     # Construction/Destruction
     def __init__(
@@ -50,9 +55,8 @@ class GroupedList(BaseList):
         init: bool = True,
     ) -> None:
         # New Attributes #
-        self.parents: set[GroupedList] = set()
-
-        self.groups: bidict.bidict = bidict.bidict()
+        self.parents = set()
+        self.groups = bidict.bidict()
 
         # Parent Attributes #
         super().__init__()

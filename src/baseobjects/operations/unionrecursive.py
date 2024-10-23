@@ -1,5 +1,5 @@
 """unionrecursive.py
-Unions a mapping object and its contained mappings with another mapping.
+Unions a mapping object and its contained mappings within another mapping.
 """
 # Package Header #
 from ..header import *
@@ -24,12 +24,12 @@ from .updaterecursive import update_recursive
 
 
 # Definitions #
-# Fuctions #
+# Functions #
 def union_recursive(d: Mapping, other: Mapping) -> Mapping:
-    """Unions a mapping object and its contained mappings withon another mapping.
+    """Unions a mapping object and its contained mappings within another mapping.
 
     Args:
-        d: The mapping type to union revursively.
+        d: The mapping type to union recursively.
         other: The other mapping to union with.
 
     Returns:

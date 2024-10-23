@@ -24,7 +24,7 @@ from typing import Any, Generator, Iterable
 
 
 # Definitions #
-# Classes #
+# Functions #
 def parentheses_iter(string: str) -> Generator[tuple[str, bool], None, None]:
     opens = re.finditer("\(", string)
     closes = re.finditer("\)", string)

@@ -22,9 +22,11 @@ from functools import singledispatch
 
 
 # Definitions #
+# Constants #
 FILETIME_INIT_DATE = datetime(1601, 1, 1, tzinfo=timezone.utc)  # The initial date of Filetime.
 
 
+# Functions #
 @singledispatch
 def filetime_to_datetime(timestamp: int | float | str | bytes, tzinfo: tzinfo | None = timezone.utc) -> datetime:
     """Converts a filetime to a datetime object.
