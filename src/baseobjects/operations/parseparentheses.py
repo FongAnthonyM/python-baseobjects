@@ -85,17 +85,29 @@ def decode_str_parentheses(string: str, iter_: Iterable, start: int = 0) -> tupl
 def decode_bytes_parentheses(iter_: Iterable) -> tuple[deque, bool]:
     items = deque()
     b_item = b""
+    in_string = False
+    string_type = None
+    ignore_string = 0
+    ignore_number = 1
     ignore = False
-    temp = None
 
     for b_as_i in iter_:
-        if b_as_i in {34, 39}:
-            if not ignore:
+        if b_as_i in {34, 39} and ignore_string < ignore_number:
+            if not in_string:
+                in_string = True
                 ignore = True
-                temp = b_as_i
-            elif b_as_i == temp:
+                string_type = b_as_i
+            elif b_as_i == string_type:
+                in_string = False
                 ignore = False
-                temp = None
+                string_type = None
+                ignore_string = 0
+                
+        if in_string: 
+            if b_as_i in {92} and ignore_string < ignore_number:
+                ignore_string += 1
+            else:
+                ignore_string = 0
 
         if not ignore and b_as_i == 40:
             if b_item:
