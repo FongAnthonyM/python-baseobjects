@@ -69,4 +69,5 @@ class SentinelObject:
 
 
 # Names #
+DEFAULTSENTINEL = SentinelObject("DefaultSentinel")
 search_sentinel = SentinelObject("search_sentinel")
