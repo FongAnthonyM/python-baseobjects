@@ -15,5 +15,6 @@ __email__ = __email__
 # Local Packages #
 from .timeddict import TimedDict
 from .orderabledict import OrderableDict
+from .deepchainmap import DeepChainMap
 from .circulardoublylinkedcontainer import LinkedNode, CircularDoublyLinkedContainer
 from .groupedlist import GroupedList

@@ -353,7 +353,8 @@ class CallbackManager(BaseObject):
             task: The Task instance to be removed, unused but required.
             name: The name of the task to be removed.
         """
-        self.scheduler_tasks.pop(name)
+        if name in self.scheduler_tasks:
+            del self.scheduler_tasks[name]
 
     def schedule_evaluations(self) -> None:
         """Schedules the evaluation of the callback functions."""
@@ -377,7 +378,8 @@ class CallbackManager(BaseObject):
             task: The Task instance to be removed, unused but required.
             name: The name of the task to be removed.
         """
-        self.evaluator_tasks.pop(name)
+        if name in self.evaluator_tasks:
+            del self.evaluator_tasks[name]
 
     # Callback Evaluation
     def evaluate_callback(self, condition: Callable, callback: Callable) -> None:
@@ -461,7 +463,8 @@ class CallbackManager(BaseObject):
             task: The Task instance to be removed, unused but required.
             name: The name of the task to be removed.
         """
-        self.callback_tasks.pop(name)
+        if name in self.callback_tasks:
+            del self.callback_tasks[name]
 
     # Task Canceling
     def cancel_schedulers(self) -> None:
