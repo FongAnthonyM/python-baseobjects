@@ -1,5 +1,5 @@
 """ callbackmanager.py
-An object which manages and executes callback functions with conditions and evaluators.
+An object which manages and executes callback functions with conditions and callers.
 """
 # Package Header #
 from ..header import *
@@ -13,87 +13,189 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
-from asyncio import create_task, Task
-from collections.abc import Callable
-from collections import deque, ChainMap
+from asyncio import create_task, Task, gather, wait_for, shield
+from collections.abc import Callable, Iterable
+from collections import deque
 from functools import partial
-from typing import Any, NamedTuple
+from typing import ClassVar, Any, NamedTuple
 
 # Third-Party Packages #
 
 # Local Packages #
 from ..bases import BaseObject
+from ..functions import CallableMultiplexObject, MethodMultiplexer
 
 
 # Definitions #
 # Classes #
-class CallbackEntry(NamedTuple):
+class ConditionalCallbackEntry(NamedTuple):
     """An entry in a callback manager's registry."""
 
     callback: Callable
     condition: Callable
-    evaluator: Callable
+    caller: Callable
+
+
+class CallbackScheduler(CallableMultiplexObject):
+    # Class Methods #
+    default_schedule: ClassVar[str] = "schedule_callbacks"
+    default_schedule_async: ClassVar[str] = "schedule_singleton_async_callbacks_async"
+
+    # Attributes #
+    callback_map: list[tuple[Callable, deque], ...]
+
+    # Magic Methods #
+    # Construction/Destruction
+    def __init__(
+        self,
+        callback_map: Iterable[tuple[Callable, deque]] | None = None,
+        schedule: Callable | str | None = None,
+        schedule_async: Callable | str | None = None,
+        *args: Any,
+        init: bool = True,
+        **kwargs: Any,
+    ) -> None:
+        # Attributes #
+        self.callback_map = []
+
+        self.schedule = MethodMultiplexer(instance=self, select=self.default_schedule)
+        self.schedule_async = MethodMultiplexer(instance=self, select=self.default_schedule_async)
+
+        # Parent Attributes #
+        super().__init__()
+
+        # Construction #
+        if init:
+            self.construct(callback_map, schedule, schedule_async, *args, **kwargs)
+
+    # Instance Methods #
+    # Constructors/Destructors
+    def construct(
+        self,
+        callback_map: list[tuple[Callable, deque]] | None = None,
+        schedule: Callable | str | None = None,
+        schedule_async: Callable | str | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
+        """Constructs this object.
+
+        Args:
+            callback_map:
+            *args: Positional arguments which may be used for inheritance.
+            **kwargs: Keyword arguments which may be used for inheritance.
+        """
+        if callback_map is not None:
+            self.callback_map.extend(callback_map)
+
+        if isinstance(schedule, str):
+            self.schedule.select(schedule)
+        elif schedule is not None:
+            self.schedule.add_function(schedule.__name__, schedule)
+
+        if isinstance(schedule_async, str):
+            self.schedule_async.select(schedule_async)
+        elif schedule_async is not None:
+            self.schedule_async.add_function(schedule_async.__name__, schedule_async)
+
+        super().construct(*args, **kwargs)
+
+    # Scheduling
+    def add_schedule_function(self, name: str, func: Callable) -> None:
+        self.schedule.add_function(name, func)
+
+    def add_schedule_async_function(self, name: str, func: Callable) -> None:
+        self.schedule_async.add_function(name, func)
+
+    def schedule_callbacks(self) -> None:
+        """Schedules the evaluation of the callback functions."""
+        for callback, _ in self.callback_map:
+            callback()
+
+    def schedule_async_callbacks(self) -> None:
+        for callback_async, tasks in self.callback_map:
+            callback_task = create_task(callback_async())
+            callback_task.add_done_callback(tasks.remove)
+            tasks.append(callback_task)
+
+    async def schedule_async_callbacks_async(self) -> None:
+        """Asynchronously, schedules the evaluation of the callback functions."""
+        self.schedule_async_callbacks()
+
+    def schedule_singleton_async_callbacks(self) -> None:
+        for callback_async, tasks in self.callback_map:
+            if len(tasks) < 1:
+                callback_task = create_task(callback_async())
+                callback_task.add_done_callback(tasks.remove)
+                tasks.append(callback_task)
+
+    async def schedule_singleton_async_callbacks_async(self) -> None:
+        """Asynchronously, schedules the evaluation of the callback functions."""
+        self.schedule_singleton_async_callbacks()
 
 
 class CallbackManager(BaseObject):
-    """An object which manages and executes callback functions with conditions and evaluators.
+    """An object which manages and executes callback functions with conditions and callers.
 
     The CallbackManager class allows the registration, formatting, scheduling, and execution of synchronous and
-    asynchronous callback functions. It supports default conditions and evaluators to streamline callback
+    asynchronous callback functions. It supports default conditions and callers to streamline callback
     registration and ensures organized management of callback and task entries.
 
     Attributes:
         default_condition: The default condition to evaluate callbacks, set to "true_condition" by default.
-        default_evaluator: The default evaluator name for callbacks, set to "evaluate_callback" by default.
-        callbacks: A dictionary storing registered synchronous CallbackEntry objects.
-        callbacks_async: A dictionary storing registered asynchronous CallbackEntry objects.
+        default_caller: The default caller name for callbacks, set to "evaluate_callback" by default.
+        callbacks: A dictionary storing registered synchronous ConditionalCallbackEntry objects.
+        callbacks_async: A dictionary storing registered asynchronous ConditionalCallbackEntry objects.
         max_callback_tasks: The maximum number of callback tasks of each type allowed simultaneously.
         scheduler_tasks: A dictionary storing tasks related to scheduling operations.
-        evaluator_tasks: A dictionary storing tasks related to evaluator operations.
+        caller_tasks: A dictionary storing tasks related to caller operations.
         callback_tasks: A dictionary storing tasks related to callback executions.
-        tasks: A ChainMap combining scheduler, evaluator, and callback task dictionaries.
+        tasks: A ChainMap combining scheduler, caller, and callback task dictionaries.
 
     Args:
         callbacks: The CallbackEntries to add to the registry.
         callbacks_async: The async CallbackEntries to add to the registry.
         *args: Positional arguments which may be used for inheritance.
         default_condition: The default condition to use when registering callbacks.
-        default_evaluator: The default evaluator to use when registering callbacks.
+        default_caller: The default caller to use when registering callbacks.
         **kwargs: Keyword arguments which may be used for inheritance.
     """
     # Attributes #
     default_condition: str = "true_condition"
-    default_evaluator: str = "evaluate_callback"
+    default_caller: str = "call_conditional"
 
-    callbacks: dict[str, CallbackEntry]
-    callbacks_async: dict[str, CallbackEntry]
+    callbacks: dict[str, Callable]
+    callbacks_async: dict[str, Callable]
+    conditional_callbacks: dict[str, Callable]
+    conditional_callbacks_async: dict[str, Callable]
+
+    scheduler_type: type = CallbackScheduler
+    schedulers: dict[str, CallbackScheduler]
 
     max_callback_tasks: int = 1
-    scheduler_tasks: dict[str, Task]
-    evaluator_tasks: dict[str, Task]
-    callback_tasks: dict[str, Task]
-    tasks: ChainMap[str, Task]
+    tasks: dict[str, deque[Task]]
 
     # Magic Methods #
     # Construction/Destruction
     def __init__(
         self,
-        callbacks: dict[str, CallbackEntry] | None = None,
-        callbacks_async: dict[str, CallbackEntry] | None = None,
+        callbacks: dict[str, ConditionalCallbackEntry] | None = None,
+        callbacks_async: dict[str, ConditionalCallbackEntry] | None = None,
         *args: Any,
         default_condition: str | None = None,
-        default_evaluator: str | None = None,
+        default_caller: str | None = None,
         init: bool = True,
         **kwargs: Any,
     ) -> None:
         # Attributes #
         self.callbacks = {}
         self.callbacks_async = {}
+        self.conditional_callbacks = {}
+        self.conditional_callbacks_async = {}
 
-        self.scheduler_tasks = {}
-        self.evaluator_tasks = {}
-        self.callback_tasks = {}
-        self.tasks = ChainMap(self.scheduler_tasks, self.evaluator_tasks, self.callback_tasks)
+        self.schedulers = {}
+
+        self.tasks = {}
 
         # Parent Attributes #
         super().__init__()
@@ -105,7 +207,7 @@ class CallbackManager(BaseObject):
                 callbacks_async,
                 *args,
                 default_condition=default_condition,
-                default_evaluator=default_evaluator,
+                default_caller=default_caller,
                 **kwargs,
             )
 
@@ -118,7 +220,7 @@ class CallbackManager(BaseObject):
         """
         state = super().__getstate__()
 
-        for name in ("callbacks", "callbacks_async", "scheduler_tasks", "evaluator_tasks", "callback_tasks", "tasks"):
+        for name in ("callbacks", "callbacks_async", "scheduler_tasks", "caller_tasks", "callback_tasks", "tasks"):
             if name in state:
                 del state[name]
 
@@ -133,20 +235,17 @@ class CallbackManager(BaseObject):
         super().__setstate__(state)
         self.callbacks = {}
         self.callbacks_async = {}
-        self.scheduler_tasks = {}
-        self.evaluator_tasks = {}
-        self.callback_tasks = {}
-        self.tasks = ChainMap(self.scheduler_tasks, self.evaluator_tasks, self.callback_tasks)
+        self.tasks = {}
 
     # Instance Methods #
     # Constructors/Destructors
     def construct(
         self,
-        callbacks: dict[str, CallbackEntry] | None = None,
-        callbacks_async: dict[str, CallbackEntry] | None = None,
+        callbacks: dict[str, ConditionalCallbackEntry] | None = None,
+        callbacks_async: dict[str, ConditionalCallbackEntry] | None = None,
         *args: Any,
         default_condition: str | None = None,
-        default_evaluator: str | None = None,
+        default_caller: str | None = None,
         **kwargs: Any,
     ) -> None:
         """Constructs this object.
@@ -156,14 +255,14 @@ class CallbackManager(BaseObject):
             callbacks_async: The async CallbackEntries to add to the registry.
             *args: Positional arguments which may be used for inheritance.
             default_condition: The default condition to use when registering callbacks.
-            default_evaluator: The default evaluator to use when registering callbacks.
+            default_caller: The default caller to use when registering callbacks.
             **kwargs: Keyword arguments which may be used for inheritance.
         """
         if default_condition is not None:
             self.default_condition = default_condition
 
-        if default_evaluator is not None:
-            self.default_evaluator = default_evaluator
+        if default_caller is not None:
+            self.default_caller = default_caller
 
         if callbacks is not None:
             self.callbacks.update(callbacks)
@@ -173,28 +272,28 @@ class CallbackManager(BaseObject):
 
         super().construct(*args, **kwargs)
 
-    # Callback Registration
-    def format_callback(
+    # Callback Creation
+    def format_conditional_callback(
         self,
         callback: Callable,
         condition: Callable | str | None = None,
-        evaluator: Callable | str | None = None,
+        caller: Callable | str | None = None,
         *args: Any,
         callback_kwargs: dict[str, Any] | None = None,
         condition_kwargs: dict[str, Any] | None = None,
-        evaluator_kwargs: dict[str, Any] | None = None,
+        caller_kwargs: dict[str, Any] | None = None,
         **kwargs: Any,
-    ) -> CallbackEntry:
+    ) -> ConditionalCallbackEntry:
         """Formats a callback entry.
 
         Args:
             callback: The callback function.
             condition: The condition function or name.
-            evaluator: The evaluator function or name.
+            caller: The caller function or name.
             *args: Positional arguments which may be used for inheritance.
             callback_kwargs: Keyword arguments for the callback.
             condition_kwargs: Keyword arguments for the condition.
-            evaluator_kwargs: Keyword arguments for the evaluator.
+            caller_kwargs: Keyword arguments for the caller.
             **kwargs: Keyword arguments which may be used for inheritance.
 
         Returns:
@@ -205,10 +304,10 @@ class CallbackManager(BaseObject):
         elif isinstance(condition, str):
             condition = getattr(self, condition)
 
-        if evaluator is None:
-            evaluator = getattr(self, self.default_evaluator)
-        elif isinstance(evaluator, str):
-            evaluator = getattr(self, evaluator)
+        if caller is None:
+            caller = getattr(self, self.default_caller)
+        elif isinstance(caller, str):
+            caller = getattr(self, caller)
 
         if callback_kwargs is not None:
             callback = partial(callback, **callback_kwargs)
@@ -216,15 +315,68 @@ class CallbackManager(BaseObject):
         if condition_kwargs is not None:
             condition = partial(condition, **condition_kwargs)
 
-        if evaluator_kwargs is not None:
-            evaluator = partial(evaluator, **evaluator_kwargs)
+        if caller_kwargs is not None:
+            caller = partial(caller, **caller_kwargs)
 
-        return CallbackEntry(callback, condition, evaluator)
+        return ConditionalCallbackEntry(callback, condition, caller)
+
+    def create_conditional_callback(
+        self,
+        callback: Callable,
+        condition: Callable,
+        caller: Callable,
+        task_name: str | None = None,
+    ) -> Callable:
+        if task_name is None:
+            return partial(caller, condition, callback)
+        else:
+            task_name = f"{task_name}_conditional_callback"
+            if (tasks := self.tasks.get(task_name, None)) is None:
+                self.tasks[task_name] = tasks = deque()
+            return partial(caller, condition, callback, tasks)
+
+    def create_scheduler(
+        self,
+        type_: type[CallbackScheduler] | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> CallbackScheduler:
+        if type_ is None:
+            type_ = self.scheduler_type
+
+        return type_(*args, **kwargs)
+
+    def create_conditional_scheduler(
+        self,
+        condition_names: Iterable[str],
+        type_: type[CallbackScheduler] | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> CallbackScheduler:
+        if type_ is None:
+            type_ = self.scheduler_type
+
+        callback_map = deque()
+        for name in condition_names:
+            callback = self.conditional_callbacks_async[name]
+            task_name = f"{name}_conditional_caller"
+            if (tasks := self.tasks.get(task_name, None)) is None:
+                self.tasks[task_name] = tasks = deque()
+            callback_map.append((callback, tasks))
+
+        return type_(callback_map, *args, **kwargs)
+
+    # Callback Registration
+    def register_callback(self, name: str, callback: Callable, is_async: bool = False) -> None:
+        if is_async:
+            self.callbacks_async[name] = callback
+        else:
+            self.callbacks[name] = callback
 
     def register_callbacks(
         self,
-        callbacks: dict[str, dict[str, Any]] | None = None,
-        callbacks_async: dict[str, dict[str, Any]] | None = None,
+        callbacks: dict[str, Callable] | Iterable[tuple[str, Callable]] | None = None,
+        callbacks_async: dict[str, Callable] | Iterable[tuple[str, Callable]]  | None = None,
     ) -> None:
         """Registers synchronous and asynchronous callbacks.
 
@@ -233,32 +385,128 @@ class CallbackManager(BaseObject):
             callbacks_async: A dictionary of asynchronous callback configurations.
         """
         if callbacks:
-            self.callbacks.update((n, self.format_callback(**c_kwargs)) for n, c_kwargs in callbacks.items())
-        if callbacks_async:
-            self.callbacks_async.update(
-                (n, self.format_callback(**c_kwargs)) for n, c_kwargs in callbacks_async.items()
-            )
+            self.callbacks.update(callbacks)
 
-    async def register_callbacks_async(
+        if callbacks_async:
+            self.callbacks_async.update(callbacks_async)
+
+    def register_conditional_callback(
         self,
-        callbacks: dict[str, dict[str, Any]] | None = None,
-        callbacks_async: dict[str, dict[str, Any]] | None = None,
+        name: str,
+        callback: Callable,
+        condition: Callable | str | None = None,
+        caller: Callable | str | None = None,
+        *args: Any,
+        callback_kwargs: dict[str, Any] | None = None,
+        condition_kwargs: dict[str, Any] | None = None,
+        caller_kwargs: dict[str, Any] | None = None,
+        is_async: bool = False,
+        **kwargs: Any,
     ) -> None:
-        """Asynchronously registers synchronous and asynchronous callbacks.
+        # Format Callback, Condition, and Caller
+        callback, condition, caller = self.format_conditional_callback(
+            callback,
+            condition,
+            caller,
+            *args,
+            callback_kwargs=callback_kwargs,
+            condition_kwargs=condition_kwargs,
+            caller_kwargs=caller_kwargs,
+            **kwargs,
+        )
+
+        # Register
+        if is_async:
+            self.conditional_callbacks_async[name] = self.create_conditional_callback(callback, condition, caller, name)
+        else:
+            self.conditional_callbacks[name] = self.create_conditional_callback(callback, condition, caller)
+
+    def register_conditional_callbacks(
+        self,
+        callbacks: dict[str, Any] | Iterable[tuple[str, Any]] | None = None,
+        callbacks_async: dict[str, Any] | Iterable[tuple[str, Any]] | None = None,
+    ) -> None:
+        """Registers synchronous and asynchronous callbacks.
 
         Args:
             callbacks: A dictionary of synchronous callback configurations.
             callbacks_async: A dictionary of asynchronous callback configurations.
         """
+        # Register Callbacks
         if callbacks:
-            self.callbacks.update((n, self.format_callback(**c_kwargs)) for n, c_kwargs in callbacks.items())
-        if callbacks_async:
-            self.callbacks_async.update(
-                (n, self.format_callback(**c_kwargs)) for n, c_kwargs in callbacks_async.items()
-            )
+            if isinstance(callbacks, dict):
+                callbacks = callbacks.items()
 
-    # Callback Condition
-    def true_condition(self) -> bool:
+            creation_iter = (
+                (n, self.create_conditional_callback(*self.format_conditional_callback(**kwargs)))
+                for n, kwargs in callbacks
+            )
+            self.conditional_callbacks.update(creation_iter)
+
+        # Register Async Callbacks
+        if callbacks_async:
+            if isinstance(callbacks_async, dict):
+                callbacks_async = callbacks_async.items()
+
+            creation_iter = (
+                (n, self.create_conditional_callback(*self.format_conditional_callback(**kwargs), task_name=n))
+                for n, kwargs in callbacks_async
+            )
+            self.conditional_callbacks_async.update(creation_iter)
+
+    def register_scheduler(
+        self,
+        name: str,
+        scheduler: CallbackScheduler | None = None,
+        type_: type[CallbackScheduler] | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
+        self.schedulers[name] = self.create_scheduler(type_, *args, **kwargs) if scheduler is None else scheduler
+
+    def register_conditional_scheduler(
+        self,
+        name: str,
+        scheduler: CallbackScheduler | None = None,
+        condition_names: Iterable[str] | None = None,
+        type_: type[CallbackScheduler] | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
+        if scheduler is None:
+            if condition_names is None:
+                raise ValueError("condition_names must be provided if scheduler is None.")
+
+            self.schedulers[name] = self.create_conditional_scheduler(condition_names, type_, *args, **kwargs)
+        else:
+            self.schedulers[name] = scheduler
+
+    def register_scheduler_callback(self, name: str, scheduler: CallbackScheduler | str) -> None:
+        task_name = f"{name}_scheduler"
+        if (tasks := self.tasks.get(task_name, None)) is None:
+            self.tasks[name] = tasks = deque()
+
+        if isinstance(scheduler, str):
+            scheduler = self.schedulers[scheduler]
+
+        self.callbacks[name] = partial(self.start_scheduler, scheduler, tasks)
+        self.callbacks_async[name] = partial(self.start_scheduler_async, scheduler, tasks)
+
+    # Callback Management
+    def map_conditionals_to_scheduler(self, name: str, condition_names: Iterable[str]) -> None:
+        callback_map = deque()
+        for c_name in condition_names:
+            callback = self.conditional_callbacks_async[c_name]
+            task_name = f"{c_name}_conditional_caller"
+            if (tasks := self.tasks.get(task_name, None)) is None:
+                self.tasks[task_name] = tasks = deque()
+            callback_map.append((callback, tasks))
+
+        self.schedulers[name].callback_map.extend(callback_map)
+
+    # Callback Conditions
+    @staticmethod
+    def true_condition() -> bool:
         """A method for a callback condition that always returns True.
 
         Returns:
@@ -266,7 +514,8 @@ class CallbackManager(BaseObject):
         """
         return True
 
-    async def true_condition_async(self) -> bool:
+    @staticmethod
+    async def true_condition_async() -> bool:
         """An async method for a callback condition that always returns True.
 
         Returns:
@@ -274,8 +523,8 @@ class CallbackManager(BaseObject):
         """
         return True
 
-    # Callback Execution
-    def execute_callback(self, name: str, *args: Any, **kwargs: Any) -> None:
+    # Callback Calling
+    def call_callback(self, name: str, *args: Any, **kwargs: Any) -> None:
         """Executes a given callback function.
 
         Args:
@@ -283,9 +532,9 @@ class CallbackManager(BaseObject):
             *args: The positional arguments to pass to the callback function.
             **kwargs: The keyword arguments to pass to the callback function.
         """
-        self.callbacks[name][0](*args, **kwargs)
+        self.callbacks[name](*args, **kwargs)
 
-    async def execute_callback_async(self, name: str, *args: Any, **kwargs: Any) -> None:
+    async def call_callback_async(self, name: str, *args: Any, **kwargs: Any) -> None:
         """Asynchronously executes a given callback function.
 
         Args:
@@ -293,96 +542,16 @@ class CallbackManager(BaseObject):
             *args: The positional arguments to pass to the callback function.
             **kwargs: The keyword arguments to pass to the callback function.
         """
-        await self.callbacks_async[name][0](*args, **kwargs)
+        await self.callbacks_async[name](*args, **kwargs)
 
-    def schedule_callback(self, name: str, *args: Any, **kwargs: Any) -> None:
-        """Schedules a callback by creating and storing an asyncio task for the specified callback.
+    def call(self, callback) -> None:
+        callback()
 
-        Args:
-            name: The name of the callback to be scheduled.
-            *args: The positional arguments to pass to the callback function.
-            **kwargs: The keyword arguments to pass to the callback function.
-        """
-        self.callback_tasks[f"callback_execution_{name}"] = create_task(self.callbacks_async[name][0](*args, **kwargs))
+    async def call_async(self, callback) -> None:
+        await callback()
 
-    async def schedule_callback_async(self, name: str, *args: Any, **kwargs: Any) -> None:
-        """Asynchronously schedules a callback by creating and storing an asyncio task for the specified callback.
-
-        Args:
-            name: The name of the callback to be scheduled.
-            *args: The positional arguments to pass to the callback function.
-            **kwargs: The keyword arguments to pass to the callback function.
-        """
-        self.callback_tasks[f"callback_execution_{name}"] = create_task(self.callbacks_async[name][0](*args, **kwargs))
-
-    # Callback Scheduling
-    def start_scheduler(self) -> None:
-        """Starts the scheduler for callback execution and management.
-
-        This method initiates and starts a scheduler if it's not already running. Specifically, it ensures that the
-        schedule of evaluations is managed asynchronously. It stores the reference to the created task in a dictionary
-        for tracking and adds a callback that will handle cleanup after the task completion.
-        """
-        # Check if scheduler is running
-        if not self.scheduler_tasks:
-            # Create scheduler
-            scheduler = create_task(self.schedule_evaluations_async())
-            self.scheduler_tasks["callback_scheduling_task"] = scheduler
-            # Add task callback to remove task when done
-            scheduler.add_done_callback(partial(self._remove_scheduler, name="callback_scheduling_task"))
-
-    async def start_scheduler_async(self) -> None:
-        """Asynchronously starts the scheduler for callback execution and management.
-
-        This method initiates and starts a scheduler if it's not already running. Specifically, it ensures that the
-        schedule of evaluations is managed asynchronously. It stores the reference to the created task in a dictionary
-        for tracking and adds a callback that will handle cleanup after the task completion.
-        """
-        # Check if scheduler is running
-        if not self.scheduler_tasks:
-            # Create scheduler
-            scheduler = create_task(self.schedule_evaluations_async())
-            self.scheduler_tasks["callback_scheduling_task"] = scheduler
-            # Add task callback to remove task when done
-            scheduler.add_done_callback(partial(self._remove_scheduler, name="callback_scheduling_task"))
-
-    def _remove_scheduler(self, task: Task, name: str) -> None:
-        """Removes a scheduler task by its name.
-
-        Args:
-            task: The Task instance to be removed, unused but required.
-            name: The name of the task to be removed.
-        """
-        if name in self.scheduler_tasks:
-            del self.scheduler_tasks[name]
-
-    def schedule_evaluations(self) -> None:
-        """Schedules the evaluation of the callback functions."""
-        for check, callback in self.callbacks.values():
-            self.evaluate_callbacks(check, callback)
-
-    async def schedule_evaluations_async(self) -> None:
-        """Asynchronously schedules the evaluation of the callback functions."""
-        for name, (callback, condition, evaluate) in self.callbacks_async.items():
-            # Check if evaluator is running
-            if name not in self.evaluator_tasks:
-                # Create evaluator
-                self.evaluator_tasks[name] = callback_evaluator = create_task(evaluate(condition, callback))
-                # Add task callback to remove task when done
-                callback_evaluator.add_done_callback(partial(self._remove_evaluator, name=name))
-
-    def _remove_evaluator(self, task: Task, name: str) -> None:
-        """Removes an evaluator task by its name.
-
-        Args:
-            task: The Task instance to be removed, unused but required.
-            name: The name of the task to be removed.
-        """
-        if name in self.evaluator_tasks:
-            del self.evaluator_tasks[name]
-
-    # Callback Evaluation
-    def evaluate_callback(self, condition: Callable, callback: Callable) -> None:
+    # Conditional Callback Calling
+    def call_contional(self, condition: Callable, callback: Callable) -> None:
         """Evaluates the callback function if the callback condition is met.
 
         Args:
@@ -392,7 +561,7 @@ class CallbackManager(BaseObject):
         if condition():
             callback()
 
-    async def evaluate_callback_async(self, condition_async: Callable, callback_async: Callable) -> None:
+    async def call_conditonal_async(self, condition_async: Callable, callback_async: Callable) -> None:
         """Asynchronously evaluates the callback function if the callback condition is met.
 
         Args:
@@ -402,7 +571,7 @@ class CallbackManager(BaseObject):
         if await condition_async():
             await callback_async()
 
-    def evaluate_callbacks(self, condition: Callable, callback: Callable) -> None:
+    def call_while_condition(self, condition: Callable, callback: Callable) -> None:
         """Evaluates the callback function while the callback condition is met.
 
         Args:
@@ -412,83 +581,83 @@ class CallbackManager(BaseObject):
         while condition():
             callback()
 
-    async def evaluate_callbacks_async(self, condition_async: Callable, callback_async: Callable) -> None:
-        """Asynchronously evaluates the callback function while the callback condition is met.
-
-        Args:
-            condition_async: The condition to evaluate the callback function.
-            callback_async: The callback function to evaluate.
-        """
-        # Create Callback Tasks
-        callback_tasks = deque()
-        while (checked := await condition_async()) or callback_tasks:
-            if len(callback_tasks) < self.max_callback_tasks and checked:
-                # Create Evaluate Task
+    async def call_while_condition_async(
+        self,
+        condition_async: Callable,
+        callback_async: Callable,
+        tasks: deque,
+    ) -> None:
+        while (checked := await condition_async()) or tasks:
+            # Add Callback Tasks and Await Them
+            if len(tasks) < self.max_callback_tasks and checked:
+                # Create Callback Tasks
                 callback_task = create_task(callback_async())
-                callback_tasks.append(callback_task)
-                # Add to collective task tracking
-                key = f"callback_evaluation_{callback_task.get_name()}"
-                self.callback_tasks[key] = callback_task
-                # Have the new task remove its reference when it's done
-                callback_task.add_done_callback(partial(self._remove_callback, name=key))
+                tasks.append(callback_task)
             else:
-                await callback_tasks.popleft()
+                await next(iter(tasks))
 
-    async def evaluate_task_callbacks_async(self, condition_async: Callable, callback_async: Callable) -> None:
-        """Asynchronously evaluates the callback function as tasks while the callback condition is met.
-
-        Args:
-            condition_async: The condition to evaluate the callback function.
-            callback_async: The callback function to evaluate.
-        """
-        # Create Callback Tasks
-        callback_tasks = deque()
-        while (checked := await condition_async()) or callback_tasks:
-            if len(callback_tasks) < self.max_callback_tasks and checked:
-                # Create Evaluate Task
+    async def call_while_condition_task_async(
+        self,
+        condition_async: Callable,
+        callback_async: Callable,
+        tasks: deque,
+    ) -> None:
+        while (checked := await condition_async()) or tasks:
+            # Add Callback Tasks and Await Them
+            if len(tasks) < self.max_callback_tasks and checked:
+                # Create Callback Tasks
                 callback_task = await callback_async()
-                callback_tasks.append(callback_task)
-                # Add to collective task tracking
-                key = f"callback_evaluation_{callback_task.get_name()}"
-                self.callback_tasks[key] = callback_task
-                # Have the new task remove its reference when it's done
-                callback_task.add_done_callback(partial(self._remove_callback, name=key))
+                callback_task.add_done_callback(tasks.remove)
+                tasks.append(callback_task)
             else:
-                await callback_tasks.popleft()
+                await next(iter(tasks))
 
-    def _remove_callback(self, task: Task, name: str) -> None:
-        """Removes a callback task by its name.
+    # Callback Scheduling
+    def start_scheduler(self, scheduler: CallbackScheduler, tasks: deque, *args: Any, **kwargs: Any) -> None:
+        """Starts the scheduler for callback execution and management.
 
-        Args:
-            task: The Task instance to be removed, unused but required.
-            name: The name of the task to be removed.
+        This method initiates and starts a scheduler if it's not already running. Specifically, it ensures that the
+        schedule of evaluations is managed asynchronously. It stores the reference to the created task in a dictionary
+        for tracking and adds a callback that will handle cleanup after the task completion.
         """
-        if name in self.callback_tasks:
-            del self.callback_tasks[name]
+        # Check if scheduler is running
+        if not tasks:
+            # Create Scheduler
+            scheduler_task = create_task(scheduler.schedule_async(*args, **kwargs))  # Create scheduling task.
+            scheduler_task.add_done_callback(tasks.remove)  # Remove task from tasks deque when done.
+            tasks.append(scheduler_task)  # Add task to tasks deque.
 
-    # Task Canceling
-    def cancel_schedulers(self) -> None:
-        """Cancels all currently scheduled callback scheduler tasks."""
-        for task in self.scheduler_tasks.values():
-            task.cancel()
-        self.scheduler_tasks.clear()
+    async def start_scheduler_async(self, scheduler: CallbackScheduler, tasks: deque, *args: Any, **kwargs: Any) -> None:
+        """Asynchronously starts the scheduler for callback execution and management.
 
-    def cancel_evaluations(self) -> None:
-        """Cancels all currently scheduled callback evaluation tasks."""
-        for task in self.evaluator_tasks.values():
-            task.cancel()
-        self.evaluator_tasks.clear()
+        This method initiates and starts a scheduler if it's not already running. Specifically, it ensures that the
+        schedule of evaluations is managed asynchronously. It stores the reference to the created task in a dictionary
+        for tracking and adds a callback that will handle cleanup after the task completion.
+        """
+        self.start_scheduler(scheduler, tasks, *args, **kwargs)
 
-    def cancel_callbacks(self) -> None:
-        """Cancels all currently scheduled callback tasks."""
-        for task in self.callback_tasks.values():
-            task.cancel()
-        self.callback_tasks.clear()
+    # Task Management
+    def join_tasks(self) -> None:
+        """Joins all currently scheduled tasks."""
+        for tasks in self.tasks.values():
+            for task in tasks:
+                while not task.done():
+                    pass
+
+    async def join_tasks_async(self, timeout: float | None = None) -> None:
+        """Asynchronously joins all currently scheduled tasks."""
+        all_tasks = deque()
+        for tasks in self.tasks.values():
+            for task in tasks:
+                all_tasks.append(shield(task))
+
+        if timeout is None:
+            await gather(*all_tasks)
+        else:
+            await wait_for(gather(*all_tasks), timeout=timeout)
 
     def cancel_tasks(self) -> None:
         """Cancels all currently scheduled tasks."""
-        for task in self.tasks.values():
-            task.cancel()
-        self.scheduler_tasks.clear()
-        self.evaluator_tasks.clear()
-        self.callback_tasks.clear()
+        for tasks in self.tasks.values():
+            for task in tasks:
+                task.cancel()

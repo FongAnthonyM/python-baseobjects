@@ -13,6 +13,7 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
+from typing import Literal
 
 # Third-Party Packages #
 
@@ -38,13 +39,21 @@ class SentinelObject:
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, id_: str | bytes | int, encoding: str = "utf-8", errors: str = "strict") -> None:
-        if isinstance(id_, str):
-            self.id_number = int.from_bytes(id_.encode(encoding, errors))
-        elif isinstance(id_, bytes):
-            self.id_number = int.from_bytes(id_)
-        elif isinstance(id_, int):
-            self.id_number = id_
+    def __init__(
+        self,
+        id_: str | bytes | int,
+        encoding: str = "utf-8",
+        errors: str = "strict",
+        byteorder: Literal["little", "big"] = "big",
+        signed: bool = False
+    ) -> None:
+        match id_:
+            case str():
+                self.id_number = int.from_bytes(id_.encode(encoding, errors), byteorder, signed=signed)
+            case bytes():
+                self.id_number = int.from_bytes(id_, byteorder, signed=signed)
+            case int():
+                self.id_number = id_
 
     # Representation
     def __hash__(self) -> int:
@@ -69,5 +78,5 @@ class SentinelObject:
 
 
 # Names #
-DEFAULTSENTINEL = SentinelObject("DefaultSentinel")
+DEFAULTSENTINEL = SentinelObject("DEFAULTSENTINEL")
 search_sentinel = SentinelObject("search_sentinel")

@@ -17,4 +17,4 @@ from .automaticproperties import AutomaticProperties
 from .registeredclass import RegisteredClass
 from .dispatchableclass import DispatchableClass
 from .classnamespaceregister import ClassNamespaceRegister
-from .callbackmanager import CallbackManager, CallbackEntry
+from .callbackmanager import CallbackManager, ConditionalCallbackEntry

@@ -50,4 +50,3 @@ class DeepChainMap(BaseObject, ChainMap):
                 del mapping[key]
                 return
         raise KeyError(key)
-
