@@ -135,3 +135,21 @@ class BaseComposite(BaseObject):
         default_components_iter = ((n, c(composite=self, **(k | new_kwargs.get(n, {})))) for n, (c, k) in type_iter)
 
         self.components.update(chain(default_components_iter, ((n, c) for n, c in components.items())))
+
+    def create_component(
+        self,
+        name: str,
+        component: type["BaseComponent"],
+        *args: Any,
+        **kwargs: Any,
+    ) -> "BaseComponent":
+        """Creates a new component.
+
+        Args:
+            name: The name of the new component.
+            component: The new component type to create.
+            *args: Positional arguments for the new component.
+            **kwargs: Keyword arguments for the new component.
+        """
+        self.components[name] = component = component(*args, **({"composite": self} | kwargs))
+        return component
