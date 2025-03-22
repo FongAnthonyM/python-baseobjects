@@ -129,21 +129,43 @@ class BaseObject(ABC):
         return y
 
     # Pickling
-    def __getstate__(self) -> dict[str, Any]:
-        """Creates a dictionary of attributes which can be used to rebuild this object
+    def __getstate__(self) -> None | dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]]:
+        """Gets the object's state for pickling.
 
         Returns:
-            A dictionary of this object's attributes.
+            The state returned will be either of the following types based on the presence of __dict__ and __slots__:
+                None: __dict__ nor __slots__ are present.
+                dict: __dict__ is present and __slots__ is not present.
+                tuple[None, dict]: __dict__ is not present and __slots__ is present.
+                tuple[dict, dict]: __dict__ is present and __slots__ is present.
         """
-        return self.__dict__.copy()
+        return super().__getstate__()
 
-    def __setstate__(self, state: dict[str, Any]) -> None:
-        """Builds this object based on a dictionary of corresponding attributes.
+    def __setstate__(self, state: Any) -> None:
+        """Sets the object's state from a pickled state.
+
+        By default, the state can be one of the following types with the corresponding behavior:
+            None: Will not set any state.
+            dict: Will set the __dict__ attribute to the state.
+            tuple[None, dict]: Will set the slot values to the second dict of the tuple.
+            tuple[dict, dict]: Will set the __dict__ attribute to the first dict of the tuple and set the slot values
+                to the second dict of the tuple.
 
         Args:
-            state: The attributes to build this object from.
+            state: An object which can be used to set the state of this object.
         """
-        self.__dict__.update(state)
+        match state:
+            case dict():
+                self.__dict__.update(state)
+            case tuple():
+                if state[0] is not None:
+                    self.__dict__.update(state[0])
+                for slot_name, value in state[1].items():
+                    setattr(self, slot_name, value)
+            case None:
+                return
+            case _:
+                raise TypeError(f"State must be None, dict, or tuple, not {type(state)}")
 
     # Instance Methods #
     # Constructors/Destructors
@@ -154,7 +176,6 @@ class BaseObject(ABC):
             *args: Arguments for inheritance.
             **kwargs: Keyword arguments for inheritance.
         """
-        pass
 
     def copy(self) -> Any:
         """Creates a shallow copy of this object.

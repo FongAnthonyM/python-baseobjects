@@ -15,7 +15,7 @@ __email__ = __email__
 # Standard Libraries #
 from collections.abc import Iterable
 from typing import Any
-import weakref
+from weakref import ReferenceType
 
 # Third-Party Packages #
 
@@ -103,7 +103,7 @@ class BoundMethodRegister(BaseMethodRegister):
     """
 
     # Attributes #
-    _self_: weakref.ref | None = None
+    _self_: ReferenceType | None = None
     __owner__: type[Any] | None = None
 
     # Properties #
@@ -117,7 +117,7 @@ class BoundMethodRegister(BaseMethodRegister):
 
     @__self__.setter
     def __self__(self, value: Any) -> None:
-        self._self_ = None if value is None else weakref.ref(value)
+        self._self_ = None if value is None else ReferenceType(value)
 
     # Magic Methods #
     # Construction/Destruction

@@ -99,13 +99,6 @@ class CallableMultiplexer(BaseMethod):
                 **kwargs,
             )
 
-    # Pickling
-    def __getstate__(self) -> dict[str, Any]:
-        state = super().__getstate__()
-        del state["_self_"]
-        warn("CallableMultiplexer Weak reference deleted for pickle, may not work as intended.")
-        return state
-
     # Calling
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
         """Calls the wrapped function with the instance as an argument if is_binding is True.
