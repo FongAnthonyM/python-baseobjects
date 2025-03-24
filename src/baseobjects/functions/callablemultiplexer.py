@@ -274,7 +274,7 @@ class CallableMultiplexObject(BaseObject):
             A dictionary of this object's attributes.
         """
         state = {}
-        for k, i in super().__getstate__().items():
+        for k, i in super().__getstate__().items().copy():
             if isinstance(i, CallableMultiplexer):
                 state[k] = CallableMultiplexItem(i.register, i.selected, i.__class__.__name__)
             else:

@@ -218,7 +218,7 @@ class CallbackManager(BaseObject):
         Returns:
             A dictionary of this object's attributes.
         """
-        state = super().__getstate__()
+        state = super().__getstate__().copy()
 
         for name in ("callbacks", "callbacks_async", "scheduler_tasks", "caller_tasks", "callback_tasks", "tasks"):
             if name in state:

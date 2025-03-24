@@ -262,7 +262,7 @@ class BaseMethod(BaseCallable):
                 tuple[None, dict]: __dict__ is not present and __slots__ is present.
                 tuple[dict, dict]: __dict__ is present and __slots__ is present.
         """
-        state = super().__getstate__()
+        state = super().__getstate__().copy()
         state["_self_"] = self.__self__
         return state
 

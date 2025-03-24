@@ -82,7 +82,7 @@ class DynamicCallable(BaseCallable):
         Returns:
             A dictionary of this object's attributes.
         """
-        state = super().__getstate__()
+        state = super().__getstate__().copy()
         state["call_multiplexer"] = (self.call_multiplexer.register, self.call_multiplexer.selected)
         return state
 
