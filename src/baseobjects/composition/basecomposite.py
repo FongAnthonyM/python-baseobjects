@@ -73,17 +73,6 @@ class BaseComposite(BaseObject):
                 **kwargs,
             )
 
-    # Pickling
-    def __setstate__(self, state: Mapping[str, Any]) -> None:
-        """Builds this object based on a dictionary of corresponding attributes.
-
-        Args:
-            state: The attributes to build this object from.
-        """
-        super().__setstate__(state)
-        for component in self.components.values():
-            component.composite = self
-
     # Instance Methods #
     # Constructors/Destructors
     def construct(

@@ -61,9 +61,19 @@ class CachingObject(BaseObject, metaclass=CachingObjectMeta):
         super().__init__(*args, **kwargs)
 
     # Pickling
-    def __getstate__(self) -> dict[Any]:
-        """Delete all cache methods for pickling."""
-        state = self.__dict__.copy()
+    def __getstate__(self) -> dict[str, Any]:
+        """Gets the object's state for pickling.
+
+        Deletes all cache methods for pickling.
+
+        Returns:
+            The state returned will be either of the following types based on the presence of __dict__ and __slots__:
+                None: __dict__ nor __slots__ are present.
+                dict: __dict__ is present and __slots__ is not present.
+                tuple[None, dict]: __dict__ is not present and __slots__ is present.
+                tuple[dict, dict]: __dict__ is present and __slots__ is present.
+        """
+        state = super().__getstate__()
         for name in self.get_caches():
             if name in state:
                 del state[name]

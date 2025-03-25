@@ -23,7 +23,7 @@ from typing import ClassVar, Any, NamedTuple
 
 # Local Packages #
 from ..bases import BaseObject
-from ..functions import CallableMultiplexObject, MethodMultiplexer
+from ..functions import MethodMultiplexer
 
 
 # Definitions #
@@ -36,7 +36,7 @@ class ConditionalCallbackEntry(NamedTuple):
     caller: Callable
 
 
-class CallbackScheduler(CallableMultiplexObject):
+class CallbackScheduler(BaseObject):
     # Class Methods #
     default_schedule: ClassVar[str] = "schedule_callbacks"
     default_schedule_async: ClassVar[str] = "schedule_singleton_async_callbacks_async"
@@ -213,12 +213,16 @@ class CallbackManager(BaseObject):
 
     # Pickling
     def __getstate__(self) -> dict[str, Any]:
-        """Creates a dictionary of attributes which can be used to rebuild this object.
+        """Gets the object's state for pickling.
 
         Returns:
-            A dictionary of this object's attributes.
+            The state returned will be either of the following types based on the presence of __dict__ and __slots__:
+                None: __dict__ nor __slots__ are present.
+                dict: __dict__ is present and __slots__ is not present.
+                tuple[None, dict]: __dict__ is not present and __slots__ is present.
+                tuple[dict, dict]: __dict__ is present and __slots__ is present.
         """
-        state = super().__getstate__().copy()
+        state = super().__getstate__()
 
         for name in ("callbacks", "callbacks_async", "scheduler_tasks", "caller_tasks", "callback_tasks", "tasks"):
             if name in state:
@@ -226,11 +230,18 @@ class CallbackManager(BaseObject):
 
         return state
 
-    def __setstate__(self, state: dict[str, Any]) -> None:
-        """Builds this object based on a dictionary of corresponding attributes.
+    def __setstate__(self, state: Any) -> None:
+        """Sets the object's state from a pickled state.
+
+        By default, the state can be one of the following types with the corresponding behavior:
+            None: Will not set any state.
+            dict: Will set the __dict__ attribute to the state.
+            tuple[None, dict]: Will set the slot values to the second dict of the tuple.
+            tuple[dict, dict]: Will set the __dict__ attribute to the first dict of the tuple and set the slot values
+                to the second dict of the tuple.
 
         Args:
-            state: The attributes to build this object from.
+            state: An object which can be used to set the state of this object.
         """
         super().__setstate__(state)
         self.callbacks = {}

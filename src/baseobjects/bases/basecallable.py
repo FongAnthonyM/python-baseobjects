@@ -262,8 +262,8 @@ class BaseMethod(BaseCallable):
                 tuple[None, dict]: __dict__ is not present and __slots__ is present.
                 tuple[dict, dict]: __dict__ is present and __slots__ is present.
         """
-        state = super().__getstate__().copy()
-        state["_self_"] = self.__self__
+        state = super().__getstate__()
+        state["_self_"] = self.__self__  # Make a strong reference for pickle
         return state
 
     def __setstate__(self, state: Any) -> None:
@@ -279,8 +279,13 @@ class BaseMethod(BaseCallable):
         Args:
             state: An object which can be used to set the state of this object.
         """
-        _self_ = state.pop("_self_")
+        # Remove strong reference
+        _self_ = state.pop("_self_", None)
+
+        # Set State
         super().__setstate__(state)
+
+        # Set weak reference
         self.__self__ = _self_
 
     # Instance Methods #

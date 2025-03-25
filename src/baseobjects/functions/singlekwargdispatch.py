@@ -117,27 +117,6 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
             else:
                 self.construct(func=kwarg, wrapper_method=wrapper_method)
 
-    # Pickling
-    def __getstate__(self) -> dict[str, Any]:
-        """Creates a dictionary of attributes which can be used to rebuild this object
-
-        Returns:
-            A dictionary of this object's attributes.
-        """
-        state = super().__getstate__()
-        state["parse"] = (self.parse.register, self.parse.selected)
-        return state
-
-    def __setstate__(self, state: dict[str, Any]) -> None:
-        """Builds this object based on a dictionary of corresponding attributes.
-
-        Args:
-            state: The attributes to build this object from.
-        """
-        self.__dict__.update(state)
-        s, r = state["parse"]
-        self.parse = MethodMultiplexer(instance=self, select=s, register=r)
-
     # Instance Methods #
     # Constructors
     def construct(

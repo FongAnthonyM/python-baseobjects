@@ -13,7 +13,6 @@ __email__ = __email__
 
 # Imports #
 # Standard Libraries #
-from asyncio import iscoroutinefunction
 from typing import Any, NamedTuple, ClassVar
 from types import MethodType
 from warnings import warn
@@ -21,7 +20,7 @@ from warnings import warn
 # Third-Party Packages #
 
 # Local Packages #
-from ..typing import AnyCallable, GetObjectMethod
+from ..typing import AnyCallable
 from ..bases import BaseObject, BaseCallable, BaseMethod
 from .functionregister import FunctionRegister
 
@@ -247,52 +246,3 @@ class MethodMultiplexer(CallableMultiplexer):
         """
         return self.__wrapped__.__get__(self._self_(), self.__owner__)(*args, **kwargs)
 
-
-class CallableMultiplexItem(NamedTuple):
-    """A NamedTuple with specifications for a pickled MethodMultiplexer."""
-
-    register: dict
-    selected: str
-    type: str
-
-
-class CallableMultiplexObject(BaseObject):
-    """An object which can be subclassed to allow MethodMultiplexer to be pickled."""
-
-    # Class Attributes #
-    _callable_multiplexers: ClassVar[dict[str, type[CallableMultiplexer]]] = {
-        CallableMultiplexer.__name__: CallableMultiplexer,
-        MethodMultiplexer.__name__: MethodMultiplexer,
-    }
-
-    # Magic Methods #
-    # Pickling
-    def __getstate__(self) -> dict[str, Any]:
-        """Creates a dictionary of attributes which can be used to rebuild this object
-
-        Returns:
-            A dictionary of this object's attributes.
-        """
-        state = {}
-        for k, i in super().__getstate__().items().copy():
-            if isinstance(i, CallableMultiplexer):
-                state[k] = CallableMultiplexItem(i.register, i.selected, i.__class__.__name__)
-            else:
-                state[k] = i
-
-        return state
-
-    def __setstate__(self, state: dict[str, Any]) -> None:
-        """Builds this object based on a dictionary of corresponding attributes.
-
-        Args:
-            state: The attributes to build this object from.
-        """
-        super().__setstate__(state)
-        for k, i in state.items():
-            if isinstance(i, CallableMultiplexItem):
-                self.__dict__[k] = self._callable_multiplexers[i.type](
-                    register=i.register,
-                    instance=self,
-                    select=i.selected,
-                )

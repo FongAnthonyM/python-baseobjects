@@ -75,27 +75,6 @@ class DynamicCallable(BaseCallable):
         if init:
             self.construct(func=func, *args, **kwargs)
 
-    # Pickling
-    def __getstate__(self) -> dict[str, Any]:
-        """Creates a dictionary of attributes which can be used to rebuild this object
-
-        Returns:
-            A dictionary of this object's attributes.
-        """
-        state = super().__getstate__().copy()
-        state["call_multiplexer"] = (self.call_multiplexer.register, self.call_multiplexer.selected)
-        return state
-
-    def __setstate__(self, state: dict[str, Any]) -> None:
-        """Builds this object based on a dictionary of corresponding attributes.
-
-        Args:
-            state: The attributes to build this object from.
-        """
-        self.__dict__.update(state)
-        register, selected = state["call_multiplexer"]
-        self.call_multiplexer = MethodMultiplexer(register, instance=self, select=selected)
-
     # Calling
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
         """This call delegates callback to a MethodMultiplexer.
@@ -195,27 +174,6 @@ class DynamicFunction(DynamicCallable, BaseFunction):
         # Object Construction #
         if init:
             self.construct(func=func, *args, **kwargs)
-
-    # Pickling
-    def __getstate__(self) -> dict[str, Any]:
-        """Creates a dictionary of attributes which can be used to rebuild this object
-
-        Returns:
-            A dictionary of this object's attributes.
-        """
-        state = super().__getstate__()
-        state["bind_multiplexer"] = (self.bind_multiplexer.register, self.bind_multiplexer.selected)
-        return state
-
-    def __setstate__(self, state: dict[str, Any]) -> None:
-        """Builds this object based on a dictionary of corresponding attributes.
-
-        Args:
-            state: The attributes to build this object from.
-        """
-        super().__setstate__(state)
-        register, selected = state["bind_multiplexer"]
-        self.bind_multiplexer = MethodMultiplexer(register, instance=self, select=selected)
 
     # Descriptor
     def __get__(self, *args: Any, **kwargs: Any) -> Any:

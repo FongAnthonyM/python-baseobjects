@@ -24,6 +24,7 @@ from copy import (
     Error,
 )
 from copyreg import dispatch_table
+import sys
 from typing import Any
 
 # Third-Party Packages #
@@ -139,7 +140,23 @@ class BaseObject(ABC):
                 tuple[None, dict]: __dict__ is not present and __slots__ is present.
                 tuple[dict, dict]: __dict__ is present and __slots__ is present.
         """
-        return super().__getstate__()
+        # Get dict
+        _dict_ = getattr(self, "__dict__", None).copy()
+
+        # Get slots
+        if  _slots_ := getattr(self, "__slots__", None):
+            _slots_ = {s: getattr(self, s) for s in _slots_}
+
+        # Return the correct state
+        match _dict_, _slots_:
+            case None, None:
+                return None
+            case dict(), None:
+                return _dict_
+            case None, dict():
+                return None, _slots_
+            case dict(), dict():
+                return _dict_, _slots_
 
     def __setstate__(self, state: Any) -> None:
         """Sets the object's state from a pickled state.
