@@ -141,17 +141,18 @@ class BaseObject(ABC):
                 tuple[dict, dict]: __dict__ is present and __slots__ is present.
         """
         # Get dict
-        _dict_ = getattr(self, "__dict__", None).copy()
+        if _dict_ := getattr(self, "__dict__", None):
+            _dict_ = _dict_.copy()
 
         # Get slots
-        if  _slots_ := getattr(self, "__slots__", None):
+        if _slots_ := getattr(self, "__slots__", None):
             _slots_ = {s: getattr(self, s) for s in _slots_}
 
         # Return the correct state
         match _dict_, _slots_:
             case None, None:
                 return None
-            case dict(), None:
+            case dict(), None | ():
                 return _dict_
             case None, dict():
                 return None, _slots_
