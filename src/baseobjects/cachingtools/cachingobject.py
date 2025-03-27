@@ -18,14 +18,14 @@ from typing import Any
 # Third-Party Packages #
 
 # Local Packages #
-from ..bases import BaseObject
+from ..bases import BaseReducible
 from .metaclasses import CachingObjectMeta
 from .caches import BaseTimedCache
 
 
 # Definitions #
 # Classes #
-class CachingObject(BaseObject, metaclass=CachingObjectMeta):
+class CachingObject(BaseReducible, metaclass=CachingObjectMeta):
     """An abstract class which is has functionality for functions that are caching.
 
     Attributes:

@@ -22,7 +22,7 @@ from typing import ClassVar, Any, NamedTuple
 # Third-Party Packages #
 
 # Local Packages #
-from ..bases import BaseObject
+from ..bases import BaseObject, BaseReducible
 from ..functions import MethodMultiplexer
 
 
@@ -134,7 +134,7 @@ class CallbackScheduler(BaseObject):
         self.schedule_singleton_async_callbacks()
 
 
-class CallbackManager(BaseObject):
+class CallbackManager(BaseReducible):
     """An object which manages and executes callback functions with conditions and callers.
 
     The CallbackManager class allows the registration, formatting, scheduling, and execution of synchronous and

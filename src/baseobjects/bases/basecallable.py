@@ -24,12 +24,12 @@ from weakref import ReferenceType
 
 # Local Packages #
 from ..typing import AnyCallable, GetObjectMethod
-from .baseobject import BaseObject
+from .basereducible import BaseReducible
 
 
 # Definitions #
 # Classes #
-class BaseCallable(BaseObject):
+class BaseCallable(BaseReducible):
     """An abstract class which implements the basic structure for creating a callable.
 
     Attributes:

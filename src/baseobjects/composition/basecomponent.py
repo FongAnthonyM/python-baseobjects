@@ -19,13 +19,13 @@ from weakref import ReferenceType
 # Third-Party Packages #
 
 # Local Packages #
-from ..bases import BaseObject
+from ..bases import BaseReducible
 from .basecomposite import BaseComposite
 
 
 # Definitions #
 # Classes #
-class BaseComponent(BaseObject):
+class BaseComponent(BaseReducible):
     """A basic component object.
 
     Attributes:
