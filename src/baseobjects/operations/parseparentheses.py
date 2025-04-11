@@ -24,130 +24,67 @@ from typing import Any, Generator, Iterable
 
 
 # Definitions #
+# Regular Expressions #
+rb_parentheses = rb"\(|\)"
+rb_double_quote_group = rb'"((?:[^"]|\\.)*)(?<!\\)"' 
+rb_single_quote_group = rb"'((?:[^']|\\.)*)(?<!\\)'"
+rb_group_between_characters = rb"[^,'\"\(\)]+" 
+rb_expression = rb"|".join((rb_parentheses, rb_double_quote_group, rb_single_quote_group, rb_group_between_characters))
+
+r_parentheses = r"\(|\)"
+r_double_quote_group = r'"((?:[^"]|\\.)*)(?<!\\)"' 
+r_single_quote_group = r"'((?:[^']|\\.)*)(?<!\\)'"
+r_group_between_characters = r"[^,'\"\(\)]+" 
+r_expression = r"|".join((r_parentheses, r_double_quote_group, r_single_quote_group, r_group_between_characters))
+
+
 # Functions #
-def parentheses_iter(string: str) -> Generator[tuple[str, bool], None, None]:
-    opens = re.finditer('\\(', string)
-    closes = re.finditer('\\)', string)
-    any_opens = True
-    any_closes = True
-
-    try:
-        open_ = next(opens).start()
-    except StopIteration:
-        open_ = None
-        any_opens = False
-
-    try:
-        close_ = next(closes).start()
-    except StopIteration:
-        close_ = None
-        any_closes = False
-
-    while any_opens or any_closes:
-        if not any_opens or (any_closes and close_ < open_):
-            yield close_, False
-
-            try:
-                close_ = next(closes).start()
-            except StopIteration:
-                close_ = None
-                any_closes = False
-
-        else:
-            yield open_, True
-
-            try:
-                open_ = next(opens).start()
-            except StopIteration:
-                open_ = None
-                any_opens = False
-
-
-def decode_str_parentheses(string: str, iter_: Iterable, start: int = 0) -> tuple[deque, int]:
-    items = deque()
-    previous = start
-
-    for location, is_open in iter_:
-        if location > previous:
-            items.append(string[previous:location])
-            previous = location
-
-        if is_open:
-            item, previous = decode_str_parentheses(string, iter_, location + 1)
-            if previous == -1:
-                raise ValueError("unbalanced expression")
-            items.append(item)
-        else:
-            return items, previous + 1
-    return items, -1
-
-
-def decode_bytes_parentheses(iter_: Iterable) -> tuple[deque, bool]:
-    items = deque()
-    b_item = b""
-    in_string = False
-    string_type = None
-    ignore_string = 0
-    ignore_number = 1
-    ignore = False
-
-    for b_as_i in iter_:
-        if b_as_i in {34, 39} and ignore_string < ignore_number:
-            if not in_string:
-                in_string = True
-                ignore = True
-                string_type = b_as_i
-            elif b_as_i == string_type:
-                in_string = False
-                ignore = False
-                string_type = None
-                ignore_string = 0
-                
-        if in_string: 
-            if b_as_i in {92} and ignore_string < ignore_number:
-                ignore_string += 1
-            else:
-                ignore_string = 0
-
-        if not ignore and b_as_i == 40:
-            if b_item:
-                items.append(b_item)
-                b_item = b""
-
-            item, closed = decode_bytes_parentheses(iter_)
-
-            if not closed:
-                raise ValueError("unbalanced expression")
-
-            items.append(item)
-        elif not ignore and b_as_i == 41:
-            if b_item:
-                items.append(b_item)
-                b_item = b""
-
-            return items, True
-        else:
-            b_item += b_as_i.to_bytes(1, "little")
-    return items, False
-
-
 @singledispatch
-def parse_parentheses(expression: str | bytes) -> dict[str, Any]:
+def parse_parentheses(expression: str | bytes | bytearray) -> dict[str, Any]:
     # Catch the general case for any unregistered types
     raise ValueError(f"{expression} is an invailid type")
 
 
 @parse_parentheses.register
 def _parse_parentheses(expression: str) -> dict[str, Any]:
-    items, flag = decode_str_parentheses(expression, parentheses_iter(expression))
-    if flag != -1:
-        raise ValueError("unbalanced expression")
-    return items
+    list_bank = deque([[]])
+    for match_object in re.finditer(r_expression, expression):
+        match (token := match_object[0]):
+            case '(':
+                new_list = []
+                list_bank[-1].append(new_list)
+                list_bank.append(new_list)
+            case ')':
+                try:
+                    list_bank.pop()
+                except IndexError:
+                    raise ValueError("Unbalanced parentheses")
+            case _:
+                list_bank[-1].append(token.strip())
+    if len(list_bank) > 1:
+        raise ValueError("Unbalanced parentheses")
+    return list_bank.pop()
 
 
-@parse_parentheses.register
-def _parse_parentheses(expression: bytes) -> dict[str, Any]:
-    items, flag = decode_bytes_parentheses(iter(expression))
-    if flag:
-        raise ValueError("unbalanced expression")
-    return items
+@parse_parentheses.register(bytes)
+@parse_parentheses.register(bytearray)
+def _parse_parentheses(expression: bytes | bytearray) -> dict[str, Any]:
+    list_bank = deque([[]])
+    for match_object in re.finditer(rb_expression, expression):
+        match (token := match_object[0]):
+            case b'(':
+                new_list = []
+                list_bank[-1].append(new_list)
+                list_bank.append(new_list)
+            case b')':
+                try:
+                    list_bank.pop()
+                except IndexError:
+                    raise ValueError("Unbalanced parentheses")
+            case _:
+                list_bank[-1].append(token.strip())
+    if len(list_bank) > 1:
+        raise ValueError("Unbalanced parentheses")
+    return list_bank.pop()
+
+

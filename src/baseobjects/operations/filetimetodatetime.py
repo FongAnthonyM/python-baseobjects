@@ -77,7 +77,8 @@ def _filetime_to_datetime(timestamp: float | str, tzinfo: tzinfo | None = None) 
 
 
 @filetime_to_datetime.register(bytes)
-def _filetime_to_datetime(timestamp: bytes, tzinfo: tzinfo | None = None) -> datetime:
+@filetime_to_datetime.register(bytearray)
+def _filetime_to_datetime(timestamp: bytes | bytearray, tzinfo: tzinfo | None = None) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:
