@@ -1,5 +1,5 @@
 """parseparentheses.py
-
+Parses expressions with parentheses and returns a nested list of extracted elements.
 """
 # Package Header #
 from ..header import *
@@ -16,7 +16,7 @@ __email__ = __email__
 from collections import deque
 from functools import singledispatch
 import re
-from typing import Any, Generator, Iterable
+from typing import Any, Callable
 
 # Third-Party Packages #
 
@@ -39,14 +39,75 @@ r_expression = r"|".join((r_parentheses, r_double_quote_group, r_single_quote_gr
 
 
 # Functions #
+def _no_cast(obj: Any) -> Any:
+    """A helper function which does not the cast the input.
+
+    Args:
+        obj: The object to be returned unchanged.
+
+    Returns:
+        The same object that was provided as input.
+    """
+    return obj
+
+
 @singledispatch
-def parse_parentheses(expression: str | bytes | bytearray) -> dict[str, Any]:
+def parse_parentheses(
+    expression: str | bytes | bytearray,
+    include: set | None = None,
+    exclude: set | None = None,
+    cast: Callable = _no_cast,
+) -> list[...]:
+    """Parses expressions with parentheses and returns a nested list of extracted elements.
+
+    This function uses a single-dispatch mechanism to handle parsing for various data types. If the type of the provided
+    expression is not supported by any registered dispatch function, a ValueError is raised. Optional filtering can be
+    applied by specifying `include` or `exclude` sets to control which elements are included or excluded. An optional
+    casting function can be applied to transform the extracted elements.
+
+    Args:
+        expression: The input expression containing parentheses to parse.
+        include: A set of elements to include in the output. Defaults to None.
+        exclude: A set of elements to exclude from the output. Defaults to None.
+        cast: A function to apply to each extracted element for custom transformations. Defaults to `_no_cast`.
+
+    Returns:
+        A nest list of parsed and optionally filtered and transformed elements.
+
+    Raises:
+        ValueError: If the type of the input expression is unsupported.
+    """
     # Catch the general case for any unregistered types
-    raise ValueError(f"{expression} is an invailid type")
+    raise ValueError(f"parse_parentheses does not parse {expression} type.")
 
 
-@parse_parentheses.register
-def _parse_parentheses(expression: str) -> dict[str, Any]:
+@parse_parentheses.register(str)
+def _parse_parentheses(
+    expression: str,
+    include: set | None = None,
+    exclude: set | None = None,
+    cast: Callable = _no_cast,
+) -> list[...]:
+    """Parses string expressions with parentheses and returns a nested list of extracted elements.
+
+    This function is used to parse expressions with parentheses into a structured list format. Each open parenthesis '('
+    denotes the start of a nested list, and each close parenthesis ')' indicates the end of the currently active list.
+    Optional filtering can be applied by specifying `include` or `exclude` sets to control which elements are included
+    or excluded. An optional casting function can be applied to transform the extracted elements.
+
+    Args:
+        expression: The input expression containing parentheses to parse.
+        include: A set of elements to include in the output. Defaults to None.
+        exclude: A set of elements to exclude from the output. Defaults to None.
+        cast: A function to apply to each extracted element for custom transformations. Defaults to `_no_cast`.
+
+    Returns:
+        A nest list of parsed and optionally filtered and transformed elements.
+
+    Raises:
+        ValueError: If the parentheses in the input expression are unbalanced (either unmatched opening or closing
+            parentheses).
+    """
     list_bank = deque([[]])
     for match_object in re.finditer(r_expression, expression):
         match (token := match_object[0]):
@@ -59,8 +120,8 @@ def _parse_parentheses(expression: str) -> dict[str, Any]:
                     list_bank.pop()
                 except IndexError:
                     raise ValueError("Unbalanced parentheses")
-            case _:
-                list_bank[-1].append(token.strip())
+            case _ if (not include or token in include) and token not in exclude:
+                list_bank[-1].append(cast(token.strip()))
     if len(list_bank) > 1:
         raise ValueError("Unbalanced parentheses")
     return list_bank.pop()
@@ -68,7 +129,34 @@ def _parse_parentheses(expression: str) -> dict[str, Any]:
 
 @parse_parentheses.register(bytes)
 @parse_parentheses.register(bytearray)
-def _parse_parentheses(expression: bytes | bytearray) -> dict[str, Any]:
+def _parse_parentheses(
+    expression: bytes | bytearray,
+    include: set | None = None,
+    exclude: set | None = None,
+    cast: Callable = _no_cast,
+) -> list[...]:
+    """Parses bytes or bytesarray expressions with parentheses and returns a nested list of extracted elements.
+
+    This function is used to parse expressions with parentheses into a structured list format. Each open parenthesis '('
+    denotes the start of a nested list, and each close parenthesis ')' indicates the end of the currently active list.
+    Optional filtering can be applied by specifying `include` or `exclude` sets to control which elements are included
+    or excluded. An optional casting function can be applied to transform the extracted elements.
+
+    Args:
+        expression: The input expression containing parentheses to parse.
+        include: A set of elements to include in the output. Defaults to None.
+        exclude: A set of elements to exclude from the output. Defaults to None.
+        cast: A function to apply to each extracted element for custom transformations. Defaults to `_no_cast`.
+
+    Returns:
+        A nest list of parsed and optionally filtered and transformed elements.
+
+    Raises:
+        ValueError: If the parentheses in the input expression are unbalanced (either unmatched opening or closing
+            parentheses).
+    """
+    if exclude is None:
+        exclude = set()
     list_bank = deque([[]])
     for match_object in re.finditer(rb_expression, expression):
         match (token := match_object[0]):
@@ -81,10 +169,8 @@ def _parse_parentheses(expression: bytes | bytearray) -> dict[str, Any]:
                     list_bank.pop()
                 except IndexError:
                     raise ValueError("Unbalanced parentheses")
-            case _:
-                list_bank[-1].append(token.strip())
+            case _ if (not include or token in include) and token not in exclude:
+                list_bank[-1].append(cast(token.strip()))
     if len(list_bank) > 1:
         raise ValueError("Unbalanced parentheses")
     return list_bank.pop()
-
-
