@@ -2,14 +2,15 @@
 A circular doubly linked container which is a fast and efficient way to store ordered data, especially if constantly
 changes size.
 """
-# Package Header #
-from ..header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
@@ -43,8 +44,8 @@ class LinkedNode(BaseObject):
     """
 
     # Attributes #
-    _previous: weakref.ReferenceType
-    _next: weakref.ReferenceType
+    _previous: weakref.ReferenceType | None = None
+    _next: weakref.ReferenceType | None = None
 
     data: Any | None = None
 
@@ -84,11 +85,7 @@ class LinkedNode(BaseObject):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        # New Attributes #
-        self._previous: weakref.ReferenceType = weakref.ref(self)
-        self._next: weakref.ReferenceType = weakref.ref(self)
-
-        # Parent Attributes #
+        # Parent Initialization #
         super().__init__(*args, init=False, **kwargs)
 
         # Object Construction #
@@ -113,10 +110,10 @@ class LinkedNode(BaseObject):
             next_: The next node.
         """
         if previous is not None:
-            self.previous = weakref.ref(previous)
+            self._previous = weakref.ref(previous)
 
         if next_ is not None:
-            self.next = weakref.ref(next_)
+            self._next = weakref.ref(next_)
 
         self.data = data
 
@@ -133,7 +130,7 @@ class CircularDoublyLinkedContainer(BaseObject):
 
     # Attributes #
     first_node: LinkedNode | None = None
-    nodes: set[LinkedNode] = set()
+    nodes: set[LinkedNode]
 
     # Properties #
     @property
@@ -144,12 +141,12 @@ class CircularDoublyLinkedContainer(BaseObject):
     @property
     def last_node(self) -> LinkedNode:
         """The last node in this container."""
-        return self.first_node.previous
+        return self.first_node if (last_node := self.first_node.previous) is None else last_node
 
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        # Parent Attributes #
+        # Parent Initialization #
         super().__init__(*args, **kwargs)
 
         # Attributes #
@@ -169,8 +166,8 @@ class CircularDoublyLinkedContainer(BaseObject):
             original_node = self.first_node
             new_obj.append(data=copy.deepcopy(original_node.data))
             while original_node.next is not self.first_node:
-                new_obj.append(data=copy.deepcopy(original_node.data))
                 original_node = original_node.next
+                new_obj.append(data=copy.deepcopy(original_node.data))
 
         return new_obj
 
@@ -227,7 +224,7 @@ class CircularDoublyLinkedContainer(BaseObject):
         Returns:
             The number of nodes in this object.
         """
-        len(self.nodes)
+        return len(self.nodes)
 
     def get_item(self, index: int) -> LinkedNode:
         """Gets a node based on its index from the start node.
@@ -243,16 +240,16 @@ class CircularDoublyLinkedContainer(BaseObject):
         # Forward Indexing
         if index > 0:
             for i in range(index):
-                node = node.next()
+                node = node.next
         # Reverse Indexing
         elif index < 0:
             index *= -1
             for i in range(index):
-                node = node.previous()
+                node = node.previous
 
         return node
 
-    @singlekwargdispatch("data")
+    @singlekwargdispatch(kwarg="data")
     def append(self, data: Any) -> LinkedNode:
         """Add a new node and data to the end of the container.
 
@@ -264,13 +261,15 @@ class CircularDoublyLinkedContainer(BaseObject):
         """
         new_node = LinkedNode(data)
         self.nodes.add(new_node)
-        weak_node = weakref.ref(new_node)
 
         if self.first_node is None:
             self.first_node = new_node
         else:
-            self.last_node.next = weak_node
-            self.first_node.previous = weak_node
+            weak_node = weakref.ref(new_node)
+            new_node.next = self.first_node
+            new_node.previous = self.last_node
+            self.last_node._next = weak_node
+            self.first_node._previous = weak_node
 
         return new_node
 
@@ -285,17 +284,19 @@ class CircularDoublyLinkedContainer(BaseObject):
             The LinkedNode added to the container.
         """
         self.nodes.add(data)
-        weak_node = weakref.ref(data)
 
         if self.first_node is None:
             self.first_node = data
         else:
-            self.last_node.next = weak_node
-            self.first_node.previous = weak_node
+            weak_node = weakref.ref(data)
+            data.next = self.first_node
+            data.previous = self.last_node
+            self.last_node._next = weak_node
+            self.first_node._previous = weak_node
 
         return data
 
-    @singlekwargdispatch("data")
+    @singlekwargdispatch(kwarg="data")
     def insert(self, data: Any, index: int) -> LinkedNode:
         """Add a new node and data at index within the container.
 
@@ -312,11 +313,17 @@ class CircularDoublyLinkedContainer(BaseObject):
         if self.first_node is None:
             self.first_node = new_node
         else:
-            point = self.get_item(index=index)
+            if index == 0:
+                point = self.first_node
+                self.first_node = new_node
+            else:
+                point = self.get_item(index=index)
+            weak_node = weakref.ref(new_node)
             new_node.next = point
-            new_node.previous = point.previous
-            new_node.previous.next = new_node
-            point.previous = new_node
+            previous = point._previous
+            new_node._previous = weakref.ref(point) if previous is None else previous
+            new_node.previous._next = weak_node
+            point._previous = weak_node
 
         return new_node
 
@@ -336,12 +343,17 @@ class CircularDoublyLinkedContainer(BaseObject):
         if self.first_node is None:
             self.first_node = data
         else:
-            point = self.get_item(index=index)
+            if index == 0:
+                point = self.first_node
+                self.first_node = data
+            else:
+                point = self.get_item(index=index)
+            weak_node = weakref.ref(data)
             data.next = point
-            data.previous = point.previous
-            data.previous.next = data
-            point.previous = data
-
+            previous = point._previous
+            data._previous = weakref.ref(point) if previous is None else previous
+            data.previous._next = weak_node
+            point._previous = weak_node
         return data
 
     def remove_node(self, node: LinkedNode) -> None:
@@ -350,8 +362,11 @@ class CircularDoublyLinkedContainer(BaseObject):
         Args:
             node: The node to move.
         """
-        node.next.previous = node.previous
-        node.previous.next = node.next
+        if node is self.first_node:
+            self.first_node = node.next
+        if self.first_node is not None:
+            node.next.previous = node.previous
+            node.previous.next = node.next
         self.nodes.remove(node)
 
     def pop(self, index: int = -1) -> LinkedNode:
@@ -379,8 +394,9 @@ class CircularDoublyLinkedContainer(BaseObject):
         Args:
             node: The node to move.
         """
-        self.move_node_end(node)
-        self.first_node = node
+        if node is not self.first_node:
+            self.move_node_end(node)
+            self.first_node = node
 
     def move_node_end(self, node: LinkedNode) -> None:
         """Move a node to the end of container.
@@ -388,12 +404,15 @@ class CircularDoublyLinkedContainer(BaseObject):
         Args:
             node: The node to move.
         """
-        node.next.previous = node.previous
-        node.previous.next = node.next
-        node.next = self.first_node
-        node.previous = self.last_node
-        self.last_node.next = node
-        self.first_node.previous = node
+        if node is not self.last_node:
+            if node is self.first_node:
+                self.first_node = node.next
+            node.next.previous = node.previous
+            node.previous.next = node.next
+            node.next = self.first_node
+            node.previous = self.last_node
+            self.last_node.next = node
+            self.first_node.previous = node
 
     def move_node(self, node: LinkedNode, index: int) -> None:
         """Move a node to an index within the container.
@@ -402,13 +421,15 @@ class CircularDoublyLinkedContainer(BaseObject):
             node: The node to move.
             index: The place to move the node to.
         """
-        node.next.previous = node.previous
-        node.previous.next = node.next
-        point = self.get_item(index=index)
-        node.next = point
-        node.previous = point.previous
-        node.previous.next = node
-        point.previous = node
+        if node is self.first_node and index != 0:
+            self.first_node = node.next
+        if (point := self.get_item(index=index)) is not node:
+            node.next.previous = node.previous
+            node.previous.next = node.next
+            node.next = point
+            node.previous = point.previous
+            node.previous.next = node
+            point.previous = node
 
     def shift_left(self, value: int = 1) -> None:
         """Shift the start of nodes to the left by an amount.
@@ -445,11 +466,13 @@ class CircularDoublyLinkedContainer(BaseObject):
         Returns:
             The forward iterable.
         """
-        node = yield self.first_node
-        node = node.next
-        while node is not self.first_node:
+        if self.first_node is not None:
+            node = self.first_node
             yield node
             node = node.next
+            while node is not self.first_node:
+                yield node
+                node = node.next
 
     def reverse_iter(self) -> Iterable:
         """Creates an iterable which iterates through the nodes from last to first.
@@ -457,11 +480,13 @@ class CircularDoublyLinkedContainer(BaseObject):
         Returns:
             The reverse iterable.
         """
-        node = yield self.last_node
-        node = node.previous
-        while node is not self.last_node:
+        if self.first_node is not None:
+            node = self.last_node
             yield node
             node = node.previous
+            while node is not self.last_node:
+                yield node
+                node = node.previous
 
     def forward_cycle(self) -> Iterable:
         """Creates an iterable which cycles through the nodes from first to last.
@@ -469,9 +494,11 @@ class CircularDoublyLinkedContainer(BaseObject):
         Returns:
             The forward cycle.
         """
-        node = yield self.first_node
-        while True:
-            node = yield node.next
+        if self.first_node is not None:
+            node = self.first_node
+            while True:
+                yield node
+                node = node.next
 
     def reverse_cycle(self) -> Iterable:
         """Creates an iterable which cycles through the nodes from last to first.
@@ -479,6 +506,7 @@ class CircularDoublyLinkedContainer(BaseObject):
         Returns:
             The reverse cycle.
         """
-        node = yield self.last_node
+        node = self.last_node
         while True:
-            node = yield node.previous
+            yield node
+            node = node.previous

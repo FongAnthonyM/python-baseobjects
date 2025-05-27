@@ -1,37 +1,52 @@
 """cachingobject.py
 An abstract class which creates properties for this class automatically.
 """
-# Package Header #
-from ..header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
 # Standard Libraries #
-from typing import Any
+from typing import Any, ClassVar
 
 # Third-Party Packages #
 
 # Local Packages #
 from ..bases import BaseReducible
-from .metaclasses import CachingObjectMeta
+from ..metaclasses import InitMeta
 from .caches import BaseTimedCache
 
 
 # Definitions #
 # Classes #
-class CachingObject(BaseReducible, metaclass=CachingObjectMeta):
-    """An abstract class which is has functionality for functions that are caching.
+class CachingObject(BaseReducible, metaclass=InitMeta):
+    """An abstract class which has functionality for functions that are caching.
 
     Attributes:
         _is_cache: Determines if the caching functions of this object will cache.
         _caches: All the caches within this object.
     """
+
+    # Class Attributes #
+    _caches_: ClassVar[set[str]] = set()
+
+    # Class Methods #
+    # Construction/Destruction
+    @classmethod
+    def _init_class_(cls, name: str, bases: tuple[type, ...], namespace: dict[str, Any]) -> None:
+        super().__init__(name, bases, namespace)
+        cls._caches_ = cls._caches_.copy()
+
+        for name, cls_attribute in namespace.items():
+            if isinstance(cls_attribute, BaseTimedCache):
+                cls._caches_.add(name)
 
     # Attributes #
     _is_cache: bool = True
@@ -57,7 +72,7 @@ class CachingObject(BaseReducible, metaclass=CachingObjectMeta):
         # Attributes #
         self._caches = self._caches_.copy()
 
-        # Parent Attributes #
+        # Parent Initialization #
         super().__init__(*args, **kwargs)
 
     # Pickling

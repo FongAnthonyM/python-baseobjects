@@ -10,6 +10,7 @@
 
    usage
    reference
+   testing
    contributing
    Code of Conduct <codeofconduct>
    License <license>

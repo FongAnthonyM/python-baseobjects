@@ -1,14 +1,15 @@
 """parseparentheses.py
 Parses expressions with parentheses and returns a nested list of extracted elements.
 """
-# Package Header #
-from ..header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
@@ -21,6 +22,7 @@ from typing import Any, Callable
 # Third-Party Packages #
 
 # Local Packages #
+from ..functions import singlekwargdispatch
 
 
 # Definitions #
@@ -51,7 +53,7 @@ def _no_cast(obj: Any) -> Any:
     return obj
 
 
-@singledispatch
+@singlekwargdispatch
 def parse_parentheses(
     expression: str | bytes | bytearray,
     include: set | None = None,
@@ -108,8 +110,10 @@ def _parse_parentheses(
         ValueError: If the parentheses in the input expression are unbalanced (either unmatched opening or closing
             parentheses).
     """
+    if exclude is None:
+        exclude = set()
     list_bank = deque([[]])
-    for match_object in re.finditer(r_expression, expression):
+    for match_object in re.finditer(r_expression, expression.strip()):
         match (token := match_object[0]):
             case '(':
                 new_list = []
@@ -122,7 +126,7 @@ def _parse_parentheses(
                     raise ValueError("Unbalanced parentheses")
             case _ if (not include or token in include) and token not in exclude:
                 list_bank[-1].append(cast(token.strip()))
-    if len(list_bank) > 1:
+    if len(list_bank) != 1:
         raise ValueError("Unbalanced parentheses")
     return list_bank.pop()
 
@@ -158,7 +162,7 @@ def _parse_parentheses(
     if exclude is None:
         exclude = set()
     list_bank = deque([[]])
-    for match_object in re.finditer(rb_expression, expression):
+    for match_object in re.finditer(rb_expression, expression.strip()):
         match (token := match_object[0]):
             case b'(':
                 new_list = []
@@ -171,6 +175,6 @@ def _parse_parentheses(
                     raise ValueError("Unbalanced parentheses")
             case _ if (not include or token in include) and token not in exclude:
                 list_bank[-1].append(cast(token.strip()))
-    if len(list_bank) > 1:
+    if len(list_bank) != 1:
         raise ValueError("Unbalanced parentheses")
     return list_bank.pop()

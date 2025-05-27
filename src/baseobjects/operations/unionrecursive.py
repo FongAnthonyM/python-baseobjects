@@ -1,21 +1,21 @@
 """unionrecursive.py
 Unions a mapping object and its contained mappings within another mapping.
 """
-# Package Header #
-from ..header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
 # Standard Libraries #
 from copy import deepcopy
 from collections.abc import Mapping
-from typing import Any
 
 # Third-Party Packages #
 

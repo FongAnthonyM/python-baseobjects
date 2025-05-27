@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ registeredclass_example.py
-An example of how to create and use a RegisteredClass.
+An example of how to create and use a BaseRegisteredClass.
 """
 
 # Imports #
@@ -14,13 +14,13 @@ from baseobjects.objects import RegisteredClass
 # Definitions #
 # Classes #
 class ExampleClass(RegisteredClass):
-    """An example class that inherits from RegisteredClass.
+    """An example class that inherits from BaseRegisteredClass.
 
     Attributes:
         class_register (dict): A dictionary to hold registered classes.
         class_registration (bool): A flag to enable class registration.
     """
-    class_register = {}
+    class_registry = {}
     class_registration = True
 
 
@@ -30,7 +30,7 @@ class ExampleSubClassOne(ExampleClass):
     Attributes:
         class_register_namespace (str): The namespace for class registration.
     """
-    class_register_namespace = "example"
+    class_registry_namespace = "example"
 
 
 class ExampleSubClassTwo(ExampleClass):
@@ -39,7 +39,7 @@ class ExampleSubClassTwo(ExampleClass):
     Attributes:
         class_register_namespace (str): The namespace for class registration.
     """
-    class_register_namespace = "example"
+    class_registry_namespace = "example"
 
 
 # Main #

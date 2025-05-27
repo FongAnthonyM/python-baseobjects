@@ -1,14 +1,15 @@
 """sentinelobject.py
 An object which acts as a sentinel object.
 """
-# Package Header #
-from ..header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
@@ -62,7 +63,7 @@ class SentinelObject:
         Returns:
             The system ID of the object.
         """
-        return id(self)
+        return self.id_number
 
     # Comparison
     def __eq__(self, other: "SentinelObject") -> bool:
@@ -77,6 +78,7 @@ class SentinelObject:
         return isinstance(other, SentinelObject) and self.id_number == other.id_number
 
 
-# Names #
+# Constants #
 DEFAULTSENTINEL = SentinelObject("DEFAULTSENTINEL")
+SEARCHSENTINEL = SentinelObject("SEARCHSENTINEL")
 search_sentinel = SentinelObject("search_sentinel")

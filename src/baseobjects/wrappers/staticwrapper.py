@@ -9,14 +9,15 @@ means subclasses should be designed to wrap the same objects and be used to wrap
 attributes/functions after initialization. These limitation are strict, but it leads to great performance preservation
 when compared to normal object attribute/method access.
 """
-# Package Header #
-from ..header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
@@ -281,8 +282,18 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         """
         store_name = "_" + wrap_name  # The true name of the attribute where the wrapped object is stored.
 
-        def get_(obj):
-            """Gets the wrapped object's attribute and check the temporary attribute if not."""
+        def get_(obj: Any) -> Any:
+            """Gets the wrapped object's attribute and check the temporary attribute if not.
+
+            Args:
+                obj: The object to get the attribute from.
+
+            Returns:
+                The attribute value.
+
+            Raises:
+                AttributeError: If the attribute cannot be found.
+            """
             try:
                 return cls._get_attribute(obj, store_name, attr_name)
             except AttributeError as error:
@@ -291,8 +302,16 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
                 except AttributeError:
                     raise error
 
-        def set_(obj, value):
-            """Sets the wrapped object's attribute or saves it to a temporary attribute if wrapped object."""
+        def set_(obj: Any, value: Any) -> None:
+            """Sets the wrapped object's attribute or saves it to a temporary attribute if wrapped object.
+
+            Args:
+                obj: The object to set the attribute on.
+                value: The value to set the attribute to.
+
+            Raises:
+                AttributeError: If the attribute cannot be set.
+            """
             try:
                 cls._set_attribute(obj, store_name, attr_name, value)
             except AttributeError as error:
@@ -301,8 +320,15 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
                 else:
                     raise error
 
-        def del_(obj):
-            """Deletes the wrapped object's attribute."""
+        def del_(obj: Any) -> None:
+            """Deletes the wrapped object's attribute.
+
+            Args:
+                obj: The object to delete the attribute from.
+
+            Raises:
+                AttributeError: If the attribute cannot be deleted.
+            """
             cls._del_attribute(obj, store_name, attr_name)
 
         return get_, set_, del_
@@ -320,8 +346,17 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         """
         store_name = "_" + wrap_name  # The true name of the attribute where the wrapped object is stored.
 
-        def func_(obj, *args, **kwargs):
-            """Evaluates the wrapped object's method."""
+        def func_(obj: Any, *args: Any, **kwargs: Any) -> Any:
+            """Evaluates the wrapped object's method.
+
+            Args:
+                obj: The object containing the wrapped object.
+                *args: The positional arguments to pass to the method.
+                **kwargs: The keyword arguments to pass to the method.
+
+            Returns:
+                The result of the method call.
+            """
             return cls._evaluate_method(obj, store_name, attr_name, args, kwargs)
 
         return func_
@@ -365,7 +400,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
                     setattr(cls, attribute, item)
 
     @classmethod
-    def _unwrap(cls) -> None:
+    def _class_unwrap(cls) -> None:
         """Removes all attributes added from other objects."""
         for name in set(dir(cls)) - cls.__original_dir_set:
             if isinstance(getattr(cls, name, None), property):
@@ -378,7 +413,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         Args:
             objects: A list of objects or types this object will wrap. Must be in the same order as _wrap_attributes.
         """
-        cls._unwrap()
+        cls._class_unwrap()
         cls._class_wrap(objects)
 
     # Instance Methods #
@@ -415,11 +450,6 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
                     # Create property
                     get_, set_, del_ = self._create_attribute_functions(name, attribute)
                     setattr(type(self), attribute, property(get_, set_, del_))
-
-    def _rewrap(self) -> None:
-        """Removes all the attributes added from other objects then adds attributes from embedded the objects."""
-        self._unwrap()
-        self._wrap()
 
     def _get_temp_attributes(self, name: str) -> None:
         """Creates temporary attributes from a wrapped object.

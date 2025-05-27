@@ -1,20 +1,20 @@
 """basecallable.py
 An abstract class which implements the basic structure for creating functions and methods.
 """
-# Package Header #
-from ..header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
 # Standard Libraries #
 from asyncio.coroutines import iscoroutinefunction, _is_coroutine
-from collections.abc import Iterable
 from functools import WRAPPER_ASSIGNMENTS
 from typing import Any
 from types import FunctionType, MethodType
@@ -97,8 +97,8 @@ class BaseCallable(BaseReducible):
 
         Args:
             func: The function or method to wrap.
-            *args: The arguments for building an instance.
-            **kwargs: The keyword arguments for build an instance.
+            *args: Positional arguments for building an instance.
+            **kwargs: Keyword arguments for build an instance.
         """
         new_callable = super().__new__(cls)
         if (instance := getattr(func, "__self__", None)) is not None:
@@ -114,25 +114,12 @@ class BaseCallable(BaseReducible):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        # Parent Attributes #
+        # Parent Initialization #
         super().__init__(*args, init=False, **kwargs)
 
         # Object Construction #
         if init:
             self.construct(func=func, *args, **kwargs)
-
-    # Calling
-    def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        """Calls the wrapped function with the instance as an argument.
-
-        Args:
-            *args: The arguments of the wrapped function.
-            **kwargs: The keyword arguments of the wrapped function.
-
-        Returns:
-            The output of the wrapped function.
-        """
-        return self.__wrapped__(*args, **kwargs)
 
     # Instance Methods #
     # Constructors/Destructors
@@ -153,6 +140,36 @@ class BaseCallable(BaseReducible):
             self.__func__ = func
 
         super().construct(*args, **kwargs)
+
+    # Binding
+    def bind_builtin(self, instance: Any = None, owner: type[Any] | None = None) -> MethodType:
+        """Creates a method of this wrapper which is bound to another object using the builtin method.
+
+        Args:
+            instance: The object to bind the method to.
+            owner: The class of the object being bound to.
+
+        Returns:
+            The bound method of this function.
+        """
+        return MethodType(self, instance)
+
+    def bind_wrapped(self, instance: Any = None, owner: type[Any] | None = None) -> MethodType:
+        """Creates a method of the wrapped function which is bound to another object."""
+        return self.__wrapped__.__get__(instance, owner)
+
+    # Calling
+    def call_wrapped(self, *args: Any, **kwargs: Any) -> Any:
+        """Calls the wrapped function with the instance as an argument.
+
+        Args:
+            *args: Positional arguments of the wrapped function.
+            **kwargs: Keyword arguments of the wrapped function.
+
+        Returns:
+            The output of the wrapped function.
+        """
+        return self.__wrapped__(*args, **kwargs)
 
     # Casting
     def as_function(self) -> FunctionType:
@@ -183,6 +200,11 @@ class BaseCallable(BaseReducible):
 
         return wrapper_function
 
+    # Method Overrides #
+    # Special method overriding which leads to less overhead.
+    __get__: GetObjectMethod = bind_builtin
+    __call__: AnyCallable = call_wrapped
+
 
 class BaseMethod(BaseCallable):
     """An abstract class which implements the basic structure for creating methods.
@@ -190,13 +212,14 @@ class BaseMethod(BaseCallable):
     Attributes:
         _self_: A weak reference to the object to bind this object to.
         __owner__: The class owner of the object.
-        _binding: Determines if this callable will bind the function to the contained object.
+        is_binding: Determines if this callable will bind to another object.
 
     Args:
         func: The function to wrap.
         instance: The other object to bind this method to.
         owner: The class of the other object to bind this method to.
         *args: Arguments for inheritance.
+        is_binding: Determines if this callable will bind to another object. Default is True.
         init: Determines if this object will construct.
         **kwargs: Keyword arguments for inheritance.
     """
@@ -205,7 +228,7 @@ class BaseMethod(BaseCallable):
     _self_: ReferenceType | None = None
     __owner__: type[Any] | None = None
 
-    _binding: bool = True
+    is_binding: bool = True
 
     # Properties #
     @property
@@ -220,19 +243,6 @@ class BaseMethod(BaseCallable):
     def __self__(self, value: Any) -> None:
         self._self_ = None if value is None else ReferenceType(value)
 
-    # Calling
-    def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        """Calls the wrapped function with the instance as an argument.
-
-        Args:
-            *args: The arguments of the wrapped function.
-            **kwargs: The keyword arguments of the wrapped function.
-
-        Returns:
-            The output of the wrapped function.
-        """
-        return self.__wrapped__(self._self_(), *args, **kwargs)
-
     # Magic Methods #
     # Construction/Destruction
     def __init__(
@@ -241,15 +251,16 @@ class BaseMethod(BaseCallable):
         instance: Any = None,
         owner: type[Any] | None = None,
         *args: Any,
+        is_binding: bool = True,
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        # Parent Attributes #
+        # Parent Initialization #
         super().__init__(*args, init=False, **kwargs)
 
         # Object Construction #
         if init:
-            self.construct(func=func, instance=instance, owner=owner, *args, **kwargs)
+            self.construct(func=func, instance=instance, owner=owner, is_binding=is_binding, *args, **kwargs)
 
     # Pickling
     def __getstate__(self) -> None | dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]]:
@@ -295,6 +306,7 @@ class BaseMethod(BaseCallable):
         func: AnyCallable | None = None,
         instance: Any = None,
         owner: type[Any] | None = None,
+        is_binding: bool = True,
         *args: Any,
         **kwargs: Any,
     ) -> None:
@@ -304,9 +316,12 @@ class BaseMethod(BaseCallable):
             func: The function to wrap.
             instance: The other object to bind this method to.
             owner: The class of the other object to bind this method to.
+            is_binding: Determines if this callable will bind to another object.
             *args: Arguments for inheritance.
             **kwargs: Keyword arguments for inheritance.
         """
+        self.is_binding = is_binding
+
         if instance is not None:
             self.__self__ = instance
 
@@ -316,7 +331,7 @@ class BaseMethod(BaseCallable):
         super().construct(func=func, *args, **kwargs)
 
     # Binding
-    def bind(self, instance: Any = None, owner: type[Any] | None = None) -> "BaseMethod":
+    def bind_self(self, instance: Any = None, owner: type[Any] | None = None) -> "BaseMethod":
         """Binds this object to another.
 
         Args:
@@ -326,10 +341,11 @@ class BaseMethod(BaseCallable):
         Returns:
             This object.
         """
-        if instance is not None:
-            self.__self__ = instance
-        if owner is not None:
-            self.__owner__ = owner
+        if self.is_binding:
+            if instance is not None:
+                self.__self__ = instance
+            if owner is not None:
+                self.__owner__ = owner
         return self
 
     def bind_to_attribute(
@@ -359,9 +375,23 @@ class BaseMethod(BaseCallable):
 
         return self
 
+    # Calling
+    def call_binding(self, *args: Any, **kwargs: Any) -> Any:
+        """Binds the wrapped function then calls the bound function.
+
+        Args:
+            *args: Positional arguments of the wrapped function.
+            **kwargs: Keyword arguments of the wrapped function.
+
+        Returns:
+            The output of the wrapped function.
+        """
+        return self.__wrapped__.__get__(self._self_(), self.__owner__)(*args, **kwargs)
+
     # Method Overrides #
     # Special method overriding which leads to less overhead.
-    __get__: GetObjectMethod = bind
+    __get__: GetObjectMethod = bind_self
+    __call__: AnyCallable = call_binding
 
 
 class BaseFunction(BaseCallable):
@@ -376,7 +406,7 @@ class BaseFunction(BaseCallable):
 
     # Instance Methods #
     # Binding
-    def bind(self, instance: Any = None, owner: type[Any] | None = None) -> BaseCallable | BaseMethod:
+    def bind(self, instance: Any, owner: type[Any] | None = None) -> BaseMethod:
         """Creates a method of this function which is bound to another object.
 
         Args:
@@ -386,26 +416,14 @@ class BaseFunction(BaseCallable):
         Returns:
             The bound method of this function.
         """
-        return self if instance is None else self.method_type(func=self, instance=instance, owner=owner)
-
-    def bind_builtin(self, instance: Any = None, owner: type[Any] | None = None) -> BaseCallable | MethodType:
-        """Creates a method of this function which is bound to another object using the builtin method.
-
-        Args:
-            instance: The object to bind the method to.
-            owner: The class of the object being bound to.
-
-        Returns:
-            The bound method of this function.
-        """
-        return self if instance is None else MethodType(self, instance)
+        return self.method_type(func=self, instance=instance, owner=owner)
 
     def bind_to_attribute(
         self,
         instance: Any = None,
         owner: type[Any] | None = None,
         name: str | None = None,
-    ) -> BaseCallable | BaseMethod:
+    ) -> BaseCallable:
         """Creates a method of this function which is bound to another object and sets the method an attribute.
 
         Args:
@@ -426,7 +444,3 @@ class BaseFunction(BaseCallable):
         setattr(instance, name, method)
 
         return method
-
-    # Method Overrides #
-    # Special method overriding which leads to less overhead.
-    __get__: GetObjectMethod = bind

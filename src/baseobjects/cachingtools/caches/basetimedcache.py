@@ -1,30 +1,31 @@
 """basetimedcache.py
 An abstract class for creating timed cache.
 """
-# Package Header #
-from ...header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
 # Standard Libraries #
 import abc
-from collections.abc import Callable, Hashable, Iterable, Iterator
+from collections.abc import Hashable, Iterable
 from contextlib import contextmanager
 from time import perf_counter
-from typing import Any
+from typing import Any, ContextManager
 
 # Third-Party Packages #
 
 # Local Packages #
 from ...typing import AnyCallable
 from ...bases import BaseObject
-from ...functions import MethodMultiplexer, DynamicCallable, DynamicMethod, DynamicFunction
+from ...functions import DynamicDecorator, MethodMultiplexer, DynamicCallable, DynamicMethod
 
 
 # Definitions #
@@ -84,7 +85,7 @@ class CacheItem(BaseObject):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        # Parent Attributes #
+        # Parent Initialization #
         super().__init__(*args, **kwargs)
 
         # Attributes #
@@ -98,7 +99,7 @@ class BaseTimedCacheCallable(DynamicCallable):
     """A base cache wrapper object for a function which resets its cache periodically.
 
     Attributes:
-        _is_local: Determines if the cache is local to each instance or all instances.
+        _instanced_cache: Determines if the cache exists in the main function or in the method instances.
 
         typed: Determines if the function's arguments are type sensitive for caching.
         is_timed: Determines if the cache will be reset periodically.
@@ -116,36 +117,39 @@ class BaseTimedCacheCallable(DynamicCallable):
         typed: Determines if the function's arguments are type sensitive for caching.
         lifetime: The period between cache resets in seconds.
         call_method: The default call method to use.
-        local: Determines if the cache is local to each instance or all instances.
+        instanced: Determines if the cache exists in the main function or in the method instances.
         *args: Arguments for inheritance.
         init: Determines if this object will construct.
         **kwargs: Keyword arguments for inheritance.
     """
 
     # Attributes #
-    _is_local: bool = False
+    _cast_excluded: set = DynamicCallable._cast_excluded | {"cache"}
+    default_call_method: str = "call_caching"
+
+    _instanced_cache: bool = False
 
     typed: bool = False
     is_timed: bool = True
     lifetime: int | float | None = None
     expiration: int | float | None = 0
 
-    cache_item_type = CacheItem
+    cache_item_type: Any = CacheItem
     cache_container: Any = None
-    _call_method: str = "caching_call"
+
     _cache_method: str = "no_cache"
     _previous_cache_method: str = "no_cache"
     cache: MethodMultiplexer
 
     # Properties #
     @property
-    def is_local(self) -> bool:
-        """Determines if the cache is local for all method bindings or for each instance."""
-        return self._is_local
+    def instanced_cache(self) -> bool:
+        """Determines if the cache exists in the main function or in the method instances."""
+        return self._instanced_cache
 
-    @is_local.setter
-    def is_local(self, value: bool) -> None:
-        self._is_local = value
+    @instanced_cache.setter
+    def instanced_cache(self, value: bool) -> None:
+        self._instanced_cache = value
 
     @property
     def cache_method(self) -> str:
@@ -165,16 +169,16 @@ class BaseTimedCacheCallable(DynamicCallable):
         typed: bool | None = None,
         lifetime: int | float | None = None,
         call_method: str | None = None,
-        local: bool | None = None,
+        instanced: bool | None = None,
         *args: Any,
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        # New Attributes #
+        # Attributes #
         self._previous_cache_method: str = self.cache_method
         self.cache: MethodMultiplexer = MethodMultiplexer(instance=self, select=self.cache_method)
 
-        # Parent Attributes #
+        # Parent Initialization #
         super().__init__(*args, init=False, **kwargs)
 
         # Object Construction #
@@ -184,7 +188,7 @@ class BaseTimedCacheCallable(DynamicCallable):
                 lifetime=lifetime,
                 typed=typed,
                 call_method=call_method,
-                local=local,
+                instanced=instanced,
                 *args,
                 **kwargs,
             )
@@ -197,18 +201,18 @@ class BaseTimedCacheCallable(DynamicCallable):
         typed: bool | None = None,
         lifetime: int | float | None = None,
         call_method: str | None = None,
-        local: bool | None = None,
+        instanced: bool | None = None,
         *args: Any,
         **kwargs: Any,
     ) -> None:
         """The constructor for this object.
 
         Args:
-            func:  The function to wrap.
+            func: The function to wrap.
             typed: Determines if the function's arguments are type sensitive for caching.
             lifetime: The period between cache resets in seconds.
             call_method: The default call method to use.
-            local: Determines if the cache is local to each instance or all instances.
+            instanced: Determines if the cache exists in the main function or in the method instances.
             *args: Arguments for inheritance.
             **kwargs: Keyword arguments for inheritance.
         """
@@ -221,8 +225,8 @@ class BaseTimedCacheCallable(DynamicCallable):
         if call_method is not None:
             self.call_method = call_method
 
-        if local is not None:
-            self.is_local = local
+        if instanced is not None:
+            self.instanced_cache = instanced
 
         super().construct(func=func, *args, **kwargs)
 
@@ -237,7 +241,7 @@ class BaseTimedCacheCallable(DynamicCallable):
         Returns:
             The result of the wrapped function.
         """
-        return self.__func__(*args, **kwargs)
+        return self.__wrapped__(*args, **kwargs)
 
     # Cache Control
     def create_key(
@@ -246,37 +250,37 @@ class BaseTimedCacheCallable(DynamicCallable):
         kwds: dict,
         typed: bool,
         kwd_mark: tuple = (object(),),
-        fasttypes: set = {int, str},
+        fasttypes: set = {int, str, frozenset, type(None)},
         tuple_: AnyCallable = tuple,
         type_: AnyCallable = type,
         len_: AnyCallable = len,
     ) -> _HashedSeq:
         """Make a cache key from optionally typed positional and keyword arguments.
 
-        The key is constructed in a way that is flat as possible rather than
-        as a nested structure that would take more memory.
-
-        If there is only a single argument and its data type is known to cache
-        its hash value, then that argument is returned without a wrapper.  This
-        saves space and improves lookup speed.
-
+        The key is constructed in a way that is flat as possible rather than as a nested structure that would take
+        more memory. If there is only a single argument and its data type is known to cache its hash value, then that
+        argument is returned without a wrapper. This saves space and improves lookup speed.
         """
-        # All of code below relies on kwds preserving the order input by the user.
-        # Formerly, we sorted() the kwds before looping.  The new way is *much*
-        # faster; however, it means that f(x=1, y=2) will now be treated as a
-        # distinct call from f(y=2, x=1) which will be cached separately.
-        key = args
+        # Fast path for common case: single positional argument with no keyword arguments
+        if len(args) == 1 and not kwds and type_(args[0]) in fasttypes:
+            return args[0]
+
+        # Build the key tuple efficiently
+        key_parts = []
+        key_parts.extend(args)
+
         if kwds:
-            key += kwd_mark
-            for item in kwds.items():
-                key += item
+            key_parts.append(kwd_mark[0])
+            for k, v in kwds.items():
+                key_parts.append(k)
+                key_parts.append(v)
+
         if typed:
-            key += tuple_(type_(v) for v in args)
+            key_parts.extend(type_(v) for v in args)
             if kwds:
-                key += tuple_(type_(v) for v in kwds.values())
-        elif len_(key) == 1 and type_(key[0]) in fasttypes:
-            return key[0]
-        return _HashedSeq(key)
+                key_parts.extend(type_(v) for v in kwds.values())
+
+        return _HashedSeq(tuple_(key_parts))
 
     def clear_condition(self, *args: Any, **kwargs: Any) -> bool:
         """The condition used to determine if the cache should be cleared.
@@ -307,14 +311,14 @@ class BaseTimedCacheCallable(DynamicCallable):
         self.cache.select(self._previous_cache_method)
 
     @contextmanager
-    def pause_caching(self) -> Callable[..., Iterator[None]]:
+    def pause_caching(self) -> ContextManager[None]:
         self.stop_caching()
         yield None
         self.resume_caching()
 
     # Calling
-    def caching_call(self, *args: Any, **kwargs: Any) -> Any:
-        """Calls the caching function and clears the cache at certain time.
+    def call_caching(self, *args: Any, **kwargs: Any) -> Any:
+        """Calls the caching function and clears the cache at a certain time.
 
         Args:
             *args: Arguments for the wrapped function.
@@ -328,7 +332,7 @@ class BaseTimedCacheCallable(DynamicCallable):
 
         return self.cache(*args, **kwargs)
 
-    def clearing_call(self, *args: Any, **kwargs: Any) -> Any:
+    def call_clearing(self, *args: Any, **kwargs: Any) -> Any:
         """Clears the cache then calls the caching function.
 
         Args:
@@ -346,23 +350,8 @@ class BaseTimedCacheCallable(DynamicCallable):
 class BaseTimedCacheMethod(BaseTimedCacheCallable, DynamicMethod):
     """An abstract method class for timed caches."""
 
-    # Properties #
-    @property
-    def is_local(self) -> bool:
-        """Determines if the cache is local for all method bindings or for each instance.
-
-        When set, the __call__ method will be changed to match the chosen style.
-        """
-        return self._is_local
-
-    @is_local.setter
-    def is_local(self, value: bool) -> None:
-        if value:
-            self.call_multiplexer.select(self.call_method)
-        else:
-            self.call_multiplexer.select("call")
-        self._is_local = value
-
+    # Instance Methods #
+    # Cache Control
     @abc.abstractmethod
     def clear_cache(self) -> None:
         """Clear the cache and update the expiration of the cache."""
@@ -370,8 +359,8 @@ class BaseTimedCacheMethod(BaseTimedCacheCallable, DynamicMethod):
             self.expiration = perf_counter() + self.lifetime
 
     # Calling
-    def caching_call(self, *args: Any, **kwargs: Any) -> Any:
-        """Calls the caching function and clears the cache at certain time.
+    def call_caching(self, *args: Any, **kwargs: Any) -> Any:
+        """Calls the caching function and clears the cache at a certain time.
 
         Args:
             *args: Arguments for the wrapped function.
@@ -383,9 +372,9 @@ class BaseTimedCacheMethod(BaseTimedCacheCallable, DynamicMethod):
         if self.clear_condition():
             self.clear_cache()
 
-        return self.cache(self.__self__, *args, **kwargs)
+        return self.cache(self._self_(), *args, **kwargs)
 
-    def clearing_call(self, *args: Any, **kwargs: Any) -> Any:
+    def call_clearing(self, *args: Any, **kwargs: Any) -> Any:
         """Clears the cache then calls the caching function.
 
         Args:
@@ -397,10 +386,10 @@ class BaseTimedCacheMethod(BaseTimedCacheCallable, DynamicMethod):
         """
         self.clear_cache()
 
-        return self.cache(self.__self__, *args, **kwargs)
+        return self.cache(self._self_(), *args, **kwargs)
 
 
-class BaseTimedCache(BaseTimedCacheCallable, DynamicFunction):
+class BaseTimedCache(BaseTimedCacheCallable, DynamicDecorator):
     """An abstract function class for timed caches."""
 
     # Attributes #
@@ -408,22 +397,20 @@ class BaseTimedCache(BaseTimedCacheCallable, DynamicFunction):
 
     # Properties #
     @property
-    def is_local(self) -> bool:
-        """Determines if the cache is local for all method bindings or for each instance.
+    def instanced_cache(self) -> bool:
+        """Determines if the cache exists in the main function or in the method instances.
 
         When set, the __get__ method will be changed to match the chosen style.
         """
-        return self._is_local
+        return self._instanced_cache
 
-    @is_local.setter
-    def is_local(self, value: bool) -> None:
+    @instanced_cache.setter
+    def instanced_cache(self, value: bool) -> None:
         if value:
-            self.call_multiplexer.select("call")
             self.bind_multiplexer.select("bind_to_attribute")
         else:
-            self.call_multiplexer.select(self.call_method)
-            self.bind_multiplexer.select("bind")
-        self._is_local = value
+            self.bind_multiplexer.select("bind_builtin")
+        self._instanced_cache = value
 
     # Instance Methods #
     # Binding
@@ -438,13 +425,13 @@ class BaseTimedCache(BaseTimedCacheCallable, DynamicFunction):
             The bound method of this function.
         """
         return self.method_type(
-            func=self,
+            func=self.__wrapped__,
             instance=instance,
             owner=owner,
             typed=self.typed,
             lifetime=self.lifetime,
             call_method=self.call_method,
-            local=self.is_local,
+            instanced=self.instanced_cache,
         )
 
     def bind_to_attribute(
@@ -452,7 +439,7 @@ class BaseTimedCache(BaseTimedCacheCallable, DynamicFunction):
         instance: Any = None,
         owner: type[Any] | None = None,
         name: str | None = None,
-    ) -> BaseTimedCacheMethod:
+    ) -> BaseTimedCacheCallable:
         """Creates a method of this function which is bound to another object and sets the method an attribute.
 
         Args:
@@ -463,17 +450,20 @@ class BaseTimedCache(BaseTimedCacheCallable, DynamicFunction):
         Returns:
             The bound method of this function.
         """
+        if instance is None:
+            return self
+
         if name is None:
-            name = self.__func__.__name__
+            name = self.__wrapped__.__name__
 
         method = self.method_type(
-            func=self,
+            func=self.__wrapped__,
             instance=instance,
             owner=owner,
             typed=self.typed,
             lifetime=self.lifetime,
             call_method=self.call_method,
-            local=self.is_local,
+            instanced=self.instanced_cache,
         )
         setattr(instance, name, method)
 

@@ -1,24 +1,26 @@
 """exceldatetodatetime.py
 A function to convert an excel date to a datetime.
 """
-# Package Header #
-from ..header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
 # Standard Libraries #
-from datetime import datetime, timedelta, tzinfo, timezone
-from functools import singledispatch
+from datetime import datetime, timedelta, timezone
+from datetime import tzinfo as TZInfo
 
 # Third-Party Packages #
 
 # Local Packages #
+from ..functions import singlekwargdispatch
 
 
 # Definitions #
@@ -27,8 +29,8 @@ EXCEL_INIT_DATE = datetime(1899, 12, 30)  # The initial date of Filetime.
 
 
 # Functions #
-@singledispatch
-def excel_date_to_datetime(timestamp: int | float | str | bytes, tzinfo: tzinfo | None = timezone.utc) -> datetime:
+@singlekwargdispatch
+def excel_date_to_datetime(timestamp: int | float | str | bytes, tzinfo: TZInfo | None = timezone.utc) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:
@@ -43,7 +45,7 @@ def excel_date_to_datetime(timestamp: int | float | str | bytes, tzinfo: tzinfo 
 
 @excel_date_to_datetime.register(float)
 @excel_date_to_datetime.register(int)
-def _excel_date_to_datetime(timestamp: float | int, tzinfo: tzinfo | None = timezone.utc) -> datetime:
+def _excel_date_to_datetime(timestamp: float | int, tzinfo: TZInfo | None = timezone.utc) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:
@@ -58,7 +60,7 @@ def _excel_date_to_datetime(timestamp: float | int, tzinfo: tzinfo | None = time
 
 @excel_date_to_datetime.register(str)
 @excel_date_to_datetime.register(bytes)
-def _excel_date_to_datetime(timestamp: str | bytes, tzinfo: tzinfo | None = timezone.utc) -> datetime:
+def _excel_date_to_datetime(timestamp: str | bytes, tzinfo: TZInfo | None = timezone.utc) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:

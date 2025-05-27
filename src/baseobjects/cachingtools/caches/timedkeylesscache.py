@@ -1,25 +1,26 @@
 """timedkeylesscache.py
-A timed cache that only hold a single item and does not create a key from arguments.
+A timed cache which holds only a single item and does not create a key from arguments.
 """
-# Package Header #
-from ...header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
 # Standard Libraries #
 from collections.abc import Callable
+from types import MethodType
 from typing import Any
 
 # Third-Party Packages #
 
 # Local Packages #
-from ...typing import AnyCallable
 from .timedsinglecache import TimedSingleCacheCallable, TimedSingleCacheMethod, TimedSingleCache
 
 
@@ -63,43 +64,7 @@ class TimedKeylessCache(TimedKeylessCacheCallable, TimedSingleCache):
 
     # Attributes #
     method_type: type[TimedSingleCacheMethod] = TimedKeylessCacheMethod
-    _bind_method: str = "bind_to_attribute"
 
 
-# Functions #
-def timed_keyless_cache(
-    typed: bool = False,
-    lifetime: int | float | None = None,
-    call_method: str | None = None,
-    local: bool = True,
-) -> Callable[[AnyCallable], TimedKeylessCache]:
-    """A factory to be used a decorator that sets the parameters of timed keyless cache function factory.
-
-    Args:
-        typed: Determines if the function's arguments are type sensitive for caching.
-        lifetime: The period between cache resets in seconds.
-        call_method: The default call method to use.
-        local: Determines if the cache is local for all method bindings or for each instance.
-
-    Returns:
-        The parameterized timed keyless cache function factory.
-    """
-
-    def timed_keyless_cache_factory(func: AnyCallable) -> TimedKeylessCache:
-        """A factory for wrapping a function with a TimedKeylessCache object.
-
-        Args:
-            func: The function to wrap with a TimedKeylessCache.
-
-        Returns:
-            The TimeKeylessCache object which wraps the given function.
-        """
-        return TimedKeylessCache(
-            func,
-            typed=typed,
-            lifetime=lifetime,
-            call_method=call_method,
-            local=local,
-        )
-
-    return timed_keyless_cache_factory
+# Aliases #
+timed_keyless_cache = TimedKeylessCache

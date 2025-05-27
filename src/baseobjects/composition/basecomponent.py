@@ -1,14 +1,15 @@
 """basecomponent.py
 
 """
-# Package Header #
-from ..header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
@@ -61,7 +62,7 @@ class BaseComponent(BaseReducible):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        # Parent Attributes #
+        # Parent Initialization #
         super().__init__(init=False)
 
         # Object Construction #

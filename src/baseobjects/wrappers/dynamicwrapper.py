@@ -4,14 +4,15 @@ after checking itself. This makes DynamicWrapper very flexible with its wrapped 
 any usage limitation, but it is significantly slower than normal object attribute/method access, because it handles
 every get, set, and delete. Performance would be better if DynamicWrapper was written in C.
 """
-# Package Header #
-from ..header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
@@ -63,13 +64,15 @@ class DynamicWrapper(BaseObject):
             AttributeError: If the requested attribute cannot be returned.
         """
         # Iterate through all object parents to find the attribute
-        for attribute in self._wrap_attributes:
-            try:
-                return getattr(object.__getattribute__(self, attribute), name)
-            except AttributeError:
-                pass
-
-        raise AttributeError
+        try:
+            return object.__getattribute__(self, name)
+        except AttributeError:
+            for attribute in self._wrap_attributes:
+                try:
+                    return getattr(object.__getattribute__(self, attribute), name)
+                except AttributeError:
+                    pass
+            raise AttributeError
 
     def __setattr__(self, name: str, value: Any) -> None:
         """Sets the attribute of another object if that attribute name is not present in this object.

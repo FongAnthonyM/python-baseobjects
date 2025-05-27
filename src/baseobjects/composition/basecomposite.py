@@ -1,14 +1,15 @@
 """basecomposite.py
 A basic composite object which is composed of component objects.
 """
-# Package Header #
-from ..header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
@@ -58,10 +59,10 @@ class BaseComposite(BaseObject):
         init: bool = True,
         **kwargs: Any
     ) -> None:
-        # New Attributes #
+        # Attributes #
         self.components: dict[str, Any] = self.components.copy()
 
-        # Parent Attributes #
+        # Parent Initialization #
         super().__init__(init=False)
 
         # Object Construction #
@@ -123,8 +124,12 @@ class BaseComposite(BaseObject):
         type_iter = ((n, temp_types[n]) for n in type_names)
         default_components_iter = ((n, c(composite=self, **(k | new_kwargs.get(n, {})))) for n, (c, k) in type_iter)
 
-        self.components.update(chain(default_components_iter, ((n, c) for n, c in components.items())))
+        self.components.update(default_components_iter)
+        for name, component in components.items():
+            component.composite = self
+            self.components[name] = component
 
+    # Components
     def create_component(
         self,
         name: str,
@@ -141,4 +146,36 @@ class BaseComposite(BaseObject):
             **kwargs: Keyword arguments for the new component.
         """
         self.components[name] = component = component(*args, **({"composite": self} | kwargs))
+        return component
+
+    def add_component(self, name: str, component: Any) -> Any:
+        """Adds an existing component to this composite.
+
+        Args:
+            name: The name of the component to add.
+            component: The component to add.
+
+        Returns:
+            The added component.
+        """
+        self.components[name] = component
+        component.composite = self
+        return component
+
+    def remove_component(self, name: str) -> Any:
+        """Removes a component by name.
+
+        Args:
+            name: The name of the component to remove.
+
+        Returns:
+            The removed component.
+
+        Raises:
+            KeyError: If no component with the given name exists.
+        """
+        component = self.components[name]
+        del self.components[name]
+        if self is component.composite:
+            component.composite = None
         return component

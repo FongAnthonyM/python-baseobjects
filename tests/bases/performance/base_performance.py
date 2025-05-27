@@ -1,0 +1,162 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+""" base_performance.py
+Common performance test classes and fixtures for testing base classes in the baseobjects package.
+"""
+# Header #
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
+
+
+# Imports #
+# Standard Libraries #
+import abc
+from pathlib import Path
+from pstats import Stats, f8, func_std_string
+import timeit
+from typing import Any, Type
+
+# Third-Party Packages #
+import pytest
+
+# Local Packages #
+
+
+# Definitions #
+# Functions #
+# Fixtures
+@pytest.fixture
+def tmp_dir(tmpdir: Any) -> Path:
+    """A pytest fixture that turns the tmpdir into a Path object.
+
+    Args:
+        tmpdir: A pytest tmpdir fixture.
+
+    Returns:
+        Path: A pathlib.Path object representing the temporary directory.
+    """
+    return Path(tmpdir)
+
+
+# Classes #
+# Performance Profiler
+class StatsMicro(Stats):
+    """A subclass of Stats that prints times in microseconds instead of seconds.
+
+    This class overrides the print_stats and print_line methods to display times in microseconds, which is more 
+    appropriate for performance testing of small functions.
+    """
+    def print_stats(self, *amount: Any) -> "StatsMicro":
+        """Print the statistics for the profiled code.
+
+        Args:
+            *amount: Optional restrictions on what to print.
+
+        Returns:
+            StatsMicro: Self for method chaining.
+        """
+        for filename in self.files:
+            print(filename, file=self.stream)
+        if self.files:
+            print(file=self.stream)
+        indent = " " * 8
+        for func in self.top_level:
+            print(indent, func_std_string(func), file=self.stream)
+
+        print(indent, self.total_calls, "function calls", end=" ", file=self.stream)
+        if self.total_calls != self.prim_calls:
+            print("(%d primitive calls)" % self.prim_calls, end=" ", file=self.stream)
+        print("in %.3f microseconds" % (self.total_tt * 1000000), file=self.stream)
+        print(file=self.stream)
+        width, list = self.get_print_list(amount)
+        if list:
+            self.print_title()
+            for func in list:
+                self.print_line(func)
+            print(file=self.stream)
+            print(file=self.stream)
+        return self
+
+    def print_line(self, func: Any) -> None:  # hack: should print percentages
+        """Print a single line of statistics.
+
+        Args:
+            func: The function for which to print statistics.
+        """
+        cc, nc, tt, ct, callers = self.stats[func]
+        c = str(nc)
+        if nc != cc:
+            c = c + "/" + str(cc)
+        print(c.rjust(9), end=" ", file=self.stream)
+        print(f8(tt * 1000000), end=" ", file=self.stream)
+        if nc == 0:
+            print(" " * 8, end=" ", file=self.stream)
+        else:
+            print(f8(tt / nc * 1000000), end=" ", file=self.stream)
+        print(f8(ct * 1000000), end=" ", file=self.stream)
+        if cc == 0:
+            print(" " * 8, end=" ", file=self.stream)
+        else:
+            print(f8(ct / cc * 1000000), end=" ", file=self.stream)
+        print(func_std_string(func), file=self.stream)
+
+
+# Performance Test Classes
+class PerformanceTest(abc.ABC):
+    """Default performance tests that all classes should pass.
+
+    This is an abstract base class that defines the interface for all performance test classes.
+
+    Attributes:
+        timeit_runs: The number of runs to use for timeit measurements.
+        speed_tolerance: The maximum percentage of time a new implementation can take compared to the old one.
+        _base_time: The time it takes to run a simple function call for a baseline of 100 million iterations.
+        call_speed: The baseline speed of a simple function call in microseconds.
+    """
+    # Attributes #
+    timeit_runs: int = 100000
+    speed_tolerance: int = 150
+    
+    # Calculate the baseline speed of a simple function call in microseconds
+    _base_time: float = timeit.timeit(lambda: None, number=10000000)
+    call_speed: float = _base_time / 10000000 * 1000000
+
+
+class ClassPerformanceTest(PerformanceTest):
+    """Default class performance tests that all classes should pass.
+
+    This is an abstract base class that defines the interface for all class performance test classes. Subclasses should 
+    implement the test_instance_creation method and set the class_ attribute.
+
+    Attributes:
+        class_: The class that the test class is testing.
+    """
+    # Attributes #
+    class_: Type[Any] | None = None
+
+    # Instance Methods #
+    # Tests
+    def test_instance_creation(self, *args: Any, **kwargs: Any) -> None:
+        """Test the performance of instance creation.
+
+        This is an abstract method that must be implemented by subclasses.
+
+        Args:
+            *args: Positional arguments list to pass to the class constructor.
+            **kwargs: Keyword arguments to pass to the class constructor.
+        """
+
+
+# Base Object
+class BaseBaseObjectPerformanceTest(ClassPerformanceTest):
+    """All BaseObject performance subclasses need to pass these tests to considered functional.
+
+    This is an abstract base class that defines the performance tests that all BaseObject subclasses should pass. 
+    Concrete test classes for BaseObject subclasses should inherit from this class.
+    """

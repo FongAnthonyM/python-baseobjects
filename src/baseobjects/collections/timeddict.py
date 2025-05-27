@@ -1,19 +1,20 @@
 """timeddict.py
 A dictionary that clears its contents after a specified time has passed.
 """
-# Package Header #
-from ..header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
 # Standard Libraries #
-from collections.abc import Callable, Hashable, Iterator
+from collections.abc import Hashable
 from contextlib import contextmanager
 from time import perf_counter
 from typing import Any
@@ -79,7 +80,7 @@ class TimedDict(BaseDict):
             self.expiration = perf_counter() + self.lifetime
 
     @contextmanager
-    def pause_timer(self) -> Callable[..., Iterator[None]]:
+    def pause_timer(self) -> None:
         """A context manager that will stop clearing the dictionary until it is returned."""
         left_over = 0.0
         if self.expiration is not None:
@@ -91,7 +92,7 @@ class TimedDict(BaseDict):
         self.is_timed = True
 
     @contextmanager
-    def pause_reset_timer(self) -> Callable[..., Iterator[None]]:
+    def pause_reset_timer(self) -> None:
         """A context manager that will stop clearing the dictionary until it is returned, resting the expiration."""
         self.is_timed = False
         yield None

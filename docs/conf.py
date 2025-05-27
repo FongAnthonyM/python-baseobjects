@@ -11,7 +11,7 @@ from datetime import datetime
 
 
 # Definitions #
-project = "base objects"
+project = "baseobjects"
 author = "Anthony Fong"
 copyright = f"{datetime.now().year}, {author}"
 extensions = [

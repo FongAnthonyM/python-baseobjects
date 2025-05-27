@@ -1,14 +1,15 @@
 """baseobject.py
 BaseObject is an abstract class which implements some basic functions that all objects should have.
 """
-# Package Header #
-from ..header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
@@ -37,7 +38,7 @@ class BaseObject(ABC):
     """An abstract class that implements some basic functions that all objects should have."""
 
     # Magic Methods #
-    # Construction/Destruction
+    # Construction/Destruction #
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         pass
 

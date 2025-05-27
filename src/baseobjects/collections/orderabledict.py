@@ -1,14 +1,15 @@
 """orderabledict.py
 A dictionary with an adjustable order and additional supporting methods.
 """
-# Package Header #
-from ..header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
@@ -47,10 +48,10 @@ class OrderableDict(BaseDict):
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, dict_: Any = None, /, *args: Any, **kwargs: Any) -> None:
-        # New Attributes #
-        self.order: list[KeyType, ...] = []
+        # Attributes #
+        self.order = []
 
-        # Parent Attributes #
+        # Parent Initialization #
         super().__init__(dict_, *args, **kwargs)
 
     # Container Methods
@@ -133,11 +134,11 @@ class OrderableDict(BaseDict):
         if key in self.data:
             old = self.order.index(key)
             if index < old:
-                self.order.insert(index, value)
-                self.order.remove(old + 1)
+                self.order.remove(key)
+                self.order.insert(index, key)
             elif index > old + 1:
-                self.order.insert(index, value)
-                self.order.remove(old)
+                self.order.remove(key)
+                self.order.insert(index - 1, key)
         else:
             self.order.insert(index, key)
 

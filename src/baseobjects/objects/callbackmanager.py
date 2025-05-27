@@ -1,14 +1,15 @@
 """ callbackmanager.py
 An object which manages and executes callback functions with conditions and callers.
 """
-# Package Header #
-from ..header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
@@ -61,7 +62,7 @@ class CallbackScheduler(BaseObject):
         self.schedule = MethodMultiplexer(instance=self, select=self.default_schedule)
         self.schedule_async = MethodMultiplexer(instance=self, select=self.default_schedule_async)
 
-        # Parent Attributes #
+        # Parent Initialization #
         super().__init__()
 
         # Construction #
@@ -197,7 +198,7 @@ class CallbackManager(BaseReducible):
 
         self.tasks = {}
 
-        # Parent Attributes #
+        # Parent Initialization #
         super().__init__()
 
         # Construction #
@@ -541,7 +542,7 @@ class CallbackManager(BaseReducible):
         Args:
             name: The name of the callback to execute.
             *args: The positional arguments to pass to the callback function.
-            **kwargs: The keyword arguments to pass to the callback function.
+            **kwargs: Keyword arguments to pass to the callback function.
         """
         self.callbacks[name](*args, **kwargs)
 
@@ -551,7 +552,7 @@ class CallbackManager(BaseReducible):
         Args:
             name: The name of the callback to execute.
             *args: The positional arguments to pass to the callback function.
-            **kwargs: The keyword arguments to pass to the callback function.
+            **kwargs: Keyword arguments to pass to the callback function.
         """
         await self.callbacks_async[name](*args, **kwargs)
 
@@ -562,7 +563,7 @@ class CallbackManager(BaseReducible):
         await callback()
 
     # Conditional Callback Calling
-    def call_contional(self, condition: Callable, callback: Callable) -> None:
+    def call_conditional(self, condition: Callable, callback: Callable) -> None:
         """Evaluates the callback function if the callback condition is met.
 
         Args:
@@ -572,7 +573,7 @@ class CallbackManager(BaseReducible):
         if condition():
             callback()
 
-    async def call_conditonal_async(self, condition_async: Callable, callback_async: Callable) -> None:
+    async def call_conditional_async(self, condition_async: Callable, callback_async: Callable) -> None:
         """Asynchronously evaluates the callback function if the callback condition is met.
 
         Args:

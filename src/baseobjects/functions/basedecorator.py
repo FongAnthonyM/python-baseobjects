@@ -1,110 +1,55 @@
 """basedecorator.py
 An abstract class which implements the basic structure for creating decorators.
 """
-# Package Header #
-from ..header import *
+# Futures Imports #
+from __future__ import annotations
 
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
 # Standard Libraries #
 from typing import Any
+from functools import partial
 
 # Third-Party Packages #
 
 # Local Packages #
+from ..bases import BaseFunction
 from ..typing import AnyCallable
 from .dynamiccallable import DynamicFunction
 
 
 # Definitions #
 # Classes #
-class BaseDecorator(DynamicFunction):
+class BaseDecorator(BaseFunction):
     """An abstract class which implements the basic structure for creating decorators."""
 
-    # Attributes #
-    _bind_method: str = "bind_builtin"
-    _call_method: str = "construct_call"
-    _wrapper_method: str = "call"
-
-    # Properties
-    @property
-    def wrapper_method(self) -> str | None:
-        """The name of the method which will act as the wrapper for this decorator."""
-        return self._wrapper_method
-
-    @wrapper_method.setter
-    def wrapper_method(self, value: str) -> None:
-        if self.call_method == self._wrapper_method:
-            self.call_method = value
-        self._wrapper_method = value
+    # Static Methods #
+    @staticmethod
+    def create_decorator(cls: BaseDecorator, func: AnyCallable, args: tuple, kwargs: dict[str, Any]) -> BaseDecorator:
+        """A static method for creating a decorator."""
+        return cls(func, *args, **kwargs)
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(
-        self,
-        func: AnyCallable | None = None,
-        *args: Any,
-        wrapper_method: str | None = None,
-        init: bool = True,
-        **kwargs: Any,
-    ) -> None:
-        # Parent Attributes #
-        super().__init__(*args, init=False, **kwargs)
-
-        # Object Construction #
-        if init:
-            self.construct(func=func, *args, wrapper_method=wrapper_method, **kwargs)
-
-    # Instance Methods #
-    # Constructors/Destructors
-    def construct(
-        self,
-        func: AnyCallable | None = None,
-        *args: Any,
-        wrapper_method: str | None = None,
-        **kwargs: Any,
-    ) -> None:
-        """The constructor for this object.
-
-        Args:
-            func: The function to wrap.
-            *args: Arguments for inheritance.
-            wrapper_method: The name of the method which will act as the wrapper for this decorator.
-            **kwargs: Keyword arguments for inheritance.
-        """
-        if wrapper_method is not None:
-            self.wrapper_method = wrapper_method
-
-        if func is not None:
-            self.call_method = self._wrapper_method
-
-        super().construct(func, *args, **kwargs)
-
-    # Calling
-    def construct_call(
-        self,
-        func: AnyCallable | None = None,
-        *args: Any,
-        wrapper_method: str | None = None,
-        **kwargs: Any,
-    ) -> "BaseDecorator":
-        """A method for constructing this object via this object being called.
+    def __new__(cls, *args: Any, func: AnyCallable | None = None, **kwargs: Any) -> BaseDecorator | partial :
+        """Dispatches either the decorator instnace or creates a factory for creating instances.
 
         Args:
             func: The function or method to wrap.
-            *args: The arguments from the call which can construct this object.
-            wrapper_method: The name of the method which will act as the wrapper for this decorator.
-            **kwargs: The keyword arguments from the call which can construct this object.
-
-        Returns:
-            This object.
+            *args: Positional arguments for building an instance.
+            **kwargs: Keyword arguments for building an instance.
         """
-        self.construct(func=func, *args, wrapper_method=wrapper_method, **kwargs)
-        instance = getattr(func, "__self__", None)
-        return self if instance is None else self.__get__(instance, instance.__class__)
+        if func is None and (not args or not callable(args[0])):
+            return partial(cls.create_decorator, cls, args=args, kwargs=kwargs)
+        else:
+            return super().__new__(cls)

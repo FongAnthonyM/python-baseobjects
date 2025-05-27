@@ -14,14 +14,14 @@ from baseobjects.objects import DispatchableClass
 # Definitions #
 # Classes #
 class ExampleClass(DispatchableClass):
-    """An example class that inherits from RegisteredClass.
+    """An example class that inherits from BaseRegisteredClass.
 
     Attributes:
-        class_register (dict): A dictionary to hold registered classes.
+        class_registry (dict): A dictionary to hold registered classes.
         class_registration (bool): A flag to enable class registration.
     """
-    class_register = {}
-    class_registration = True  # This flag enables class registration and sets this class as the head of the register.
+    class_registry = {}
+    class_registration = True  # This flag enables class registration and sets this class as the head of the registry.
 
     @classmethod
     def get_class_information(
@@ -34,8 +34,8 @@ class ExampleClass(DispatchableClass):
         """Gets a class namespace and name from a given set of arguments.
 
         Args:
-            *args: The arguments to get the namespace and name from.
-            **kwargs: The keyword arguments to get the namespace and name from.
+            *args: Positional arguments to get the namespace and name from.
+            **kwargs: Keyword arguments to get the namespace and name from.
 
         Returns:
             The namespace and name of the class.
@@ -47,18 +47,18 @@ class ExampleSubClassOne(ExampleClass):
     """A subclass of ExampleClass with a specific namespace for registration.
 
     Attributes:
-        class_register_namespace (str): The namespace for class registration.
+        class_registry_namespace (str): The namespace for class registration.
     """
-    class_register_namespace = "example"
+    class_registry_namespace = "example"
 
 
 class ExampleSubClassTwo(ExampleClass):
     """Another subclass of ExampleClass with the same namespace for registration.
 
     Attributes:
-        class_register_namespace (str): The namespace for class registration.
+        class_registry_namespace (str): The namespace for class registration.
     """
-    class_register_namespace = "example"
+    class_registry_namespace = "example"
 
 
 # Main #

@@ -9,7 +9,7 @@ An example of how to create and use a Composite.
 from typing import Any
 
 # Third-Party Packages #
-from baseobjects.objects import ClassNamespaceRegister
+from baseobjects.objects import ClassNamespaceRegistry
 from baseobjects.composition import BaseDispatchingComposite, BaseComponent
 
 
@@ -49,14 +49,14 @@ class ExampleDispatchingComposite(BaseDispatchingComposite):
 
     Attributes:
         default_component_types (dict): Default types of components.
-        component_types_register (ClassNamespaceRegister): A register of component classes and their keyword arguments.
+        component_types_registry (NamespaceClassRegistry): A registry of component classes and their keyword arguments.
         number (int): A number attribute managed by the composite.
     """
     # Class Attributes #
     default_component_types = {"printing": (PrintingComponent, {}), "adding": (AddingComponent, {})}
 
     # Attributes #
-    component_types_register: ClassNamespaceRegister = ClassNamespaceRegister()
+    component_types_registry: ClassNamespaceRegistry = ClassNamespaceRegistry()
     number: int = 0
 
     # Magic Methods #
@@ -72,7 +72,7 @@ class ExampleDispatchingComposite(BaseDispatchingComposite):
         init: bool = True,
         **kwargs: Any
     ) -> None:
-        # Parent Attributes #
+        # Parent Initialization #
         super().__init__(init=False)
 
         # Object Construction #
@@ -134,17 +134,17 @@ class ExampleDispatchingComposite(BaseDispatchingComposite):
             name: The name of the component to add.
             namespace: The namespace of the component to add.
             class_name: The class name of the component to add.
-            *args: The arguments to use in dispatching.
-            **kwargs: The keyword arguments to use in dispatching.
+            *args: Positional arguments to use in dispatching.
+            **kwargs: Keyword arguments to use in dispatching.
 
         Returns:
             A dictionary of the names of the components, their types, and their keyword arguments.
         """
-        return {name: self.component_types_register.get_class(namespace, class_name)}
+        return {name: self.component_types_registry.get_class(namespace, class_name)}
 
 
 # Assignment
-ExampleDispatchingComposite.component_types_register.register_class(
+ExampleDispatchingComposite.component_types_registry.register_class(
     SubtractingComponent,
     namespace="example",
     name="SubtractingComponent",

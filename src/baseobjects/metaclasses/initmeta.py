@@ -1,14 +1,15 @@
 """initmeta.py
 InitMeta is an abstract metaclass that implements an init class method which allows some setup after a class is created.
 """
-# Package Header #
-from ..header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
@@ -44,4 +45,10 @@ class InitMeta(BaseMeta):
         bases: tuple[type, ...] | None = None,
         namespace: dict[str, Any] | None = None,
     ) -> None:
-        pass
+        """The init class method for this object.
+
+        Args:
+            name: The name of this class.
+            bases: The parent types of this class.
+            namespace: The functions and class attributes of this class.
+        """

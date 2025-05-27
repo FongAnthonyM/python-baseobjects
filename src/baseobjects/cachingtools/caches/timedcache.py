@@ -1,19 +1,20 @@
 """timedcache.py
 A cache that periodically resets and include its instantiation decorator function.
 """
-# Package Header #
-from ...header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
 # Standard Libraries #
-from collections.abc import Callable
+import functools
 from time import perf_counter
 from typing import Any
 
@@ -45,7 +46,7 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         typed: Determines if the function's arguments are type sensitive for caching.
         lifetime: The period between cache resets in seconds.
         call_method: The default call method to use.
-        local: Determines if the cache is local to each instance or all instances.
+        instanced: Determines if the cache exists in the main function or in the method instances.
         *args: Arguments for inheritance.
         init: Determines if this object will construct.
         **kwargs: Keyword arguments for inheritance.
@@ -76,15 +77,15 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         typed: bool | None = None,
         lifetime: int | float | None = None,
         call_method: str | None = None,
-        local: bool | None = None,
+        instanced: bool | None = None,
         *args: Any,
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        # New Attributes #
+        # Attributes #
         self.priority: Any = self.priority_queue_type()
 
-        # Parent Attributes #
+        # Parent Initialization #
         super().__init__(*args, init=False, **kwargs)
 
         # Overriden Attributes #
@@ -98,7 +99,7 @@ class TimedCacheCallable(BaseTimedCacheCallable):
                 maxsize=maxsize,
                 typed=typed,
                 call_method=call_method,
-                local=local,
+                instanced=instanced,
                 *args,
                 **kwargs,
             )
@@ -117,19 +118,19 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         typed: bool = False,
         lifetime: int | float | None = None,
         call_method: str | None = None,
-        local: bool = True,
+        instanced: bool = True,
         *args: Any,
         **kwargs: Any,
     ) -> None:
         """The constructor for this object.
 
         Args:
-            func:  The function to wrap.
+            func: The function to wrap.
             maxsize: The max size of the cache.
             typed: Determines if the function's arguments are type sensitive for caching.
             lifetime: The period between cache resets in seconds.
             call_method: The default call method to use.
-            local: Determines if the cache is local to each instance or all instances.
+            instanced: Determines if the cache exists in the main function or in the method instances.
             *args: Arguments for inheritance.
             **kwargs: Keyword arguments for inheritance.
         """
@@ -141,7 +142,7 @@ class TimedCacheCallable(BaseTimedCacheCallable):
             typed=typed,
             lifetime=lifetime,
             call_method=call_method,
-            local=local,
+            instanced=instanced,
             *args,
             **kwargs,
         )
@@ -212,12 +213,12 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         self._maxsize = value
 
     def poll(self) -> bool:
-        """Check if the cache has reached its max size."""
-        return self.cache_container.__len__() <= self._maxsize
+        """Check if there is room in the cache."""
+        return len(self.cache_container) <= self._maxsize
 
     def get_length(self) -> int:
         """Gets the length of the cache."""
-        return self.cache_container.__len__()
+        return len(self.cache_container)
 
 
 class TimedCacheMethod(TimedCacheCallable, BaseTimedCacheMethod):
@@ -249,7 +250,7 @@ class TimedCache(TimedCacheCallable, BaseTimedCache):
             typed=self.typed,
             lifetime=self.lifetime,
             call_method=self.call_method,
-            local=self.is_local,
+            instanced=self.instanced_cache,
             maxsize=self.maxsize,
         )
 
@@ -279,7 +280,7 @@ class TimedCache(TimedCacheCallable, BaseTimedCache):
             typed=self.typed,
             lifetime=self.lifetime,
             call_method=self.call_method,
-            local=self.is_local,
+            instanced=self.instanced_cache,
             maxsize=self.maxsize,
         )
         setattr(instance, name, method)
@@ -287,43 +288,5 @@ class TimedCache(TimedCacheCallable, BaseTimedCache):
         return method
 
 
-# Functions #
-def timed_cache(
-    maxsize: int | None = None,
-    typed: bool = False,
-    lifetime: int | float | None = None,
-    call_method: str | None = None,
-    local: bool = True,
-) -> Callable[[AnyCallable], TimedCache]:
-    """A factory to be used a decorator that sets the parameters of timed cache function factory.
-
-    Args:
-        maxsize: The max size of the cache.
-        typed: Determines if the function's arguments are type sensitive for caching.
-        lifetime: The period between cache resets in seconds.
-        call_method: The default call method to use.
-        local: Determines if the cache is local for all method bindings or for each instance.
-
-    Returns:
-        The parameterized timed cache function factory.
-    """
-
-    def timed_cache_factory(func: AnyCallable) -> TimedCache:
-        """A factory for wrapping a function with a TimedCache object.
-
-        Args:
-            func: The function to wrap with a TimedCache.
-
-        Returns:
-            The TimeCache object which wraps the given function.
-        """
-        return TimedCache(
-            func,
-            maxsize=maxsize,
-            typed=typed,
-            lifetime=lifetime,
-            call_method=call_method,
-            local=local,
-        )
-
-    return timed_cache_factory
+# Aliases #
+timed_cache = TimedCache

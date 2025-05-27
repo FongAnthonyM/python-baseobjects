@@ -1,24 +1,26 @@
 """filetimetodatetime.py
 A function to convert a filetime to a datetime.
 """
-# Package Header #
-from ..header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
 # Standard Libraries #
-from datetime import datetime, timedelta, tzinfo, timezone
-from functools import singledispatch
+from datetime import datetime, timedelta, timezone
+from datetime import tzinfo as TZInfo
 
 # Third-Party Packages #
 
 # Local Packages #
+from ..functions import singlekwargdispatch
 
 
 # Definitions #
@@ -27,8 +29,8 @@ FILETIME_INIT_DATE = datetime(1601, 1, 1, tzinfo=timezone.utc)  # The initial da
 
 
 # Functions #
-@singledispatch
-def filetime_to_datetime(timestamp: int | float | str | bytes, tzinfo: tzinfo | None = timezone.utc) -> datetime:
+@singlekwargdispatch
+def filetime_to_datetime(timestamp: int | float | str | bytes, tzinfo: TZInfo | None = timezone.utc) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:
@@ -42,7 +44,7 @@ def filetime_to_datetime(timestamp: int | float | str | bytes, tzinfo: tzinfo | 
 
 
 @filetime_to_datetime.register
-def _filetime_to_datetime(timestamp: int, tzinfo: tzinfo | None = None) -> datetime:
+def _filetime_to_datetime(timestamp: int, tzinfo: TZInfo | None = None) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:
@@ -60,7 +62,7 @@ def _filetime_to_datetime(timestamp: int, tzinfo: tzinfo | None = None) -> datet
 
 @filetime_to_datetime.register(float)
 @filetime_to_datetime.register(str)
-def _filetime_to_datetime(timestamp: float | str, tzinfo: tzinfo | None = None) -> datetime:
+def _filetime_to_datetime(timestamp: float | str, tzinfo: TZInfo | None = None) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:
@@ -78,7 +80,7 @@ def _filetime_to_datetime(timestamp: float | str, tzinfo: tzinfo | None = None) 
 
 @filetime_to_datetime.register(bytes)
 @filetime_to_datetime.register(bytearray)
-def _filetime_to_datetime(timestamp: bytes | bytearray, tzinfo: tzinfo | None = None) -> datetime:
+def _filetime_to_datetime(timestamp: bytes | bytearray, tzinfo: TZInfo | None = None) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:

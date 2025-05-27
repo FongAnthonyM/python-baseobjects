@@ -1,14 +1,15 @@
 """basedispatchingcomposite.py
 A composite object which includes methods for dispatching component objects during instantiation.
 """
-# Package Header #
-from ..header import *
-
 # Header #
-__author__ = __author__
-__credits__ = __credits__
-__maintainer__ = __maintainer__
-__email__ = __email__
+__package_name__ = "baseobjects"
+
+__author__ = "Anthony Fong"
+__credits__ = ["Anthony Fong"]
+__copyright__ = "Copyright 2021, Anthony Fong"
+__license__ = "MIT"
+
+__version__ = "1.12.0"
 
 
 # Imports #
@@ -18,7 +19,7 @@ from typing import Any
 # Third-Party Packages #
 
 # Local Packages
-from ..objects import ClassNamespaceRegister
+from ..classregistration import NamespaceClassRegistry
 from .basecomposite import BaseComposite
 
 
@@ -31,7 +32,7 @@ class BaseDispatchingComposite(BaseComposite):
         default_component_types: The default component classes and their keyword arguments for this object.
 
     Attributes:
-        component_types_register: A register of component classes and their keyword arguments.
+        component_types_registry: A registry of component classes and their keyword arguments.
         components: The components of this object.
 
     Args:
@@ -42,15 +43,15 @@ class BaseDispatchingComposite(BaseComposite):
     """
 
     # Attributes #
-    component_types_register: ClassNamespaceRegister
+    component_types_registry: NamespaceClassRegistry
 
     # Methods #
     def dispatch_component_types(self, *args: Any, **kwargs: Any) -> dict[str, tuple[type, dict[str, Any]]]:
         """An abstract method that dispatches component types using the given arguments.
 
         Args:
-            *args: The arguments to use in dispatching.
-            **kwargs: The keyword arguments to use in dispatching.
+            *args: Positional arguments to use in dispatching.
+            **kwargs: Keyword arguments to use in dispatching.
 
         Returns:
             A dictionary of the names of the components, their types, and their keyword arguments.
