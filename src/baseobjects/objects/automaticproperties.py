@@ -15,9 +15,8 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 from collections.abc import Callable, Iterable
-from abc import abstractmethod
 from builtins import property
-from functools import partialmethod
+from functools import partial
 from typing import Any, ClassVar
 
 # Third-Party Packages #
@@ -34,12 +33,12 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
     """An abstract class which creates properties for this class automatically.
 
     Class Attributes:
-        _properties_map: The functions used to create properties.
-        _properies: A container that has the names of the properties and some information to build them.
+        default_property_function_factory: The factory function to use for creating property modification functions.
+        properties: The map of properties to create for this class.
     """
 
     # Class Attributes #
-    default_property_function_factory: ClassVar[Callable]
+    default_property_function_factory: ClassVar[str | Callable] = "property_method_factory"
     properties: ClassVar[dict[str, str | Iterable[Callable, str, dict]]] = {}
 
     # Class Methods #
@@ -58,7 +57,6 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
             bases: The parent types of this class.
             namespace: The functions and class attributes of this class.
         """
-        super().__init__(name, bases, namespace)
         cls._construct_properties_()
 
     # Property Methods
@@ -76,13 +74,13 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         return getattr(self, name)
 
     @classmethod
-    def property_class_set(cls, self, name: str, value: Any) -> None:
+    def property_class_set(cls, self, value: Any, name: str) -> None:
         """A generic class method set for properties which can be implemented in a subclass.
 
         Args:
             self: The target object to set.
-            name: The name of the attribute to set.
             value: The item to set within the target object.
+            name: The name of the attribute to set.
         """
         setattr(self, name, value)
 
@@ -111,17 +109,9 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         """
         name = info
 
-        def _property_class_get(self) -> Any:
-            """Gets an attribute in the object."""
-            return cls.property_class_get(self, name)
-
-        def _property_class_set(self, value: Any) -> None:
-            """Sets an attribute in the object."""
-            cls.property_class_set(self, name, value)
-
-        def _property_class_del(self) -> None:
-            """Deletes an attribute in the object."""
-            cls.property_class_del(self, name)
+        _property_class_get = partial(cls.property_class_get, name=name)
+        _property_class_set = partial(cls.property_class_set, name=name)
+        _property_class_del = partial(cls.property_class_del, name=name)
 
         return _property_class_get, _property_class_set, _property_class_del
 
@@ -139,9 +129,9 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         """
         name = info
 
-        _property_get = partialmethod(cls.property_get, name)
-        _property_set = partialmethod(cls.property_set, name)
-        _property_del = partialmethod(cls.property_del, name)
+        _property_get = partial(cls.property_get, name=name)
+        _property_set = partial(cls.property_set, name=name)
+        _property_del = partial(cls.property_del, name=name)
 
         return _property_get, _property_set, _property_del
 
@@ -151,7 +141,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         """Constructs all properties from a list which maps the properties and their functionality.
 
         Args:
-            map_: A list to map the properties from.
+            property_map: A list to map the properties from.
 
         Raises:
             AttributeError: If an attribute in the map is not in the object.
@@ -162,12 +152,16 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         for name, info in property_map.items():
             match info:
                 case str():
-                    new_property = property(*cls.default_property_function_factory(info))
+                    factory = cls.default_property_function_factory
+                    attribute = info
+                    factory_kwargs = {}
                 case _:
                     factory, attribute, factory_kwargs = info
-                    new_property = property(*factory(attribute, **factory_kwargs))
-            setattr(cls, name, new_property)
 
+            if isinstance(factory, str):
+                factory = getattr(cls, factory)
+
+            setattr(cls, name, property(*factory(attribute, **factory_kwargs)))
 
     # Instance Methods #
     # Property Methods
@@ -182,12 +176,12 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         """
         return getattr(self, name)
 
-    def property_set(self, name: str, value: Any) -> None:
+    def property_set(self, value: Any, name: str) -> None:
         """A generic set for properties which can be implemented in a subclass.
 
         Args:
-            name: The name of the attribute to set.
             value: The item to set within the target object.
+            name: The name of the attribute to set.
         """
         setattr(self, name, value)
 
