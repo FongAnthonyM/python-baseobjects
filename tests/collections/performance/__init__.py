@@ -1,5 +1,7 @@
-""" __init__.py
-Performance tests for the baseobjects.collections module.
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""__init__.py
+Performance tests for the collections package.
 """
 # Header #
 __package_name__ = "baseobjects"

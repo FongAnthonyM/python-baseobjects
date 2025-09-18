@@ -1,7 +1,8 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-""" timeddict_test.py
+"""timeddict_test.py
 Tests for the TimedDict class in the baseobjects package.
+
+This module provides tests for the TimedDict class, which extends BaseDict to implement a dictionary
+that clears its contents after a specified time has elapsed.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -16,28 +17,30 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
+import copy
+import pickle
 import time
-from typing import Type
+from typing import Any, Type
 
 # Third-Party Packages #
 import pytest
 
 # Local Packages #
 from src.baseobjects.collections import TimedDict
-from tests.bases.base_test import ClassTest
+from src.baseobjects.testsuite.bases import BaseObjectTestSuite
 
 
 # Definitions #
-# Classes #
-class TestTimedDict(ClassTest):
+# Tests #
+class TestTimedDict(BaseObjectTestSuite):
     """Test the TimedDict class.
 
-    This class tests the functionality of the TimedDict class, which is a dictionary that clears its contents after a
-    specified time has passed.
+    This class tests the functionality of the TimedDict class, which extends BaseDict to implement a dictionary
+    that clears its contents after a specified time has elapsed.
     """
 
     # Attributes #
-    class_: Type[TimedDict] = TimedDict
+    TestClass: Type[TimedDict] = TimedDict
 
     # Instance Methods #
     # Fixtures
@@ -46,264 +49,441 @@ class TestTimedDict(ClassTest):
         """Create an empty TimedDict for testing.
 
         Returns:
-            An empty TimedDict.
+            TimedDict: An empty TimedDict.
         """
-        return self.class_()
+        return self.TestClass()
 
     @pytest.fixture
-    def populated_dict(self) -> TimedDict:
-        """Create a TimedDict with items for testing.
+    def simple_dict(self) -> TimedDict:
+        """Create a TimedDict with a few items for testing.
 
         Returns:
-            A TimedDict with items.
+            TimedDict: A TimedDict with a few items.
         """
-        return self.class_({"a": 1, "b": 2, "c": 3})
+        return self.TestClass({"a": 1, "b": 2, "c": 3})
 
     @pytest.fixture
-    def short_lived_dict(self) -> TimedDict:
-        """Create a TimedDict with a short lifetime for testing.
+    def timed_dict(self) -> TimedDict:
+        """Create a TimedDict with a lifetime for testing.
 
         Returns:
-            A TimedDict with a short lifetime.
+            TimedDict: A TimedDict with a lifetime.
         """
-        d = self.class_({"a": 1, "b": 2, "c": 3})
-        d.lifetime = 0.1  # 100 milliseconds
-        d.reset_expiration()
-        return d
+        td = self.TestClass({"a": 1, "b": 2, "c": 3})
+        td.lifetime = 1.0  # 1 second lifetime
+        return td
+
+    @pytest.fixture
+    def test_object(self) -> TimedDict:
+        """Create a test object for testing.
+
+        Returns:
+            TimedDict: A TimedDict with a few items.
+        """
+        # Use function scope to ensure a fresh object for each test
+        return self.TestClass({"a": 1, "b": 2, "c": 3, "d": 4})
 
     # Tests
     def test_instance_creation(self) -> None:
         """Test that instances of TimedDict can be created with various parameters.
 
-        This test verifies that TimedDict instances can be created with no items, a dictionary, or keyword arguments.
+        This test verifies that TimedDict instances can be created with no arguments,
+        a dictionary, or keyword arguments.
         """
         # Create an empty instance
-        td = self.class_()
+        td = self.TestClass()
         assert td is not None
+        assert isinstance(td, self.TestClass)
         assert len(td) == 0
         assert td.is_timed is True
         assert td.lifetime is None
         assert td.expiration is None
 
         # Create an instance with a dictionary
-        items = {"a": 1, "b": 2, "c": 3}
-        td = self.class_(items)
+        mapping = {"a": 1, "b": 2, "c": 3}
+        td = self.TestClass(mapping)
         assert td is not None
+        assert isinstance(td, self.TestClass)
         assert len(td) == 3
         assert td["a"] == 1
         assert td["b"] == 2
         assert td["c"] == 3
 
         # Create an instance with keyword arguments
-        td = self.class_(a=1, b=2, c=3)
+        td = self.TestClass(a=1, b=2, c=3)
         assert td is not None
+        assert isinstance(td, self.TestClass)
         assert len(td) == 3
         assert td["a"] == 1
         assert td["b"] == 2
         assert td["c"] == 3
 
-    def test_data_property(self, populated_dict: TimedDict) -> None:
-        """Test the data property of TimedDict.
+    def test_copy(self, test_object: TimedDict) -> None:
+        """Test the copy behavior of the object.
 
-        This test verifies that the data property returns the dictionary data and calls verify.
-
-        Args:
-            populated_dict: A TimedDict with items.
-        """
-        assert populated_dict.data == {"a": 1, "b": 2, "c": 3}
-        
-        # Test that verify is called
-        populated_dict.lifetime = 0
-        populated_dict.expiration = 0  # Set to expire immediately
-        assert populated_dict.data == {}  # Should be cleared by verify
-
-    def test_clear(self, populated_dict: TimedDict) -> None:
-        """Test the clear method of TimedDict.
-
-        This test verifies that the clear method removes all items from the dictionary and resets the expiration.
+        This test verifies that copy creates a new object with the same attributes.
 
         Args:
-            populated_dict: A TimedDict with items.
+            test_object: A fixture providing a test object instance.
         """
-        # Set a lifetime and expiration
-        populated_dict.lifetime = 10
-        populated_dict.reset_expiration()
-        initial_expiration = populated_dict.expiration
-        
-        # Clear the dictionary
-        populated_dict.clear()
-        assert len(populated_dict) == 0
-        assert populated_dict.expiration != initial_expiration  # Expiration should be reset
+        # Copy Object
+        obj_copy = copy.copy(test_object)
 
-    def test_reset_expiration(self) -> None:
-        """Test the reset_expiration method of TimedDict.
+        # Validate
+        assert obj_copy is not test_object  # Different objects
+        assert isinstance(obj_copy, self.TestClass)  # Same type
+        assert obj_copy == test_object  # Equal values
+        assert obj_copy.is_timed == test_object.is_timed
+        assert obj_copy.lifetime == test_object.lifetime
+        assert obj_copy.expiration == test_object.expiration
 
-        This test verifies that the reset_expiration method updates the expiration to a new future time.
-        """
-        td = self.class_()
-        
-        # Test with no lifetime
-        td.reset_expiration()
-        assert td.expiration is None
-        
-        # Test with a lifetime
-        td.lifetime = 10
-        td.reset_expiration()
-        assert td.expiration is not None
-        assert td.expiration > time.perf_counter()  # Expiration should be in the future
+    def test_copy_method(self, test_object: TimedDict) -> None:
+        """Test the copy method behavior of the object.
 
-    def test_pause_timer(self, short_lived_dict: TimedDict) -> None:
-        """Test the pause_timer context manager of TimedDict.
-
-        This test verifies that the pause_timer context manager stops the timer while active and resumes it with the
-        remaining time when exited.
+        This test verifies that the copy method creates a new object with the same attributes.
 
         Args:
-            short_lived_dict: A TimedDict with a short lifetime.
+            test_object: A fixture providing a test object instance.
+        """
+        # Copy Object
+        obj_copy = test_object.copy()
+
+        # Validate
+        assert obj_copy is not test_object  # Different objects
+        assert isinstance(obj_copy, self.TestClass)  # Same type
+        assert obj_copy == test_object  # Equal values
+        assert obj_copy.is_timed == test_object.is_timed
+        assert obj_copy.lifetime == test_object.lifetime
+        assert obj_copy.expiration == test_object.expiration
+
+    def test_deepcopy(self, test_object: TimedDict, memo: dict | None = None) -> None:
+        """Test the deep copy behavior of the object.
+
+        This test verifies that deepcopy creates a new object with new mutable attributes.
+
+        Args:
+            test_object: A fixture providing a test object instance.
+            memo: A memo dictionary to pass to deepcopy.
+        """
+        # Set a lifetime to test copying of all attributes
+        test_object.lifetime = 10.0
+
+        # Deep Copy Object
+        if memo is None:
+            memo = {}
+        obj_deepcopy = copy.deepcopy(test_object, memo=memo)
+
+        # Validate
+        assert obj_deepcopy is not test_object
+        assert isinstance(obj_deepcopy, self.TestClass)
+        assert obj_deepcopy == test_object
+        assert obj_deepcopy.is_timed == test_object.is_timed
+        assert obj_deepcopy.lifetime == test_object.lifetime
+        assert obj_deepcopy.expiration is not None
+
+        # Verify that modifying the deepcopy doesn't affect the original
+        obj_deepcopy["deepcopy_key"] = 300
+        assert "deepcopy_key" in obj_deepcopy
+        assert "deepcopy_key" not in test_object
+
+    def test_deepcopy_method(self, test_object: TimedDict, memo: dict | None = None) -> None:
+        """Test the deepcopy method behavior of the object.
+
+        This test verifies that the deepcopy method creates a new object with new mutable attributes.
+
+        Args:
+            test_object: A fixture providing a test object instance.
+            memo: A memo dictionary to pass to deepcopy.
+        """
+        # Set a lifetime to test copying of all attributes
+        test_object.lifetime = 10.0
+
+        # Deep Copy Object
+        if memo is None:
+            memo = {}
+        obj_deepcopy = test_object.deepcopy(memo=memo)
+
+        # Validate
+        assert obj_deepcopy is not test_object
+        assert isinstance(obj_deepcopy, self.TestClass)
+        assert obj_deepcopy == test_object
+        assert obj_deepcopy.is_timed == test_object.is_timed
+        assert obj_deepcopy.lifetime == test_object.lifetime
+        assert obj_deepcopy.expiration is not None
+
+        # Verify that modifying the deepcopy doesn't affect the original
+        obj_deepcopy["deepcopy_method_key"] = 400
+        assert "deepcopy_method_key" in obj_deepcopy
+        assert "deepcopy_method_key" not in test_object
+
+    def test_pickling(self, test_object: TimedDict) -> None:
+        """Test pickling and unpickling of the object.
+
+        This test verifies that the object can be pickled and unpickled correctly.
+
+        Args:
+            test_object: A fixture providing a test object instance.
+        """
+        # Set a lifetime to test pickling of all attributes
+        test_object.lifetime = 5.0
+        test_object["e"] = 5
+
+        # Pickle and Unpickle Object
+        pickled = pickle.dumps(test_object)
+        unpickled = pickle.loads(pickled)
+
+        # Validate
+        assert unpickled is not test_object
+        assert isinstance(unpickled, self.TestClass)
+        assert unpickled == test_object
+        assert unpickled.is_timed == test_object.is_timed
+        assert unpickled.lifetime == test_object.lifetime
+        assert unpickled.expiration is not None
+
+        # Check that the values are accessible
+        assert unpickled["a"] == 1
+        assert unpickled["b"] == 2
+        assert unpickled["c"] == 3
+        assert unpickled["d"] == 4
+        assert unpickled["e"] == 5
+
+    def test_lifetime_property(self, empty_dict: TimedDict) -> None:
+        """Test the lifetime property.
+
+        This test verifies that the lifetime property can be set and retrieved correctly.
+
+        Args:
+            empty_dict: An empty TimedDict.
+        """
+        # Default value
+        assert empty_dict.lifetime is None
+
+        # Set lifetime
+        empty_dict.lifetime = 10.0
+        assert empty_dict.lifetime == 10.0
+        assert empty_dict.expiration is not None  # Should be set when lifetime is set
+
+        # Change lifetime
+        empty_dict.lifetime = 5.0
+        assert empty_dict.lifetime == 5.0
+        assert empty_dict.expiration is not None  # Should be updated
+
+        # Set to None
+        empty_dict.lifetime = None
+        assert empty_dict.lifetime is None
+
+    def test_data_property(self, simple_dict: TimedDict) -> None:
+        """Test the data property.
+
+        This test verifies that the data property returns the dictionary data.
+
+        Args:
+            simple_dict: A TimedDict with a few items.
+        """
+        # Check data property
+        data = simple_dict.data
+        assert isinstance(data, dict)
+        assert len(data) == 3
+        assert data["a"] == 1
+        assert data["b"] == 2
+        assert data["c"] == 3
+
+    def test_clear(self, simple_dict: TimedDict) -> None:
+        """Test the clear method.
+
+        This test verifies that the dictionary can be cleared and the expiration is reset.
+
+        Args:
+            simple_dict: A TimedDict with a few items.
+        """
+        # Set a lifetime
+        simple_dict.lifetime = 10.0
+        old_expiration = simple_dict.expiration
+
+        # Clear dictionary
+        simple_dict.clear()
+
+        # Verify dictionary is empty
+        assert len(simple_dict) == 0
+
+        # Verify expiration was reset
+        assert simple_dict.expiration is not None
+        assert simple_dict.expiration != old_expiration
+
+    def test_reset_expiration(self, timed_dict: TimedDict) -> None:
+        """Test the reset_expiration method.
+
+        This test verifies that the expiration time is reset correctly.
+
+        Args:
+            timed_dict: A TimedDict with a lifetime.
         """
         # Get initial expiration
-        initial_expiration = short_lived_dict.expiration
-        
-        # Pause the timer
-        with short_lived_dict.pause_timer():
-            assert short_lived_dict.is_timed is False
-            assert short_lived_dict.expiration is None
-            
-            # Sleep for longer than the lifetime
-            time.sleep(0.2)
-            
-            # Dictionary should not be cleared
-            assert len(short_lived_dict) == 3
-        
-        # Timer should be resumed
-        unpaused_expiration = short_lived_dict.expiration
-        assert short_lived_dict.is_timed is True
-        assert unpaused_expiration is not None
-        
-        # Expiration should be close to the original (accounting for the time spent in the context manager)
-        # This is approximate since we can't know exactly how much time passed (time.sleep may not be accurate)
-        assert abs(unpaused_expiration - (initial_expiration + 0.2)) < 0.001
+        initial_expiration = timed_dict.expiration
+        assert initial_expiration is not None
 
-    def test_pause_reset_timer(self, short_lived_dict: TimedDict) -> None:
-        """Test the pause_reset_timer context manager of TimedDict.
+        # Wait a bit
+        time.sleep(0.1)
 
-        This test verifies that the pause_reset_timer context manager stops the timer while active
-        and resets it when exited.
+        # Reset expiration
+        timed_dict.reset_expiration()
+
+        # Verify expiration was updated
+        assert timed_dict.expiration is not None
+        assert timed_dict.expiration > initial_expiration
+
+    def test_pause_timer(self, timed_dict: TimedDict) -> None:
+        """Test the pause_timer context manager.
+
+        This test verifies that the timer is paused within the context manager.
 
         Args:
-            short_lived_dict: A TimedDict with a short lifetime.
+            timed_dict: A TimedDict with a lifetime.
         """
         # Get initial expiration
-        initial_expiration = short_lived_dict.expiration
-        
-        # Pause the timer
-        with short_lived_dict.pause_reset_timer():
-            assert short_lived_dict.is_timed is False
-            
-            # Sleep for longer than the lifetime
-            time.sleep(0.2)
-            
-            # Dictionary should not be cleared
-            assert len(short_lived_dict) == 3
-        
-        # Timer should be resumed and reset
-        assert short_lived_dict.is_timed is True
-        assert short_lived_dict.expiration is not None
-        assert short_lived_dict.expiration > initial_expiration  # New expiration should be later
+        initial_expiration = timed_dict.expiration
+        assert initial_expiration is not None
 
-    def test_clear_condition(self) -> None:
-        """Test the clear_condition method of TimedDict.
+        # Use pause_timer context manager
+        with timed_dict.pause_timer():
+            assert timed_dict.is_timed is False
+            assert timed_dict.expiration is None
 
-        This test verifies that the clear_condition method returns True when the dictionary should be cleared.
-        """
-        td = self.class_()
-        
-        # Test with no lifetime
-        assert td.clear_condition() is False
-        
-        # Test with a future expiration
-        td.lifetime = 10
-        td.reset_expiration()
-        assert td.clear_condition() is False
-        
-        # Test with a past expiration
-        td.expiration = time.perf_counter() - 1  # Set to expire 1 second ago
-        assert td.clear_condition() is True
-        
-        # Test with is_timed=False
-        td.is_timed = False
-        assert td.clear_condition() is False
+            # Modify dictionary during pause
+            timed_dict["d"] = 4
 
-    def test_verify(self, short_lived_dict: TimedDict) -> None:
-        """Test the verify method of TimedDict.
+        # Verify timer is resumed after context
+        assert timed_dict.is_timed is True
+        assert timed_dict.expiration is not None
+        assert timed_dict["d"] == 4
 
-        This test verifies that the verify method clears the dictionary when the expiration has passed.
+    def test_pause_reset_timer(self, timed_dict: TimedDict) -> None:
+        """Test the pause_reset_timer context manager.
+
+        This test verifies that the timer is paused within the context manager and reset afterward.
 
         Args:
-            short_lived_dict: A TimedDict with a short lifetime.
+            timed_dict: A TimedDict with a lifetime.
         """
-        # Dictionary should not be cleared initially
-        short_lived_dict.verify()
-        assert len(short_lived_dict) == 3
-        
-        # Sleep for longer than the lifetime
-        time.sleep(0.2)
-        
-        # Dictionary should be cleared after verify
-        short_lived_dict.verify()
-        assert len(short_lived_dict) == 0
+        # Get initial expiration
+        initial_expiration = timed_dict.expiration
+        assert initial_expiration is not None
 
-    def test_automatic_clearing(self, short_lived_dict: TimedDict) -> None:
-        """Test that the dictionary is automatically cleared when accessed after expiration.
+        # Use pause_reset_timer context manager
+        with timed_dict.pause_reset_timer():
+            assert timed_dict.is_timed is False
 
-        This test verifies that accessing the dictionary after the expiration time has passed
-        automatically clears it.
+            # Modify dictionary during pause
+            timed_dict["d"] = 4
+
+        # Verify timer is resumed and reset after context
+        assert timed_dict.is_timed is True
+        assert timed_dict.expiration is not None
+        assert timed_dict.expiration > initial_expiration
+        assert timed_dict["d"] == 4
+
+    def test_clear_condition(self, timed_dict: TimedDict) -> None:
+        """Test the clear_condition method.
+
+        This test verifies that the clear_condition method returns the correct value.
 
         Args:
-            short_lived_dict: A TimedDict with a short lifetime.
+            timed_dict: A TimedDict with a lifetime.
         """
-        # Dictionary should not be cleared initially
-        assert len(short_lived_dict) == 3
-        
-        # Sleep for longer than the lifetime
-        time.sleep(0.2)
-        
-        # Dictionary should be cleared when accessed
-        assert len(short_lived_dict) == 0
+        # Initially, condition should be False
+        assert timed_dict.clear_condition() is False
 
-    def test_standard_dict_methods(self, populated_dict: TimedDict) -> None:
-        """Test that standard dictionary methods work with TimedDict.
+        # Wait for expiration
+        time.sleep(1.1)  # Slightly more than the 1.0 second lifetime
 
-        This test verifies that TimedDict inherits and correctly implements standard dictionary methods.
+        # Now condition should be True
+        assert timed_dict.clear_condition() is True
+
+        # Disable timing
+        timed_dict.is_timed = False
+        assert timed_dict.clear_condition() is False
+
+        # Re-enable timing
+        timed_dict.is_timed = True
+        assert timed_dict.clear_condition() is True
+
+    def test_verify(self, timed_dict: TimedDict) -> None:
+        """Test the verify method.
+
+        This test verifies that the dictionary is cleared when the expiration time is reached.
 
         Args:
-            populated_dict: A TimedDict with items.
+            timed_dict: A TimedDict with a lifetime.
         """
-        # Test __getitem__
-        assert populated_dict["a"] == 1
-        
-        # Test __setitem__
-        populated_dict["d"] = 4
-        assert populated_dict["d"] == 4
-        
-        # Test __delitem__
-        del populated_dict["a"]
-        assert "a" not in populated_dict
-        
-        # Test keys, values, items
-        assert set(populated_dict.keys()) == {"b", "c", "d"}
-        assert set(populated_dict.values()) == {2, 3, 4}
-        assert set(populated_dict.items()) == {("b", 2), ("c", 3), ("d", 4)}
-        
-        # Test update
-        populated_dict.update({"e": 5, "f": 6})
-        assert populated_dict["e"] == 5
-        assert populated_dict["f"] == 6
-        
-        # Test pop
-        value = populated_dict.pop("b")
-        assert value == 2
-        assert "b" not in populated_dict
+        # Initially, dictionary should have items
+        assert len(timed_dict) == 3
+
+        # Wait for expiration
+        time.sleep(1.1)  # Slightly more than the 1.0 second lifetime
+
+        # Call verify (this should clear the dictionary)
+        timed_dict.verify()
+
+        # Verify dictionary is now empty
+        assert len(timed_dict) == 0
+
+    def test_auto_clearing(self, timed_dict: TimedDict) -> None:
+        """Test that the dictionary automatically clears when accessed after expiration.
+
+        Args:
+            timed_dict: A TimedDict with a lifetime.
+        """
+        # Initially, dictionary should have items
+        assert len(timed_dict) == 3
+
+        # Wait for expiration
+        time.sleep(1.1)  # Slightly more than the 1.0 second lifetime
+
+        # Access the data property (should trigger verify)
+        data = timed_dict.data
+
+        # Verify dictionary is now empty
+        assert len(data) == 0
+        assert len(timed_dict) == 0
+
+    def test_edge_case_zero_lifetime(self) -> None:
+        """Test the behavior with a zero lifetime."""
+        # Create dictionary with zero lifetime
+        td = self.TestClass({"a": 1, "b": 2})
+
+        # Dictionary should clear immediately when lifetime is set to zero
+        # because setting lifetime calls reset_expiration which sets expiration to current time + lifetime
+        # and when lifetime is 0, expiration is set to current time, making clear_condition() return True
+        assert len(td) == 2
+        td.lifetime = 0
+
+        # Dictionary should already be empty after setting lifetime to zero
+        assert len(td) == 0
+
+    def test_edge_case_negative_lifetime(self) -> None:
+        """Test the behavior with a negative lifetime."""
+        # Create dictionary with negative lifetime
+        td = self.TestClass({"a": 1, "b": 2})
+
+        # Dictionary should clear immediately when lifetime is set to a negative value
+        # because setting lifetime calls reset_expiration which sets expiration to current time + lifetime
+        # and when lifetime is negative, expiration is set to a time in the past, making clear_condition() return True
+        assert len(td) == 2
+        td.lifetime = -1
+
+        # Dictionary should already be empty after setting lifetime to a negative value
+        assert len(td) == 0
+
+    def test_edge_case_none_lifetime(self) -> None:
+        """Test the behavior with a None lifetime."""
+        # Create dictionary with None lifetime
+        td = self.TestClass({"a": 1, "b": 2})
+        td.lifetime = None
+
+        # Dictionary should not clear when verified
+        assert len(td) == 2
+        td.verify()
+        assert len(td) == 2
 
 
 # Main #

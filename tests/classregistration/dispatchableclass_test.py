@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-""" dispatchableclass_test.py
+"""dispatchableclass_test.py
 Tests for the DispatchableClass class in the baseobjects package.
 """
 # Header #
@@ -16,14 +14,16 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
+import copy
+import pickle
 from typing import Any, ClassVar, Optional, Type, Tuple
 
 # Third-Party Packages #
 import pytest
 
 # Local Packages #
-from src.baseobjects.classregistration import DispatchableClass, BaseClassRegistry
-from tests.bases.base_test import BaseBaseObjectTest
+from baseobjects.classregistration import DispatchableClass, BaseClassRegistry
+from baseobjects.testsuite.classregistration import DispatchableClassTestSuite
 
 
 # Definitions #
@@ -54,7 +54,7 @@ class ConcreteClassRegistry(BaseClassRegistry):
         """
         return self.get(name, default)
 
-class TestDispatchableClass(BaseBaseObjectTest):
+class TestDispatchableClass(DispatchableClassTestSuite):
     """Test the DispatchableClass class.
 
     This class tests the functionality of the DispatchableClass class, which is an abstract class
@@ -122,82 +122,154 @@ class TestDispatchableClass(BaseBaseObjectTest):
         class_registration = True
 
     # Attributes #
-    class_: Type[BaseTestDispatchableClass] = BaseTestDispatchableClass
+    TestClass: Type[BaseTestDispatchableClass] = BaseTestDispatchableClass
 
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_instance(self) -> "TestDispatchableClass.BaseTestDispatchableClass":
-        """Create a test instance for use in tests.
+    def test_object(self) -> "TestDispatchableClass.BaseTestDispatchableClass":
+        """Create a test object for use in tests.
 
         Returns:
             BaseTestDispatchableClass: An instance of the test class.
         """
-        return self.class_()
+        return self.TestClass()
 
     # Tests
-    def test_instance_creation(self) -> None:
-        """Test that instances of BaseTestDispatchableClass can be created."""
-        instance = self.class_()
-        assert instance is not None
-        assert isinstance(instance, DispatchableClass)
+    def test_copy(self, test_object: Any) -> None:
+        """Test the copy behavior of the object.
 
-    def test_get_class_information(self) -> None:
-        """Test the get_class_information method."""
+        This test verifies that copy creates a new object with the same attributes.
+
+        Args:
+            test_object: A fixture providing a test object instance.
+        """
+        # Copy Object
+        obj_copy = copy.copy(test_object)
+
+        # Validate
+        assert obj_copy is not test_object
+        assert isinstance(obj_copy, self.TestClass)
+
+    def test_copy_method(self, test_object: Any) -> None:
+        """Test the copy method behavior of the object.
+
+        This test verifies that copy creates a new object with the same attributes.
+
+        Args:
+            test_object: A fixture providing a test object instance.
+        """
+        # Copy Object
+        obj_copy = test_object.copy()
+
+        # Validate
+        assert obj_copy is not test_object
+        assert isinstance(obj_copy, self.TestClass)
+
+    def test_deepcopy(self, test_object: Any, memo: dict | None = None) -> None:
+        """Test the deep copy behavior of the object.
+
+        This test verifies that deepcopy creates a new object with new mutable attributes but the same immutable
+        attributes.
+
+        Args:
+            test_object: A fixture providing a test object instance.
+            memo: A memo dictionary to pass to deepcopy.
+        """
+        # Deep Copy Object
+        if memo is None:
+            memo = {}
+        obj_deepcopy = copy.deepcopy(test_object, memo=memo)
+
+        # Validate
+        assert obj_deepcopy is not test_object
+        assert isinstance(obj_deepcopy, self.TestClass)
+
+    def test_deepcopy_method(self, test_object: Any, memo: dict | None = None) -> None:
+        """Test the deepcopy method behavior of the object.
+
+        This test verifies that deepcopy creates a new object with new mutable attributes but the same immutable
+        attributes.
+
+        Args:
+            test_object: A fixture providing a test object instance.
+            memo: A memo dictionary to pass to deepcopy.
+        """
+        # Deep Copy Object
+        if memo is None:
+            memo = {}
+        obj_deepcopy = test_object.deepcopy(memo=memo)
+
+        # Validate
+        assert obj_deepcopy is not test_object
+        assert isinstance(obj_deepcopy, self.TestClass)
+
+    def test_pickling(self, test_object: Any) -> None:
+        """Test pickling and unpickling of the object.
+
+        This test verifies that the object can be pickled and unpickled correctly.
+
+        Args:
+            test_object: A fixture providing a test object instance.
+        """
+        # Pickle and Unpickle Object
+        pickled = pickle.dumps(test_object)
+        unpickled = pickle.loads(pickled)
+
+        # Validate
+        assert unpickled is not test_object
+        assert isinstance(unpickled, self.TestClass)
+
+    def test_get_class_information(self, *args: Any, **kwargs: Any) -> None:
+        """Test the get_class_information method.
+
+        This test verifies that the get_class_information method correctly extracts class information from arguments.
+
+        Args:
+            *args: Positional arguments to test the get_class_information method.
+            **kwargs: Keyword arguments to test the get_class_information method.
+        """
         # Test with positional argument
-        info = self.class_.get_class_information("TypeADispatchable")
+        info = self.TestClass.get_class_information("TypeADispatchable")
         assert info == ("TypeADispatchable",)
 
         # Test with keyword argument
-        info = self.class_.get_class_information(type="TypeBDispatchable")
+        info = self.TestClass.get_class_information(type="TypeBDispatchable")
         assert info == ("TypeBDispatchable",)
 
         # Test with no relevant arguments
-        info = self.class_.get_class_information(123, irrelevant="value")
-        assert info == (self.class_.__name__,)
+        info = self.TestClass.get_class_information(123, irrelevant="value")
+        assert info == (self.TestClass.__name__,)
 
-    def test_dispatch_with_positional_arg(self) -> None:
-        """Test dispatching with a positional argument."""
-        # Create instance with type name as positional argument
-        instance = self.class_("TypeADispatchable")
-
-        # Verify instance is of the correct type
+    def test_class_dispatch(self, *args: Any, **kwargs: Any) -> None:
+        """Test class dispatching.
+        
+        Args:
+            *args: Positional arguments to test the class dispatching.
+            **kwargs: Keyword arguments to test the class dispatching.
+        """
+        # Test dispatching with positional argument
+        instance = self.TestClass("TypeADispatchable")
         assert isinstance(instance, self.TypeADispatchable)
 
-    def test_dispatch_with_keyword_arg(self) -> None:
-        """Test dispatching with a keyword argument."""
-        # Create instance with type name as keyword argument
-        instance = self.class_(type="TypeBDispatchable")
-
-        # Verify instance is of the correct type
+        # Test dispatching with keyword argument
+        instance = self.TestClass(type="TypeBDispatchable")
         assert isinstance(instance, self.TypeBDispatchable)
 
-    def test_dispatch_with_unknown_type(self) -> None:
-        """Test dispatching with an unknown type."""
-        # Create instance with unknown type name
-        instance = self.class_("UnknownType")
+        # Test dispatching with unknown type
+        instance = self.TestClass("UnknownType")
+        assert isinstance(instance, self.TestClass)
+        assert type(instance) is self.TestClass
 
-        # Verify instance is of the base type
-        assert isinstance(instance, self.class_)
-        assert type(instance) is self.class_
-
-    def test_dispatch_from_subclass(self) -> None:
-        """Test that dispatching doesn't happen when called from a subclass."""
-        # Create instance from subclass with type name that would dispatch to a different subclass
+        # Test that dispatching doesn't happen when called from a subclass
         instance = self.TypeADispatchable("TypeBDispatchable")
-
-        # Verify instance is of the calling type, not the dispatched type
         assert isinstance(instance, self.TypeADispatchable)
         assert not isinstance(instance, self.TypeBDispatchable)
 
-    def test_no_dispatch_without_args(self) -> None:
-        """Test that dispatching doesn't happen when no arguments are provided."""
-        # Create instance without arguments
-        instance = self.class_()
-
-        # Verify instance is of the base type
-        assert isinstance(instance, self.class_)
-        assert type(instance) is self.class_
+        # Test that dispatching doesn't happen when no arguments are provided
+        instance = self.TestClass()
+        assert isinstance(instance, self.TestClass)
+        assert type(instance) is self.TestClass
 
 
 # Main #

@@ -1,7 +1,8 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-""" baseobject_test.py
+"""baseobject_test.py
 Tests for the BaseObject class in the baseobjects package.
+
+This module provides tests for the BaseObject class, which is an abstract base class that implements fundamental
+functionality that should be available in all objects, such as copying and deep copying.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -16,6 +17,8 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
+import copy
+import pickle
 from typing import Any, Type
 
 # Third-Party Packages #
@@ -23,150 +26,138 @@ import pytest
 
 # Local Packages #
 from src.baseobjects.bases import BaseObject
-from .base_test import BaseBaseObjectTest
+from src.baseobjects.testsuite.bases import BaseObjectTestSuite
 
 
 # Classes #
-class TestBaseObject(BaseBaseObjectTest):
+class BaseTestObject(BaseObject):
+    """A subclass of BaseObject for testing purposes.
+
+    This class has both mutable and immutable attributes to test copying behavior.
+    """
+
+    # Magic Methods #
+    def __init__(self) -> None:
+        """Initialize with immutable and mutable attributes."""
+        super().__init__()
+        self.immutable: int = 0
+        self.mutable: dict = {}
+
+
+# Tests #
+class TestBaseObject(BaseObjectTestSuite):
     """Test the BaseObject class.
 
     This class tests the functionality of the BaseObject class, which is the base class for all objects in the
     baseobjects package. It creates a test subclass of BaseObject to test with.
     """
 
-    # Class Definitions #
-    class BaseTestObject(BaseObject):
-        """A subclass of BaseObject for testing purposes.
-
-        This class has both mutable and immutable attributes to test copying behavior.
-        """
-        # Magic Methods #
-        def __init__(self) -> None:
-            """Initialize with immutable and mutable attributes."""
-            self.immutable: int = 0
-            self.mutable: dict = {}
-
-    class NormalObject(object):
-        """A normal Python object for comparison with BaseObject.
-
-        This class has the same attributes as BaseTestObject but inherits from object.
-        """
-        # Magic Methods #
-        def __init__(self) -> None:
-            """Initialize with immutable and mutable attributes."""
-            self.immutable: int = 0
-            self.mutable: dict = {}
-
     # Attributes #
-    class_: Type[BaseTestObject] = BaseTestObject
+    TestClass: Type[BaseObject] = BaseTestObject
 
     # Instance Methods #
-    # Fixtures
-    @pytest.fixture
-    def test_object(self) -> 'TestBaseObject.BaseTestObject':
-        """Create a test object instance for use in tests.
-
-        Returns:
-            BaseTestObject: An instance of the test class.
-        """
-        return self.class_()
-
     # Tests
-    def test_instance_creation(self, test_object: 'TestBaseObject.BaseTestObject') -> None:
-        """Test that instances of BaseTestObject can be created.
+    def test_copy(self, test_object: BaseObject) -> None:
+        """Test the copy behavior of the object.
+
+        This test verifies that copy creates a new object with the same attributes.
 
         Args:
-            test_object: A fixture providing a BaseTestObject instance.
+            test_object: A fixture providing a test object instance.
         """
-        assert test_object is not None
+        # Copy Object
+        obj_copy = copy.copy(test_object)
 
-    def test_copy(self, test_object: 'TestBaseObject.BaseTestObject') -> None:
-        """Test the copy method of BaseObject.
+        # Validate
+        assert obj_copy is not test_object
+        assert isinstance(obj_copy, self.TestClass)
+        assert obj_copy.immutable == test_object.immutable
+        assert obj_copy.mutable == test_object.mutable
+        assert id(obj_copy.mutable) == id(test_object.mutable)  # Shallow copy, same reference
 
-        This test verifies that the copy method creates a new object with references to the same attributes
-        (shallow copy).
+    def test_copy_method(self, test_object: BaseObject) -> None:
+        """Test the copy method behavior of the object.
+
+        This test verifies that copy creates a new object with the same attributes.
 
         Args:
-            test_object: A fixture providing a BaseTestObject instance.
+            test_object: A fixture providing a test object instance.
         """
-        new: 'TestBaseObject.BaseTestObject' = test_object.copy()
-        assert id(new.immutable) == id(test_object.immutable)
-        assert id(new.mutable) == id(test_object.mutable)
+        # Copy Object
+        obj_copy = test_object.copy()
 
-    def test_deepcopy(self, test_object: 'TestBaseObject.BaseTestObject') -> None:
-        """Test the deepcopy method of BaseObject.
+        # Validate
+        assert obj_copy is not test_object
+        assert isinstance(obj_copy, self.TestClass)
+        assert obj_copy.immutable == test_object.immutable
+        assert obj_copy.mutable == test_object.mutable
+        assert id(obj_copy.mutable) == id(test_object.mutable)  # Shallow copy, same reference
 
-        This test verifies that the deepcopy method creates a new object with new copies of mutable attributes but
-        references to the same immutable attributes.
+    def test_deepcopy(self, test_object: BaseObject, memo: dict | None = None) -> None:
+        """Test the deep copy behavior of the object.
+
+        This test verifies that deepcopy creates a new object with new mutable attributes but the same immutable
+        attributes.
 
         Args:
-            test_object: A fixture providing a BaseTestObject instance.
+            test_object: A fixture providing a test object instance.
+            memo: A memo dictionary to pass to deepcopy.
         """
-        new: 'TestBaseObject.BaseTestObject' = test_object.deepcopy()
-        assert id(new.immutable) == id(test_object.immutable)
-        assert id(new.mutable) != id(test_object.mutable)
+        # Deep Copy Object
+        if memo is None:
+            memo = {}
+        obj_deepcopy = copy.deepcopy(test_object, memo=memo)
 
-    def test_deepcopy_with_memo(self, test_object: 'TestBaseObject.BaseTestObject') -> None:
-        """Test the deepcopy method of BaseObject with a memo dictionary.
+        # Validate
+        assert obj_deepcopy is not test_object
+        assert isinstance(obj_deepcopy, self.TestClass)
+        assert obj_deepcopy.immutable == test_object.immutable
+        assert obj_deepcopy.mutable == test_object.mutable
+        assert id(obj_deepcopy.mutable) != id(test_object.mutable)  # Deep copy, different reference
 
-        This test verifies that the deepcopy method correctly uses the memo dictionary to avoid
-        copying the same object twice.
+    def test_deepcopy_method(self, test_object: BaseObject, memo: dict | None = None) -> None:
+        """Test the deepcopy method behavior of the object.
+
+        This test verifies that deepcopy creates a new object with new mutable attributes but the same immutable
+        attributes.
 
         Args:
-            test_object: A fixture providing a BaseTestObject instance.
+            test_object: A fixture providing a test object instance.
+            memo: A memo dictionary to pass to deepcopy.
         """
-        memo = {}
-        new: 'TestBaseObject.BaseTestObject' = test_object.deepcopy(memo=memo)
+        # Deep Copy Object
+        if memo is None:
+            memo = {}
+        obj_deepcopy = test_object.deepcopy(memo=memo)
 
-        # The object should be in the memo dictionary
-        assert id(test_object) in memo
-        assert memo[id(test_object)] is new
+        # Validate
+        assert obj_deepcopy is not test_object
+        assert isinstance(obj_deepcopy, self.TestClass)
+        assert obj_deepcopy.immutable == test_object.immutable
+        assert obj_deepcopy.mutable == test_object.mutable
+        assert id(obj_deepcopy.mutable) != id(test_object.mutable)  # Deep copy, different reference
 
-        # A second deepcopy with the same memo should return the same object
-        second_new = test_object.deepcopy(memo=memo)
-        assert second_new is new
+    def test_pickling(self, test_object: Any) -> None:
+        """Test pickling and unpickling of the object.
 
-    def test_deepcopy_nested(self) -> None:
-        """Test deepcopy with nested BaseObject instances.
-
-        This test verifies that deepcopy correctly handles nested BaseObject instances.
-        """
-        # Create a BaseObject with a nested BaseObject
-        outer = self.BaseTestObject()
-        inner = self.BaseTestObject()
-        outer.mutable["inner"] = inner
-
-        # Deepcopy the outer object
-        outer_copy = outer.deepcopy()
-
-        # The inner object should also be copied
-        assert outer_copy.mutable["inner"] is not inner
-        assert isinstance(outer_copy.mutable["inner"], self.BaseTestObject)
-
-    def test_pickle(self, test_object: 'TestBaseObject.BaseTestObject') -> None:
-        """Test pickling and unpickling of BaseObject instances.
-
-        This test verifies that BaseObject instances can be pickled and unpickled correctly.
+        This test verifies that the object can be pickled and unpickled correctly.
 
         Args:
-            test_object: A fixture providing a BaseTestObject instance.
+            test_object: A fixture providing a test object instance.
         """
-        import pickle
-
         # Modify the test object
         test_object.immutable = 42
         test_object.mutable["key"] = "value"
 
-        # Pickle and unpickle
+        # Pickle and Unpickle Object
         pickled = pickle.dumps(test_object)
         unpickled = pickle.loads(pickled)
 
-        # Verify the unpickled object has the same attributes
+        # Validate
+        assert unpickled is not test_object
+        assert isinstance(unpickled, self.TestClass)
         assert unpickled.immutable == test_object.immutable
         assert unpickled.mutable == test_object.mutable
-
-        # Verify the unpickled object is a different instance
-        assert unpickled is not test_object
 
     def test_with_slots(self) -> None:
         """Test BaseObject with __slots__.
@@ -179,6 +170,7 @@ class TestBaseObject(BaseBaseObjectTest):
 
             def __init__(self) -> None:
                 """Initialize with slot attributes."""
+                super().__init__()
                 self.slot1 = "value1"
                 self.slot2 = "value2"
 
@@ -202,6 +194,7 @@ class TestBaseObject(BaseBaseObjectTest):
             """A BaseObject subclass with properties."""
             def __init__(self) -> None:
                 """Initialize with a private attribute."""
+                super().__init__()
                 self._value = "initial"
 
             @property
@@ -256,6 +249,7 @@ class TestBaseObject(BaseBaseObjectTest):
 
             def __init__(self) -> None:
                 """Initialize with a regular attribute."""
+                super().__init__()
                 self.regular = "regular"
 
         # Create and copy an object with a descriptor
@@ -269,13 +263,13 @@ class TestBaseObject(BaseBaseObjectTest):
         # Verify the copy is a different instance
         assert desc_copy is not desc_obj
 
-    def test_dict_modifications(self, test_object: 'TestBaseObject.BaseTestObject') -> None:
+    def test_dict_modifications(self, test_object: BaseObject) -> None:
         """Test BaseObject with __dict__ modifications.
 
         This test verifies that BaseObject works correctly when __dict__ is modified directly.
 
         Args:
-            test_object: A fixture providing a BaseTestObject instance.
+            test_object: A fixture providing a test object instance.
         """
         # Modify __dict__ directly
         test_object.__dict__["new_attr"] = "new value"
@@ -291,6 +285,43 @@ class TestBaseObject(BaseBaseObjectTest):
 
         # Verify the copy is a different instance
         assert copy_obj is not test_object
+
+    def test_deepcopy_with_memo(self, test_object: BaseObject) -> None:
+        """Test the deepcopy method of BaseObject with a memo dictionary.
+
+        This test verifies that the deepcopy method correctly uses the memo dictionary to avoid
+        copying the same object twice.
+
+        Args:
+            test_object: A fixture providing a test object instance.
+        """
+        memo = {}
+        new = test_object.deepcopy(memo=memo)
+
+        # The object should be in the memo dictionary
+        assert id(test_object) in memo
+        assert memo[id(test_object)] is new
+
+        # A second deepcopy with the same memo should return the same object
+        second_new = test_object.deepcopy(memo=memo)
+        assert second_new is new
+
+    def test_deepcopy_nested(self) -> None:
+        """Test deepcopy with nested BaseObject instances.
+
+        This test verifies that deepcopy correctly handles nested BaseObject instances.
+        """
+        # Create a BaseObject with a nested BaseObject
+        outer = self.TestClass()
+        inner = self.TestClass()
+        outer.mutable["inner"] = inner
+
+        # Deepcopy the outer object
+        outer_copy = outer.deepcopy()
+
+        # The inner object should also be copied
+        assert outer_copy.mutable["inner"] is not inner
+        assert isinstance(outer_copy.mutable["inner"], self.TestClass)
 
 
 # Main #

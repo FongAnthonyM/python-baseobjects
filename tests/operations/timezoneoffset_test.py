@@ -31,7 +31,7 @@ from src.baseobjects.operations.timezoneoffset import timezone_offset, INIT_DATE
 class TestTimezoneOffset:
     """Test the timezone_offset function.
 
-    This class tests the functionality of the timezone_offset function, which gets the offset of a given timezone.
+    This class tests_old_ the functionality of the timezone_offset function, which gets the offset of a given timezone.
     """
 
     # Instance Methods #

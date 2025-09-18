@@ -16,7 +16,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from datetime import datetime, timezone, timedelta
+from datetime import timezone, timedelta
 
 # Third-Party Packages #
 import pytest
@@ -30,7 +30,7 @@ from src.baseobjects.operations.filetimetodatetime import filetime_to_datetime, 
 class TestFiletimeToDatetime:
     """Test the filetime_to_datetime function.
 
-    This class tests the functionality of the filetime_to_datetime function, which converts a Windows filetime to a
+    This class tests_old_ the functionality of the filetime_to_datetime function, which converts a Windows filetime to a
     datetime object.
     """
 
@@ -39,8 +39,8 @@ class TestFiletimeToDatetime:
     def test_filetime_to_datetime_int(self) -> None:
         """Test converting an integer filetime to a datetime.
 
-        This test verifies that the filetime_to_datetime function correctly converts
-        an integer filetime to a datetime object.
+        This test verifies that the filetime_to_datetime function correctly converts an integer filetime to a datetime
+        object.
         """
         # Test with a simple integer
         result = filetime_to_datetime(1000000, None)
@@ -61,8 +61,8 @@ class TestFiletimeToDatetime:
     def test_filetime_to_datetime_float(self) -> None:
         """Test converting a float filetime to a datetime.
 
-        This test verifies that the filetime_to_datetime function correctly converts
-        a float filetime to a datetime object, including division by 10.
+        This test verifies that the filetime_to_datetime function correctly converts a float filetime to a datetime
+        object, including division by 10.
         """
         # Test with a simple float
         result = filetime_to_datetime(10000.0, None)
@@ -77,8 +77,8 @@ class TestFiletimeToDatetime:
     def test_filetime_to_datetime_str(self) -> None:
         """Test converting a string filetime to a datetime.
 
-        This test verifies that the filetime_to_datetime function correctly converts
-        a string representation of a filetime to a datetime object.
+        This test verifies that the filetime_to_datetime function correctly converts a string representation of a
+        filetime to a datetime object.
         """
         # Test with a simple string
         result = filetime_to_datetime("10000", None)
@@ -93,8 +93,8 @@ class TestFiletimeToDatetime:
     def test_filetime_to_datetime_bytes(self) -> None:
         """Test converting a bytes filetime to a datetime.
 
-        This test verifies that the filetime_to_datetime function correctly converts
-        a bytes representation of a filetime to a datetime object.
+        This test verifies that the filetime_to_datetime function correctly converts a bytes representation of a
+        filetime to a datetime object.
         """
         # Test with a simple bytes (10000 in little-endian)
         result = filetime_to_datetime(b'\x10\x27\x00\x00\x00\x00\x00\x00', None)
@@ -111,8 +111,8 @@ class TestFiletimeToDatetime:
     def test_filetime_to_datetime_bytearray(self) -> None:
         """Test converting a bytearray filetime to a datetime.
 
-        This test verifies that the filetime_to_datetime function correctly converts
-        a bytearray representation of a filetime to a datetime object.
+        This test verifies that the filetime_to_datetime function correctly converts a bytearray representation of a
+        filetime to a datetime object.
         """
         # Test with a simple bytearray (10000 in little-endian)
         result = filetime_to_datetime(bytearray(b'\x10\x27\x00\x00\x00\x00\x00\x00'), None)
@@ -129,8 +129,7 @@ class TestFiletimeToDatetime:
     def test_filetime_to_datetime_timezone(self) -> None:
         """Test converting a filetime with different timezones.
 
-        This test verifies that the filetime_to_datetime function correctly handles
-        different timezone specifications.
+        This test verifies that the filetime_to_datetime function correctly handles different timezone specifications.
         """
         # Test with None timezone (default)
         result = filetime_to_datetime(1000000)
@@ -149,8 +148,8 @@ class TestFiletimeToDatetime:
     def test_filetime_to_datetime_invalid_type(self) -> None:
         """Test converting an invalid type to a datetime.
 
-        This test verifies that the filetime_to_datetime function raises a TypeError
-        when an unsupported type is provided.
+        This test verifies that the filetime_to_datetime function raises a TypeError when an unsupported type is
+        provided.
         """
         # Test with a list (unsupported type)
         with pytest.raises(TypeError):
@@ -167,8 +166,8 @@ class TestFiletimeToDatetime:
     def test_filetime_to_datetime_invalid_string(self) -> None:
         """Test converting an invalid string to a datetime.
 
-        This test verifies that the filetime_to_datetime function raises a ValueError
-        when an invalid string that cannot be converted to an integer is provided.
+        This test verifies that the filetime_to_datetime function raises a ValueError when an invalid string that cannot
+        be converted to an integer is provided.
         """
         # Test with a non-numeric string
         with pytest.raises(ValueError):

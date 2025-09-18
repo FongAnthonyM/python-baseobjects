@@ -1,5 +1,5 @@
 """ __init__.py
-Performance tests for the baseobjects.operations module.
+Performance tests_old_ for the baseobjects.operations module.
 """
 # Header #
 __package_name__ = "baseobjects"

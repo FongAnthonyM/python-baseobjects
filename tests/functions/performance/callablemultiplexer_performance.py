@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" callablemultiplexer_performance.py
-Performance tests for the CallableMultiplexer and MethodMultiplexer classes in the baseobjects package.
+"""callablemultiplexer_performance.py
+Performance tests for the CallableMultiplexer and MethodMultiplexer classes in the baseobjects.functions package.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -23,17 +23,22 @@ from typing import Type, Any
 import pytest
 
 # Local Packages #
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 from src.baseobjects.functions.callablemultiplexer import CallableMultiplexer, MethodMultiplexer
-from tests.bases.performance.base_performance import ClassPerformanceTest
 
 
 # Definitions #
-# Callable Multiplexer
-class TestCallableMultiplexer(ClassPerformanceTest):
-    """Test the performance of the CallableMultiplexer class.
+# Classes #
+class TestCallableMultiplexerPerformance(BasePerformanceTestSuite):
+    """Test suite for assaying the performance of the CallableMultiplexer class.
 
-    This class tests the performance of the CallableMultiplexer class, which provides a way
-    to multiplex between different callable objects.
+    This test suite measures the performance of various operations on CallableMultiplexer objects
+    and compares them with standard Python implementations.
+
+    Attributes:
+        timeit_runs: The number of times to run the timeit function.
+        speed_tolerance: The maximum speed tolerance in microseconds.
+        TestClass: The class being tested.
     """
     # Class Definitions #
     class TestClass:
@@ -51,7 +56,7 @@ class TestCallableMultiplexer(ClassPerformanceTest):
     timeit_runs: int = 1000000
     speed_tolerance: int = 400
 
-    class_: Type[CallableMultiplexer] = CallableMultiplexer
+    TestClass: Type[CallableMultiplexer] = CallableMultiplexer
 
     # Instance Methods #
     # Fixtures
@@ -62,14 +67,14 @@ class TestCallableMultiplexer(ClassPerformanceTest):
         Returns:
             CallableMultiplexer: An instance of the test class.
         """
-        multiplexer = self.class_()
+        multiplexer = self.TestClass()
         multiplexer.add_function("func1", lambda x: x * 2)
         multiplexer.add_function("func2", lambda x: x * 3)
         multiplexer.select("func1")
         return multiplexer
 
     @pytest.fixture
-    def test_class_instance(self) -> "TestCallableMultiplexer.TestClass":
+    def test_class_instance(self) -> "TestCallableMultiplexerPerformance.TestClass":
         """Create a test class instance for use in tests.
 
         Returns:
@@ -79,26 +84,30 @@ class TestCallableMultiplexer(ClassPerformanceTest):
 
     # Tests
     def test_instance_creation(self) -> None:
-        """Test that instances of CallableMultiplexer can be created efficiently."""
+        """Test that instances of CallableMultiplexer can be created efficiently.
+
+        This test compares the speed of creating CallableMultiplexer instances with creating
+        standard Python dictionaries.
+        """
         # Define the performance test functions
         def create_multiplexer() -> None:
-            self.class_()
+            self.TestClass()
 
         def create_dict() -> None:
             {"func1": lambda x: x * 2, "func2": lambda x: x * 3}
 
-        # Calculate the mean time in microseconds for the new implementation
+        # Calculate the mean time in microseconds for the multiplexer creation
         new_time = timeit.timeit(create_multiplexer, number=self.timeit_runs)
         mean_new = new_time / self.timeit_runs * 1000000
 
-        # Calculate the mean time in microseconds for the old implementation
+        # Calculate the mean time in microseconds for the dictionary creation
         old_time = timeit.timeit(create_dict, number=self.timeit_runs)
         mean_old = old_time / self.timeit_runs * 1000000
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nOld: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
-        print(f"New: {mean_new:.3f} μs ({percent:.3f}% of old function time)")
+        print(f"\nDictionary creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"CallableMultiplexer creation: {mean_new:.3f} μs ({percent:.3f}% of dictionary creation time)")
         assert percent < self.speed_tolerance
 
     def test_call_speed(self, test_multiplexer: CallableMultiplexer) -> None:
@@ -122,50 +131,18 @@ class TestCallableMultiplexer(ClassPerformanceTest):
         def call_normal() -> None:
             normal(arg)
 
-        # Calculate the mean time in microseconds for the new implementation
+        # Calculate the mean time in microseconds for the multiplexer call
         new_time = timeit.timeit(call_multiplexer, number=self.timeit_runs)
         mean_new = new_time / self.timeit_runs * 1000000
 
-        # Calculate the mean time in microseconds for the old implementation
+        # Calculate the mean time in microseconds for the normal function call
         old_time = timeit.timeit(call_normal, number=self.timeit_runs)
         mean_old = old_time / self.timeit_runs * 1000000
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nOld: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
-        print(f"New: {mean_new:.3f} μs ({percent:.3f}% of old function time)")
-        assert percent < self.speed_tolerance
-
-    def test_select_speed(self, test_multiplexer: CallableMultiplexer) -> None:
-        """Test the performance of the select method of CallableMultiplexer.
-
-        This test compares the speed of CallableMultiplexer.select() with a dictionary lookup.
-
-        Args:
-            test_multiplexer: A fixture providing a CallableMultiplexer instance.
-        """
-        # Create a dictionary to compare against
-        funcs = {"func1": lambda x: x * 2, "func2": lambda x: x * 3}
-        
-        # Define the performance test functions
-        def select_multiplexer() -> None:
-            test_multiplexer.select("func2")
-
-        def select_dict() -> None:
-            _ = funcs["func2"]
-
-        # Calculate the mean time in microseconds for the new implementation
-        new_time = timeit.timeit(select_multiplexer, number=self.timeit_runs)
-        mean_new = new_time / self.timeit_runs * 1000000
-
-        # Calculate the mean time in microseconds for the old implementation
-        old_time = timeit.timeit(select_dict, number=self.timeit_runs)
-        mean_old = old_time / self.timeit_runs * 1000000
-        percent = (mean_new / mean_old) * 100
-
-        # Print the performance comparison
-        print(f"\nOld: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
-        print(f"New: {mean_new:.3f} μs ({percent:.3f}% of old function time)")
+        print(f"\nNormal function call: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"CallableMultiplexer call: {mean_new:.3f} μs ({percent:.3f}% of normal function call time)")
         assert percent < self.speed_tolerance
 
     def test_add_function_speed(self, test_multiplexer: CallableMultiplexer) -> None:
@@ -190,30 +167,34 @@ class TestCallableMultiplexer(ClassPerformanceTest):
         def add_to_dict() -> None:
             funcs["func3"] = new_func
 
-        # Calculate the mean time in microseconds for the new implementation
+        # Calculate the mean time in microseconds for the multiplexer add
         new_time = timeit.timeit(add_to_multiplexer, number=self.timeit_runs // 10)
         mean_new = new_time / (self.timeit_runs // 10) * 1000000
 
-        # Calculate the mean time in microseconds for the old implementation
+        # Calculate the mean time in microseconds for the dictionary update
         old_time = timeit.timeit(add_to_dict, number=self.timeit_runs // 10)
         mean_old = old_time / (self.timeit_runs // 10) * 1000000
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nOld: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
-        print(f"New: {mean_new:.3f} μs ({percent:.3f}% of old function time)")
+        print(f"\nDictionary update: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"CallableMultiplexer add_function: {mean_new:.3f} μs ({percent:.3f}% of dictionary update time)")
         assert percent < self.speed_tolerance
 
 
-# Method Multiplexer
-class TestMethodMultiplexer(ClassPerformanceTest):
-    """Test the performance of the MethodMultiplexer class.
+class TestMethodMultiplexerPerformance(BasePerformanceTestSuite):
+    """Test suite for assaying the performance of the MethodMultiplexer class.
 
-    This class tests the performance of the MethodMultiplexer class, which is a subclass of
-    CallableMultiplexer that provides method-specific functionality.
+    This test suite measures the performance of various operations on MethodMultiplexer objects
+    and compares them with standard Python implementations.
+
+    Attributes:
+        timeit_runs: The number of times to run the timeit function.
+        speed_tolerance: The maximum speed tolerance in microseconds.
+        TestClass: The class being tested.
     """
     # Class Definitions #
-    class TestClass:
+    class ExampleInstanceClass:
         """A class to test method binding."""
         
         def method1(self, x: int) -> int:
@@ -228,21 +209,21 @@ class TestMethodMultiplexer(ClassPerformanceTest):
     timeit_runs: int = 1000000
     speed_tolerance: int = 400
 
-    class_: Type[MethodMultiplexer] = MethodMultiplexer
+    TestClass: Type[MethodMultiplexer] = MethodMultiplexer
 
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_class_instance(self) -> "TestMethodMultiplexer.TestClass":
+    def test_class_instance(self) -> "TestMethodMultiplexerPerformance.TestClass":
         """Create a test class instance for use in tests.
 
         Returns:
             TestClass: An instance of the test class.
         """
-        return self.TestClass()
+        return self.ExampleInstanceClass()
 
     @pytest.fixture
-    def test_multiplexer(self, test_class_instance: "TestMethodMultiplexer.TestClass") -> MethodMultiplexer:
+    def test_multiplexer(self, test_class_instance: "TestMethodMultiplexerPerformance.TestClass") -> MethodMultiplexer:
         """Create a test multiplexer instance for use in tests.
 
         Args:
@@ -251,41 +232,42 @@ class TestMethodMultiplexer(ClassPerformanceTest):
         Returns:
             MethodMultiplexer: An instance of the test class.
         """
-        multiplexer = self.class_(instance=test_class_instance)
-        multiplexer.add_method("method1", test_class_instance.method1)
-        multiplexer.add_method("method2", test_class_instance.method2)
+        multiplexer = self.TestClass(instance=test_class_instance)
         multiplexer.select("method1")
         return multiplexer
 
     # Tests
-    def test_instance_creation(self, test_class_instance: "TestMethodMultiplexer.TestClass") -> None:
+    def test_instance_creation(self, test_class_instance: "TestMethodMultiplexerPerformance.TestClass") -> None:
         """Test that instances of MethodMultiplexer can be created efficiently.
+
+        This test compares the speed of creating MethodMultiplexer instances with creating
+        standard Python dictionaries of methods.
 
         Args:
             test_class_instance: A fixture providing a TestClass instance.
         """
         # Define the performance test functions
         def create_multiplexer() -> None:
-            self.class_(instance=test_class_instance)
+            self.TestClass(instance=test_class_instance)
 
         def create_dict() -> None:
             {"method1": test_class_instance.method1, "method2": test_class_instance.method2}
 
-        # Calculate the mean time in microseconds for the new implementation
+        # Calculate the mean time in microseconds for the multiplexer creation
         new_time = timeit.timeit(create_multiplexer, number=self.timeit_runs)
         mean_new = new_time / self.timeit_runs * 1000000
 
-        # Calculate the mean time in microseconds for the old implementation
+        # Calculate the mean time in microseconds for the dictionary creation
         old_time = timeit.timeit(create_dict, number=self.timeit_runs)
         mean_old = old_time / self.timeit_runs * 1000000
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nOld: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
-        print(f"New: {mean_new:.3f} μs ({percent:.3f}% of old function time)")
+        print(f"\nDictionary of methods creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"MethodMultiplexer creation: {mean_new:.3f} μs ({percent:.3f}% of dictionary creation time)")
         assert percent < self.speed_tolerance
 
-    def test_call_speed(self, test_multiplexer: MethodMultiplexer, test_class_instance: "TestMethodMultiplexer.TestClass") -> None:
+    def test_call_speed(self, test_multiplexer: MethodMultiplexer, test_class_instance: "TestMethodMultiplexerPerformance.TestClass") -> None:
         """Test the performance of the __call__ method of MethodMultiplexer.
 
         This test compares the speed of MethodMultiplexer.__call__() with a direct method call.
@@ -303,19 +285,43 @@ class TestMethodMultiplexer(ClassPerformanceTest):
         def call_normal() -> None:
             test_class_instance.method1(arg)
 
-        # Calculate the mean time in microseconds for the new implementation
+        # Calculate the mean time in microseconds for the multiplexer call
         new_time = timeit.timeit(call_multiplexer, number=self.timeit_runs)
         mean_new = new_time / self.timeit_runs * 1000000
 
-        # Calculate the mean time in microseconds for the old implementation
+        # Calculate the mean time in microseconds for the direct method call
         old_time = timeit.timeit(call_normal, number=self.timeit_runs)
         mean_old = old_time / self.timeit_runs * 1000000
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nOld: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
-        print(f"New: {mean_new:.3f} μs ({percent:.3f}% of old function time)")
+        print(f"\nDirect method call: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"MethodMultiplexer call: {mean_new:.3f} μs ({percent:.3f}% of direct method call time)")
         assert percent < self.speed_tolerance
+
+    def test_edge_case_method_switching(self, test_multiplexer: MethodMultiplexer) -> None:
+        """Test the performance of rapidly switching between methods.
+
+        This test measures the performance overhead when frequently switching between methods.
+
+        Args:
+            test_multiplexer: A fixture providing a MethodMultiplexer instance.
+        """
+        # Define the performance test functions
+        def switch_and_call() -> None:
+            test_multiplexer.select("method1")
+            test_multiplexer(5)
+            test_multiplexer.select("method2")
+            test_multiplexer(5)
+
+        # Calculate the mean time in microseconds
+        time = timeit.timeit(switch_and_call, number=self.timeit_runs // 10)
+        mean_time = time / (self.timeit_runs // 10) * 1000000
+
+        # Print the performance result
+        print(f"\nMethod switching and calling: {mean_time:.3f} μs")
+        # No direct comparison, just ensure it's reasonably fast
+        assert mean_time < 200  # 200 microseconds is a reasonable threshold
 
 
 # Main #

@@ -1,7 +1,9 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-""" basemethod_test.py
+"""basemethod_test.py
 Tests for the BaseMethod class in the baseobjects package.
+
+This module provides tests for the BaseMethod class, which extends BaseCallable to create method-like callable objects
+that maintain a reference to the instance they're bound to and properly handle method binding semantics. This class is
+particularly useful for creating custom method types, method factories, and method decorators.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -13,158 +15,373 @@ __license__ = "MIT"
 
 __version__ = "1.12.0"
 
-from types import MethodType
+
 # Imports #
 # Standard Libraries #
-from typing import Any, Optional, Type
+import pickle
+import gc
+import weakref
+from typing import Any, Type
 
 # Third-Party Packages #
 import pytest
 
 # Local Packages #
-from src.baseobjects.bases import BaseObject, BaseMethod
-from .base_test import BaseBaseObjectTest
+from src.baseobjects.bases import BaseMethod
+from src.baseobjects.testsuite.bases import BaseMethodTestSuite, example_method, ExampleBindTarget
 
 
 # Classes #
-class TestBaseMethod(BaseBaseObjectTest):
+class TestBaseMethod(BaseMethodTestSuite):
     """Test the BaseMethod class.
 
-    This class tests the functionality of the BaseMethod class, which is a base class for method objects in the 
-    baseobjects package.
+    This class tests the functionality of the BaseMethod class, which extends BaseCallable to create
+    method-like callable objects that maintain a reference to the instance they're bound to.
     """
+
     # Attributes #
-    class_: Type[BaseMethod] = BaseMethod
+    TestClass: Type[BaseMethod] = BaseMethod
 
     # Instance Methods #
-    # Fixtures
-    @pytest.fixture
-    def generate_method(self, request: Optional[Any] = None) -> BaseMethod:
-        """Create a BaseMethod instance with a generic function.
-
-        The generic function returns the first argument passed to it, which will be the instance the method is bound to.
-
-        Args:
-            request: A pytest request object that may contain parameters. If provided, the get_method parameter is 
-                passed to BaseMethod.
-
-        Returns:
-            BaseMethod: An instance of BaseMethod wrapping the generic function and bound to self.
-        """
-        def generic(*args: Any, **kwargs: Any) -> Any:
-            return args[0]
-
-        if request is None:
-            return self.class_(func=generic, instance=self)
-        else:
-            return self.class_(func=generic, instance=self, get_method=request.param)
-
     # Tests
-    def test_method_call(self, generate_method: BaseMethod) -> None:
-        """Test that a BaseMethod instance can be called like a normal method.
-
-        When called, the method should pass the bound instance (self) as the first argument to the wrapped function.
+    def test_instance_creation(self, *args: Any, **kwargs: Any) -> None:
+        """Test that instances of the class can be created.
 
         Args:
-            generate_method: A fixture providing a BaseMethod instance.
+            *args: Positional arguments list to pass to the class constructor.
+            **kwargs: Keyword arguments to pass to the class constructor.
         """
-        assert self == generate_method()
+        # Create an instance with a test method
+        instance = self.TestClass(example_method)
+        
+        # Verify it's an instance of the correct class
+        assert isinstance(instance, self.TestClass)
+        
+        # Verify it has the correct wrapped function
+        assert instance.__func__ is example_method
+        
+        # Verify it has no bound instance by default
+        assert instance.__self__ is None
+        
+        # Create an instance with a test method and a bound instance
+        bind_target = self.create_bind_target()
+        bound_instance = self.TestClass(example_method, instance=bind_target, owner=self.BindTargetClass)
+        
+        # Verify it has the correct bound instance
+        assert bound_instance.__self__ is bind_target
+        assert bound_instance.__owner__ is self.BindTargetClass
 
-    def test_binding(self, generate_method: BaseMethod) -> None:
-        """Test the bind_self method of BaseMethod.
-
-        This test verifies that a BaseMethod can be rebound to a different object instance, changing which instance is 
-        passed as the first argument when called.
+    def test_call(self, test_method_object: BaseMethod) -> None:
+        """Test that the method object can be called and correctly delegates to the wrapped method.
 
         Args:
-            generate_method: A fixture providing a BaseMethod instance.
+            test_method_object: A fixture providing a BaseMethod instance that wraps a method.
         """
-        obj = BaseObject()
-        bound_method = generate_method.bind_self(instance=obj)
-        assert bound_method is generate_method
-        assert obj == generate_method()
+        # Create a bind target
+        bind_target = self.create_bind_target()
+        
+        # Bind the method to the target
+        test_method_object.__self__ = bind_target
+        
+        # Call the method
+        result = test_method_object(3)
+        
+        # Verify it returns the expected result
+        assert result == (5, bind_target)  # (3 + 2, instance)
+        
+        # Call with different arguments
+        result = test_method_object(3, 4)
+        
+        # Verify it returns the expected result
+        assert result == (7, bind_target)  # (3 + 4, instance)
 
-    def test_bind_wrapped(self, generate_method: BaseMethod) -> None:
-        """Test the bind_wrapped method of BaseMethod.
-
-        This test verifies that a BaseMethod can be rebound to a different object instance, changing which instance is
-        passed as the first argument when called.
+    def test_as_function(self, test_method_object: BaseMethod) -> None:
+        """Test that the method object can be converted to a standard Python function.
 
         Args:
-            generate_method: A fixture providing a BaseMethod instance.
+            test_method_object: A fixture providing a BaseMethod instance that wraps a method.
         """
-        obj = BaseObject()
-        bound_method = generate_method.bind_wrapped(instance=obj)
-        assert isinstance(bound_method, MethodType)
-        assert obj == bound_method()
+        # Create a bind target
+        bind_target = self.create_bind_target()
+        
+        # Bind the method to the target
+        test_method_object.__self__ = bind_target
+        
+        # Convert to a standard Python function
+        func = test_method_object.as_function()
+        
+        # Verify it's a function
+        assert callable(func)
+        
+        # Verify it returns the expected result
+        assert func(3) == (5, bind_target)  # (3 + 2, instance)
+        assert func(3, 4) == (7, bind_target)  # (3 + 4, instance)
+        
+        # Verify it has the correct attributes
+        assert func.__name__ == test_method_object.__name__
+        assert func.__doc__ == test_method_object.__doc__
+        assert func.__wrapped__ is test_method_object
 
-    def test_binding_to_attribute(self, generate_method: BaseMethod) -> None:
-        """Test the bind_to_attribute method of BaseMethod.
-
-        This test verifies that a BaseMethod can be bound to an attribute of an object, making it accessible as an 
-        attribute while maintaining its binding to the original instance.
+    def test_call_wrapped(self, test_method_object: BaseMethod) -> None:
+        """Test that the wrapped method can be called directly.
 
         Args:
-            generate_method: A fixture providing a BaseMethod instance.
+            test_method_object: A fixture providing a BaseMethod instance that wraps a method.
         """
-        obj = BaseObject()
-        generate_method.bind_to_attribute(instance=obj)
-        assert hasattr(obj, "generic")
-        assert obj.generic == generate_method
+        # Create a bind target
+        bind_target = self.create_bind_target()
+        
+        # Call the wrapped method directly
+        result = test_method_object.call_wrapped(bind_target, 3)
+        
+        # Verify it returns the expected result
+        assert result == (5, bind_target)  # (3 + 2, instance)
+        
+        # Call with different arguments
+        result = test_method_object.call_wrapped(bind_target, 3, 4)
+        
+        # Verify it returns the expected result
+        assert result == (7, bind_target)  # (3 + 4, instance)
 
-    def test_binding_to_attribute_with_name(self, generate_method: BaseMethod) -> None:
-        """Test the bind_to_attribute method of BaseMethod with a custom name.
-
-        This test verifies that a BaseMethod can be bound to an attribute with a custom name.
+    def test_call_binding(self, test_method_object: BaseMethod) -> None:
+        """Test that the bound method correctly passes the instance as the first argument when called.
 
         Args:
-            generate_method: A fixture providing a BaseMethod instance.
+            test_method_object: A fixture providing a BaseMethod instance that wraps a method.
         """
-        obj = BaseObject()
-        generate_method.bind_to_attribute(instance=obj, name="custom_name")
-        assert hasattr(obj, "custom_name")
-        assert obj.custom_name == generate_method
+        # Create a bind target
+        bind_target = self.create_bind_target()
+        
+        # Bind the method to the target
+        test_method_object.__self__ = bind_target
+        test_method_object.__owner__ = self.BindTargetClass
+        
+        # Call the method using call_binding
+        result = test_method_object.call_binding(3)
+        
+        # Verify it returns the expected result
+        assert result == (5, bind_target)  # (3 + 2, instance)
+        
+        # Call with different arguments
+        result = test_method_object.call_binding(3, 4)
+        
+        # Verify it returns the expected result
+        assert result == (7, bind_target)  # (3 + 4, instance)
 
-    def test_descriptor_behavior(self) -> None:
-        """Test the descriptor behavior of BaseMethod.
+    def test_bind_self(self, test_bind_target: ExampleBindTarget) -> None:
+        """Test that the method can be bound to an instance.
 
-        This test verifies that a BaseMethod can be accessed as a descriptor.
+        This test verifies that a bound method is returned and that it functions correctly.
+
+        Args:
+            test_bind_target: A fixture providing an instance to bind the method to.
         """
-        # Create a simple test class
-        class TestClass:
-            def test_method(self, *args: Any, **kwargs: Any) -> Any:
-                return self
+        # Call the parent test method
+        super().test_bind_self(test_bind_target)
+        
+        # Create a method
+        method = self.create_method_object()
+        
+        # Bind the method to the target
+        bound_method = method.bind_self(test_bind_target, self.BindTargetClass)
+        
+        # Verify it's the same method (not a new instance)
+        assert bound_method is method
+        
+        # Verify it's bound to the correct instance
+        assert bound_method.__self__ is test_bind_target
+        assert bound_method.__owner__ is self.BindTargetClass
+        
+        # Verify it returns the expected result when called
+        result = bound_method(3)
+        assert result == (5, test_bind_target)  # (3 + 2, instance)
+        
+        # Test with is_binding=False
+        unbound_method = self.create_method_object(is_binding=False)
+        unbound_result = unbound_method.bind_self(test_bind_target, self.BindTargetClass)
+        
+        # Verify it's the same method (not a new instance)
+        assert unbound_result is unbound_method
+        
+        # Verify it's not bound to the instance
+        assert unbound_result.__self__ is None
 
-        # Create an instance
-        instance = TestClass()
+    def test_bind_to_attribute(self) -> None:
+        """Test that the method can be bound to an instance and set as an attribute.
 
-        # Create a BaseMethod from the instance method
-        method = BaseMethod(func=instance.test_method.__func__, instance=instance)
-
-        # Verify the method returns the instance
-        assert method() is instance
-
-    def test_state_methods(self) -> None:
-        """Test the __getstate__ and __setstate__ methods of BaseMethod.
-
-        This test verifies that the state can be extracted and restored.
+        This test verifies that a bound method is returned and bound to the target instance's attribute,
+        and that it functions correctly.
         """
-        # Create a method that returns a fixed value
-        def test_method(instance: Any) -> str:
-            return "test_value"
+        # Call the parent test method
+        super().test_bind_to_attribute()
+        
+        # Create a method and a bind target
+        method = self.create_method_object()
+        bind_target = self.create_bind_target()
+        
+        # Bind the method to the target and set it as an attribute
+        bound_method = method.bind_to_attribute(bind_target, self.BindTargetClass)
+        
+        # Verify it's the same method (not a new instance)
+        assert bound_method is method
+        
+        # Verify it's bound to the correct instance
+        assert bound_method.__self__ is bind_target
+        assert bound_method.__owner__ is self.BindTargetClass
+        
+        # Verify it's set as an attribute on the instance
+        assert hasattr(bind_target, method.__wrapped__.__name__)
+        
+        # Verify it returns the expected result when called through the attribute
+        method_name = method.__wrapped__.__name__
+        result = getattr(bind_target, method_name)(3)
+        assert result == (5, bind_target)  # (3 + 2, instance)
+        
+        # Test with a custom name
+        new_method = self.create_method_object()
+        new_bind_target = self.create_bind_target()
+        bound_method_named = new_method.bind_to_attribute(
+            new_bind_target,
+            self.BindTargetClass,
+            name="custom_method",
+        )
+        
+        # Verify it's set as an attribute with the custom name
+        assert hasattr(new_bind_target, "custom_method")
+        
+        # Verify it returns the expected result when called through the attribute
+        result = new_bind_target.custom_method(3)
+        assert result == (5, new_bind_target)  # (3 + 2, instance)
 
-        # Create a BaseMethod
-        method = BaseMethod(func=test_method, instance=self)
+    def test_descriptor_protocol(self, test_method_object: BaseMethod) -> None:
+        """Test that the method implements the descriptor protocol for method binding.
 
-        # Get the state
-        state = method.__getstate__()
+        This test verifies that the descriptor returns a bound method and that it functions correctly.
 
-        # Create a new method and set its state
-        new_method = BaseMethod()
-        new_method.__setstate__(state)
+        Args:
+            test_method_object: A fixture providing a BaseMethod instance that wraps a method.
+        """
+        # Call the parent test method
+        super().test_descriptor_protocol(test_method_object)
+        
+        # Create a class with the method as a descriptor
+        method = self.create_method_object()
+        class DescriptorTest:
+            descriptor_method = method
+        
+        # Create an instance of the class
+        instance = DescriptorTest()
+        
+        # Verify the descriptor returns the same method (not a new instance)
+        assert instance.descriptor_method is method
+        
+        # Verify it's bound to the correct instance
+        assert instance.descriptor_method.__self__ is instance
+        
+        # Verify it returns the expected result when called
+        result = instance.descriptor_method(3)
+        assert result == (5, instance)  # (3 + 2, instance)
 
-        # Verify the new method has the same behavior
-        assert new_method() == "test_value"
+    def test_weak_reference(self) -> None:
+        """Test that the method maintains a weak reference to the bound instance."""
+        # Call the parent test method
+        super().test_weak_reference()
+        
+        # Create a method
+        method = self.create_method_object()
+        
+        # Create a new scope to control the lifetime of the instance
+        def inner_scope():
+            # Create a local instance
+            local_instance = self.create_bind_target()
+            
+            # Bind the method to the local instance
+            method.__self__ = local_instance
+            
+            # Verify it's bound to the correct instance
+            assert method.__self__ is local_instance
+            
+            # Return a weak reference to the local instance
+            return weakref.ref(local_instance)
+        
+        # Get a weak reference to the local instance
+        weak_ref = inner_scope()
+        
+        # Force garbage collection
+        gc.collect()
+        
+        # Verify the local instance has been garbage collected
+        assert weak_ref() is None
+        
+        # Verify the method's bound instance is now None
+        assert method.__self__ is None
+
+    def test_pickling_with_instance(self) -> None:
+        """Test pickling and unpickling of the method object with a bound instance."""
+        # Create a method and a bind target
+        method = self.create_method_object()
+        bind_target = self.create_bind_target()
+        
+        # Bind the method to the target
+        method.__self__ = bind_target
+        method.__owner__ = self.BindTargetClass
+        
+        # Pickle and unpickle the method and bind target (need a strong reference to the bind target)
+        items = (method, bind_target)
+        pickled = pickle.dumps(items)
+        unpickled_method, unpickled_bind_target = pickle.loads(pickled)
+        
+        # Verify the unpickled method is a new instance
+        assert unpickled_method is not method
+        
+        # Verify it has the correct wrapped function
+        assert unpickled_method.__func__ is method.__func__
+        
+        # Verify it's bound to the correct instance
+        assert unpickled_method.__self__ is not bind_target
+        assert unpickled_method.__self__ is unpickled_bind_target
+        assert unpickled_method.__owner__ is self.BindTargetClass
+        
+        # Verify it returns the expected result when called
+        result = unpickled_method(3)
+        assert result == (5, unpickled_bind_target)  # (3 + 2, instance)
+
+    def test_is_binding_flag(self) -> None:
+        """Test the is_binding flag."""
+        # Create a method with is_binding=False
+        method = self.create_method_object(is_binding=False)
+        
+        # Verify the flag is set correctly
+        assert method.is_binding is False
+        
+        # Create a class with the method as a descriptor
+        class DescriptorTest:
+            descriptor_method = method
+        
+        # Create an instance of the class
+        instance = DescriptorTest()
+        
+        # Verify the descriptor returns the same method (not bound to the instance)
+        assert instance.descriptor_method is method
+        
+        # Verify it's not bound to the instance
+        assert instance.descriptor_method.__self__ is None
+        
+        # Create a method with is_binding=True
+        binding_method = self.create_method_object(is_binding=True)
+        
+        # Create a class with the method as a descriptor
+        class BindingDescriptorTest:
+            descriptor_method = binding_method
+        
+        # Create an instance of the class
+        binding_instance = BindingDescriptorTest()
+        
+        # Verify the descriptor returns the same method (bound to the instance)
+        assert binding_instance.descriptor_method is binding_method
+        
+        # Verify it's bound to the instance
+        assert binding_instance.descriptor_method.__self__ is binding_instance
 
 
 # Main #

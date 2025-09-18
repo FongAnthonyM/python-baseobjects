@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" singlekwargdispatch_performance.py
-Performance tests for the singlekwargdispatchmethod and singlekwargdispatch classes in the baseobjects package.
+"""singlekwargdispatch_performance.py
+Performance tests for the singlekwargdispatchmethod and singlekwargdispatch classes in the baseobjects.functions package.
 """
 # Future Imports #
 from __future__ import annotations
@@ -21,23 +21,27 @@ __version__ = "1.12.0"
 # Standard Libraries #
 from functools import singledispatchmethod
 import timeit
-from typing import Type, Any
+from typing import Type, Any, Union
 
 # Third-Party Packages #
 import pytest
 
 # Local Packages #
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 from src.baseobjects.functions.singlekwargdispatch import singlekwargdispatch
-from tests.bases.performance.base_performance import ClassPerformanceTest
 
 
 # Definitions #
-# Single Kwarg Dispatch
-class TestSingleKwargDispatch(ClassPerformanceTest):
-    """Test the performance of the singlekwargdispatch class.
+# Classes #
+class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
+    """Test suite for assaying the performance of the singlekwargdispatch class.
 
-    This class tests the performance of the singlekwargdispatch class, which extends singledispatch
-    to allow kwargs to be used for dispatching.
+    This test suite measures the performance of various operations on singlekwargdispatch objects
+    and compares them with standard Python implementations.
+
+    Attributes:
+        timeit_runs: The number of times to run the timeit function.
+        speed_tolerance: The maximum speed tolerance in microseconds.
     """
     # Class Definitions #
     class DispatchTestClass:
@@ -52,7 +56,7 @@ class TestSingleKwargDispatch(ClassPerformanceTest):
             else:
                 return f"Default: {arg}"
 
-        def normal_kwarg_method(self, arg: Any = None, kwarg: int | str | None = None, **kwargs):
+        def normal_kwarg_method(self, arg: Any = None, kwarg: Union[int, str, None] = None, **kwargs):
             """A normal method with a kwarg."""
             if isinstance(kwarg, int):
                 return f"Integer: {kwarg}"
@@ -77,7 +81,7 @@ class TestSingleKwargDispatch(ClassPerformanceTest):
             return f"String: {arg}"
 
         @singlekwargdispatch
-        def dispatch_arg(self, arg: int | str, **kwargs):
+        def dispatch_arg(self, arg: Union[int, str], **kwargs):
             """Default implementation."""
             return f"Default: {arg}"
 
@@ -92,7 +96,7 @@ class TestSingleKwargDispatch(ClassPerformanceTest):
             return f"String: {arg}"
 
         @singlekwargdispatch(kwarg="kwarg")
-        def dispatch_kwarg(self, arg: Any = None, kwarg: int | str | None = None, **kwargs):
+        def dispatch_kwarg(self, arg: Any = None, kwarg: Union[int, str, None] = None, **kwargs):
             """Default implementation with specific kwarg."""
             return f"Default: {kwarg}"
 
@@ -102,7 +106,7 @@ class TestSingleKwargDispatch(ClassPerformanceTest):
             return f"Integer: {kwarg}"
 
         @dispatch_kwarg.register(str)
-        def _(self, arg: Any = None, kwarg: int | str | None = None, **kwargs):
+        def _(self, arg: Any = None, kwarg: Union[int, str, None] = None, **kwargs):
             """Process a string value."""
             return f"String: {kwarg}"
 
@@ -113,7 +117,7 @@ class TestSingleKwargDispatch(ClassPerformanceTest):
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_class_instance(self) -> TestSingleKwargDispatch.DispatchTestClass:
+    def test_class_instance(self) -> "TestSingleKwargDispatchPerformance.DispatchTestClass":
         """Create a test class instance for use in tests.
 
         Returns:
@@ -122,10 +126,11 @@ class TestSingleKwargDispatch(ClassPerformanceTest):
         return self.DispatchTestClass()
 
     # Tests
-    def test_dispatch_call_speed_with_arg(self, test_class_instance: TestSingleKwargDispatch.DispatchTestClass) -> None:
+    def test_dispatch_call_speed_with_arg(self, test_class_instance: "TestSingleKwargDispatchPerformance.DispatchTestClass") -> None:
         """Test the performance of the dispatch_call method with a positional argument.
 
-        This test compares the speed of singlekwargdispatch.dispatch_call() with a normal singledispatchmethod.
+        This test compares the speed of singlekwargdispatch.dispatch_call() with a normal singledispatchmethod
+        and a manual type check implementation.
 
         Args:
             test_class_instance: A fixture providing a DispatchTestClass instance.
@@ -142,29 +147,31 @@ class TestSingleKwargDispatch(ClassPerformanceTest):
         def call_normal_dispatch() -> None:
             test_class_instance.normal_arg_method(arg)
 
-        # Calculate the mean time in microseconds for the new implementation
+        # Calculate the mean time in microseconds for the singlekwargdispatch implementation
         new_time = timeit.timeit(call_single_kwarg_dispatch, number=self.timeit_runs)
         mean_new = new_time / self.timeit_runs * 1000000
 
-        # Calculate the mean time in microseconds for the old implementation
+        # Calculate the mean time in microseconds for the singledispatchmethod implementation
         old_time = timeit.timeit(call_single_dispatch, number=self.timeit_runs)
         mean_old = old_time / self.timeit_runs * 1000000
-        percent = (mean_new / mean_old) * 100
+        percent_to_old = (mean_new / mean_old) * 100
 
-        # Calculate the mean time in microseconds for the baseline implementation
+        # Calculate the mean time in microseconds for the manual type check implementation
         baseline_time = timeit.timeit(call_normal_dispatch, number=self.timeit_runs)
         mean_baseline = baseline_time / self.timeit_runs * 1000000
+        percent_to_baseline = (mean_new / mean_baseline) * 100
 
         # Print the performance comparison
-        print(f"\nBaseline: {mean_baseline:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
-        print(f"Old: {mean_old:.3f} μs")
-        print(f"New: {mean_new:.3f} μs ({percent:.3f}% of old function time)")
-        assert percent < self.speed_tolerance
+        print(f"\nManual type check: {mean_baseline:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"singledispatchmethod: {mean_old:.3f} μs ({(mean_old / mean_baseline):.3f}% of manual type check time)")
+        print(f"singlekwargdispatch with arg: {mean_new:.3f} μs ({percent_to_baseline:.3f}% of manual type check time, {percent_to_old:.3f}% of singledispatchmethod time)")
+        assert percent_to_old < self.speed_tolerance
 
-    def test_dispatch_call_speed_with_kwarg(self, test_class_instance: TestSingleKwargDispatch.DispatchTestClass) -> None:
+    def test_dispatch_call_speed_with_kwarg(self, test_class_instance: "TestSingleKwargDispatchPerformance.DispatchTestClass") -> None:
         """Test the performance of the dispatch_call method with a keyword argument.
 
-        This test compares the speed of singlekwargdispatch.dispatch_call() with a manual type check and dispatch.
+        This test compares the speed of singlekwargdispatch.dispatch_call() with a keyword argument
+        against a manual type check implementation and singledispatchmethod.
 
         Args:
             test_class_instance: A fixture providing a DispatchTestClass instance.
@@ -175,30 +182,228 @@ class TestSingleKwargDispatch(ClassPerformanceTest):
         def call_single_kwarg_dispatch() -> None:
             test_class_instance.dispatch_kwarg(kwarg=arg)
 
+        def call_normal_kwarg_dispatch() -> None:
+            test_class_instance.normal_kwarg_method(kwarg=arg)
+
         def call_single_dispatch() -> None:
+            # singledispatchmethod doesn't support kwarg dispatch, so we use arg
             test_class_instance.functools_dispatch(arg)
 
-        def call_normal_dispatch() -> None:
-            test_class_instance.normal_arg_method(arg)
-
-        # Calculate the mean time in microseconds for the new implementation
+        # Calculate the mean time in microseconds for the singlekwargdispatch implementation
         new_time = timeit.timeit(call_single_kwarg_dispatch, number=self.timeit_runs)
         mean_new = new_time / self.timeit_runs * 1000000
 
-        # Calculate the mean time in microseconds for the old implementation
+        # Calculate the mean time in microseconds for the manual type check implementation
+        baseline_time = timeit.timeit(call_normal_kwarg_dispatch, number=self.timeit_runs)
+        mean_baseline = baseline_time / self.timeit_runs * 1000000
+        percent_to_baseline = (mean_new / mean_baseline) * 100
+
+        # Calculate the mean time in microseconds for the singledispatchmethod implementation
         old_time = timeit.timeit(call_single_dispatch, number=self.timeit_runs)
         mean_old = old_time / self.timeit_runs * 1000000
-        percent = (mean_new / mean_old) * 100
-
-        # Calculate the mean time in microseconds for the baseline implementation
-        baseline_time = timeit.timeit(call_normal_dispatch, number=self.timeit_runs)
-        mean_baseline = baseline_time / self.timeit_runs * 1000000
+        percent_to_old = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nBaseline: {mean_baseline:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
-        print(f"Old: {mean_old:.3f} μs")
-        print(f"New: {mean_new:.3f} μs ({percent:.3f}% of old function time)")
-        assert percent < self.speed_tolerance
+        print(f"\nManual type check with kwarg: {mean_baseline:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"singledispatchmethod with arg: {mean_old:.3f} μs ({(mean_old / mean_baseline):.3f}% of manual type check time)")
+        print(f"singlekwargdispatch with kwarg: {mean_new:.3f} μs ({percent_to_baseline:.3f}% of manual type check time, {percent_to_old:.3f}% of singledispatchmethod time)")
+        assert percent_to_baseline < self.speed_tolerance * 2  # Allow more overhead for kwarg dispatch
+
+    def test_edge_case_multiple_types(self, test_class_instance: "TestSingleKwargDispatchPerformance.DispatchTestClass") -> None:
+        """Test the performance with an edge case of multiple registered types.
+
+        This test measures the performance overhead when dispatching with many registered types.
+
+        Args:
+            test_class_instance: A fixture providing a DispatchTestClass instance.
+        """
+        # Create a class with many registered types
+        class ManyTypesDispatch:
+            @singlekwargdispatch
+            def dispatch(self, arg: Any, **kwargs):
+                """Default implementation."""
+                return f"Default: {arg}"
+
+            @dispatch.register
+            def _(self, arg: int, **kwargs):
+                return f"Integer: {arg}"
+
+            @dispatch.register(str)
+            def _(self, arg: str, **kwargs):
+                return f"String: {arg}"
+
+            @dispatch.register(list)
+            def _(self, arg: list, **kwargs):
+                return f"List: {arg}"
+
+            @dispatch.register(dict)
+            def _(self, arg: dict, **kwargs):
+                return f"Dict: {arg}"
+
+            @dispatch.register(tuple)
+            def _(self, arg: tuple, **kwargs):
+                return f"Tuple: {arg}"
+
+            @dispatch.register(set)
+            def _(self, arg: set, **kwargs):
+                return f"Set: {arg}"
+
+            @dispatch.register(bool)
+            def _(self, arg: bool, **kwargs):
+                return f"Bool: {arg}"
+
+            @dispatch.register(float)
+            def _(self, arg: float, **kwargs):
+                return f"Float: {arg}"
+
+            @dispatch.register(complex)
+            def _(self, arg: complex, **kwargs):
+                return f"Complex: {arg}"
+
+            @singledispatchmethod
+            def functools_dispatch(self, arg: Any, **kwargs):
+                """Default implementation."""
+                return f"Default: {arg}"
+
+            @functools_dispatch.register
+            def _(self, arg: int, **kwargs):
+                return f"Integer: {arg}"
+
+            @functools_dispatch.register(str)
+            def _(self, arg: str, **kwargs):
+                return f"String: {arg}"
+
+            @functools_dispatch.register(list)
+            def _(self, arg: list, **kwargs):
+                return f"List: {arg}"
+
+            @functools_dispatch.register(dict)
+            def _(self, arg: dict, **kwargs):
+                return f"Dict: {arg}"
+
+            @functools_dispatch.register(tuple)
+            def _(self, arg: tuple, **kwargs):
+                return f"Tuple: {arg}"
+
+            @functools_dispatch.register(set)
+            def _(self, arg: set, **kwargs):
+                return f"Set: {arg}"
+
+            @functools_dispatch.register(bool)
+            def _(self, arg: bool, **kwargs):
+                return f"Bool: {arg}"
+
+            @functools_dispatch.register(float)
+            def _(self, arg: float, **kwargs):
+                return f"Float: {arg}"
+
+            @functools_dispatch.register(complex)
+            def _(self, arg: complex, **kwargs):
+                return f"Complex: {arg}"
+
+        many_types = ManyTypesDispatch()
+        
+        # Define the performance test functions
+        def call_single_kwarg_dispatch() -> None:
+            many_types.dispatch(42)
+            many_types.dispatch("test")
+            many_types.dispatch([1, 2, 3])
+            many_types.dispatch({"a": 1})
+            many_types.dispatch((1, 2))
+
+        def call_single_dispatch() -> None:
+            many_types.functools_dispatch(42)
+            many_types.functools_dispatch("test")
+            many_types.functools_dispatch([1, 2, 3])
+            many_types.functools_dispatch({"a": 1})
+            many_types.functools_dispatch((1, 2))
+
+        # Calculate the mean time in microseconds for the singlekwargdispatch implementation
+        new_time = timeit.timeit(call_single_kwarg_dispatch, number=self.timeit_runs // 100)
+        mean_new = new_time / (self.timeit_runs // 100) * 1000000
+
+        # Calculate the mean time in microseconds for the singledispatchmethod implementation
+        old_time = timeit.timeit(call_single_dispatch, number=self.timeit_runs // 100)
+        mean_old = old_time / (self.timeit_runs // 100) * 1000000
+        percent = (mean_new / mean_old) * 100
+
+        # Print the performance comparison
+        print(f"\nsingledispatchmethod with many types: {mean_old:.3f} μs")
+        print(f"singlekwargdispatch with many types: {mean_new:.3f} μs ({percent:.3f}% of singledispatchmethod time)")
+        assert percent < self.speed_tolerance * 1.5  # Allow more overhead for many types
+
+    def test_edge_case_nested_dispatch(self, test_class_instance: "TestSingleKwargDispatchPerformance.DispatchTestClass") -> None:
+        """Test the performance with an edge case of nested dispatch.
+
+        This test measures the performance overhead when using nested dispatch methods.
+
+        Args:
+            test_class_instance: A fixture providing a DispatchTestClass instance.
+        """
+        # Create a class with nested dispatch
+        class NestedDispatch:
+            @singlekwargdispatch
+            def outer_dispatch(self, arg: Any, **kwargs):
+                """Default outer implementation."""
+                return self.inner_dispatch(arg)
+
+            @outer_dispatch.register
+            def _(self, arg: int, **kwargs):
+                """Process an integer in outer."""
+                return f"Outer Integer: {self.inner_dispatch(arg)}"
+
+            @singlekwargdispatch
+            def inner_dispatch(self, arg: Any, **kwargs):
+                """Default inner implementation."""
+                return f"Default: {arg}"
+
+            @inner_dispatch.register
+            def _(self, arg: int, **kwargs):
+                """Process an integer in inner."""
+                return f"Inner Integer: {arg}"
+
+            @singledispatchmethod
+            def outer_functools(self, arg: Any, **kwargs):
+                """Default outer implementation."""
+                return self.inner_functools(arg)
+
+            @outer_functools.register
+            def _(self, arg: int, **kwargs):
+                """Process an integer in outer."""
+                return f"Outer Integer: {self.inner_functools(arg)}"
+
+            @singledispatchmethod
+            def inner_functools(self, arg: Any, **kwargs):
+                """Default inner implementation."""
+                return f"Default: {arg}"
+
+            @inner_functools.register
+            def _(self, arg: int, **kwargs):
+                """Process an integer in inner."""
+                return f"Inner Integer: {arg}"
+
+        nested = NestedDispatch()
+        
+        # Define the performance test functions
+        def call_nested_kwarg_dispatch() -> None:
+            nested.outer_dispatch(42)
+
+        def call_nested_functools_dispatch() -> None:
+            nested.outer_functools(42)
+
+        # Calculate the mean time in microseconds for the nested singlekwargdispatch
+        new_time = timeit.timeit(call_nested_kwarg_dispatch, number=self.timeit_runs // 10)
+        mean_new = new_time / (self.timeit_runs // 10) * 1000000
+
+        # Calculate the mean time in microseconds for the nested singledispatchmethod
+        old_time = timeit.timeit(call_nested_functools_dispatch, number=self.timeit_runs // 10)
+        mean_old = old_time / (self.timeit_runs // 10) * 1000000
+        percent = (mean_new / mean_old) * 100
+
+        # Print the performance comparison
+        print(f"\nNested singledispatchmethod: {mean_old:.3f} μs")
+        print(f"Nested singlekwargdispatch: {mean_new:.3f} μs ({percent:.3f}% of nested singledispatchmethod time)")
+        assert percent < self.speed_tolerance * 1.5  # Allow more overhead for nested dispatch
 
 
 # Main #

@@ -1,5 +1,5 @@
-""" __init__.py
-Package initialization for tests.collections.
+"""__init__.py
+Tests for the collections module in the baseobjects package.
 """
 # Header #
 __package_name__ = "baseobjects"

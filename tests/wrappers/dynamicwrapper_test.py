@@ -16,122 +16,94 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
+import copy
 import pickle
-from typing import Any, List, Optional, Type
+from typing import Any
 
 # Third-Party Packages #
 import pytest
 
 # Local Packages #
 from src.baseobjects.wrappers import DynamicWrapper
-from tests.wrappers.base_test_wrappers import BaseWrapperTest
+from src.baseobjects.testsuite.wrappertestsuite import WrapperTestSuite
 
 
 # Definitions #
 # Classes #
-class TestDynamicWrapper(BaseWrapperTest):
-    """Test the DynamicWrapper class.
+class TestDynamicWrapper(DynamicWrapper):
+    """A test class that inherits from DynamicWrapper.
 
-    This class tests the functionality of the DynamicWrapper class, which is a wrapper that calls wrapped
-    attributes/functions by changing the __getattr__ method.
+    This class uses DynamicWrapper to wrap ExampleOne and ExampleTwo objects.
     """
+    _wrapped_map_: list[str] = ["_first", "_second"]
 
-    # Class Definitions #
-    class DynamicWrapperTestObject(DynamicWrapper):
-        """A test class that inherits from DynamicWrapper.
-
-        This class uses DynamicWrapper to wrap ExampleOne and ExampleTwo objects.
-        """
-        _wrap_attributes: List[str] = ["_first", "_second"]
-
-        def __init__(self, first: Optional[Any] = None, second: Optional[Any] = None) -> None:
-            """Initialize with wrapped objects.
-
-            Args:
-                first: The first object to wrap.
-                second: The second object to wrap.
-            """
-            self._first = first
-            self._second = second
-            self.two = "wrapper"
-            self.four = "wrapper"
-
-        def wrap(self) -> str:
-            """Return a string identifying this class.
-
-            Returns:
-                A string identifying this class.
-            """
-            return "wrapper"
-
-    class DynamicWrapperWithGetAttr(DynamicWrapper):
-        """A test class that inherits from DynamicWrapper and wraps an object with __getattr__.
-
-        This class is used to test how DynamicWrapper handles objects with __getattr__.
-        """
-        _wrap_attributes: List[str] = ["_wrapped"]
-
-        def __init__(self, wrapped: Optional[Any] = None) -> None:
-            """Initialize with a wrapped object.
-
-            Args:
-                wrapped: The object to wrap.
-            """
-            self.existing = "wrapper_existing"
-            self._wrapped = wrapped
-
-    class NestedDynamicWrapper(DynamicWrapper):
-        """A test class for nesting wrappers.
-
-        This class wraps another wrapper.
-        """
-        _wrap_attributes: List[str] = ["_wrapped"]
-
-        def __init__(self, wrapped: Optional[Any] = None) -> None:
-            """Initialize with a wrapped wrapper.
-
-            Args:
-                wrapped: The wrapper to wrap.
-            """
-            self._wrapped = wrapped
-            self.nested_attr = "nested"
-
-    # Attributes #
-    class_: Type[DynamicWrapper] = DynamicWrapperTestObject
-
-    # Instance Methods #
-    # Fixtures
-    def new_object(self) -> DynamicWrapperTestObject:
-        """Create a new DynamicWrapperTestObject instance.
-
-        Returns:
-            A new DynamicWrapperTestObject instance with ExampleOne and ExampleTwo objects.
-        """
-        first = self.ExampleOne()
-        second = self.ExampleTwo()
-        return self.DynamicWrapperTestObject(first, second)
-
-    def new_object_with_getattr(self) -> DynamicWrapperWithGetAttr:
-        """Create a new DynamicWrapperWithGetAttr instance.
-
-        Returns:
-            A new DynamicWrapperWithGetAttr instance with an ExampleWithGetAttr object.
-        """
-        wrapped = self.ExampleWithGetAttr()
-        return self.DynamicWrapperWithGetAttr(wrapped)
-
-    @pytest.fixture(params=[new_object])
-    def test_object(self, request: Any) -> Any:
-        """Fixture that returns a test object.
+    def __init__(self, first: Any = None, second: Any = None) -> None:
+        """Initialize with wrapped objects.
 
         Args:
-            request: The pytest request object.
+            first: The first object to wrap.
+            second: The second object to wrap.
+        """
+        self._first = first
+        self._second = second
+        self.two = "wrapper"
+        self.four = "wrapper"
+
+    def wrap(self) -> str:
+        """Return a string identifying this class.
 
         Returns:
-            A test object created by the method specified in the request parameters.
+            A string identifying this class.
         """
-        return request.param(self)
+        return "wrapper"
 
+
+class TestDynamicWrapperWithGetAttr(DynamicWrapper):
+    """A test class that inherits from DynamicWrapper and wraps an object with __getattr__.
+
+    This class is used to test how DynamicWrapper handles objects with __getattr__.
+    """
+    _wrapped_map_: list[str] = ["_wrapped_obj"]
+
+    def __init__(self, wrapped: Any = None) -> None:
+        """Initialize with a wrapped object.
+
+        Args:
+            wrapped: The object to wrap.
+        """
+        self.existing = "wrapper_existing"
+        self._wrapped_obj = wrapped
+
+
+class NestedDynamicWrapper(DynamicWrapper):
+    """A test class for nesting wrappers.
+
+    This class wraps another wrapper.
+    """
+    _wrapped_map_: list[str] = ["_wrapped_obj"]
+
+    def __init__(self, wrapped: Any = None) -> None:
+        """Initialize with a wrapped wrapper.
+
+        Args:
+            wrapped: The wrapper to wrap.
+        """
+        self._wrapped_obj = wrapped
+        self.nested_attr = "nested"
+
+
+# Tests #
+class TestDynamicWrapperTests(WrapperTestSuite):
+    """Test the DynamicWrapper class.
+
+    This class tests the functionality of the DynamicWrapper class, which is a wrapper that
+    calls wrapped attributes/functions by changing the __getattr__ method.
+    """
+
+    # Class Attributes #
+    TestClass = TestDynamicWrapper
+
+    # Instance Methods #
     # Additional Tests
     def test_setattr_method(self) -> None:
         """Test the _setattr method.
@@ -139,7 +111,8 @@ class TestDynamicWrapper(BaseWrapperTest):
         This test verifies that the _setattr method bypasses the dynamic attribute resolution and sets attributes
         directly on the wrapper.
         """
-        obj = self.new_object()
+        # Create a test object
+        obj = self.TestClass(self.ExampleOne(), self.ExampleTwo())
 
         # Set an attribute in the wrapper object but is also present in the wrapped object
         obj._setattr("one", "direct_set")
@@ -154,33 +127,25 @@ class TestDynamicWrapper(BaseWrapperTest):
         This test verifies that attributes dynamically created by a wrapped object's __getattr__ are accessible through
         the wrapper.
         """
-        obj = self.new_object_with_getattr()
+        # Create a test object with an object that has __getattr__
+        class ExampleWithGetAttr:
+            """An example class with a __getattr__ method."""
+            def __init__(self) -> None:
+                """Initialize with attributes."""
+                self.existing = "exists"
+
+            def __getattr__(self, name: str) -> str:
+                """Return a dynamic attribute."""
+                return f"dynamic_{name}"
+
+        obj = TestDynamicWrapperWithGetAttr(ExampleWithGetAttr())
 
         # Test accessing an existing attribute
         assert obj.existing == "wrapper_existing"  # From wrapper
-        assert obj._wrapped.existing == "exists"  # From wrapped
+        assert obj._wrapped_obj.existing == "exists"  # From wrapped
 
         # Test accessing a dynamically created attribute
         assert obj.nonexistent == "dynamic_nonexistent"
-
-    def test_nested_wrappers(self) -> None:
-        """Test how the wrapper handles nested wrappers.
-
-        This test verifies that wrappers can be nested, with one wrapper wrapping another wrapper,
-        and that attribute access works correctly through multiple levels of wrapping.
-        """
-        inner = self.new_object()
-        outer = self.NestedDynamicWrapper(inner)
-
-        # Test access to inner wrapper's attributes
-        assert outer.one == "one"
-        assert outer.three == "two"
-
-        # Test access to inner wrapper's wrapped objects' attributes
-        assert outer._wrapped._first.one == "one"
-
-        # Test access to outer wrapper's own attributes
-        assert outer.nested_attr == "nested"
 
     def test_none_wrapped_object(self) -> None:
         """Test how the wrapper handles None values for wrapped objects.
@@ -188,7 +153,8 @@ class TestDynamicWrapper(BaseWrapperTest):
         This test verifies that the wrapper can handle None values for wrapped objects
         without raising exceptions during normal operations.
         """
-        obj = self.DynamicWrapperTestObject(None, None)
+        # Create a wrapper with None as the wrapped object
+        obj = self.TestClass(None, None)
 
         # Verify wrapper's own attributes are accessible
         assert obj.two == "wrapper"
@@ -197,6 +163,28 @@ class TestDynamicWrapper(BaseWrapperTest):
         # Verify accessing wrapped attributes raises AttributeError, not TypeError
         with pytest.raises(AttributeError):
             _ = obj.one
+
+    def test_nested_wrappers(self) -> None:
+        """Test how the wrapper handles nested wrappers.
+
+        This test verifies that wrappers can be nested, with one wrapper wrapping another wrapper,
+        and that attribute access works correctly through multiple levels of wrapping.
+        """
+        # Create a wrapper
+        inner = self.TestClass(self.ExampleOne(), self.ExampleTwo())
+
+        # Create a wrapper that wraps the first wrapper
+        outer = NestedDynamicWrapper(inner)
+
+        # Verify that attribute access works through multiple levels of wrapping
+        assert outer.one == "one"
+        assert outer.three == "two"
+
+        # Verify that accessing the inner wrapper's wrapped objects works
+        assert outer._first.one == "one"
+
+        # Verify that accessing the outer wrapper's own attributes works
+        assert outer.nested_attr == "nested"
 
 
 # Main #

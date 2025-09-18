@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-""" baseregisteredclass_test.py
+"""baseregisteredclass_test.py
 Tests for the BaseRegisteredClass class in the baseobjects package.
 """
 # Header #
@@ -16,19 +14,20 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
+import copy
+import pickle
 from typing import Any, ClassVar, Optional, Type
 
 # Third-Party Packages #
 import pytest
 
 # Local Packages #
-from src.baseobjects.classregistration import BaseRegisteredClass, BaseClassRegistry
-from tests.bases.base_test import BaseBaseObjectTest
+from baseobjects.classregistration import BaseRegisteredClass, BaseClassRegistry
+from baseobjects.testsuite.classregistration import BaseRegisteredClassTestSuite
 
 
 # Definitions #
 # Classes #
-# Class Definitions #
 class ConcreteClassRegistry(BaseClassRegistry):
     """A concrete subclass of BaseClassRegistry for testing purposes."""
 
@@ -54,142 +53,137 @@ class ConcreteClassRegistry(BaseClassRegistry):
         """
         return self.get(name, default)
 
-class TestBaseRegisteredClass(BaseBaseObjectTest):
-    """Test the BaseRegisteredClass class.
 
-    This class tests the functionality of the BaseRegisteredClass class, which is an abstract class
-    that registers subclasses, allowing subclass dispatching. It creates test subclasses of
-    BaseRegisteredClass to test with since BaseRegisteredClass is abstract.
-    """
+class ExampleRegisteredClass(BaseRegisteredClass):
+    """A base test subclass of BaseRegisteredClass for testing purposes."""
 
-    # Class Definitions #
-    class BaseTestRegisteredClass(BaseRegisteredClass):
-        """A base test subclass of BaseRegisteredClass for testing purposes."""
+    # Class Attributes #
+    class_registry_type: ClassVar[Type[BaseClassRegistry]] = ConcreteClassRegistry
+    class_registration: ClassVar[bool] = True
 
-        # Class Attributes #
-        class_registry_type: ClassVar[Type[BaseClassRegistry]] = ConcreteClassRegistry
+    @classmethod
+    def register_class(cls, *args: Any, **kwargs: Any) -> None:
+        """Registers this class with the registry.
 
-        @classmethod
-        def register_class(cls, *args: Any, **kwargs: Any) -> None:
-            """Registers this class with the registry.
+        Args:
+            *args: Positional arguments.
+            **kwargs: Keyword arguments.
+        """
+        if cls.class_registry is not None:
+            cls.class_registry.register_class(cls)
 
-            Args:
-                *args: Positional arguments.
-                **kwargs: Keyword arguments.
-            """
-            if cls.class_registry is not None:
-                cls.class_registry.register_class(cls)
+    @classmethod
+    def get_registered_class(cls, name: str, default: Any = None) -> Optional["BaseRegisteredClass"]:
+        """Gets a subclass from the registry.
 
-        @classmethod
-        def get_registered_class(cls, name: str, default: Any = None) -> Optional["BaseRegisteredClass"]:
-            """Gets a subclass from the registry.
-
-            Args:
-                name: The name of the class to get.
-                default: The default value to return if the class is not found.
-
-            Returns:
-                The requested subclass or the default value.
-            """
-            if cls.class_registry is None:
-                return default
-            return cls.class_registry.get_class(name, default)
-
-    # Attributes #
-    class_: Type[BaseTestRegisteredClass] = BaseTestRegisteredClass
-
-    # Instance Methods #
-    # Fixtures
-    @pytest.fixture
-    def test_instance(self) -> "TestBaseRegisteredClass.BaseTestRegisteredClass":
-        """Create a test instance for use in tests.
+        Args:
+            name: The name of the class to get.
+            default: The default value to return if the class is not found.
 
         Returns:
-            BaseTestRegisteredClass: An instance of the test class.
+            The requested subclass or the default value.
         """
-        return self.class_()
+        if cls.class_registry is None:
+            return default
+        return cls.class_registry.get_class(name, default)
 
+
+# Tests #
+class TestBaseRegisteredClass(BaseRegisteredClassTestSuite):
+    """Test the BaseRegisteredClass class.
+
+    This class tests the functionality of the BaseRegisteredClass class, which is an abstract class that registers
+    subclasses, allowing subclass dispatching. It creates test subclasses of BaseRegisteredClass to test with since BaseRegisteredClass is abstract.
+    """
+
+    # Attributes #
+    TestClass: Type[ExampleRegisteredClass] = ExampleRegisteredClass
+
+    # Instance Methods #
     # Tests
-    def test_instance_creation(self) -> None:
-        """Test that instances of BaseTestRegisteredClass can be created."""
-        instance = self.class_()
-        assert instance is not None
-        assert isinstance(instance, BaseRegisteredClass)
+    def test_copy(self, test_object: Any) -> None:
+        """Test the copy behavior of the object.
 
-    def test_create_class_registry(self) -> None:
-        """Test creating a class registry."""
-        # Reset class registry for testing
-        self.class_.class_registry = None
+        This test verifies that copy creates a new object with the same attributes.
 
-        # Create class registry
-        self.class_.create_class_registry()
+        Args:
+            test_object: A fixture providing a test object instance.
+        """
+        # Copy Object
+        obj_copy = copy.copy(test_object)
 
-        # Verify class registry was created
-        assert self.class_.class_registry is not None
-        assert isinstance(self.class_.class_registry, BaseClassRegistry)
-        assert self.class_.class_registry.head_class == self.class_
+        # Validate
+        assert obj_copy is not test_object
+        assert isinstance(obj_copy, self.TestClass)
 
-    def test_register_class(self) -> None:
-        """Test registering a class."""
-        # Reset class registry for testing
-        self.class_.class_registry = None
-        self.class_.create_class_registry()
+    def test_copy_method(self, test_object: Any) -> None:
+        """Test the copy method behavior of the object.
 
-        # Register class
-        self.class_.register_class()
+        This test verifies that copy creates a new object with the same attributes.
 
-        # Verify class was registered
-        assert self.class_.__name__ in self.class_.class_registry
-        assert self.class_.class_registry[self.class_.__name__] == self.class_
+        Args:
+            test_object: A fixture providing a test object instance.
+        """
+        # Copy Object
+        obj_copy = test_object.copy()
 
-    def test_get_registered_class(self) -> None:
-        """Test getting a registered class."""
-        # Reset class registry for testing
-        self.class_.class_registry = None
-        self.class_.create_class_registry()
-        self.class_.register_class()
+        # Validate
+        assert obj_copy is not test_object
+        assert isinstance(obj_copy, self.TestClass)
 
-        # Get registered class
-        retrieved_class = self.class_.get_registered_class(self.class_.__name__)
+    def test_deepcopy(self, test_object: Any, memo: dict | None = None) -> None:
+        """Test the deep copy behavior of the object.
 
-        # Verify class was retrieved
-        assert retrieved_class == self.class_
+        This test verifies that deepcopy creates a new object with new mutable attributes but the same immutable
+        attributes.
 
-    def test_get_registered_class_with_default(self) -> None:
-        """Test getting a non-existent registered class with a default value."""
-        # Reset class registry for testing
-        self.class_.class_registry = None
-        self.class_.create_class_registry()
+        Args:
+            test_object: A fixture providing a test object instance.
+            memo: A memo dictionary to pass to deepcopy.
+        """
+        # Deep Copy Object
+        if memo is None:
+            memo = {}
+        obj_deepcopy = copy.deepcopy(test_object, memo=memo)
 
-        # Get non-existent registered class with default
-        default = object()
-        retrieved = self.class_.get_registered_class("NonExistentClass", default=default)
+        # Validate
+        assert obj_deepcopy is not test_object
+        assert isinstance(obj_deepcopy, self.TestClass)
 
-        # Verify default was returned
-        assert retrieved is default
+    def test_deepcopy_method(self, test_object: Any, memo: dict | None = None) -> None:
+        """Test the deepcopy method behavior of the object.
 
-    def test_init_subclass_with_registration(self) -> None:
-        """Test that subclasses are registered when class_registration is True."""
-        # Create a subclass with registration enabled
-        class RegisteredSubclass(self.class_):
-            class_registration = True
+        This test verifies that deepcopy creates a new object with new mutable attributes but the same immutable
+        attributes.
 
-        # Verify subclass was registered
-        assert RegisteredSubclass.__name__ in self.class_.class_registry
-        assert self.class_.class_registry[RegisteredSubclass.__name__] == RegisteredSubclass
+        Args:
+            test_object: A fixture providing a test object instance.
+            memo: A memo dictionary to pass to deepcopy.
+        """
+        # Deep Copy Object
+        if memo is None:
+            memo = {}
+        obj_deepcopy = test_object.deepcopy(memo=memo)
 
-    def test_init_subclass_without_registration(self) -> None:
-        """Test that subclasses are not registered when class_registration is False."""
-        # Reset class registry for testing
-        self.class_.class_registry = None
-        self.class_.create_class_registry()
+        # Validate
+        assert obj_deepcopy is not test_object
+        assert isinstance(obj_deepcopy, self.TestClass)
 
-        # Create a subclass with registration disabled
-        class UnregisteredSubclass(self.class_):
-            class_registration = False
+    def test_pickling(self, test_object: Any) -> None:
+        """Test pickling and unpickling of the object.
 
-        # Verify subclass was not registered
-        assert UnregisteredSubclass.__name__ not in self.class_.class_registry
+        This test verifies that the object can be pickled and unpickled correctly.
+
+        Args:
+            test_object: A fixture providing a test object instance.
+        """
+        # Pickle and Unpickle Object
+        pickled = pickle.dumps(test_object)
+        unpickled = pickle.loads(pickled)
+
+        # Validate
+        assert unpickled is not test_object
+        assert isinstance(unpickled, self.TestClass)
 
 
 # Main #

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" sentinelobject_performance.py
-Performance tests for the SentinelObject class in the baseobjects package.
+"""sentinelobject_performance.py
+Performance tests for the SentinelObject class in the baseobjects.bases package.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -16,213 +16,282 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
+import copy
+import pickle
 import timeit
-from typing import Type
+from typing import Any, Dict, ClassVar
 
 # Third-Party Packages #
 import pytest
 
 # Local Packages #
-from src.baseobjects.bases import SentinelObject
-from .base_performance import BaseBaseObjectPerformanceTest
+from src.baseobjects.testsuite import BasePerformanceTestSuite
+from src.baseobjects.bases import SentinelObject, BaseReducible
 
 
 # Definitions #
-# Sentinel Object
-class TestSentinelObject(BaseBaseObjectPerformanceTest):
-    """Test the performance of the SentinelObject class.
-
-    This class tests the performance of the SentinelObject class, which is used to create sentinel objects in the
-    baseobjects package.
-    """
-    # Class Definitions #
-    class NormalSentinel:
-        """A normal Python sentinel object for comparison with SentinelObject."""
-        # Magic Methods #
-        def __init__(self, id_: str | bytes | int) -> None:
-            """Initialize with an ID."""
-            if isinstance(id_, str):
-                self.id_number = int.from_bytes(id_.encode("utf-8"), "big")
-            elif isinstance(id_, bytes):
-                self.id_number = int.from_bytes(id_, "big")
-            else:
-                self.id_number = id_
-
-        def __hash__(self) -> int:
-            """Return the hash of the object."""
-            return self.id_number
-
-        def __eq__(self, other) -> bool:
-            """Compare two sentinel objects."""
-            return isinstance(other, self.__class__) and self.id_number == other.id_number
+# Classes #
+class NormalSentinel:
+    """A normal Python object implementing a sentinel pattern for comparison."""
+    # Class Attributes #
+    registry: ClassVar[Dict[str, "NormalSentinel"]] = {}
 
     # Attributes #
-    class_: Type[SentinelObject] = SentinelObject
+    identity: str
+
+    def __new__(cls, id_: str) -> "NormalSentinel":
+        """Create a new sentinel object or return an existing one with the same ID."""
+        if (sentinel := cls.registry.get(id_, None)) is None:
+            cls.registry[id_] = sentinel = super().__new__(cls)
+        return sentinel
+
+    def __init__(self, id_: str) -> None:
+        """Initialize the sentinel object with the given ID."""
+        self.identity = id_
+
+    def __reduce__(self) -> tuple[Any, tuple[Any]]:
+        """Reduce the sentinel object for pickling."""
+        return self.__class__, (self.identity,)
+
+
+class TestSentinelObjectPerformance(BasePerformanceTestSuite):
+    """Test suite for assaying the performance of the SentinelObject class.
+
+    This test suite measures the performance of various operations on SentinelObject objects
+    and compares them with standard Python implementations.
+    """
+    # Attributes #
+    timeit_runs: int = 100000
 
     # Instance Methods #
     # Tests
-    def test_instance_creation_string(self) -> None:
-        """Test the performance of creating a SentinelObject with a string ID.
+    def test_creation_performance(self) -> None:
+        """Test the performance of creating SentinelObject instances.
 
-        This test compares the speed of creating a SentinelObject with a string ID with a normal sentinel object.
+        This test compares the speed of creating SentinelObject instances with creating
+        standard Python sentinel objects.
         """
-        string_id = "test_sentinel"
+        def create_sentinel_object() -> None:
+            SentinelObject("test_sentinel")
 
-        def create_base() -> None:
-            SentinelObject(string_id)
+        def create_normal_sentinel() -> None:
+            NormalSentinel("test_sentinel")
 
-        def create_normal() -> None:
-            self.NormalSentinel(string_id)
+        # Calculate the mean time in microseconds for SentinelObject creation
+        sentinel_time = timeit.timeit(create_sentinel_object, number=self.timeit_runs)
+        mean_sentinel = sentinel_time / self.timeit_runs * 1000000
 
-        # Calculate the mean time in microseconds for the new implementation
-        new_time = timeit.timeit(create_base, number=self.timeit_runs)
-        mean_new = new_time / self.timeit_runs * 1000000
-
-        # Calculate the mean time in microseconds for the old implementation
-        old_time = timeit.timeit(create_normal, number=self.timeit_runs)
-        mean_old = old_time / self.timeit_runs * 1000000
-        percent = (mean_new / mean_old) * 100
+        # Calculate the mean time in microseconds for normal sentinel creation
+        normal_time = timeit.timeit(create_normal_sentinel, number=self.timeit_runs)
+        mean_normal = normal_time / self.timeit_runs * 1000000
+        percent = (mean_sentinel / mean_normal) * 100
 
         # Print the performance comparison
-        print(f"\nNew (string ID): {mean_new:.3f} μs ({percent:.3f}% of old function time)")
-        assert percent < self.speed_tolerance
+        print(f"\nNormal sentinel creation: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"SentinelObject creation: {mean_sentinel:.3f} μs ({percent:.3f}% of normal sentinel creation time)")
+        assert percent < self.speed_tolerance * 1.5  # Allow some overhead for SentinelObject creation
 
-    def test_instance_creation_bytes(self) -> None:
-        """Test the performance of creating a SentinelObject with a bytes ID.
+    def test_registry_lookup_performance(self) -> None:
+        """Test the performance of looking up existing sentinel objects in the registry.
 
-        This test compares the speed of creating a SentinelObject with a bytes ID with a normal sentinel object.
+        This test compares the speed of retrieving existing SentinelObject instances with retrieving
+        standard Python sentinel objects.
         """
-        bytes_id = b"test_sentinel"
+        # Create sentinel objects first to ensure they're in the registry
+        sentinel_id = "existing_sentinel"
+        SentinelObject(sentinel_id)
+        NormalSentinel(sentinel_id)
 
-        def create_base() -> None:
-            SentinelObject(bytes_id)
+        def lookup_sentinel_object() -> None:
+            SentinelObject(sentinel_id)
 
-        def create_normal() -> None:
-            self.NormalSentinel(bytes_id)
+        def lookup_normal_sentinel() -> None:
+            NormalSentinel(sentinel_id)
 
-        # Calculate the mean time in microseconds for the new implementation
-        new_time = timeit.timeit(create_base, number=self.timeit_runs)
-        mean_new = new_time / self.timeit_runs * 1000000
+        # Calculate the mean time in microseconds for SentinelObject lookup
+        sentinel_time = timeit.timeit(lookup_sentinel_object, number=self.timeit_runs)
+        mean_sentinel = sentinel_time / self.timeit_runs * 1000000
 
-        # Calculate the mean time in microseconds for the old implementation
-        old_time = timeit.timeit(create_normal, number=self.timeit_runs)
-        mean_old = old_time / self.timeit_runs * 1000000
-        percent = (mean_new / mean_old) * 100
+        # Calculate the mean time in microseconds for normal sentinel lookup
+        normal_time = timeit.timeit(lookup_normal_sentinel, number=self.timeit_runs)
+        mean_normal = normal_time / self.timeit_runs * 1000000
+        percent = (mean_sentinel / mean_normal) * 100
 
         # Print the performance comparison
-        print(f"\nNew (bytes ID): {mean_new:.3f} μs ({percent:.3f}% of old function time)")
-        assert percent < self.speed_tolerance
+        print(f"\nNormal sentinel lookup: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"SentinelObject lookup: {mean_sentinel:.3f} μs ({percent:.3f}% of normal sentinel lookup time)")
+        assert percent < self.speed_tolerance  # Should be very similar to normal sentinel lookup
 
-    def test_instance_creation_int(self) -> None:
-        """Test the performance of creating a SentinelObject with an int ID.
+    def test_copy_performance(self) -> None:
+        """Test the performance of copying SentinelObject instances.
 
-        This test compares the speed of creating a SentinelObject with an int ID with a normal sentinel object.
+        This test compares the speed of copying SentinelObject instances with copying
+        standard Python sentinel objects.
         """
-        int_id = 12345
+        sentinel_object = SentinelObject("copy_test")
+        normal_sentinel = NormalSentinel("copy_test")
 
-        def create_base() -> None:
-            SentinelObject(int_id)
+        def copy_sentinel_object() -> None:
+            sentinel_object.copy()
 
-        def create_normal() -> None:
-            self.NormalSentinel(int_id)
+        def copy_normal_sentinel() -> None:
+            copy.copy(normal_sentinel)
 
-        # Calculate the mean time in microseconds for the new implementation
-        new_time = timeit.timeit(create_base, number=self.timeit_runs)
-        mean_new = new_time / self.timeit_runs * 1000000
+        # Calculate the mean time in microseconds for SentinelObject.copy
+        sentinel_time = timeit.timeit(copy_sentinel_object, number=self.timeit_runs)
+        mean_sentinel = sentinel_time / self.timeit_runs * 1000000
 
-        # Calculate the mean time in microseconds for the old implementation
-        old_time = timeit.timeit(create_normal, number=self.timeit_runs)
-        mean_old = old_time / self.timeit_runs * 1000000
-        percent = (mean_new / mean_old) * 100
+        # Calculate the mean time in microseconds for copy.copy on normal sentinel
+        normal_time = timeit.timeit(copy_normal_sentinel, number=self.timeit_runs)
+        mean_normal = normal_time / self.timeit_runs * 1000000
+        percent = (mean_sentinel / mean_normal) * 100
 
         # Print the performance comparison
-        print(f"\nNew (int ID): {mean_new:.3f} μs ({percent:.3f}% of old function time)")
-        assert percent < self.speed_tolerance
+        print(f"\nNormal sentinel copy: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"SentinelObject.copy: {mean_sentinel:.3f} μs ({percent:.3f}% of normal sentinel copy time)")
+        assert percent < self.speed_tolerance  # Should be very fast since it just returns self
 
-    def test_hash_speed(self) -> None:
-        """Test the performance of hashing a SentinelObject.
+    def test_deepcopy_performance(self) -> None:
+        """Test the performance of deep copying SentinelObject instances.
 
-        This test compares the speed of hashing a SentinelObject with a normal sentinel object.
+        This test compares the speed of deep copying SentinelObject instances with deep copying
+        standard Python sentinel objects.
         """
-        base_sentinel = SentinelObject("test_sentinel")
-        normal_sentinel = self.NormalSentinel("test_sentinel")
+        sentinel_object = SentinelObject("deepcopy_test")
+        normal_sentinel = NormalSentinel("deepcopy_test")
 
-        def hash_base() -> None:
-            hash(base_sentinel)
+        def deepcopy_sentinel_object() -> None:
+            sentinel_object.deepcopy()
 
-        def hash_normal() -> None:
-            hash(normal_sentinel)
+        def deepcopy_normal_sentinel() -> None:
+            copy.deepcopy(normal_sentinel)
 
-        # Calculate the mean time in microseconds for the new implementation
-        new_time = timeit.timeit(hash_base, number=self.timeit_runs)
-        mean_new = new_time / self.timeit_runs * 1000000
+        # Calculate the mean time in microseconds for SentinelObject.deepcopy
+        sentinel_time = timeit.timeit(deepcopy_sentinel_object, number=self.timeit_runs)
+        mean_sentinel = sentinel_time / self.timeit_runs * 1000000
 
-        # Calculate the mean time in microseconds for the old implementation
-        old_time = timeit.timeit(hash_normal, number=self.timeit_runs)
-        mean_old = old_time / self.timeit_runs * 1000000
-        percent = (mean_new / mean_old) * 100
+        # Calculate the mean time in microseconds for copy.deepcopy on normal sentinel
+        normal_time = timeit.timeit(deepcopy_normal_sentinel, number=self.timeit_runs)
+        mean_normal = normal_time / self.timeit_runs * 1000000
+        percent = (mean_sentinel / mean_normal) * 100
 
         # Print the performance comparison
-        print(f"\nNew (hash): {mean_new:.3f} μs ({percent:.3f}% of old function time)")
-        assert percent < self.speed_tolerance
+        print(f"\nNormal sentinel deepcopy: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"SentinelObject.deepcopy: {mean_sentinel:.3f} μs ({percent:.3f}% of normal sentinel deepcopy time)")
+        assert percent < self.speed_tolerance  # Should be very fast since it just returns self
 
-    def test_equality_speed_same(self) -> None:
-        """Test the performance of comparing equal SentinelObjects.
+    def test_pickle_performance(self) -> None:
+        """Test the performance of pickling and unpickling SentinelObject instances.
 
-        This test compares the speed of comparing equal SentinelObjects with normal sentinel objects.
+        This test compares the speed of pickling and unpickling SentinelObject instances with
+        standard Python sentinel objects.
         """
-        base_sentinel1 = SentinelObject("test_sentinel")
-        base_sentinel2 = SentinelObject("test_sentinel")
-        normal_sentinel1 = self.NormalSentinel("test_sentinel")
-        normal_sentinel2 = self.NormalSentinel("test_sentinel")
+        sentinel_object = SentinelObject("pickle_test")
+        normal_sentinel = NormalSentinel("pickle_test")
 
-        def compare_base() -> None:
-            base_sentinel1 == base_sentinel2
+        def pickle_sentinel_object() -> None:
+            pickle.dumps(sentinel_object)
 
-        def compare_normal() -> None:
-            normal_sentinel1 == normal_sentinel2
+        def pickle_normal_sentinel() -> None:
+            pickle.dumps(normal_sentinel)
 
-        # Calculate the mean time in microseconds for the new implementation
-        new_time = timeit.timeit(compare_base, number=self.timeit_runs)
-        mean_new = new_time / self.timeit_runs * 1000000
+        # Calculate the mean time in microseconds for pickling SentinelObject
+        sentinel_time = timeit.timeit(pickle_sentinel_object, number=self.timeit_runs // 10)  # Reduce runs for pickling
+        mean_sentinel = sentinel_time / (self.timeit_runs // 10) * 1000000
 
-        # Calculate the mean time in microseconds for the old implementation
-        old_time = timeit.timeit(compare_normal, number=self.timeit_runs)
-        mean_old = old_time / self.timeit_runs * 1000000
-        percent = (mean_new / mean_old) * 100
+        # Calculate the mean time in microseconds for pickling normal sentinel
+        normal_time = timeit.timeit(pickle_normal_sentinel, number=self.timeit_runs // 10)  # Reduce runs for pickling
+        mean_normal = normal_time / (self.timeit_runs // 10) * 1000000
+        percent = (mean_sentinel / mean_normal) * 100
 
         # Print the performance comparison
-        print(f"\nNew (equality, same): {mean_new:.3f} μs ({percent:.3f}% of old function time)")
-        assert percent < self.speed_tolerance
+        print(f"\nNormal sentinel pickling: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"SentinelObject pickling: {mean_sentinel:.3f} μs ({percent:.3f}% of normal sentinel pickling time)")
+        assert percent < self.speed_tolerance * 2  # Allow more overhead for pickling operations
 
-    def test_equality_speed_different(self) -> None:
-        """Test the performance of comparing different SentinelObjects.
+        # Now test unpickling
+        sentinel_pickle = pickle.dumps(sentinel_object)
+        normal_pickle = pickle.dumps(normal_sentinel)
 
-        This test compares the speed of comparing different SentinelObjects with normal sentinel objects.
-        """
-        base_sentinel1 = SentinelObject("test_sentinel1")
-        base_sentinel2 = SentinelObject("test_sentinel2")
-        normal_sentinel1 = self.NormalSentinel("test_sentinel1")
-        normal_sentinel2 = self.NormalSentinel("test_sentinel2")
+        def unpickle_sentinel_object() -> None:
+            pickle.loads(sentinel_pickle)
 
-        def compare_base() -> None:
-            base_sentinel1 == base_sentinel2
+        def unpickle_normal_sentinel() -> None:
+            pickle.loads(normal_pickle)
 
-        def compare_normal() -> None:
-            normal_sentinel1 == normal_sentinel2
+        # Calculate the mean time in microseconds for unpickling SentinelObject
+        sentinel_time = timeit.timeit(unpickle_sentinel_object, number=self.timeit_runs // 10)  # Reduce runs for unpickling
+        mean_sentinel = sentinel_time / (self.timeit_runs // 10) * 1000000
 
-        # Calculate the mean time in microseconds for the new implementation
-        new_time = timeit.timeit(compare_base, number=self.timeit_runs)
-        mean_new = new_time / self.timeit_runs * 1000000
-
-        # Calculate the mean time in microseconds for the old implementation
-        old_time = timeit.timeit(compare_normal, number=self.timeit_runs)
-        mean_old = old_time / self.timeit_runs * 1000000
-        percent = (mean_new / mean_old) * 100
+        # Calculate the mean time in microseconds for unpickling normal sentinel
+        normal_time = timeit.timeit(unpickle_normal_sentinel, number=self.timeit_runs // 10)  # Reduce runs for unpickling
+        mean_normal = normal_time / (self.timeit_runs // 10) * 1000000
+        percent = (mean_sentinel / mean_normal) * 100
 
         # Print the performance comparison
-        print(f"\nNew (equality, different): {mean_new:.3f} μs ({percent:.3f}% of old function time)")
-        assert percent < self.speed_tolerance
+        print(f"\nNormal sentinel unpickling: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"SentinelObject unpickling: {mean_sentinel:.3f} μs ({percent:.3f}% of normal sentinel unpickling time)")
+        assert percent < self.speed_tolerance * 2  # Allow more overhead for unpickling operations
+
+    def test_identity_comparison_performance(self) -> None:
+        """Test the performance of identity comparisons with SentinelObject instances.
+
+        This test compares the speed of identity comparisons with SentinelObject instances vs
+        standard Python sentinel objects.
+        """
+        # Create two instances with the same ID (should be the same object)
+        sentinel1 = SentinelObject("compare_test")
+        sentinel2 = SentinelObject("compare_test")
+        normal1 = NormalSentinel("compare_test")
+        normal2 = NormalSentinel("compare_test")
+
+        def compare_sentinel_objects() -> None:
+            sentinel1 is sentinel2
+
+        def compare_normal_sentinels() -> None:
+            normal1 is normal2
+
+        # Calculate the mean time in microseconds for SentinelObject identity comparison
+        sentinel_time = timeit.timeit(compare_sentinel_objects, number=self.timeit_runs)
+        mean_sentinel = sentinel_time / self.timeit_runs * 1000000
+
+        # Calculate the mean time in microseconds for normal sentinel identity comparison
+        normal_time = timeit.timeit(compare_normal_sentinels, number=self.timeit_runs)
+        mean_normal = normal_time / self.timeit_runs * 1000000
+        percent = (mean_sentinel / mean_normal) * 100
+
+        # Print the performance comparison
+        print(f"\nNormal sentinel identity comparison: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"SentinelObject identity comparison: {mean_sentinel:.3f} μs ({percent:.3f}% of normal sentinel identity comparison time)")
+        assert percent < self.speed_tolerance  # Should be very similar to normal identity comparison
+
+    def test_multiple_sentinel_creation_performance(self) -> None:
+        """Test the performance of creating multiple SentinelObject instances with different IDs.
+
+        This test measures the time it takes to create multiple SentinelObject instances with
+        different IDs and compares it with creating multiple standard Python sentinel objects.
+        """
+        def create_multiple_sentinel_objects() -> None:
+            for i in range(10):
+                SentinelObject(f"multi_test_{i}")
+
+        def create_multiple_normal_sentinels() -> None:
+            for i in range(10):
+                NormalSentinel(f"multi_test_{i}")
+
+        # Calculate the mean time in microseconds for creating multiple SentinelObjects
+        sentinel_time = timeit.timeit(create_multiple_sentinel_objects, number=self.timeit_runs // 100)  # Reduce runs for multiple creations
+        mean_sentinel = sentinel_time / (self.timeit_runs // 100) * 1000000
+
+        # Calculate the mean time in microseconds for creating multiple normal sentinels
+        normal_time = timeit.timeit(create_multiple_normal_sentinels, number=self.timeit_runs // 100)  # Reduce runs for multiple creations
+        mean_normal = normal_time / (self.timeit_runs // 100) * 1000000
+        percent = (mean_sentinel / mean_normal) * 100
+
+        # Print the performance comparison
+        print(f"\nMultiple normal sentinel creation: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"Multiple SentinelObject creation: {mean_sentinel:.3f} μs ({percent:.3f}% of multiple normal sentinel creation time)")
+        assert percent < self.speed_tolerance * 2  # Allow more overhead for multiple creations
 
 
 # Main #

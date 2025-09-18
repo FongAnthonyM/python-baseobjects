@@ -16,7 +16,6 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any, List
 
 # Third-Party Packages #
 import pytest
@@ -30,7 +29,7 @@ from src.baseobjects.operations import parse_parentheses
 class TestParseParentheses:
     """Test the parse_parentheses function.
 
-    This class tests the functionality of the parse_parentheses function, which parses expressions with parentheses and
+    This class tests_old_ the functionality of the parse_parentheses function, which parses expressions with parentheses and
     returns a nested list of extracted elements.
     """
 

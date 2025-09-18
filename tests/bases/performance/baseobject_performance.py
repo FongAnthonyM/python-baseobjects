@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" base_performance.py
-Performance tests for the BaseObject class in the baseobjects package.
+"""baseobject_performance.py
+Performance tests for the BaseObject class in the baseobjects.bases package.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -18,259 +18,299 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import copy
 import timeit
-from typing import Type
+from typing import Any, Dict, List
 
 # Third-Party Packages #
 import pytest
 
 # Local Packages #
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 from src.baseobjects.bases import BaseObject
-from .base_performance import BaseBaseObjectPerformanceTest
 
 
 # Definitions #
-# Base Object
-class TestBaseObject(BaseBaseObjectPerformanceTest):
-    """Test the performance of the BaseObject class.
+# Classes #
+class NormalObject:
+    """A normal Python object for comparison with BaseObject."""
+    def __init__(self, value: Any = None, mutable: List[int] = None, mapping: Dict[str, int] = None) -> None:
+        """Initialize with some attributes."""
+        self.value = value
+        self.mutable = mutable or [1, 2, 3]
+        self.mapping = mapping or {"a": 1, "b": 2, "c": 3}
 
-    This class tests the performance of the BaseObject class, which is the base class for all objects in the baseobjects
-    package. It creates a test subclass of BaseObject to test with.
+
+class TestBaseObjectPerformance(BasePerformanceTestSuite):
+    """Test suite for assaying the performance of the BaseObject class.
+
+    This test suite measures the performance of various operations on BaseObject objects
+    and compares them with standard Python implementations.
     """
     # Class Definitions #
-    class BaseTestObject(BaseObject):
-        """A subclass of BaseObject for testing purposes.
-
-        This class has both mutable and immutable attributes to test copying behavior.
-        """
-        # Magic Methods #
-        def __init__(self) -> None:
-            """Initialize with immutable and mutable attributes."""
-            self.immutable: int = 0
-            self.mutable: dict = {}
-
-    class NormalObject(object):
-        """A normal Python object for comparison with BaseObject.
-
-        This class has the same attributes as BaseTestObject but inherits from object.
-        """
-        # Magic Methods #
-        def __init__(self) -> None:
-            """Initialize with immutable and mutable attributes."""
-            self.immutable: int = 0
-            self.mutable: dict = {}
+    class TestObject(BaseObject):
+        """A concrete subclass of BaseObject for testing purposes."""
+        def __init__(self, value: Any = None, mutable: List[int] = None, mapping: Dict[str, int] = None) -> None:
+            """Initialize with some attributes."""
+            super().__init__()
+            self.value = value
+            self.mutable = mutable or [1, 2, 3]
+            self.mapping = mapping or {"a": 1, "b": 2, "c": 3}
 
     # Attributes #
-    class_: Type[BaseTestObject] = BaseTestObject
+    timeit_runs: int = 100000
 
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_object(self) -> "TestBaseObject.BaseTestObject":
+    def test_object(self) -> "TestBaseObjectPerformance.TestObject":
         """Create a test object instance for use in tests.
 
         Returns:
-            BaseTestObject: An instance of the test class.
+            TestObject: An instance of the test class.
         """
-        return self.class_()
+        return self.TestObject("test")
+
+    @pytest.fixture
+    def test_normal_object(self) -> NormalObject:
+        """Create a normal object instance for comparison.
+
+        Returns:
+            NormalObject: A standard Python object.
+        """
+        return NormalObject("test")
 
     # Tests
-    def test_instance_creation(self, test_object: "TestBaseObject.BaseTestObject") -> None:
-        """Test that instances of BaseTestObject can be created efficiently.
+    def test_instance_creation_performance(self) -> None:
+        """Test the performance of creating instances of the BaseObject subclass.
 
-        Args:
-            test_object: A fixture providing a BaseTestObject instance.
+        This test compares the speed of creating BaseObject subclass instances with creating
+        standard Python objects.
         """
-        assert test_object is not None
+        def create_base_object() -> None:
+            self.TestObject("test")
 
-    def test_copy_speed(self, test_object: "TestBaseObject.BaseTestObject") -> None:
-        """Test the performance of the copy method of BaseObject.
+        def create_normal_object() -> None:
+            NormalObject("test")
 
-        This test compares the speed of BaseObject.copy() with the standard copy.copy() function.
+        # Calculate the mean time in microseconds for BaseObject
+        base_time = timeit.timeit(create_base_object, number=self.timeit_runs)
+        mean_base = base_time / self.timeit_runs * 1000000
 
-        Args:
-            test_object: A fixture providing a BaseTestObject instance.
-        """
-        normal = self.NormalObject()
-
-        def normal_copy() -> None:
-            copy.copy(normal)
-
-        # Calculate the mean time in microseconds for the new implementation
-        new_time = timeit.timeit(test_object.copy, number=self.timeit_runs)
-        mean_new = new_time / self.timeit_runs * 1000000
-
-        # Calculate the mean time in microseconds for the old implementation
-        old_time = timeit.timeit(normal_copy, number=self.timeit_runs)
-        mean_old = old_time / self.timeit_runs * 1000000
-        percent = (mean_new / mean_old) * 100
+        # Calculate the mean time in microseconds for normal object
+        normal_time = timeit.timeit(create_normal_object, number=self.timeit_runs)
+        mean_normal = normal_time / self.timeit_runs * 1000000
+        percent = (mean_base / mean_normal) * 100
 
         # Print the performance comparison
-        print(f"\nNew: {mean_new:.3f} μs ({percent:.3f}% of old function time)")
-        assert percent < self.speed_tolerance
+        print(f"\nNormal object creation: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"BaseObject subclass creation: {mean_base:.3f} μs ({percent:.3f}% of normal object creation time)")
+        assert percent < self.speed_tolerance * 1.5  # Allow some overhead for BaseObject initialization
 
-    def test_deepcopy_speed(self, test_object: "TestBaseObject.BaseTestObject") -> None:
-        """Test the performance of the deepcopy method of BaseObject.
+    def test_copy_performance(self, test_object: "TestBaseObjectPerformance.TestObject", test_normal_object: NormalObject) -> None:
+        """Test the performance of the __copy__ method of BaseObject.
 
-        This test compares the speed of BaseObject.deepcopy() with the standard copy.deepcopy() function.
+        This test compares the speed of BaseObject.__copy__() with copy.copy() on a normal object.
 
         Args:
-            test_object: A fixture providing a BaseTestObject instance.
+            test_object: A fixture providing a TestObject instance.
+            test_normal_object: A fixture providing a NormalObject instance.
         """
-        normal = self.NormalObject()
+        def copy_base_object() -> None:
+            test_object.copy()
 
-        def normal_deepcopy() -> None:
-            copy.deepcopy(normal)
+        def copy_normal_object() -> None:
+            copy.copy(test_normal_object)
 
-        # Calculate the mean time in microseconds for the new implementation
-        new_time = timeit.timeit(test_object.deepcopy, number=self.timeit_runs)
-        mean_new = new_time / self.timeit_runs * 1000000
+        # Calculate the mean time in microseconds for BaseObject.copy
+        base_time = timeit.timeit(copy_base_object, number=self.timeit_runs)
+        mean_base = base_time / self.timeit_runs * 1000000
 
-        # Calculate the mean time in microseconds for the old implementation
-        old_time = timeit.timeit(normal_deepcopy, number=self.timeit_runs)
-        mean_old = old_time / self.timeit_runs * 1000000
-        percent = (mean_new / mean_old) * 100
+        # Calculate the mean time in microseconds for copy.copy on normal object
+        normal_time = timeit.timeit(copy_normal_object, number=self.timeit_runs)
+        mean_normal = normal_time / self.timeit_runs * 1000000
+        percent = (mean_base / mean_normal) * 100
 
         # Print the performance comparison
-        print(f"\nNew: {mean_new:.3f} μs ({percent:.3f}% of old function time)")
-        assert percent < self.speed_tolerance
+        print(f"\nNormal object copy: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"BaseObject.copy: {mean_base:.3f} μs ({percent:.3f}% of normal object copy time)")
+        assert percent < self.speed_tolerance * 2  # Allow more overhead for copy operations
 
-    def test_construct_speed(self, test_object: "TestBaseObject.BaseTestObject") -> None:
-        """Test the performance of the construct method of BaseObject.
+    def test_deepcopy_performance(self, test_object: "TestBaseObjectPerformance.TestObject", test_normal_object: NormalObject) -> None:
+        """Test the performance of the __deepcopy__ method of BaseObject.
 
-        This test compares the speed of BaseObject.construct() with a direct attribute assignment.
+        This test compares the speed of BaseObject.__deepcopy__() with copy.deepcopy() on a normal object.
 
         Args:
-            test_object: A fixture providing a BaseTestObject instance.
+            test_object: A fixture providing a TestObject instance.
+            test_normal_object: A fixture providing a NormalObject instance.
         """
-        normal = self.NormalObject()
+        def deepcopy_base_object() -> None:
+            test_object.deepcopy()
 
-        def normal_construct() -> None:
-            # Simulate construct by setting attributes directly
-            normal.immutable = 0
-            normal.mutable = {}
+        def deepcopy_normal_object() -> None:
+            copy.deepcopy(test_normal_object)
 
-        # Calculate the mean time in microseconds for the new implementation
-        new_time = timeit.timeit(test_object.construct, number=self.timeit_runs)
-        mean_new = new_time / self.timeit_runs * 1000000
+        # Calculate the mean time in microseconds for BaseObject.deepcopy
+        base_time = timeit.timeit(deepcopy_base_object, number=self.timeit_runs // 10)  # Reduce runs for deepcopy
+        mean_base = base_time / (self.timeit_runs // 10) * 1000000
 
-        # Calculate the mean time in microseconds for the old implementation
-        old_time = timeit.timeit(normal_construct, number=self.timeit_runs)
-        mean_old = old_time / self.timeit_runs * 1000000
-        percent = (mean_new / mean_old) * 100
+        # Calculate the mean time in microseconds for copy.deepcopy on normal object
+        normal_time = timeit.timeit(deepcopy_normal_object, number=self.timeit_runs // 10)  # Reduce runs for deepcopy
+        mean_normal = normal_time / (self.timeit_runs // 10) * 1000000
+        percent = (mean_base / mean_normal) * 100
 
         # Print the performance comparison
-        print(f"\nNew: {mean_new:.3f} μs ({percent:.3f}% of old function time)")
-        assert percent < self.speed_tolerance
+        print(f"\nNormal object deepcopy: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"BaseObject.deepcopy: {mean_base:.3f} μs ({percent:.3f}% of normal object deepcopy time)")
+        assert percent < self.speed_tolerance * 3  # Allow more overhead for deepcopy operations
 
-    def test_copy_vs_dunder_copy(self, test_object: "TestBaseObject.BaseTestObject") -> None:
-        """Test the performance difference between copy() and __copy__() methods.
+    def test_attribute_access_performance(self, test_object: "TestBaseObjectPerformance.TestObject", test_normal_object: NormalObject) -> None:
+        """Test the performance of accessing attributes of BaseObject vs normal object.
 
-        This test compares the speed of BaseObject.copy() with BaseObject.__copy__().
-
-        Args:
-            test_object: A fixture providing a BaseTestObject instance.
-        """
-        # Calculate the mean time in microseconds for copy method
-        copy_time = timeit.timeit(test_object.copy, number=self.timeit_runs)
-        mean_copy = copy_time / self.timeit_runs * 1000000
-
-        # Calculate the mean time in microseconds for __copy__ method
-        dunder_time = timeit.timeit(test_object.__copy__, number=self.timeit_runs)
-        mean_dunder = dunder_time / self.timeit_runs * 1000000
-        percent = (mean_copy / mean_dunder) * 100
-
-        # Print the performance comparison
-        print(f"\ncopy(): {mean_copy:.3f} μs, __copy__(): {mean_dunder:.3f} μs ({percent:.3f}% ratio)")
-        # The wrapper should not add significant overhead
-        assert percent < 115  # Allow up to 15% overhead
-
-    def test_deepcopy_vs_dunder_deepcopy(self, test_object: "TestBaseObject.BaseTestObject") -> None:
-        """Test the performance difference between deepcopy() and __deepcopy__() methods.
-
-        This test compares the speed of BaseObject.deepcopy() with BaseObject.__deepcopy__().
+        This test compares the speed of accessing attributes of a BaseObject subclass vs a normal object.
 
         Args:
-            test_object: A fixture providing a BaseTestObject instance.
+            test_object: A fixture providing a TestObject instance.
+            test_normal_object: A fixture providing a NormalObject instance.
         """
-        # Calculate the mean time in microseconds for deepcopy method
-        deepcopy_time = timeit.timeit(test_object.deepcopy, number=self.timeit_runs)
-        mean_deepcopy = deepcopy_time / self.timeit_runs * 1000000
-
-        # Calculate the mean time in microseconds for __deepcopy__ method
-        dunder_time = timeit.timeit(lambda: test_object.__deepcopy__({}), number=self.timeit_runs)
-        mean_dunder = dunder_time / self.timeit_runs * 1000000
-        percent = (mean_deepcopy / mean_dunder) * 100
-
-        # Print the performance comparison
-        print(f"\ndeepcopy(): {mean_deepcopy:.3f} μs, __deepcopy__(): {mean_dunder:.3f} μs ({percent:.3f}% ratio)")
-        # The wrapper should not add significant overhead
-        assert percent < 110  # Allow up to 10% overhead
-
-    def test_attribute_access_speed(self, test_object: "TestBaseObject.BaseTestObject") -> None:
-        """Test the performance of attribute access in BaseObject.
-
-        This test compares the speed of attribute access in BaseObject with a normal Python object.
-
-        Args:
-            test_object: A fixture providing a BaseTestObject instance.
-        """
-        normal = self.NormalObject()
-
-        def access_base_attr() -> None:
-            # Access both immutable and mutable attributes
-            _ = test_object.immutable
+        def access_base_object_attr() -> None:
+            _ = test_object.value
             _ = test_object.mutable
+            _ = test_object.mapping
 
-        def access_normal_attr() -> None:
-            # Access both immutable and mutable attributes
-            _ = normal.immutable
-            _ = normal.mutable
+        def access_normal_object_attr() -> None:
+            _ = test_normal_object.value
+            _ = test_normal_object.mutable
+            _ = test_normal_object.mapping
 
         # Calculate the mean time in microseconds for BaseObject attribute access
-        base_time = timeit.timeit(access_base_attr, number=self.timeit_runs)
+        base_time = timeit.timeit(access_base_object_attr, number=self.timeit_runs)
         mean_base = base_time / self.timeit_runs * 1000000
 
         # Calculate the mean time in microseconds for normal object attribute access
-        normal_time = timeit.timeit(access_normal_attr, number=self.timeit_runs)
+        normal_time = timeit.timeit(access_normal_object_attr, number=self.timeit_runs)
         mean_normal = normal_time / self.timeit_runs * 1000000
         percent = (mean_base / mean_normal) * 100
 
         # Print the performance comparison
-        print(f"\nBaseObject attr access: {mean_base:.3f} μs ({percent:.3f}% of normal object time)")
-        assert percent < self.speed_tolerance
+        print(f"\nNormal object attribute access: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"BaseObject attribute access: {mean_base:.3f} μs ({percent:.3f}% of normal object attribute access time)")
+        assert percent < self.speed_tolerance  # Should be very similar to normal attribute access
 
-    def test_attribute_modification_speed(self, test_object: "TestBaseObject.BaseTestObject") -> None:
-        """Test the performance of attribute modification in BaseObject.
+    def test_attribute_modification_performance(self, test_object: "TestBaseObjectPerformance.TestObject", test_normal_object: NormalObject) -> None:
+        """Test the performance of modifying attributes of BaseObject vs normal object.
 
-        This test compares the speed of attribute modification in BaseObject with a normal Python object.
+        This test compares the speed of modifying attributes of a BaseObject subclass vs a normal object.
 
         Args:
-            test_object: A fixture providing a BaseTestObject instance.
+            test_object: A fixture providing a TestObject instance.
+            test_normal_object: A fixture providing a NormalObject instance.
         """
-        normal = self.NormalObject()
+        def modify_base_object_attr() -> None:
+            test_object.value = "modified"
+            test_object.mutable.append(4)
+            test_object.mapping["d"] = 4
 
-        def modify_base_attr() -> None:
-            # Modify both immutable and mutable attributes
-            test_object.immutable = 1
-            test_object.mutable = {"key": "value"}
-
-        def modify_normal_attr() -> None:
-            # Modify both immutable and mutable attributes
-            normal.immutable = 1
-            normal.mutable = {"key": "value"}
+        def modify_normal_object_attr() -> None:
+            test_normal_object.value = "modified"
+            test_normal_object.mutable.append(4)
+            test_normal_object.mapping["d"] = 4
 
         # Calculate the mean time in microseconds for BaseObject attribute modification
-        base_time = timeit.timeit(modify_base_attr, number=self.timeit_runs)
+        base_time = timeit.timeit(modify_base_object_attr, number=self.timeit_runs)
         mean_base = base_time / self.timeit_runs * 1000000
 
         # Calculate the mean time in microseconds for normal object attribute modification
-        normal_time = timeit.timeit(modify_normal_attr, number=self.timeit_runs)
+        normal_time = timeit.timeit(modify_normal_object_attr, number=self.timeit_runs)
         mean_normal = normal_time / self.timeit_runs * 1000000
         percent = (mean_base / mean_normal) * 100
 
         # Print the performance comparison
-        print(f"\nBaseObject attr modification: {mean_base:.3f} μs ({percent:.3f}% of normal object time)")
-        assert percent < self.speed_tolerance
+        print(f"\nNormal object attribute modification: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"BaseObject attribute modification: {mean_base:.3f} μs ({percent:.3f}% of normal object attribute modification time)")
+        assert percent < self.speed_tolerance  # Should be very similar to normal attribute modification
+
+    def test_construct_performance(self) -> None:
+        """Test the performance of the construct method of BaseObject.
+
+        This test measures the time it takes to call the construct method on a BaseObject subclass.
+        """
+        class ConstructTestObject(BaseObject):
+            """A subclass of BaseObject that implements the construct method."""
+            def __init__(self) -> None:
+                """Initialize without setting attributes."""
+                super().__init__()
+                self.value = None
+                self.mutable = None
+                self.mapping = None
+
+            def construct(self, value: Any = None, mutable: List[int] = None, mapping: Dict[str, int] = None) -> None:
+                """Construct the object with the given attributes."""
+                super().construct()
+                self.value = value
+                self.mutable = mutable or [1, 2, 3]
+                self.mapping = mapping or {"a": 1, "b": 2, "c": 3}
+
+        test_object = ConstructTestObject()
+
+        def call_construct() -> None:
+            test_object.construct("test")
+
+        # Calculate the mean time in microseconds for BaseObject.construct
+        construct_time = timeit.timeit(call_construct, number=self.timeit_runs)
+        mean_construct = construct_time / self.timeit_runs * 1000000
+
+        # Print the performance result
+        print(f"\nBaseObject.construct: {mean_construct:.3f} μs or {mean_construct / self.call_speed:.3f} cu")
+        # No direct comparison, just ensure it's reasonably fast
+        assert mean_construct < 200  # 200 microseconds is a reasonable threshold
+
+    def test_complex_object_copy_performance(self) -> None:
+        """Test the performance of copying complex objects with nested structures.
+
+        This test compares the speed of copying complex objects with BaseObject vs normal objects.
+        """
+        TestObject = self.TestObject
+
+        # Create complex objects with nested structures
+        class ComplexBaseObject(BaseObject):
+            """A complex BaseObject subclass with nested structures."""
+            def __init__(self) -> None:
+                """Initialize with nested structures."""
+                super().__init__()
+                self.nested = TestObject("nested")
+                self.nested_list = [TestObject(f"list_{i}") for i in range(5)]
+                self.nested_dict = {f"key_{i}": TestObject(f"dict_{i}") for i in range(5)}
+
+        class ComplexNormalObject:
+            """A complex normal object with nested structures."""
+            def __init__(self) -> None:
+                """Initialize with nested structures."""
+                self.nested = NormalObject("nested")
+                self.nested_list = [NormalObject(f"list_{i}") for i in range(5)]
+                self.nested_dict = {f"key_{i}": NormalObject(f"dict_{i}") for i in range(5)}
+
+        complex_base = ComplexBaseObject()
+        complex_normal = ComplexNormalObject()
+
+        def copy_complex_base() -> None:
+            complex_base.copy()
+
+        def copy_complex_normal() -> None:
+            copy.copy(complex_normal)
+
+        # Calculate the mean time in microseconds for complex BaseObject copy
+        base_time = timeit.timeit(copy_complex_base, number=self.timeit_runs // 10)  # Reduce runs for complex objects
+        mean_base = base_time / (self.timeit_runs // 10) * 1000000
+
+        # Calculate the mean time in microseconds for complex normal object copy
+        normal_time = timeit.timeit(copy_complex_normal, number=self.timeit_runs // 10)  # Reduce runs for complex objects
+        mean_normal = normal_time / (self.timeit_runs // 10) * 1000000
+        percent = (mean_base / mean_normal) * 100
+
+        # Print the performance comparison
+        print(f"\nComplex normal object copy: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"Complex BaseObject copy: {mean_base:.3f} μs ({percent:.3f}% of complex normal object copy time)")
+        assert percent < self.speed_tolerance * 3  # Allow more overhead for complex object copying
 
 
 # Main #

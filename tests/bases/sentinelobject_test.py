@@ -1,7 +1,8 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-""" sentinelobject_test.py
+"""sentinelobject_test.py
 Tests for the SentinelObject class in the baseobjects package.
+
+This module provides tests for the SentinelObject class, which implements a singleton pattern through a registry
+mechanism, ensuring that only one instance exists for each unique identifier.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -16,179 +17,262 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Type
+import copy
 import pickle
+from typing import Type
 
 # Third-Party Packages #
 import pytest
 
 # Local Packages #
 from src.baseobjects.bases import SentinelObject
-from .base_test import ClassTest
+from src.baseobjects.testsuite.bases import BaseObjectTestSuite
 
 
 # Classes #
-class TestSentinelObject(ClassTest):
+class TestSentinelObject(BaseObjectTestSuite):
     """Test the SentinelObject class.
 
-    This class tests the functionality of the SentinelObject class, which is used to create
-    sentinel objects in the baseobjects package.
+    This class tests the functionality of the SentinelObject class, which implements a singleton pattern through a
+    registry mechanism, ensuring that only one instance exists for each unique identifier.
     """
 
-    # Class Definitions #
-    class NormalSentinel:
-        """A normal Python sentinel object for comparison with SentinelObject."""
-        # Magic Methods #
-        def __init__(self, id_: str | bytes | int) -> None:
-            """Initialize with an ID."""
-            if isinstance(id_, str):
-                self.id_number = int.from_bytes(id_.encode("utf-8"), "big")
-            elif isinstance(id_, bytes):
-                self.id_number = int.from_bytes(id_, "big")
-            else:
-                self.id_number = id_
-
-        def __hash__(self) -> int:
-            """Return the hash of the object."""
-            return id(self)
-
-        def __eq__(self, other) -> bool:
-            """Compare two sentinel objects."""
-            return isinstance(other, self.__class__) and self.id_number == other.id_number
-
     # Attributes #
-    class_: Type[SentinelObject] = SentinelObject
+    TestClass: Type[SentinelObject] = SentinelObject
 
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def string_id(self) -> str:
-        """Create a string ID for testing.
+    def test_object(self) -> SentinelObject:
+        """Create a test object instance for use in tests.
 
         Returns:
-            str: A string ID.
+            SentinelObject: An instance of the SentinelObject class with a test identifier.
         """
-        return "test_sentinel"
+        return self.TestClass("TEST_SENTINEL")
 
     @pytest.fixture
-    def bytes_id(self) -> bytes:
-        """Create a bytes ID for testing.
+    def test_object_same_id(self) -> SentinelObject:
+        """Create a test object with the same ID as test_object.
 
         Returns:
-            bytes: A bytes ID.
+            SentinelObject: An instance of the SentinelObject class with the same identifier as test_object.
         """
-        return b"test_sentinel"
+        return self.TestClass("TEST_SENTINEL")
 
     @pytest.fixture
-    def int_id(self) -> int:
-        """Create an int ID for testing.
+    def test_object_different_id(self) -> SentinelObject:
+        """Create a test object with a different ID than test_object.
 
         Returns:
-            int: An integer ID.
+            SentinelObject: An instance of the SentinelObject class with a different identifier than test_object.
         """
-        return 12345
+        return self.TestClass("DIFFERENT_TEST_SENTINEL")
+
+    @pytest.fixture
+    def test_object_bytes_id(self) -> SentinelObject:
+        """Create a test object with a bytes ID.
+
+        Returns:
+            SentinelObject: An instance of the SentinelObject class with a bytes identifier.
+        """
+        return self.TestClass(b"BYTES_TEST_SENTINEL")
+
+    @pytest.fixture
+    def test_object_int_id(self) -> SentinelObject:
+        """Create a test object with an integer ID.
+
+        Returns:
+            SentinelObject: An instance of the SentinelObject class with an integer identifier.
+        """
+        return self.TestClass(42)
 
     # Tests
-    def test_instance_creation_string(self, string_id: str) -> None:
-        """Test that instances of SentinelObject can be created with a string ID.
+    def test_instance_creation(self) -> None:
+        """Test that instances of SentinelObject can be created."""
+        # Create Object
+        obj = self.TestClass("TEST_SENTINEL_CREATION")
+
+        # Validate
+        assert isinstance(obj, self.TestClass)
+        assert obj.identity == "TEST_SENTINEL_CREATION"
+
+    def test_singleton_behavior_same_id(self, test_object: SentinelObject, test_object_same_id: SentinelObject) -> None:
+        """Test that SentinelObject implements the singleton pattern for the same ID.
+
+        This test verifies that two SentinelObject instances created with the same ID are the same object.
 
         Args:
-            string_id: A fixture providing a string ID.
+            test_object: A fixture providing a SentinelObject instance.
+            test_object_same_id: A fixture providing another SentinelObject instance with the same ID.
         """
-        sentinel = self.class_(string_id)
-        assert sentinel is not None
-        assert hasattr(sentinel, "id_number")
-        assert isinstance(sentinel.id_number, int)
+        # Validate
+        assert test_object is test_object_same_id
+        assert test_object.identity == test_object_same_id.identity
+        assert id(test_object) == id(test_object_same_id)
 
-    def test_instance_creation_bytes(self, bytes_id: bytes) -> None:
-        """Test that instances of SentinelObject can be created with a bytes ID.
+    def test_different_objects_different_ids(self, test_object: SentinelObject, test_object_different_id: SentinelObject) -> None:
+        """Test that SentinelObject creates different objects for different IDs.
+
+        This test verifies that two SentinelObject instances created with different IDs are different objects.
 
         Args:
-            bytes_id: A fixture providing a bytes ID.
+            test_object: A fixture providing a SentinelObject instance.
+            test_object_different_id: A fixture providing another SentinelObject instance with a different ID.
         """
-        sentinel = self.class_(bytes_id)
-        assert sentinel is not None
-        assert hasattr(sentinel, "id_number")
-        assert isinstance(sentinel.id_number, int)
+        # Validate
+        assert test_object is not test_object_different_id
+        assert test_object.identity != test_object_different_id.identity
+        assert id(test_object) != id(test_object_different_id)
 
-    def test_instance_creation_int(self, int_id: int) -> None:
-        """Test that instances of SentinelObject can be created with an int ID.
+    def test_different_id_types(self, test_object_bytes_id: SentinelObject, test_object_int_id: SentinelObject) -> None:
+        """Test that SentinelObject supports different ID types.
+
+        This test verifies that SentinelObject can be created with different ID types (bytes, int).
 
         Args:
-            int_id: A fixture providing an int ID.
+            test_object_bytes_id: A fixture providing a SentinelObject instance with a bytes ID.
+            test_object_int_id: A fixture providing a SentinelObject instance with an integer ID.
         """
-        sentinel = self.class_(int_id)
-        assert sentinel is not None
-        assert hasattr(sentinel, "id_number")
-        assert isinstance(sentinel.id_number, int)
-        assert sentinel.id_number == int_id
+        # Validate
+        assert isinstance(test_object_bytes_id.identity, bytes)
+        assert test_object_bytes_id.identity == b"BYTES_TEST_SENTINEL"
+        
+        assert isinstance(test_object_int_id.identity, int)
+        assert test_object_int_id.identity == 42
+        
+        assert test_object_bytes_id is not test_object_int_id
 
-    def test_hash(self) -> None:
-        """Test the hash method of SentinelObject.
+    def test_registry(self) -> None:
+        """Test that the sentinel registry correctly tracks sentinel objects."""
+        # Clear registry before test (for isolation)
+        original_registry = self.TestClass.sentinel_registry.copy()
+        self.TestClass.sentinel_registry.clear()
+        
+        try:
+            # Create sentinel objects
+            sentinel1 = self.TestClass("REGISTRY_TEST_1")
+            sentinel2 = self.TestClass("REGISTRY_TEST_2")
+            
+            # Validate registry
+            assert len(self.TestClass.sentinel_registry) == 2
+            assert "REGISTRY_TEST_1" in self.TestClass.sentinel_registry
+            assert "REGISTRY_TEST_2" in self.TestClass.sentinel_registry
+            assert self.TestClass.sentinel_registry["REGISTRY_TEST_1"] is sentinel1
+            assert self.TestClass.sentinel_registry["REGISTRY_TEST_2"] is sentinel2
+            
+            # Create another sentinel with existing ID
+            sentinel1_again = self.TestClass("REGISTRY_TEST_1")
+            
+            # Validate registry didn't change
+            assert len(self.TestClass.sentinel_registry) == 2
+            assert sentinel1_again is sentinel1
+        finally:
+            # Restore original registry
+            self.TestClass.sentinel_registry.clear()
+            self.TestClass.sentinel_registry.update(original_registry)
 
-        This test verifies that the hash method returns the id_number of the object.
+    def test_copy(self, test_object: SentinelObject) -> None:
+        """Test the copy behavior of SentinelObject.
+
+        This test verifies that copy returns the original object, preserving the singleton pattern.
+
+        Args:
+            test_object: A fixture providing a SentinelObject instance.
         """
-        sentinel = self.class_("test_hash")
-        assert hash(sentinel) != sentinel.id_number
+        # Copy Object
+        obj_copy = copy.copy(test_object)
 
-    def test_equality_same_id(self) -> None:
-        """Test equality comparison with the same ID.
+        # Validate
+        assert obj_copy is test_object
+        assert id(obj_copy) == id(test_object)
 
-        This test verifies that two SentinelObjects with the same ID are equal.
+    def test_copy_method(self, test_object: SentinelObject) -> None:
+        """Test the copy method behavior of SentinelObject.
+
+        This test verifies that the copy method returns the original object, preserving the singleton pattern.
+
+        Args:
+            test_object: A fixture providing a SentinelObject instance.
         """
-        sentinel1 = self.class_("test_equality")
-        sentinel2 = self.class_("test_equality")
-        assert sentinel1 == sentinel2
+        # Copy Object
+        obj_copy = test_object.copy()
 
-    def test_equality_different_id(self) -> None:
-        """Test equality comparison with different IDs.
+        # Validate
+        assert obj_copy is test_object
+        assert id(obj_copy) == id(test_object)
 
-        This test verifies that two SentinelObjects with different IDs are not equal.
+    def test_deepcopy(self, test_object: SentinelObject, memo: dict | None = None) -> None:
+        """Test the deep copy behavior of SentinelObject.
+
+        This test verifies that deepcopy returns the original object, preserving the singleton pattern.
+
+        Args:
+            test_object: A fixture providing a SentinelObject instance.
+            memo: A memo dictionary to pass to deepcopy.
         """
-        sentinel1 = self.class_("test_equality1")
-        sentinel2 = self.class_("test_equality2")
-        assert sentinel1 != sentinel2
+        # Deep Copy Object
+        if memo is None:
+            memo = {}
+        obj_deepcopy = copy.deepcopy(test_object, memo=memo)
 
-    def test_equality_different_types(self) -> None:
-        """Test equality comparison with different types.
+        # Validate
+        assert obj_deepcopy is test_object
+        assert id(obj_deepcopy) == id(test_object)
 
-        This test verifies that a SentinelObject is not equal to an object of a different type.
+    def test_deepcopy_method(self, test_object: SentinelObject, memo: dict | None = None) -> None:
+        """Test the deepcopy method behavior of SentinelObject.
+
+        This test verifies that the deepcopy method returns the original object, preserving the singleton pattern.
+
+        Args:
+            test_object: A fixture providing a SentinelObject instance.
+            memo: A memo dictionary to pass to deepcopy.
         """
-        sentinel = self.class_("test_equality")
-        normal = self.NormalSentinel("test_equality")
-        assert sentinel != normal
+        # Deep Copy Object
+        if memo is None:
+            memo = {}
+        obj_deepcopy = test_object.deepcopy(memo=memo)
 
-    def test_different_encoding(self) -> None:
-        """Test creating a SentinelObject with a different encoding.
+        # Validate
+        assert obj_deepcopy is test_object
+        assert id(obj_deepcopy) == id(test_object)
 
-        This test verifies that the encoding parameter works correctly.
+    def test_pickling(self, test_object: SentinelObject) -> None:
+        """Test pickling and unpickling of SentinelObject.
+
+        This test verifies that the object can be pickled and unpickled correctly, and that the unpickled object
+        is the same object as the original due to the singleton pattern.
+
+        Args:
+            test_object: A fixture providing a SentinelObject instance.
         """
-        sentinel1 = self.class_("test_encoding", encoding="utf-8")
-        sentinel2 = self.class_("test_encoding", encoding="ascii")
-        # Both encodings should produce the same result for ASCII characters
-        assert sentinel1 == sentinel2
-
-    def test_different_byteorder(self) -> None:
-        """Test creating a SentinelObject with a different byteorder.
-
-        This test verifies that the byteorder parameter works correctly.
-        """
-        sentinel1 = self.class_("test_byteorder", byteorder="big")
-        sentinel2 = self.class_("test_byteorder", byteorder="little")
-        # Different byteorders should produce different ID numbers
-        assert sentinel1 != sentinel2
-
-    def test_pickle_unpickle(self) -> None:
-        """Test pickling and unpickling a SentinelObject.
-
-        This test verifies that a pickled and unpickled SentinelObject maintains equality with
-        another SentinelObject created with the same ID.
-        """
-        original = self.class_("test_pickle")
-        pickled = pickle.dumps(original)
+        # Pickle and Unpickle Object
+        pickled = pickle.dumps(test_object)
         unpickled = pickle.loads(pickled)
-        assert original is not unpickled
-        assert original == unpickled
+
+        # Validate
+        assert unpickled is test_object
+        assert id(unpickled) == id(test_object)
+        assert unpickled.identity == test_object.identity
+
+    def test_predefined_constants(self) -> None:
+        """Test the predefined sentinel constants.
+
+        This test verifies that the predefined sentinel constants DEFAULTSENTINEL and SEARCHSENTINEL
+        are instances of SentinelObject with the correct identities.
+        """
+        from src.baseobjects.bases.sentinelobject import DEFAULTSENTINEL, SEARCHSENTINEL
+
+        # Validate DEFAULTSENTINEL
+        assert isinstance(DEFAULTSENTINEL, SentinelObject)
+        assert DEFAULTSENTINEL.identity == "DEFAULTSENTINEL"
+        assert DEFAULTSENTINEL is SentinelObject("DEFAULTSENTINEL")
+
+        # Validate SEARCHSENTINEL
+        assert isinstance(SEARCHSENTINEL, SentinelObject)
+        assert SEARCHSENTINEL.identity == "SEARCHSENTINEL"
+        assert SEARCHSENTINEL is SentinelObject("SEARCHSENTINEL")
 
 
 # Main #

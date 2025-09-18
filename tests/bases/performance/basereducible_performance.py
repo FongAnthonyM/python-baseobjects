@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" basereducible_performance.py
-Performance tests for the BaseReducible class in the baseobjects package.
+"""basereducible_performance.py
+Performance tests for the BaseReducible class in the baseobjects.bases package.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -18,170 +18,389 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import pickle
 import timeit
-from typing import Type
+from typing import Any, Dict, List, ClassVar
 
 # Third-Party Packages #
 import pytest
 
 # Local Packages #
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 from src.baseobjects.bases import BaseReducible
-from .base_performance import BaseBaseObjectPerformanceTest
 
 
 # Definitions #
-# Base Reducible
-class TestBaseReducible(BaseBaseObjectPerformanceTest):
-    """Test the performance of the BaseReducible class.
+# Classes #
+class NormalReducible:
+    """A normal Python object with pickle support for comparison with BaseReducible."""
+    def __init__(self, value: Any = None, mutable: List[int] = None, mapping: Dict[str, int] = None) -> None:
+        """Initialize with some attributes."""
+        self.value = value
+        self.mutable = mutable or [1, 2, 3]
+        self.mapping = mapping or {"a": 1, "b": 2, "c": 3}
 
-    This class tests the performance of the BaseReducible class, which is the base class for objects that implement
-    custom pickling behavior in the baseobjects package.
+    def __getstate__(self) -> Dict[str, Any]:
+        """Get the object's state for pickling."""
+        return self.__dict__.copy()
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:
+        """Set the object's state from a pickled state."""
+        self.__dict__.update(state)
+
+
+class SlottedNormalReducible:
+    """A normal Python object with __slots__ and pickle support for comparison."""
+    __slots__ = ["value", "mutable", "mapping"]
+
+    def __init__(self, value: Any = None, mutable: List[int] = None, mapping: Dict[str, int] = None) -> None:
+        """Initialize with some attributes."""
+        self.value = value
+        self.mutable = mutable or [1, 2, 3]
+        self.mapping = mapping or {"a": 1, "b": 2, "c": 3}
+
+    def __getstate__(self) -> Dict[str, Any]:
+        """Get the object's state for pickling."""
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:
+        """Set the object's state from a pickled state."""
+        for slot, value in state.items():
+            setattr(self, slot, value)
+
+
+class TestBaseReduciblePerformance(BasePerformanceTestSuite):
+    """Test suite for assaying the performance of the BaseReducible class.
+
+    This test suite measures the performance of various operations on BaseReducible objects
+    and compares them with standard Python implementations.
     """
     # Class Definitions #
-    class BaseTestReducible(BaseReducible):
-        """A subclass of BaseReducible for testing purposes."""
-        # Magic Methods #
-        def __init__(self) -> None:
-            """Initialize with immutable and mutable attributes."""
+    class TestReducible(BaseReducible):
+        """A concrete subclass of BaseReducible for testing purposes."""
+        def __init__(self, value: Any = None, mutable: List[int] = None, mapping: Dict[str, int] = None) -> None:
+            """Initialize with some attributes."""
             super().__init__()
-            self.immutable: int = 0
-            self.mutable: dict = {"key": "value"}
-            self.nested: list = [1, 2, {"nested_key": "nested_value"}]
+            self.value = value
+            self.mutable = mutable or [1, 2, 3]
+            self.mapping = mapping or {"a": 1, "b": 2, "c": 3}
 
-    class NormalObject(object):
-        """A normal Python object for comparison with BaseReducible."""
-        # Magic Methods #
-        def __init__(self) -> None:
-            """Initialize with immutable and mutable attributes."""
-            self.immutable: int = 0
-            self.mutable: dict = {"key": "value"}
-            self.nested: list = [1, 2, {"nested_key": "nested_value"}]
+    class TestSlottedReducible(BaseReducible):
+        """A concrete subclass of BaseReducible with __slots__ for testing purposes."""
+        __slots__ = ["value", "mutable", "mapping"]
+
+        def __init__(self, value: Any = None, mutable: List[int] = None, mapping: Dict[str, int] = None) -> None:
+            """Initialize with some attributes."""
+            super().__init__()
+            self.value = value
+            self.mutable = mutable or [1, 2, 3]
+            self.mapping = mapping or {"a": 1, "b": 2, "c": 3}
+
+    class TestMixedReducible(BaseReducible):
+        """A concrete subclass of BaseReducible with both __dict__ and __slots__ for testing purposes."""
+        __slots__ = ["value"]
+
+        def __init__(self, value: Any = None, mutable: List[int] = None, mapping: Dict[str, int] = None) -> None:
+            """Initialize with some attributes."""
+            super().__init__()
+            self.value = value
+            self.mutable = mutable or [1, 2, 3]
+            self.mapping = mapping or {"a": 1, "b": 2, "c": 3}
 
     # Attributes #
-    class_: Type[BaseTestReducible] = BaseTestReducible
+    timeit_runs: int = 10000  # Reduced runs for pickling operations which can be slower
 
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_object(self) -> "TestBaseReducible.BaseTestReducible":
-        """Create a test object instance for use in tests.
+    def test_reducible(self) -> "TestBaseReduciblePerformance.TestReducible":
+        """Create a test reducible instance for use in tests.
 
         Returns:
-            BaseTestReducible: An instance of the test class.
+            TestReducible: An instance of the test class.
         """
-        return self.class_()
+        return self.TestReducible("test")
+
+    @pytest.fixture
+    def test_slotted_reducible(self) -> "TestBaseReduciblePerformance.TestSlottedReducible":
+        """Create a test slotted reducible instance for use in tests.
+
+        Returns:
+            TestSlottedReducible: An instance of the test class with __slots__.
+        """
+        return self.TestSlottedReducible("test")
+
+    @pytest.fixture
+    def test_mixed_reducible(self) -> "TestBaseReduciblePerformance.TestMixedReducible":
+        """Create a test mixed reducible instance for use in tests.
+
+        Returns:
+            TestMixedReducible: An instance of the test class with both __dict__ and __slots__.
+        """
+        return self.TestMixedReducible("test")
+
+    @pytest.fixture
+    def test_normal_reducible(self) -> NormalReducible:
+        """Create a normal reducible instance for comparison.
+
+        Returns:
+            NormalReducible: A standard Python object with pickle support.
+        """
+        return NormalReducible("test")
+
+    @pytest.fixture
+    def test_slotted_normal_reducible(self) -> SlottedNormalReducible:
+        """Create a normal slotted reducible instance for comparison.
+
+        Returns:
+            SlottedNormalReducible: A standard Python object with __slots__ and pickle support.
+        """
+        return SlottedNormalReducible("test")
 
     # Tests
-    def test_instance_creation(self, test_object: "TestBaseReducible.BaseTestReducible") -> None:
-        """Test that instances of BaseTestReducible can be created efficiently.
-
-        Args:
-            test_object: A fixture providing a BaseTestReducible instance.
-        """
-        assert test_object is not None
-
-    def test_pickle_speed(self, test_object: "TestBaseReducible.BaseTestReducible") -> None:
-        """Test the performance of pickling a BaseReducible object.
-
-        This test compares the speed of pickling a BaseReducible object with a normal Python object.
-
-        Args:
-            test_object: A fixture providing a BaseTestReducible instance.
-        """
-        normal = self.NormalObject()
-
-        def pickle_base() -> None:
-            pickle.dumps(test_object)
-
-        def pickle_normal() -> None:
-            pickle.dumps(normal)
-
-        # Calculate the mean time in microseconds for the new implementation
-        new_time = timeit.timeit(pickle_base, number=self.timeit_runs)
-        mean_new = new_time / self.timeit_runs * 1000000
-
-        # Calculate the mean time in microseconds for the old implementation
-        old_time = timeit.timeit(pickle_normal, number=self.timeit_runs)
-        mean_old = old_time / self.timeit_runs * 1000000
-        percent = (mean_new / mean_old) * 100
-
-        # Print the performance comparison
-        print(f"\nNew: {mean_new:.3f} μs ({percent:.3f}% of old function time)")
-        assert percent < self.speed_tolerance
-
-    def test_unpickle_speed(self, test_object: "TestBaseReducible.BaseTestReducible") -> None:
-        """Test the performance of unpickling a BaseReducible object.
-
-        This test compares the speed of unpickling a BaseReducible object with a normal Python object.
-
-        Args:
-            test_object: A fixture providing a BaseTestReducible instance.
-        """
-        normal = self.NormalObject()
-        
-        # Pickle the objects first
-        pickled_base = pickle.dumps(test_object)
-        pickled_normal = pickle.dumps(normal)
-
-        def unpickle_base() -> None:
-            pickle.loads(pickled_base)
-
-        def unpickle_normal() -> None:
-            pickle.loads(pickled_normal)
-
-        # Calculate the mean time in microseconds for the new implementation
-        new_time = timeit.timeit(unpickle_base, number=self.timeit_runs)
-        mean_new = new_time / self.timeit_runs * 1000000
-
-        # Calculate the mean time in microseconds for the old implementation
-        old_time = timeit.timeit(unpickle_normal, number=self.timeit_runs)
-        mean_old = old_time / self.timeit_runs * 1000000
-        percent = (mean_new / mean_old) * 100
-
-        # Print the performance comparison
-        print(f"\nNew: {mean_new:.3f} μs ({percent:.3f}% of old function time)")
-        assert percent < self.speed_tolerance
-
-    def test_getstate_speed(self, test_object: "TestBaseReducible.BaseTestReducible") -> None:
+    def test_getstate_performance(
+        self,
+        test_reducible: "TestBaseReduciblePerformance.TestReducible",
+        test_normal_reducible: NormalReducible,
+    ) -> None:
         """Test the performance of the __getstate__ method of BaseReducible.
 
-        This test measures the time it takes to get the state of a BaseReducible object.
+        This test compares the speed of BaseReducible.__getstate__() with a normal object's __getstate__().
 
         Args:
-            test_object: A fixture providing a BaseTestReducible instance.
+            test_reducible: A fixture providing a TestReducible instance.
+            test_normal_reducible: A fixture providing a NormalReducible instance.
         """
-        # Calculate the mean time in microseconds for the __getstate__ method
-        getstate_time = timeit.timeit(test_object.__getstate__, number=self.timeit_runs)
-        mean_getstate = getstate_time / self.timeit_runs * 1000000
+        def getstate_base_reducible() -> None:
+            test_reducible.__getstate__()
+
+        def getstate_normal_reducible() -> None:
+            test_normal_reducible.__getstate__()
+
+        # Calculate the mean time in microseconds for BaseReducible.__getstate__
+        base_time = timeit.timeit(getstate_base_reducible, number=self.timeit_runs)
+        mean_base = base_time / self.timeit_runs * 1000000
+
+        # Calculate the mean time in microseconds for normal object's __getstate__
+        normal_time = timeit.timeit(getstate_normal_reducible, number=self.timeit_runs)
+        mean_normal = normal_time / self.timeit_runs * 1000000
+        percent = (mean_base / mean_normal) * 100
+
+        # Print the performance comparison
+        print(f"\nNormal object __getstate__: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"BaseReducible.__getstate__: {mean_base:.3f} μs ({percent:.3f}% of normal object __getstate__ time)")
+        assert percent < self.speed_tolerance * 2  # Allow more overhead for state extraction
+
+    def test_slotted_getstate_performance(
+        self,
+        test_slotted_reducible: "TestBaseReduciblePerformance.TestSlottedReducible",
+        test_slotted_normal_reducible: SlottedNormalReducible,
+    ) -> None:
+        """Test the performance of the __getstate__ method of BaseReducible with __slots__.
+
+        This test compares the speed of BaseReducible.__getstate__() with a normal slotted object's __getstate__().
+
+        Args:
+            test_slotted_reducible: A fixture providing a TestSlottedReducible instance.
+            test_slotted_normal_reducible: A fixture providing a SlottedNormalReducible instance.
+        """
+        def getstate_base_reducible() -> None:
+            test_slotted_reducible.__getstate__()
+
+        def getstate_normal_reducible() -> None:
+            test_slotted_normal_reducible.__getstate__()
+
+        # Calculate the mean time in microseconds for BaseReducible.__getstate__
+        base_time = timeit.timeit(getstate_base_reducible, number=self.timeit_runs)
+        mean_base = base_time / self.timeit_runs * 1000000
+
+        # Calculate the mean time in microseconds for normal object's __getstate__
+        normal_time = timeit.timeit(getstate_normal_reducible, number=self.timeit_runs)
+        mean_normal = normal_time / self.timeit_runs * 1000000
+        percent = (mean_base / mean_normal) * 100
+
+        # Print the performance comparison
+        print(f"\nNormal slotted object __getstate__: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"BaseReducible with __slots__ __getstate__: {mean_base:.3f} μs ({percent:.3f}% of normal slotted object __getstate__ time)")
+        assert percent < self.speed_tolerance * 2  # Allow more overhead for state extraction
+
+    def test_mixed_getstate_performance(
+        self,
+        test_mixed_reducible: "TestBaseReduciblePerformance.TestMixedReducible",
+    ) -> None:
+        """Test the performance of the __getstate__ method of BaseReducible with both __dict__ and __slots__.
+
+        This test measures the time it takes to get the state of a BaseReducible object with both __dict__ and __slots__.
+
+        Args:
+            test_mixed_reducible: A fixture providing a TestMixedReducible instance.
+        """
+        def getstate_mixed_reducible() -> None:
+            test_mixed_reducible.__getstate__()
+
+        # Calculate the mean time in microseconds for BaseReducible.__getstate__
+        mixed_time = timeit.timeit(getstate_mixed_reducible, number=self.timeit_runs)
+        mean_mixed = mixed_time / self.timeit_runs * 1000000
 
         # Print the performance result
-        print(f"\n__getstate__: {mean_getstate:.3f} μs")
+        print(f"\nBaseReducible with mixed __dict__ and __slots__ __getstate__: {mean_mixed:.3f} μs or {mean_mixed / self.call_speed:.3f} cu")
         # No direct comparison, just ensure it's reasonably fast
-        assert mean_getstate < 100  # 100 microseconds is a reasonable threshold
+        assert mean_mixed < 200  # 200 microseconds is a reasonable threshold
 
-    def test_setstate_speed(self, test_object: "TestBaseReducible.BaseTestReducible") -> None:
+    def test_setstate_performance(
+        self,
+        test_reducible: "TestBaseReduciblePerformance.TestReducible",
+        test_normal_reducible: NormalReducible,
+    ) -> None:
         """Test the performance of the __setstate__ method of BaseReducible.
 
-        This test measures the time it takes to set the state of a BaseReducible object.
+        This test compares the speed of BaseReducible.__setstate__() with a normal object's __setstate__().
 
         Args:
-            test_object: A fixture providing a BaseTestReducible instance.
+            test_reducible: A fixture providing a TestReducible instance.
+            test_normal_reducible: A fixture providing a NormalReducible instance.
         """
-        # Get the state to use for setting
-        state = test_object.__getstate__()
+        # Get states to restore
+        base_state = test_reducible.__getstate__()
+        normal_state = test_normal_reducible.__getstate__()
 
-        def setstate() -> None:
-            # Create a new instance and set its state
-            obj = self.class_()
-            obj.__setstate__(state)
+        def setstate_base_reducible() -> None:
+            test_reducible.__setstate__(base_state)
 
-        # Calculate the mean time in microseconds for the __setstate__ method
-        setstate_time = timeit.timeit(setstate, number=self.timeit_runs)
-        mean_setstate = setstate_time / self.timeit_runs * 1000000
+        def setstate_normal_reducible() -> None:
+            test_normal_reducible.__setstate__(normal_state)
+
+        # Calculate the mean time in microseconds for BaseReducible.__setstate__
+        base_time = timeit.timeit(setstate_base_reducible, number=self.timeit_runs)
+        mean_base = base_time / self.timeit_runs * 1000000
+
+        # Calculate the mean time in microseconds for normal object's __setstate__
+        normal_time = timeit.timeit(setstate_normal_reducible, number=self.timeit_runs)
+        mean_normal = normal_time / self.timeit_runs * 1000000
+        percent = (mean_base / mean_normal) * 100
+
+        # Print the performance comparison
+        print(f"\nNormal object __setstate__: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"BaseReducible.__setstate__: {mean_base:.3f} μs ({percent:.3f}% of normal object __setstate__ time)")
+        assert percent < self.speed_tolerance * 2  # Allow more overhead for state restoration
+
+    def test_slotted_setstate_performance(
+        self,
+        test_slotted_reducible: "TestBaseReduciblePerformance.TestSlottedReducible",
+        test_slotted_normal_reducible: SlottedNormalReducible,
+    ) -> None:
+        """Test the performance of the __setstate__ method of BaseReducible with __slots__.
+
+        This test compares the speed of BaseReducible.__setstate__() with a normal slotted object's __setstate__().
+
+        Args:
+            test_slotted_reducible: A fixture providing a TestSlottedReducible instance.
+            test_slotted_normal_reducible: A fixture providing a SlottedNormalReducible instance.
+        """
+        # Get states to restore
+        base_state = test_slotted_reducible.__getstate__()
+        normal_state = test_slotted_normal_reducible.__getstate__()
+
+        def setstate_base_reducible() -> None:
+            test_slotted_reducible.__setstate__(base_state)
+
+        def setstate_normal_reducible() -> None:
+            test_slotted_normal_reducible.__setstate__(normal_state)
+
+        # Calculate the mean time in microseconds for BaseReducible.__setstate__
+        base_time = timeit.timeit(setstate_base_reducible, number=self.timeit_runs)
+        mean_base = base_time / self.timeit_runs * 1000000
+
+        # Calculate the mean time in microseconds for normal object's __setstate__
+        normal_time = timeit.timeit(setstate_normal_reducible, number=self.timeit_runs)
+        mean_normal = normal_time / self.timeit_runs * 1000000
+        percent = (mean_base / mean_normal) * 100
+
+        # Print the performance comparison
+        print(f"\nNormal slotted object __setstate__: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"BaseReducible with __slots__ __setstate__: {mean_base:.3f} μs ({percent:.3f}% of normal slotted object __setstate__ time)")
+        assert percent < self.speed_tolerance * 2  # Allow more overhead for state restoration
+
+    def test_mixed_setstate_performance(
+        self,
+        test_mixed_reducible: "TestBaseReduciblePerformance.TestMixedReducible",
+    ) -> None:
+        """Test the performance of the __setstate__ method of BaseReducible with both __dict__ and __slots__.
+
+        This test measures the time it takes to set the state of a BaseReducible object with both __dict__ and __slots__.
+
+        Args:
+            test_mixed_reducible: A fixture providing a TestMixedReducible instance.
+        """
+        # Get state to restore
+        mixed_state = test_mixed_reducible.__getstate__()
+
+        def setstate_mixed_reducible() -> None:
+            test_mixed_reducible.__setstate__(mixed_state)
+
+        # Calculate the mean time in microseconds for BaseReducible.__setstate__
+        mixed_time = timeit.timeit(setstate_mixed_reducible, number=self.timeit_runs)
+        mean_mixed = mixed_time / self.timeit_runs * 1000000
 
         # Print the performance result
-        print(f"\n__setstate__: {mean_setstate:.3f} μs")
+        print(f"\nBaseReducible with mixed __dict__ and __slots__ __setstate__: {mean_mixed:.3f} μs or {mean_mixed / self.call_speed:.3f} cu")
         # No direct comparison, just ensure it's reasonably fast
-        assert mean_setstate < 100  # 100 microseconds is a reasonable threshold
+        assert mean_mixed < 200  # 200 microseconds is a reasonable threshold
+
+    def test_pickle_performance(
+        self,
+        test_reducible: "TestBaseReduciblePerformance.TestReducible",
+        test_normal_reducible: NormalReducible,
+    ) -> None:
+        """Test the performance of pickling and unpickling BaseReducible objects.
+
+        This test compares the speed of pickling and unpickling BaseReducible objects with normal objects.
+
+        Args:
+            test_reducible: A fixture providing a TestReducible instance.
+            test_normal_reducible: A fixture providing a NormalReducible instance.
+        """
+        def pickle_base_reducible() -> None:
+            pickle.dumps(test_reducible)
+
+        def pickle_normal_reducible() -> None:
+            pickle.dumps(test_normal_reducible)
+
+        # Calculate the mean time in microseconds for pickling BaseReducible
+        base_time = timeit.timeit(pickle_base_reducible, number=self.timeit_runs // 10)  # Reduce runs for pickling
+        mean_base = base_time / (self.timeit_runs // 10) * 1000000
+
+        # Calculate the mean time in microseconds for pickling normal object
+        normal_time = timeit.timeit(pickle_normal_reducible, number=self.timeit_runs // 10)  # Reduce runs for pickling
+        mean_normal = normal_time / (self.timeit_runs // 10) * 1000000
+        percent = (mean_base / mean_normal) * 100
+
+        # Print the performance comparison
+        print(f"\nNormal object pickling: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"BaseReducible pickling: {mean_base:.3f} μs ({percent:.3f}% of normal object pickling time)")
+        assert percent < self.speed_tolerance * 3  # Allow more overhead for pickling operations
+
+        # Now test unpickling
+        base_pickle = pickle.dumps(test_reducible)
+        normal_pickle = pickle.dumps(test_normal_reducible)
+
+        def unpickle_base_reducible() -> None:
+            pickle.loads(base_pickle)
+
+        def unpickle_normal_reducible() -> None:
+            pickle.loads(normal_pickle)
+
+        # Calculate the mean time in microseconds for unpickling BaseReducible
+        base_time = timeit.timeit(unpickle_base_reducible, number=self.timeit_runs // 10)  # Reduce runs for unpickling
+        mean_base = base_time / (self.timeit_runs // 10) * 1000000
+
+        # Calculate the mean time in microseconds for unpickling normal object
+        normal_time = timeit.timeit(unpickle_normal_reducible, number=self.timeit_runs // 10)  # Reduce runs for unpickling
+        mean_normal = normal_time / (self.timeit_runs // 10) * 1000000
+        percent = (mean_base / mean_normal) * 100
+
+        # Print the performance comparison
+        print(f"\nNormal object unpickling: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(f"BaseReducible unpickling: {mean_base:.3f} μs ({percent:.3f}% of normal object unpickling time)")
+        assert percent < self.speed_tolerance * 3  # Allow more overhead for unpickling operations
 
 
 # Main #

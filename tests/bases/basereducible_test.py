@@ -1,7 +1,8 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-""" basereducible_test.py
+"""basereducible_test.py
 Tests for the BaseReducible class in the baseobjects package.
+
+This module provides tests for the BaseReducible class, which extends BaseObject to add functionality for object
+reduction and pickling.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -16,42 +17,44 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Type
+import copy
 import pickle
+from typing import Type
 
 # Third-Party Packages #
 import pytest
 
 # Local Packages #
 from src.baseobjects.bases import BaseReducible
-from .base_test import BaseBaseObjectTest
+from src.baseobjects.testsuite.bases import BaseObjectTestSuite
 
 
 # Classes #
-class TestBaseReducible(BaseBaseObjectTest):
+class ReducibleTestObject(BaseReducible):
+    """A subclass of BaseReducible for testing purposes.
+
+    This class has both normal attributes and slot attributes to test pickling behavior.
+    """
+    __slots__ = ("slot_value",)
+
+    # Magic Methods #
+    def __init__(self) -> None:
+        """Initialize with normal and slot attributes."""
+        super().__init__()
+        self.normal_value: str = "normal"
+        self.slot_value: str = "slot"
+
+
+# Tests #
+class TestBaseReducible(BaseObjectTestSuite):
     """Test the BaseReducible class.
 
     This class tests the functionality of the BaseReducible class, which is a base class for objects that need to be
     pickled/reduced in the baseobjects package.
     """
 
-    # Class Definitions #
-    class ReducibleTestObject(BaseReducible):
-        """A subclass of BaseReducible for testing purposes.
-
-        This class has both normal attributes and slot attributes to test pickling behavior.
-        """
-        __slots__ = ("slot_value",)
-
-        # Magic Methods #
-        def __init__(self) -> None:
-            """Initialize with normal and slot attributes."""
-            super().__init__()
-            self.normal_value: str = "normal"
-            self.slot_value: str = "slot"
-
     # Attributes #
-    class_: Type[BaseReducible] = BaseReducible
+    TestClass: Type[BaseReducible] = ReducibleTestObject
 
     # Instance Methods #
     # Fixtures
@@ -62,7 +65,7 @@ class TestBaseReducible(BaseBaseObjectTest):
         Returns:
             ReducibleTestObject: An instance of the test class.
         """
-        return self.ReducibleTestObject()
+        return self.TestClass()
 
     # Tests
     def test_instance_creation(self, test_object: "TestBaseReducible.ReducibleTestObject") -> None:
@@ -71,6 +74,7 @@ class TestBaseReducible(BaseBaseObjectTest):
         Args:
             test_object: A fixture providing a ReducibleTestObject instance.
         """
+        # Validate
         assert test_object is not None
         assert test_object.normal_value == "normal"
         assert test_object.slot_value == "slot"
@@ -83,7 +87,10 @@ class TestBaseReducible(BaseBaseObjectTest):
         Args:
             test_object: A fixture providing a ReducibleTestObject instance.
         """
+        # Get state
         state = test_object.__getstate__()
+
+        # Validate
         assert isinstance(state, tuple)
         assert len(state) == 2
         assert isinstance(state[0], dict)
@@ -107,7 +114,7 @@ class TestBaseReducible(BaseBaseObjectTest):
         # Apply the state
         test_object.__setstate__(state)
 
-        # Verify the state was applied
+        # Validate
         assert test_object.normal_value == "modified"
         assert test_object.slot_value == "modified_slot"
 
@@ -125,7 +132,7 @@ class TestBaseReducible(BaseBaseObjectTest):
         # Apply the state
         test_object.__setstate__(state)
 
-        # Verify the state was applied
+        # Validate
         assert test_object.normal_value == "dict_only"
         assert test_object.slot_value == "slot"  # Should remain unchanged
 
@@ -140,7 +147,7 @@ class TestBaseReducible(BaseBaseObjectTest):
         # Apply None state
         test_object.__setstate__(None)
 
-        # Verify the state remains unchanged
+        # Validate
         assert test_object.normal_value == "normal"
         assert test_object.slot_value == "slot"
 
@@ -172,7 +179,7 @@ class TestBaseReducible(BaseBaseObjectTest):
         # Get state
         state = obj.__getstate__()
 
-        # Verify state is an empty dict
+        # Validate
         assert isinstance(state, dict)
         assert len(state) == 0
 
@@ -193,7 +200,7 @@ class TestBaseReducible(BaseBaseObjectTest):
         # Get state
         state = obj.__getstate__()
 
-        # Verify state is a dict
+        # Validate
         assert isinstance(state, dict)
         assert "dict_attr" in state
         assert state["dict_attr"] == "dict value"
@@ -218,7 +225,7 @@ class TestBaseReducible(BaseBaseObjectTest):
         # Get state
         state = obj.__getstate__()
 
-        # Verify state is a tuple with (dict, slots_dict)
+        # Validate
         assert isinstance(state, tuple)
         assert len(state) == 2
         assert isinstance(state[0], dict)
@@ -228,25 +235,111 @@ class TestBaseReducible(BaseBaseObjectTest):
         assert "slot_attr" in state[1]
         assert state[1]["slot_attr"] == "slot value"
 
-    def test_pickling(self, test_object: "TestBaseReducible.ReducibleTestObject") -> None:
-        """Test that a BaseReducible can be pickled and unpickled.
+    def test_copy(self, test_object: BaseReducible) -> None:
+        """Test the copy behavior of the object.
 
-        This test verifies the complete pickling and unpickling process.
+        This test verifies that copy creates a new object with the same attributes.
 
         Args:
-            test_object: A fixture providing a ReducibleTestObject instance.
+            test_object: A fixture providing a test object instance.
+        """
+        # Copy Object
+        obj_copy = copy.copy(test_object)
+
+        # Validate
+        assert obj_copy is not test_object
+        assert isinstance(obj_copy, self.TestClass)
+        assert obj_copy.normal_value == test_object.normal_value
+        assert obj_copy.slot_value == test_object.slot_value
+
+    def test_copy_method(self, test_object: BaseReducible) -> None:
+        """Test the copy method behavior of the object.
+
+        This test verifies that copy creates a new object with the same attributes.
+
+        Args:
+            test_object: A fixture providing a test object instance.
+        """
+        # Copy Object
+        obj_copy = test_object.copy()
+
+        # Validate
+        assert obj_copy is not test_object
+        assert isinstance(obj_copy, self.TestClass)
+        assert obj_copy.normal_value == test_object.normal_value
+        assert obj_copy.slot_value == test_object.slot_value
+
+    def test_deepcopy(self, test_object: BaseReducible, memo: dict | None = None) -> None:
+        """Test the deep copy behavior of the object.
+
+        This test verifies that deepcopy creates a new object with new mutable attributes but the same immutable
+        attributes.
+
+        Args:
+            test_object: A fixture providing a test object instance.
+            memo: A memo dictionary to pass to deepcopy.
+        """
+        # Modify the test object to have a mutable attribute
+        test_object.mutable_attr = {"key": "value"}
+
+        # Deep Copy Object
+        if memo is None:
+            memo = {}
+        obj_deepcopy = copy.deepcopy(test_object, memo=memo)
+
+        # Validate
+        assert obj_deepcopy is not test_object
+        assert isinstance(obj_deepcopy, self.TestClass)
+        assert obj_deepcopy.normal_value == test_object.normal_value
+        assert obj_deepcopy.slot_value == test_object.slot_value
+        assert obj_deepcopy.mutable_attr == test_object.mutable_attr
+        assert obj_deepcopy.mutable_attr is not test_object.mutable_attr  # Deep copy, different reference
+
+    def test_deepcopy_method(self, test_object: BaseReducible, memo: dict | None = None) -> None:
+        """Test the deepcopy method behavior of the object.
+
+        This test verifies that deepcopy creates a new object with new mutable attributes but the same immutable
+        attributes.
+
+        Args:
+            test_object: A fixture providing a test object instance.
+            memo: A memo dictionary to pass to deepcopy.
+        """
+        # Modify the test object to have a mutable attribute
+        test_object.mutable_attr = {"key": "value"}
+
+        # Deep Copy Object
+        if memo is None:
+            memo = {}
+        obj_deepcopy = test_object.deepcopy(memo=memo)
+
+        # Validate
+        assert obj_deepcopy is not test_object
+        assert isinstance(obj_deepcopy, self.TestClass)
+        assert obj_deepcopy.normal_value == test_object.normal_value
+        assert obj_deepcopy.slot_value == test_object.slot_value
+        assert obj_deepcopy.mutable_attr == test_object.mutable_attr
+        assert obj_deepcopy.mutable_attr is not test_object.mutable_attr  # Deep copy, different reference
+
+    def test_pickling(self, test_object: BaseReducible) -> None:
+        """Test pickling and unpickling of the object.
+
+        This test verifies that the object can be pickled and unpickled correctly.
+
+        Args:
+            test_object: A fixture providing a test object instance.
         """
         # Modify the object
         test_object.normal_value = "pickled normal"
         test_object.slot_value = "pickled slot"
 
-        # Pickle and unpickle
+        # Pickle and Unpickle Object
         pickled = pickle.dumps(test_object)
         unpickled = pickle.loads(pickled)
 
-        # Verify the unpickled object has the same values
-        assert test_object is not unpickled
-        assert isinstance(unpickled, TestBaseReducible.ReducibleTestObject)
+        # Validate
+        assert unpickled is not test_object
+        assert isinstance(unpickled, self.TestClass)
         assert unpickled.normal_value == "pickled normal"
         assert unpickled.slot_value == "pickled slot"
 
