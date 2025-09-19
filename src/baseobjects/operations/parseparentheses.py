@@ -15,7 +15,6 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 from collections import deque
-from functools import singledispatch
 import re
 from typing import Any, Callable
 
@@ -30,13 +29,13 @@ from ..functions import singlekwargdispatch
 rb_parentheses = rb"\(|\)"
 rb_double_quote_group = rb'"((?:[^"]|\\.)*)(?<!\\)"' 
 rb_single_quote_group = rb"'((?:[^']|\\.)*)(?<!\\)'"
-rb_group_between_characters = rb"[^,'\"\(\)]+" 
+rb_group_between_characters = rb"[^, '\"\(\)]+"
 rb_expression = rb"|".join((rb_parentheses, rb_double_quote_group, rb_single_quote_group, rb_group_between_characters))
 
 r_parentheses = r"\(|\)"
 r_double_quote_group = r'"((?:[^"]|\\.)*)(?<!\\)"' 
 r_single_quote_group = r"'((?:[^']|\\.)*)(?<!\\)'"
-r_group_between_characters = r"[^,'\"\(\)]+" 
+r_group_between_characters = r"[^, '\"\(\)]+"
 r_expression = r"|".join((r_parentheses, r_double_quote_group, r_single_quote_group, r_group_between_characters))
 
 

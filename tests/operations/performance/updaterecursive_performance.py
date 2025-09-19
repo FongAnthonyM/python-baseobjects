@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" updaterecursive_performance.py
+"""updaterecursive_performance.py
 Performance tests_old_ for the update_recursive function in the baseobjects.operations package.
 """
 # Header #
@@ -24,8 +24,8 @@ from typing import Any, Dict
 import pytest
 
 # Local Packages #
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 from src.baseobjects.operations import update_recursive
-from tests.bases.performance.base_performance import ClassPerformanceTest
 
 
 # Definitions #
@@ -65,7 +65,7 @@ def standard_update_non_recursive(d: Dict[str, Any], updates: Mapping) -> Dict[s
 
 
 # Classes #
-class TestUpdateRecursive(ClassPerformanceTest):
+class TestUpdateRecursive(BasePerformanceTestSuite):
     """Test the performance of the update_recursive function.
 
     This class tests_old_ the performance of the update_recursive function, which updates a mapping object and its contained

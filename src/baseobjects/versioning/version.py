@@ -1,5 +1,17 @@
 """version.py
-Version is an abstract class which versions of different types can be defined from.
+Abstract base class for version objects.
+
+This module provides the Version abstract base class that defines the interface for all version implementations. It
+includes abstract methods for comparison, construction, and type conversion that must be implemented by subclasses.
+
+Typical usage example:
+
+  class CustomVersion(Version):
+      # Implement abstract methods
+      ...
+
+  version = CustomVersion("1.0")
+  print(f"Version: {version}")
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -28,17 +40,10 @@ from ..bases import BaseObject
 class Version(BaseObject):
     """An abstract class for creating versions which stores and handles a versioning.
 
-    Class Attributes:
-        default_version_name: The name of the version.
-
-    Attributes:
-        version_type: The type of version object this object is.
-
     Args:
         version: An object to derive a version from.
-        ver_name: The name of the version type being used.
         init: Determines if this object will construct.
-        **kwargs: More keyword arguments for constructing this object
+        **kwargs: Keyword arguments for constructing this object
     """
 
     # Class Methods #
@@ -48,14 +53,17 @@ class Version(BaseObject):
 
         Args:
             other: An object to convert to this type.
-            pass_: True to return original object rather than raise an error.
+            pass_: True to return the original object rather than raise an error.
 
         Returns:
             obj: The converted object of this type or the original object.
+
+        Raises:
+            TypeError: If the object cannot be converted to this type.
         """
         try:
             other = cls(other)
-        except TypeError as e:
+        except Exception as e:
             if not pass_:
                 raise e
 
@@ -78,8 +86,11 @@ class Version(BaseObject):
             self.construct(version=version, **kwargs)
 
     # Representation #
+    @abstractmethod
     def __hash__(self) -> int:
         """Overrides hash to make the object hashable.
+
+        Subclasses must override this method if they wish to be hashable.
 
         Returns:
             The system ID of the object.

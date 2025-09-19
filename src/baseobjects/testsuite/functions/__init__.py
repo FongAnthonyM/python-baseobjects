@@ -16,5 +16,6 @@ __version__ = "1.12.0"
 # Local Packages #
 from .basedecoratortestsuite import BaseDecoratorTestSuite
 from .dynamiccallabletestsuite import DynamicCallableTestSuite
+from .dynamicdecoratortestsuite import DynamicDecoratorTestSuite
 from .dynamicfunctiontestsuite import DynamicFunctionTestSuite
 from .dynamicmethodtestsuite import DynamicMethodTestSuite

@@ -1,5 +1,10 @@
 """timedsinglecache.py
 A timed cache that holds only a single item.
+
+This module provides the TimedSingleCache class and related components for implementing a time-based cache that
+stores only a single result at a time. Unlike the standard timed cache, this implementation replaces the previous
+cached result whenever a new function call with different arguments is made. This is useful for functions where
+only the most recent result needs to be cached, saving memory while still providing caching benefits.
 """
 # Header #
 __package_name__ = "baseobjects"

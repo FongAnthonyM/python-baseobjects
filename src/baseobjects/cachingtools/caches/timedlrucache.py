@@ -1,5 +1,10 @@
 """timedlrucache.py
 A Least Recently Used (LRU) cache that periodically resets.
+
+This module provides the TimedLRUCache class and related components for implementing a time-based Least Recently Used
+(LRU) cache. It extends the basic timed cache functionality with an LRU eviction policy, which removes the least
+recently accessed items when the cache reaches its maximum size. This combines the benefits of time-based expiration
+with efficient memory usage through the LRU algorithm.
 """
 # Header #
 __package_name__ = "baseobjects"

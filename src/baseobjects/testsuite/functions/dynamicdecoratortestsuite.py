@@ -117,14 +117,6 @@ class DynamicDecoratorTestSuite(BaseDecoratorTestSuite, DynamicFunctionTestSuite
             **kwargs: Keyword arguments to pass to the decorator.
         """
 
-    @abstractmethod
-    def test_bind_multiplexer(self) -> None:
-        """Test that the bind_multiplexer correctly delegates to the selected binding method."""
-
-    @abstractmethod
-    def test_call_multiplexer(self) -> None:
-        """Test that the call_multiplexer correctly delegates to the selected call method."""
-
 
 # Main #
 if __name__ == "__main__":

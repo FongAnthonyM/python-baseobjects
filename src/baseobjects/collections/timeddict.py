@@ -32,7 +32,7 @@ class TimedDict(BaseDict):
 
     Attributes:
         is_timed: Determines if the dictionary will be reset periodically.
-        lifetime: The period between dictionary resets in seconds.
+        _lifetime: The period between dictionary resets in seconds.
         expiration: The next time the dictionary will be rest.
 
     Args:
@@ -42,12 +42,22 @@ class TimedDict(BaseDict):
 
     # Attributes #
     is_timed: bool = True
-    lifetime: int | float | None = None
+    _lifetime: int | float | None = None
     expiration: int | float | None = None
 
     _data: dict[Hashable, Any]
 
     # Properties #
+    @property
+    def lifetime(self) -> int | float | None:
+        """The period between dictionary resets in seconds."""
+        return self._lifetime
+
+    @lifetime.setter
+    def lifetime(self, value: int | float | None) -> None:
+        self._lifetime = value
+        self.reset_expiration()
+
     @property
     def data(self) -> dict[Hashable, Any]:
         """The data of the dictionary."""
@@ -109,7 +119,7 @@ class TimedDict(BaseDict):
         Returns:
             bool: Determines if the cache should be cleared.
         """
-        return self.is_timed and self.lifetime is not None and perf_counter() >= self.expiration
+        return self.is_timed and self._lifetime is not None and perf_counter() >= self.expiration
 
     def verify(self) -> None:
         """Verifies if the dictionary should be cleared and then clears it."""

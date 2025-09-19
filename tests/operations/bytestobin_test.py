@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" bytestobin_test.py
+"""bytestobin_test.py
 Tests for the bytes_to_bin function in the baseobjects package.
 """
 # Header #

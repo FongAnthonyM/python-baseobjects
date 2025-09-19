@@ -1,5 +1,9 @@
 """cachingobject.py
 An abstract class which creates properties for this class automatically.
+
+This module provides the CachingObject class, which is an abstract base class that implements caching functionality
+for methods and properties. It allows for enabling, disabling, and managing caches within objects, as well as
+setting cache lifetimes and clearing caches.
 """
 # Header #
 __package_name__ = "baseobjects"

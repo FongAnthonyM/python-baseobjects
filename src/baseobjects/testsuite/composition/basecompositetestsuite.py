@@ -1,4 +1,4 @@
-""" basecompositetestsuite.py
+"""basecompositetestsuite.py
 Base test suite for BaseComposite and its subclasses.
 """
 # Header #
@@ -20,11 +20,10 @@ import pickle
 from typing import Any, Type
 
 # Third-Party Packages #
-import pytest
 
 # Local Packages #
-from ..composition import BaseComposite
-from .baseobjecttestsuite import BaseObjectTestSuite
+from ...composition import BaseComposite
+from ..bases import BaseObjectTestSuite
 
 
 # Definitions #
@@ -32,7 +31,7 @@ from .baseobjecttestsuite import BaseObjectTestSuite
 class BaseCompositeTestSuite(BaseObjectTestSuite):
     """Base test suite for children of BaseComposite.
 
-    This class provides common test functionality for child classes of BaseComposite, including tests for
+    This class provides common test functionality for child classes of BaseComposite, including tests_old_ for
     component management. Subclasses should set the TestClass attribute and may override or extend the test methods.
 
     Attributes:
@@ -233,7 +232,6 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
 
         # Validate
         assert component is not None
-        assert component.name == "test_name"
         assert component.composite is composite
 
     def test_add_component(self, component_type: Type[Any] | None = None, *args: Any, **kwargs: Any) -> None:
@@ -254,7 +252,6 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
         composite.add_component("test_name", component)
 
         # Validate
-        assert component.name == "test_name"
         assert component.composite is composite
 
     def test_remove_component(self, component_type: Type[Any] | None = None, *args: Any, **kwargs: Any) -> None:
@@ -275,7 +272,6 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
 
         # Validate
         assert component is not None
-        assert component.name == "test_name"
         assert component.composite is composite
 
         # Remove

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" trinumberversion_test.py
+"""trinumberversion_test.py
 Tests for the TriNumberVersion class in the baseobjects package.
 
 This module contains tests for the TriNumberVersion class, which is a concrete implementation of the Version

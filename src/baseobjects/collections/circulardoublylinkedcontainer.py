@@ -1,6 +1,10 @@
 """circulardoublylinkedcontainer.py
-A circular doubly linked container which is a fast and efficient way to store ordered data, especially if constantly
-changes size.
+A circular doubly linked container for efficient ordered data storage.
+
+This module provides the CircularDoublyLinkedContainer class and supporting LinkedNode class for implementing a
+circular doubly linked list data structure. This container is particularly efficient for storing ordered data that
+frequently changes size, as it allows for constant-time insertions and deletions at any position once a reference
+to that position is obtained. The circular nature of the container enables efficient traversal in both directions.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -23,13 +27,13 @@ import weakref
 # Third-Party Packages #
 
 # Local Packages #
-from ..bases import BaseObject
+from ..bases import BaseObject, BaseReducible
 from ..functions import singlekwargdispatch
 
 
 # Definitions #
 # Classes #
-class LinkedNode(BaseObject):
+class LinkedNode(BaseReducible):
     """A node in a circular doubly linked container.
 
     Attributes:
@@ -91,6 +95,52 @@ class LinkedNode(BaseObject):
         # Object Construction #
         if init:
             self.construct(data=data, previous=previous, next_=next_)
+
+    # Pickling
+    def __getstate__(self) -> None | dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]]:
+        """Gets the object's state for pickling.
+
+        This method prepares the object for pickling by converting the weak references to other nodes into strong
+        references. This is necessary because weak references cannot be pickled directly. The method first gets the
+        state from the parent class, then adds the nodes as a strong reference.
+
+        Returns:
+            The state returned will be either of the following types based on the presence of __dict__ and __slots__:
+                None: Neither __dict__ nor __slots__ are present.
+                dict: __dict__ is present and __slots__ is not present.
+                tuple[None, dict]: __dict__ is not present and __slots__ is present.
+                tuple[dict, dict]: __dict__ is present and __slots__ is present.
+        """
+        state = super().__getstate__()
+        # Convert weak reference to strong reference for pickling
+        state["_next"] = self.next
+        state["_previous"] = self.previous
+        return state
+
+    def __setstate__(self, state: Any) -> None:
+        """Sets the object's state from a pickled state.
+
+        This method restores the object from a pickled state by first extracting the nodes from the state. Then sets the
+        state using the parent class's __setstate__ method. Finally, it converts the strong reference to the other nodes
+        back into weak references.
+
+        By default, the state can be one of the following types with the corresponding behavior:
+            None: Will not set any state.
+            dict: Will set the __dict__ attribute to the state.
+            tuple[None, dict]: Will set the slot values to the second dict of the tuple.
+            tuple[dict, dict]: Will set the __dict__ attribute to the first dict of the tuple and set the slot values
+                to the second dict of the tuple.
+
+        Args:
+            state: An object which can be used to set the state of this object.
+        """
+        _next = state.pop("_next", None)
+        _previous = state.pop("_previous", None)
+        super().__setstate__(state)
+        if _next is not None:
+            self._next = weakref.ref(_next)
+        if _previous is not None:
+            self._previous = weakref.ref(_previous)
 
     # Instance Methods #
     # Constructors
@@ -441,7 +491,7 @@ class CircularDoublyLinkedContainer(BaseObject):
             self.first_node = self.first_node.next
         elif value > 1:
             i = 0
-            while i <= value:
+            while i < value:
                 self.first_node = self.first_node.next
                 i += 1
 
@@ -455,7 +505,7 @@ class CircularDoublyLinkedContainer(BaseObject):
             self.first_node = self.first_node.previous
         elif value > 1:
             i = 0
-            while i <= value:
+            while i < value:
                 self.first_node = self.first_node.previous
                 i += 1
 
@@ -469,10 +519,10 @@ class CircularDoublyLinkedContainer(BaseObject):
         if self.first_node is not None:
             node = self.first_node
             yield node
-            node = node.next
-            while node is not self.first_node:
-                yield node
-                node = node.next
+            if (node := node.next) is not None:
+                while node is not self.first_node:
+                    yield node
+                    node = node.next
 
     def reverse_iter(self) -> Iterable:
         """Creates an iterable which iterates through the nodes from last to first.
@@ -483,10 +533,10 @@ class CircularDoublyLinkedContainer(BaseObject):
         if self.first_node is not None:
             node = self.last_node
             yield node
-            node = node.previous
-            while node is not self.last_node:
-                yield node
-                node = node.previous
+            if (node := node.previous) is not None:
+                while node is not self.last_node:
+                    yield node
+                    node = node.previous
 
     def forward_cycle(self) -> Iterable:
         """Creates an iterable which cycles through the nodes from first to last.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" namespaceclassregistry_test.py
+"""namespaceclassregistry_test.py
 Tests for the NamespaceClassRegistry class in the baseobjects package.
 """
 # Header #
@@ -22,8 +22,8 @@ from typing import Any, Type
 import pytest
 
 # Local Packages #
-from baseobjects.classregistration import NamespaceClassRegistry
-from baseobjects.testsuite.classregistration.baseclassregistrytestsuite import BaseClassRegistryTestSuite
+from src.baseobjects.classregistration import NamespaceClassRegistry
+from src.baseobjects.testsuite.classregistration.baseclassregistrytestsuite import BaseClassRegistryTestSuite
 
 
 # Definitions #

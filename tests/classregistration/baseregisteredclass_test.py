@@ -22,8 +22,8 @@ from typing import Any, ClassVar, Optional, Type
 import pytest
 
 # Local Packages #
-from baseobjects.classregistration import BaseRegisteredClass, BaseClassRegistry
-from baseobjects.testsuite.classregistration import BaseRegisteredClassTestSuite
+from src.baseobjects.classregistration import BaseRegisteredClass, BaseClassRegistry
+from src.baseobjects.testsuite.classregistration import BaseRegisteredClassTestSuite
 
 
 # Definitions #

@@ -1,5 +1,5 @@
-""" __init__.py
-Tests for the baseobjects.objects module.
+"""__init__.py
+Tests for the objects module in the baseobjects package.
 """
 # Header #
 __package_name__ = "baseobjects"

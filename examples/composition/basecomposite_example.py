@@ -11,6 +11,7 @@ This example demonstrates:
 5. Serialization and deserialization of composites with components
 """
 
+
 # Imports #
 # Standard Libraries #
 import pickle

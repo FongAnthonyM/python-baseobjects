@@ -1,5 +1,10 @@
 """timedkeylesscache.py
 A timed cache which holds only a single item and does not create a key from arguments.
+
+This module provides the TimedKeylessCache class and related components for implementing a simplified time-based
+cache that stores only a single result regardless of the input arguments. Unlike other caches, it doesn't use the
+function arguments to create cache keys, making it suitable for functions where the result is expected to be the
+same regardless of input, but may change over time.
 """
 # Header #
 __package_name__ = "baseobjects"

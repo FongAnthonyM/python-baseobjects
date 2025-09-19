@@ -1,8 +1,8 @@
 """automaticpropertiestestsuite.py
 Test suite for the AutomaticProperties class.
 
-This module provides the AutomaticPropertiesTestSuite class which serves as a foundation for testing classes that inherit
-from AutomaticProperties. It includes tests for property creation, access, modification, and deletion.
+This module provides the AutomaticPropertiesTestSuite class which serves as a foundation for testing classes that
+inherit from AutomaticProperties. It includes tests for property creation, access, modification, and deletion.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -19,7 +19,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import copy
 import pickle
-from typing import Any, Type
+from typing import Type
 
 # Third-Party Packages #
 import pytest

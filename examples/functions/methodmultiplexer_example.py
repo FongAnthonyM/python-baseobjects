@@ -9,9 +9,10 @@ This example demonstrates:
 3. Selecting which method to use at runtime
 """
 
+
 # Imports #
 # Standard Libraries #
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 # Third-Party Packages #
 from baseobjects.functions import MethodMultiplexer, FunctionRegistry
@@ -224,7 +225,157 @@ def method_processor_example():
     print()
 
 
+def dynamic_method_multiplexer_example():
+    """Demonstrates MethodMultiplexer's ability to dynamically select methods from the instance it wraps.
+
+    This example highlights how MethodMultiplexer can directly access and bind methods from the wrapped
+    instance without needing to add them to a registry first.
+    """
+    print("Dynamic Method Selection with MethodMultiplexer:\n")
+
+    # Create a class with various methods that we'll dynamically select between
+    class DataProcessor:
+        def __init__(self, name):
+            self.name = name
+            self.data = {
+                "numbers": [1, 2, 3, 4, 5],
+                "text": "Hello World",
+                "mixed": [10, "abc", 30, "xyz"]
+            }
+
+            # Create a MethodMultiplexer that wraps this instance
+            # Note: We don't provide a registry - we'll select methods directly from the instance
+            self.method_selector = MethodMultiplexer(instance=self)
+
+            # Set a default method
+            self.method_selector.select("sum_numbers")
+
+        # Define various processing methods that we'll select between
+        def sum_numbers(self):
+            """Sum all numbers in the numbers list."""
+            return sum(self.data["numbers"])
+
+        def average_numbers(self):
+            """Calculate the average of numbers in the numbers list."""
+            numbers = self.data["numbers"]
+            return sum(numbers) / len(numbers)
+
+        def reverse_text(self):
+            """Reverse the text string."""
+            return self.data["text"][::-1]
+
+        def uppercase_text(self):
+            """Convert the text to uppercase."""
+            return self.data["text"].upper()
+
+        def extract_numbers(self):
+            """Extract only the numbers from the mixed list."""
+            return [item for item in self.data["mixed"] if isinstance(item, int)]
+
+        def extract_strings(self):
+            """Extract only the strings from the mixed list."""
+            return [item for item in self.data["mixed"] if isinstance(item, str)]
+
+        # Method to add new data
+        def add_number(self, number):
+            """Add a number to the numbers list."""
+            self.data["numbers"].append(number)
+            return self.data["numbers"]
+
+        # Method to process using the currently selected method
+        def process(self):
+            """Process data using the currently selected method."""
+            return self.method_selector()
+
+        # Method to change the selected method
+        def set_processor(self, method_name):
+            """Change the processing method.
+
+            Args:
+                method_name: Name of the method to select.
+            """
+            self.method_selector.select(method_name)
+            return f"Selected method: {method_name}"
+
+    # Create an instance of our processor
+    processor = DataProcessor("Dynamic Method Processor")
+
+    # Show initial data
+    print(f"Initial data:")
+    print(f"Numbers: {processor.data['numbers']}")
+    print(f"Text: '{processor.data['text']}'")
+    print(f"Mixed: {processor.data['mixed']}")
+
+    # Process with the default method (sum_numbers)
+    result = processor.process()
+    print(f"\nUsing default method 'sum_numbers':")
+    print(f"processor.process() = {result}")
+
+    # Change to a different method and process again
+    processor.set_processor("average_numbers")
+    result = processor.process()
+    print(f"\nChanged to method 'average_numbers':")
+    print(f"processor.process() = {result}")
+
+    # Try a text processing method
+    processor.set_processor("uppercase_text")
+    result = processor.process()
+    print(f"\nChanged to method 'uppercase_text':")
+    print(f"processor.process() = '{result}'")
+
+    # Try a method that processes the mixed data
+    processor.set_processor("extract_numbers")
+    result = processor.process()
+    print(f"\nChanged to method 'extract_numbers':")
+    print(f"processor.process() = {result}")
+
+    # Add a new number using the method_selector directly
+    processor.method_selector.select("add_number")
+    result = processor.method_selector(10)  # Call with an argument
+    print(f"\nCalling 'add_number' with argument 10:")
+    print(f"processor.method_selector(10) = {result}")
+
+    # Now the sum should be different
+    processor.set_processor("sum_numbers")
+    result = processor.process()
+    print(f"\nBack to 'sum_numbers' after adding a number:")
+    print(f"processor.process() = {result}")
+
+    # Try a method that doesn't exist in the registry but exists in the instance
+    processor.set_processor("extract_strings")
+    result = processor.process()
+    print(f"\nUsing 'extract_strings' method (not in registry, but in instance):")
+    print(f"processor.process() = {result}")
+
+    # Demonstrate that we can dynamically add methods to the instance and select them
+    print("\nDynamically adding a new method to the instance:")
+
+    # Add a new method to the instance
+    def count_items(self):
+        """Count the number of items in each data category."""
+        return {
+            "numbers": len(self.data["numbers"]),
+            "text": len(self.data["text"]),
+            "mixed": len(self.data["mixed"])
+        }
+
+    # Add the method to the instance
+    import types
+    processor.count_items = types.MethodType(count_items, processor)
+
+    # Select and use the new method
+    processor.set_processor("count_items")
+    result = processor.process()
+    print(f"Added and selected 'count_items' method:")
+    print(f"processor.process() = {result}")
+
+    print()
+
+
 # Main #
 if __name__ == "__main__":
     # Using MethodMultiplexer in a practical application
     method_processor_example()
+
+    # Demonstrating dynamic method selection with MethodMultiplexer
+    dynamic_method_multiplexer_example()

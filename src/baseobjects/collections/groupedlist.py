@@ -1,5 +1,11 @@
 """groupedlist.py
 A list which contains any item, but nested GroupLists' contents are treated as if they are elements of this list.
+
+This module provides the GroupedList class, which extends BaseList to implement a hierarchical list structure where
+nested GroupedList instances are treated as if their contents are direct elements of the parent list. This allows for
+organizing items into logical groups while still being able to iterate through all items as if they were in a flat
+list. The class supports named groups, parent-child relationships, and various operations for manipulating the
+hierarchical structure.
 """
 # Future Imports #
 from __future__ import annotations
@@ -25,7 +31,7 @@ from typing import Any
 import bidict
 
 # Local Packages #
-from ..bases import BaseList, search_sentinel
+from ..bases import BaseList, SEARCHSENTINEL
 
 
 # Definitions #
@@ -117,7 +123,7 @@ class GroupedList(BaseList):
 
     def __setitem__(self, i: int | str | slice, item: Any) -> None:
         """Sets an item in this GroupedList.
-    
+
         Args:
             i: If an integer, the index where the item should be set.
                If a string, the name of the group to set.
@@ -141,12 +147,12 @@ class GroupedList(BaseList):
 
     def __delitem__(self, i: int | str | slice) -> None:
         """Deletes an item from this GroupedList.
-    
+
         Args:
             i: If an integer, the index of the item to delete.
                If a string, the name of the group to delete.
                If a slice, the slice of items to delete.
-    
+
         Raises:
             TypeError: If the index type is not supported.
             IndexError: If the index is out of range.
@@ -421,7 +427,10 @@ class GroupedList(BaseList):
                 else:
                     lengths.append(len(item))
 
-        return (len(self.data) - len(self.groups), tuple(lengths))
+        if len(lengths) == 0:
+            return len(self.data) - len(self.groups)
+        else:
+            return len(self.data) - len(self.groups), tuple(lengths)
 
     def get_length(self) -> int:
         """Gets the total number of items in this GroupedList, including items in child groups.
@@ -434,12 +443,18 @@ class GroupedList(BaseList):
             n_items += len(group)
         return n_items
 
-    def create_group(self, name: str, items: Iterable | None = None) -> GroupedList:
+    def create_group(
+        self,
+        name: str,
+        items: Iterable | None = None,
+        parents: Iterable[GroupedList] | None = None,
+    ) -> GroupedList:
         """Creates a new group with the given name and adds it to this GroupedList.
 
         Args:
             name: The name of the group to create.
             items: The items to add to the new group.
+            parents: The parents of the new group.
 
         Returns:
             The newly created group.
@@ -448,20 +463,26 @@ class GroupedList(BaseList):
             KeyError: If a group with the given name already exists.
         """
         if name not in self.groups:
-            new_group = self.__class__(items=items, parent=self)
+            new_group = self.__class__(items=items, parent=self, parents=parents)
             self.groups[name] = new_group
             self.data.append(new_group)
             return new_group
         else:
             raise KeyError(f"{name} group already exists.")
 
-    def require_group(self, name: str | Iterable[str], items: Iterable | None = None) -> GroupedList:
+    def require_group(
+        self,
+        name: str | Iterable[str],
+        items: Iterable | None = None,
+        parents: Iterable[GroupedList] | None = None,
+    ) -> GroupedList:
         """Gets an existing group with the given name or creates it if it doesn't exist.
 
         Args:
             name: The name of the group to get or create. Can be a single string or an iterable of strings for nested
                 groups.
             items: The items to add to the new group.
+            parents: The parents of the new group.
 
         Returns:
             The existing or newly created group.
@@ -473,9 +494,9 @@ class GroupedList(BaseList):
 
         # Require name at this level
         first = names.pop()
-        new_group = self.groups.get(first, search_sentinel)
-        if new_group is search_sentinel:
-            new_group = self.__class__(items=items, parent=self)
+        new_group = self.groups.get(first, SEARCHSENTINEL)
+        if new_group is SEARCHSENTINEL:
+            new_group = self.__class__(items=items, parent=self, parents=parents)
             self.groups[first] = new_group
             self.data.append(new_group)
 
@@ -734,11 +755,11 @@ class GroupedList(BaseList):
 
     def delete_slice(self, slice_: slice, group: str | None = None) -> None:
         """Deletes a slice of items from this GroupedList or a specific group.
-    
+
         Args:
             slice_: The slice of items to delete.
             group: The name of the group to delete the items from, or None to delete from this GroupedList.
-    
+
         Raises:
             KeyError: If the group name does not exist.
         """

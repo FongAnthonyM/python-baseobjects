@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" bytestobin_performance.py
+"""bytestobin_performance.py
 Performance tests_old_ for the bytes_to_bin function in the baseobjects.operations package.
 """
 # Header #
@@ -17,14 +17,14 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import timeit
-from typing import Any, Callable, Tuple
+from typing import Any
 
 # Third-Party Packages #
 import pytest
 
 # Local Packages #
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 from src.baseobjects.operations import bytes_to_bin
-from tests.bases.performance.base_performance import ClassPerformanceTest
 
 
 # Definitions #
@@ -69,7 +69,7 @@ def standard_bytes_to_bin_little(bytes_: bytes, out_type: type = int) -> tuple[A
 
 
 # Classes #
-class TestBytesToBin(ClassPerformanceTest):
+class TestBytesToBin(BasePerformanceTestSuite):
     """Test the performance of the bytes_to_bin function.
 
     This class tests_old_ the performance of the bytes_to_bin function, which converts bytes to a tuple of binary values.

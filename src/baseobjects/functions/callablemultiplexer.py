@@ -20,7 +20,7 @@ from types import MethodType
 # Third-Party Packages #
 
 # Local Packages #
-from ..typing import AnyCallable
+from ..typing import AnyCallable, GetObjectMethod
 from ..bases import BaseCallable, BaseMethod
 from .functionregistry import FunctionRegistry
 
@@ -38,7 +38,7 @@ class CallableMultiplexer(BaseMethod):
     Attributes:
         registry: The function registry to use for selecting a function/method.
         _selected: The name of the function/method to select for use.
-        is_binding_wrapper: Determines if this callable will bind the selected function to the contained instance.
+        _is_binding_wrapper: Determines if this callable will bind the selected function to the contained instance.
         is_coroutine: Checks if this callable is a coroutine.
 
     Args:
@@ -58,9 +58,22 @@ class CallableMultiplexer(BaseMethod):
     _selected: str | None = None
     _selected_bind_method: Any = None
 
-    is_binding_wrapper: bool = False
+    _is_binding_wrapper: bool = False
 
     # Properties #
+    @property
+    def is_binding_wrapper(self) -> bool:
+        """Determines if this callable will bind the selected function to the contained instance."""
+        return self._is_binding_wrapper
+
+    @is_binding_wrapper.setter
+    def is_binding_wrapper(self, value: bool) -> None:
+        self._is_binding_wrapper = value
+        if not value:
+            self._selected_bind_method = None
+        elif self.__wrapped__ is not None:
+            self._selected_bind_method = self.__wrapped__.__get__
+
     @property
     def selected(self) -> str | None:
         """The name of the selected function/method."""
@@ -90,6 +103,46 @@ class CallableMultiplexer(BaseMethod):
         # Object Construction #
         if init:
             self.construct(registry, instance, owner, select, binding, *args, is_binding=is_binding, **kwargs)
+
+    # Pickling
+    def __getstate__(self) -> None | dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]]:
+        """Gets the object's state for pickling.
+
+        This method prepares the object for pickling by converting the weak reference to the bound instance into a
+        strong reference. This is necessary because weak references cannot be pickled directly. The method first gets
+        the state from the parent class, then adds the bound instance as a strong reference.
+
+        Returns:
+            The state returned will be either of the following types based on the presence of __dict__ and __slots__:
+                None: Neither __dict__ nor __slots__ are present.
+                dict: __dict__ is present and __slots__ is not present.
+                tuple[None, dict]: __dict__ is not present and __slots__ is present.
+                tuple[dict, dict]: __dict__ is present and __slots__ is present.
+        """
+        state = super().__getstate__()
+        state.pop("_selected_bind_method", None)
+        return state
+
+    def __setstate__(self, state: Any) -> None:
+        """Sets the object's state from a pickled state.
+
+        This method restores the object from a pickled state by first extracting the bound instance from the state. Then
+        sets the state using the parent class's __setstate__ method. Finally, it converts the strong reference to the
+        bound instance back into a weak reference.
+
+        By default, the state can be one of the following types with the corresponding behavior:
+            None: Will not set any state.
+            dict: Will set the __dict__ attribute to the state.
+            tuple[None, dict]: Will set the slot values to the second dict of the tuple.
+            tuple[dict, dict]: Will set the __dict__ attribute to the first dict of the tuple and set the slot values
+                to the second dict of the tuple.
+
+        Args:
+            state: An object which can be used to set the state of this object.
+        """
+        super().__setstate__(state)
+        if self.__wrapped__ is not None:
+            self._selected_bind_method = self.__wrapped__.__get__
 
     # Calling
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
@@ -137,13 +190,13 @@ class CallableMultiplexer(BaseMethod):
         else:
             self.build_registry()
 
-        if binding is not None:
-            self.is_binding_wrapper = binding
-
         super().construct( *args, instance=instance, owner=owner, is_binding=is_binding, **kwargs)
 
         if select is not None:
             self.select(select)
+
+        if binding is not None:
+            self._is_binding_wrapper = binding
 
     def build_registry(self) -> None:
         """Creates the registry this object will use for function/method selection."""
@@ -190,10 +243,10 @@ class CallableMultiplexer(BaseMethod):
         if name is None:
             func = None
         elif (func := self.registry.get(name, None)) is not None:
-            self.is_binding_wrapper = False
+            self._is_binding_wrapper = False
         elif self._self_ is not None:
-            func = getattr(self._self_(), name)
-            self.is_binding_wrapper = True
+            func = getattr(self._self_(), name).__func__
+            self._is_binding_wrapper = True
         self.__func__ = func
         self._selected_bind_method = func.__get__
         self._selected = name
@@ -219,6 +272,30 @@ class CallableMultiplexer(BaseMethod):
         self.registry[name] = self.__func__ = getattr(method, "__func__")
         self._selected_bind_method = self.__wrapped__.__get__
         self._selected = name
+
+    # Binding
+    def bind_self(self, instance: Any = None, owner: type[Any] | None = None) -> "BaseMethod":
+        """Binds this method to an instance and/or owner class.
+
+        Args:
+            instance: The object to bind this method to. This becomes the 'self' parameter when the method is called.
+            owner: The class of the object being bound to. This is used for proper method binding and to support
+                inheritance.
+
+        Returns:
+            This method object, now bound to the specified instance and/or owner class.
+        """
+        if self.is_binding:
+            if instance is not None:
+                self.__self__ = instance
+            if owner is not None:
+                self.__owner__ = owner
+            self.is_binding_wrapper = True
+        return self
+
+    # Method Overrides #
+    # Special method overriding which leads to less overhead.
+    __get__: GetObjectMethod = bind_self
 
 
 class MethodMultiplexer(CallableMultiplexer):

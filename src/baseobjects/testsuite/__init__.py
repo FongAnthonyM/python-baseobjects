@@ -1,5 +1,9 @@
 """__init__.py
-testsuite provides base classes for creating test suites.
+testsuite provides test suite classes.
+
+This module serves as an initialization file for the testsuite package, which provides various test suite classes
+for testing baseobjects functionality. It imports and exposes classes from subpackages, making them available for
+direct import from the testsuite package.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -15,4 +19,10 @@ __version__ = "1.12.0"
 # Imports #
 # Local Packages #
 from .bases import *
-from .baseobjecttestsuite import BaseObjectTestSuite
+from .classregistration import *
+from .functions import *
+from .objects import *
+from .wrappers import *
+from .cachingtools import *
+from .versiontestsuite import VersionTestSuite
+from .cachingtoolstestsuite import TimedCacheTestSuite

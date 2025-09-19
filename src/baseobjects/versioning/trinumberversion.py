@@ -1,7 +1,22 @@
 """trinumberversion.py
-TriNumberVersion is a versioning system which is defined by three numbers. This class does not enforce any special
-meaning of the three number, but the Major number is more significant than the Minor number which is more
-significant than the Patch number. A good example of the tri-number framework can be found at https://semver.org/
+Implementation of a three-number versioning system.
+
+This module provides the TriNumberVersion class which implements a version system defined by three numbers: major,
+minor, and patch. The class does not enforce any special meaning of these numbers, but follows the convention that the
+major number is more significant than the minor number, which is more significant than the patch number. This follows
+similar patterns like Semantic Versioning (https://semver.org/).
+
+Typical usage example:
+
+  version = TriNumberVersion("1.2.3")
+  print(f"Version: {version}")  # Outputs: Version: 1.2.3
+
+  # Compare versions
+  if version > TriNumberVersion("1.0.0"):
+      print("Newer version")
+
+  # Create from components
+  new_version = TriNumberVersion(major=2, minor=0, patch=0)
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -22,8 +37,8 @@ from typing import Any
 # Third-Party Packages #
 
 # Local Packages #
-from baseobjects.functions import singlekwargdispatch
-from baseobjects.versioning.version import Version
+from ..functions import singlekwargdispatch
+from .version import Version
 
 
 # Definitions #
@@ -71,6 +86,15 @@ class TriNumberVersion(Version):
         if init:
             self.construct(version=version, minor=minor, patch=patch, major=major, ver_name=ver_name)
 
+    # Representation #
+    def __hash__(self) -> int:
+        """Overrides hash to make the object hashable.
+
+        Returns:
+            The system ID of the object.
+        """
+        return id(self)
+
     # Comparison
     def __eq__(self, other: Any) -> bool:
         """Expands on equals comparison to include comparing the version number.
@@ -95,10 +119,10 @@ class TriNumberVersion(Version):
         """Expands on not equals comparison to include comparing the version number.
 
         Args:
-            other (:obj:): The object to compare to this object.
+            other: The object to compare to this object.
 
         Returns:
-            bool: True if the other object or version number is not equivalent.
+            True if the other object or version number is not equivalent.
         """
         if isinstance(other, TriNumberVersion):
             return self.tuple() != other.tuple()
@@ -114,10 +138,10 @@ class TriNumberVersion(Version):
         """Creates the less than comparison for these objects which includes str, list, and tuple.
 
         Args:
-            other (:obj:): The object to compare to this object.
+            other: The object to compare to this object.
 
         Returns:
-            bool: True if this object is less than to the other objects' version number.
+            True if this object is less than to the other objects' version number.
 
         Raises:
             TypeError: If 'other' is a type that cannot be compared to.
@@ -136,10 +160,10 @@ class TriNumberVersion(Version):
         """Creates the greater than comparison for these objects which includes str, list, and tuple.
 
         Args:
-            other (:obj:): The object to compare to this object.
+            other: The object to compare to this object.
 
         Returns:
-            bool: True if this object is greater than to the other objects' version number.
+            True if this object is greater than to the other objects' version number.
 
         Raises:
             TypeError: If 'other' is a type that cannot be compared to.
@@ -158,10 +182,10 @@ class TriNumberVersion(Version):
         """Creates the less than or equal to comparison for these objects which includes str, list, and tuple.
 
         Args:
-            other (:obj:): The object to compare to this object.
+            other: The object to compare to this object.
 
         Returns:
-            bool: True if this object is less than or equal to to the other objects' version number.
+            True if this object is less than or equal to to the other objects' version number.
 
         Raises:
             TypeError: If 'other' is a type that cannot be compared to.
@@ -180,10 +204,10 @@ class TriNumberVersion(Version):
         """Creates the greater than or equal to comparison for these objects which includes str, list, and tuple.
 
         Args:
-            other (:obj:): The object to compare to this object.
+            other: The object to compare to this object.
 
         Returns:
-            bool: True if this object is greater than or equal to to the other objects' version number.
+            True if this object is greater than or equal to to the other objects' version number.
 
         Raises:
             TypeError: If 'other' is a type that cannot be compared to.
@@ -311,7 +335,7 @@ class TriNumberVersion(Version):
             self.patch = patch
 
     # Type Conversion
-    def list(self) -> list[int, int, int]:
+    def list(self) -> list[int]:
         """Returns the list representation of the version.
 
         Returns:

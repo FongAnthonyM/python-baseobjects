@@ -28,11 +28,12 @@ from typing import Any, Callable, Type
 import pytest
 
 # Local Packages #
-from baseobjects.functions import BaseDecorator
-from baseobjects.testsuite.functions import BaseDecoratorTestSuite
-from baseobjects.testsuite.bases import example_function, example_coroutine
+from src.baseobjects.functions import BaseDecorator
+from src.baseobjects.testsuite.functions import BaseDecoratorTestSuite
+from src.baseobjects.testsuite.bases import example_function, example_coroutine
 
 
+# Definitions #
 # Classes #
 class ConcreteDecorator(BaseDecorator):
     """A concrete implementation of BaseDecorator for testing purposes."""
@@ -66,6 +67,7 @@ class ConcreteDecorator(BaseDecorator):
         return result
 
 
+# Tests #
 class TestBaseDecorator(BaseDecoratorTestSuite):
     """Test the BaseDecorator class.
 
@@ -355,7 +357,7 @@ class TestBaseDecorator(BaseDecoratorTestSuite):
         result = deepcopied(3)
         assert result == 5  # 3 + 2 (default y)
 
-    def test_edge_case_no_function(self) -> None:
+    def test_no_function(self) -> None:
         """Test the edge case where no function is provided to the decorator."""
         # Create a decorator without a function
         decorator = self.TestClass()
@@ -373,7 +375,7 @@ class TestBaseDecorator(BaseDecoratorTestSuite):
         result = decorated(3)
         assert result == 5  # 3 + 2 (default y)
 
-    def test_edge_case_none_function(self) -> None:
+    def test_none_function(self) -> None:
         """Test the edge case where None is provided as the function to the decorator."""
         # Create a decorator with None as the function
         decorator = self.TestClass(func=None)
@@ -391,7 +393,7 @@ class TestBaseDecorator(BaseDecoratorTestSuite):
         result = decorated(3)
         assert result == 5  # 3 + 2 (default y)
 
-    def test_edge_case_coroutine_decorator(self) -> None:
+    def test_coroutine_decorator(self) -> None:
         """Test the edge case where the decorator is applied to a coroutine function."""
         # Define a coroutine to be decorated
         @self.TestClass

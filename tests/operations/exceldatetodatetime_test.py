@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" exceldatetodatetime_test.py
+"""exceldatetodatetime_test.py
 Tests for the excel_date_to_datetime function in the baseobjects package.
 """
 # Header #

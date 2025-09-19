@@ -1,5 +1,10 @@
 """basetimedcache.py
 An abstract class for creating timed cache.
+
+This module provides the BaseTimedCache class and related components for implementing time-based caching functionality.
+It includes classes for cache items, cache callable wrappers, and the main abstract base class that defines the
+interface and common behavior for all timed cache implementations. The caches automatically invalidate entries after
+a specified lifetime has elapsed.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -110,7 +115,7 @@ class BaseTimedCacheCallable(DynamicCallable):
         cache_container: Contains the results of the wrapped function.
         _cache_method: The name of the caching method.
         _previous_cache_method: The previous caching method used.
-        cache: The multiplexer which control the caching method being use.
+        cache: The multiplexer which controls the caching method being use.
 
     Args:
         func: The function to wrap.
@@ -175,8 +180,8 @@ class BaseTimedCacheCallable(DynamicCallable):
         **kwargs: Any,
     ) -> None:
         # Attributes #
-        self._previous_cache_method: str = self.cache_method
-        self.cache: MethodMultiplexer = MethodMultiplexer(instance=self, select=self.cache_method)
+        self._previous_cache_method: str = self._cache_method
+        self.cache: MethodMultiplexer = MethodMultiplexer(instance=self, select=self._cache_method)
 
         # Parent Initialization #
         super().__init__(*args, init=False, **kwargs)
@@ -189,7 +194,6 @@ class BaseTimedCacheCallable(DynamicCallable):
                 typed=typed,
                 call_method=call_method,
                 instanced=instanced,
-                *args,
                 **kwargs,
             )
 
@@ -250,7 +254,7 @@ class BaseTimedCacheCallable(DynamicCallable):
         kwds: dict,
         typed: bool,
         kwd_mark: tuple = (object(),),
-        fasttypes: set = {int, str, frozenset, type(None)},
+        fasttypes: set = {int, str},
         tuple_: AnyCallable = tuple,
         type_: AnyCallable = type,
         len_: AnyCallable = len,
@@ -261,26 +265,18 @@ class BaseTimedCacheCallable(DynamicCallable):
         more memory. If there is only a single argument and its data type is known to cache its hash value, then that
         argument is returned without a wrapper. This saves space and improves lookup speed.
         """
-        # Fast path for common case: single positional argument with no keyword arguments
-        if len(args) == 1 and not kwds and type_(args[0]) in fasttypes:
-            return args[0]
-
-        # Build the key tuple efficiently
-        key_parts = []
-        key_parts.extend(args)
-
+        key = args
         if kwds:
-            key_parts.append(kwd_mark[0])
-            for k, v in kwds.items():
-                key_parts.append(k)
-                key_parts.append(v)
-
+            key += kwd_mark
+            for item in kwds.items():
+                key += item
         if typed:
-            key_parts.extend(type_(v) for v in args)
+            key += tuple_(type_(v) for v in args)
             if kwds:
-                key_parts.extend(type_(v) for v in kwds.values())
-
-        return _HashedSeq(tuple_(key_parts))
+                key += tuple_(type_(v) for v in kwds.values())
+        elif len_(key) == 1 and type_(key[0]) in fasttypes:
+            return key[0]
+        return _HashedSeq(key)
 
     def clear_condition(self, *args: Any, **kwargs: Any) -> bool:
         """The condition used to determine if the cache should be cleared.
@@ -302,13 +298,13 @@ class BaseTimedCacheCallable(DynamicCallable):
 
     def stop_caching(self) -> None:
         """Stops using the cache, storing the method used."""
-        self._previous_cache_method = self.cache.selected
-        self.cache.select("no_cache")
+        self._previous_cache_method = self.cache_method
+        self.cache_method = "no_cache"
         self.clear_cache()
 
     def resume_caching(self) -> None:
         """Resumes caching by setting the call method to the previous call method"""
-        self.cache.select(self._previous_cache_method)
+        self.cache_method = self._previous_cache_method
 
     @contextmanager
     def pause_caching(self) -> ContextManager[None]:

@@ -54,14 +54,18 @@ class ConcreteClassRegistry(BaseClassRegistry):
         """
         return self.get(name, default)
 
+
 class ExampleComponentClass(BaseComponent):
     """A test component class for testing DispatchableComposite."""
+
 
 class ExampleTypeAComponent(BaseComponent):
     """A test component class for type A."""
 
+
 class ExampleTypeBComponent(BaseComponent):
     """A test component class for type B."""
+
 
 class ExampleDispatchableComposite(DispatchableComposite):
     """A base test subclass of DispatchableComposite for testing purposes."""
@@ -200,9 +204,11 @@ class ExampleDispatchableComposite(DispatchableComposite):
 
         return {}
 
+
 class TypeADispatchable(ExampleDispatchableComposite):
     """A subclass of ExampleDispatchableComposite for testing dispatching to type A."""
     class_registration = True
+
 
 class TypeBDispatchable(ExampleDispatchableComposite):
     """A subclass of ExampleDispatchableComposite for testing dispatching to type B."""

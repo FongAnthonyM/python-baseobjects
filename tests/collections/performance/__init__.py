@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """__init__.py
 Performance tests for the collections package.
 """

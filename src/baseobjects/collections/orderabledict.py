@@ -1,5 +1,11 @@
 """orderabledict.py
 A dictionary with an adjustable order and additional supporting methods.
+
+This module provides the OrderableDict class, which extends BaseDict to implement a dictionary that maintains an
+explicit ordering of its keys. Unlike OrderedDict from the standard library, OrderableDict allows for direct
+manipulation of the key order through various methods. It supports accessing items by their position in the order,
+moving items within the order, and other operations that combine dictionary functionality with list-like ordering
+capabilities.
 """
 # Header #
 __package_name__ = "baseobjects"

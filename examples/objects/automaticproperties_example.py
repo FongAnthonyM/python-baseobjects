@@ -10,6 +10,8 @@ This example demonstrates:
 4. Creating properties with different access patterns
 5. Extending AutomaticProperties for specialized behavior
 """
+
+
 # Imports #
 # Standard Libraries #
 from typing import Any, Dict, List, ClassVar

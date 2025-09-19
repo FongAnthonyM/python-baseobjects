@@ -1,5 +1,9 @@
 """basecomposite.py
 A basic composite object which is composed of component objects.
+
+This module provides the BaseComposite class, which implements the Composite design pattern. It allows objects to be
+composed of other objects (components) and provides methods for adding, removing, and managing these components.
+The composite pattern enables clients to treat individual objects and compositions of objects uniformly.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -14,8 +18,6 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from collections.abc import Mapping
-from itertools import chain
 from typing import ClassVar, Any
 
 # Third-Party Packages #
@@ -109,7 +111,7 @@ class BaseComposite(BaseObject):
 
         Args:
             component_kwargs: The keyword arguments for creating the components.
-            component_types: Component class and their keyword arguments to instantiate.
+            component_types: Component classes and their keyword arguments to instantiate.
             components: Components to add.
         """
         new_kwargs = {} if component_kwargs is None else component_kwargs

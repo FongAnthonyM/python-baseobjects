@@ -11,6 +11,8 @@ This example demonstrates:
 5. Handling different input types (str, bytes)
 6. Practical applications for parentheses parsing
 """
+
+
 # Imports #
 # Standard Libraries #
 

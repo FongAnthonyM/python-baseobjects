@@ -1,9 +1,9 @@
 """basefunction_test.py
 Tests for the BaseFunction class in the baseobjects package.
 
-This module provides tests for the BaseFunction class, which extends BaseCallable to create function-like
-callable objects that can be converted to methods when bound to instances. It provides utilities for binding
-to instances and attributes, making it ideal for creating decorators and function factories.
+This module provides tests for the BaseFunction class, which extends BaseCallable to create function-like callable
+objects that can be converted to methods when bound to instances. It provides utilities for binding to instances and
+attributes, making it ideal for creating decorators and function factories.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -19,7 +19,7 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 from types import MethodType
-from typing import Any, Type, Callable
+from typing import Any, Type
 
 # Third-Party Packages #
 import pytest
@@ -39,7 +39,6 @@ class TestBaseFunction(BaseFunctionTestSuite):
 
     # Attributes #
     TestClass: Type[BaseFunction] = BaseFunction
-    BindTargetClass: Type[Any] = ExampleBindTarget
 
     # Instance Methods #
     # Tests

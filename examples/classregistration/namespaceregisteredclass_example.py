@@ -11,12 +11,13 @@ This example demonstrates:
 5. Using the class registry for dispatching
 """
 
+
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar, Dict, Optional, Type
+from typing import Any, ClassVar
 
 # Third-Party Packages #
-from baseobjects.classregistration import NamespaceClassRegistry, NamespaceRegisteredClass
+from baseobjects.classregistration import NamespaceRegisteredClass
 
 # Local Packages #
 

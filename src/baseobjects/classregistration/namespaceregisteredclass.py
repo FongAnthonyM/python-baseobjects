@@ -1,7 +1,8 @@
-"""An abstract class which registers subclasses with namespaces, allowing subclass dispatching.
+"""namespaceregisteredclass.py
+A class which registers its subclasses with namespace information.
 
-This module provides the NamespaceRegisteredClass, which extends BaseRegisteredClass to add namespace-based
-registration and retrieval of subclasses.
+This module provides the NamespaceRegisteredClass, which extends BaseRegisteredClass to add namespace-based registration
+and retrieval of subclasses.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -29,14 +30,14 @@ from .namespaceclassregistry import NamespaceClassRegistry
 # Definitions #
 # Classes #
 class NamespaceRegisteredClass(BaseRegisteredClass):
-    """An abstract class which registers subclasses, allowing subclass dispatching.
+    """A class which registers its subclasses with namespace information.
 
     Attributes:
-        class_registry: A registry of all subclasses of this class.
-        class_registry_head: The root class of the registered classes.
+        class_registry_type: The type of registry to use for storing subclasses.
+        class_registry: A registry of the subclasses.
+        class_registration: Determines if this class/subclass will be added to the registry.
         class_registry_namespace: The namespace of the subclass.
         class_registry_name: The name of which the subclass will be registered as.
-        class_registration: Determines if this class/subclass will be added to the registry.
         _module_: Optional module name to use instead of __module__ for namespace.
     """
 
@@ -49,7 +50,13 @@ class NamespaceRegisteredClass(BaseRegisteredClass):
 
     # Class Methods #
     # Construction/Destruction
-    def __init_subclass__(cls, namespace: str | None = None, name: str | None = None, **kwargs: Any) -> None:
+    def __init_subclass__(
+        cls,
+        namespace: str | None = None,
+        name: str | None = None,
+        register_kwargs: dict[str, Any] | None = None,
+        **kwargs: Any,
+    ) -> None:
         """The init when creating a subclass.
 
         Args:
@@ -57,16 +64,9 @@ class NamespaceRegisteredClass(BaseRegisteredClass):
             name: The name to register the subclass as. If None, uses class_registry_name or class name.
             **kwargs: Keyword arguments for creating a subclass.
         """
-        super().__init_subclass__(**kwargs)
-
-        # Add subclass to the registry.
-        if cls.class_registration:
-            if cls.class_registry is None:
-                cls.create_class_registry()
-            elif not cls.class_registry:
-                cls.class_registry_head = cls
-
-            cls.register_class(namespace=namespace or cls.class_registry_namespace, name=name)
+        n_kwargs = {"namespace": namespace or cls.class_registry_namespace, "name": name}
+        r_kwargs = n_kwargs if register_kwargs is None else register_kwargs | n_kwargs
+        super().__init_subclass__(register_kwargs=r_kwargs, **kwargs)
 
     # Register
     @classmethod
@@ -95,10 +95,10 @@ class NamespaceRegisteredClass(BaseRegisteredClass):
         if name is None:
             name = cls.class_registry_name if "class_registry_name" in cls.__dict__ else cls.__name__
 
-        cls.class_registry.register_classes(cls, namespace, name)
+        cls.class_registry.register_class(cls, namespace, name)
 
     @classmethod
-    def get_registered_class(cls, namespace: str, name: str, module: str | None = None) -> Optional["BaseRegisteredClass"]:
+    def get_registered_class(cls, namespace: str, name: str, module: str | None = None) -> Optional[BaseRegisteredClass]:
         """Gets a subclass from the registry.
 
         Args:

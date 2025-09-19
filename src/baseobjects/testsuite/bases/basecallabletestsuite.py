@@ -1,9 +1,9 @@
 """basecallabletestsuite.py
 Base class for test suites which test BaseCallable and its subclasses.
 
-This module provides a base test suite for testing the BaseCallable class and its subclasses. It defines
-abstract methods for testing the core functionality of callable objects, including instance creation,
-function calling, attribute copying, binding, and coroutine support.
+This module provides a base test suite for testing the BaseCallable class and its subclasses. It defines abstract 
+methods for testing the core functionality of callable objects, including instance creation, function calling, binding, 
+and coroutine support.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -21,6 +21,8 @@ __version__ = "1.12.0"
 import asyncio
 from abc import abstractmethod
 import copy
+import pickle
+from types import MethodType
 from typing import Any, Type, Callable
 
 # Third-Party Packages #
@@ -73,6 +75,43 @@ async def example_coroutine(x: int, y: int = 2) -> int:
     return x + y
 
 
+async def example_coroutine_method(self, x: int, y: int = 2) -> tuple[int, Any]:
+    """A simple test coroutine that adds two numbers.
+
+    Args:
+        x: First number to add
+        y: Second number to add (default: 2)
+
+    Returns:
+        A tuple with the sum of x and y, and the instance
+    """
+    await asyncio.sleep(0.001)  # Simulate some async work
+    return x + y, self
+
+
+class ExampleBindTarget:
+    """A test class for testing method binding."""
+
+    # Attributes #
+    value: int
+
+    # Magic Methods #
+    # Construction/Destruction
+    def __init__(self, value: int = 42):
+        """Initialize the instance.
+
+        Args:
+            value: The initial value to set.
+        """
+        self.value = value
+
+    # Instance Methods #
+    # Constructors/Destructors
+    def method(self, x: int) -> int:
+        """A test method that returns the sum of self.value and x."""
+        return self.value + x
+
+
 # Classes #
 class BaseCallableTestSuite(BaseObjectTestSuite):
     """Base class for test suites which test BaseCallable and its subclasses.
@@ -87,9 +126,88 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
 
     # Attributes #
     TestClass: Type[BaseCallable]
+    BindTargetClass: Type[Any] = ExampleBindTarget
 
     # Instance Methods #
+    def create_bind_target(self, *args: Any, **kwargs) -> Any:
+        """Create a test instance to bind methods to.
+
+        Args:
+            *args: Positional arguments to pass to the class constructor.
+            **kwargs: Keyword arguments to pass to the class constructor.
+
+        Returns:
+            The test instance.
+        """
+        return self.BindTargetClass(*args, **kwargs)
+    
+    def create_function_object(self, func: Callable[..., Any] = example_function, *args: Any, **kwargs: Any) -> Any:
+        """Create a BaseCallable instance that wraps a function.
+
+        Args:
+            func: The function to wrap.
+            *args: Positional arguments to pass to the class constructor.
+            **kwargs: Keyword arguments to pass to the class constructor.
+
+        Returns:
+            The test instance.
+        """
+        return self.TestClass(func, *args, **kwargs)
+    
+    def create_method_object(self, func: Callable[..., Any] = example_method, *args: Any, **kwargs: Any) -> Any:
+        """Create a BaseCallable instance that wraps a method.
+        
+        Args:
+            func: The method to wrap.
+            *args: Positional arguments to pass to the class constructor.
+            **kwargs: Keyword arguments to pass to the class constructor.
+
+        Returns:
+            The test instance.
+        """
+        return self.TestClass(func, *args, **kwargs)
+
+    def create_coroutine_object(self, func: Callable[..., Any] = example_coroutine, *args: Any, **kwargs: Any) -> Any:
+        """Create a BaseCallable instance that wraps a coroutine function.
+
+        Args:
+            func: The coroutine function to wrap.
+            *args: Positional arguments to pass to the class constructor.
+            **kwargs: Keyword arguments to pass to the class constructor.
+
+        Returns:
+            The test instance.
+        """
+        return self.TestClass(func, *args, **kwargs)
+
+    def create_coroutine_method_object(
+        self,
+        func: Callable[..., Any] = example_coroutine_method,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Any:
+        """Create a BaseCallable instance that wraps a coroutine method.
+
+        Args:
+            func: The coroutine method to wrap.
+            *args: Positional arguments to pass to the class constructor.
+            **kwargs: Keyword arguments to pass to the class constructor.
+
+        Returns:
+            The test instance.
+        """
+        return self.TestClass(func, *args, **kwargs)
+
     # Fixtures
+    @pytest.fixture
+    def test_bind_target(self) -> Any:
+        """Create a test instance to bind methods to.
+
+        Returns:
+            Any: An instance to bind methods to.
+        """
+        return self.create_bind_target()
+
     @pytest.fixture
     def test_function_object(self) -> BaseCallable:
         """Create a test callable object that wraps a function.
@@ -97,16 +215,16 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
         Returns:
             BaseCallable: An instance of the test class that wraps a function.
         """
-        return self.TestClass(example_function)
+        return self.create_function_object()
 
     @pytest.fixture
     def test_method_object(self) -> BaseCallable:
-        """Create a test callable object that wraps a function.
+        """Create a test callable object that wraps a method.
 
         Returns:
             BaseCallable: An instance of the test class that wraps a function.
         """
-        return self.TestClass(example_method)
+        return self.create_method_object()
 
     @pytest.fixture
     def test_coroutine_object(self) -> BaseCallable:
@@ -115,7 +233,16 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
         Returns:
             BaseCallable: An instance of the test class that wraps a coroutine function.
         """
-        return self.TestClass(example_coroutine)
+        return self.create_coroutine_object()
+
+    @pytest.fixture
+    def test_coroutine_method_object(self) -> BaseCallable:
+        """Create a test callable object that wraps a coroutine method.
+
+        Returns:
+            BaseCallable: An instance of the test class that wraps a coroutine function.
+        """
+        return self.create_coroutine_method_object()
 
     @pytest.fixture
     def test_object(self, test_function_object: BaseCallable, *args: Any, **kwargs: Any) -> BaseCallable:
@@ -146,7 +273,8 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
     def test_copy(self, test_object: BaseCallable) -> None:
         """Test the copy behavior of the callable object.
 
-        This test verifies that copy creates a new object with the same wrapped function.
+        This test verifies that copy creates a new object with the same wrapped function. This method may be overwritten
+        to include validation beyond checking that the function is correct.
 
         Args:
             test_object: A fixture providing a BaseCallable instance.
@@ -162,7 +290,8 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
     def test_copy_method(self, test_object: BaseCallable) -> None:
         """Test the copy method behavior of the callable object.
 
-        This test verifies that copy creates a new object with the same wrapped function.
+        This test verifies that copy creates a new object with the same wrapped function. This method may be overwritten
+        to include validation beyond checking that the function is correct.
 
         Args:
             test_object: A fixture providing a BaseCallable instance.
@@ -178,7 +307,8 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
     def test_deepcopy(self, test_object: BaseCallable, memo: dict | None = None) -> None:
         """Test the deep copy behavior of the callable object.
 
-        This test verifies that deepcopy creates a new object with the same wrapped function.
+        This test verifies that deepcopy creates a new object with the same wrapped function. This method may be
+        overwritten to include validation beyond checking that the function is correct.
 
         Args:
             test_object: A fixture providing a BaseCallable instance.
@@ -197,7 +327,8 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
     def test_deepcopy_method(self, test_object: BaseCallable, memo: dict | None = None) -> None:
         """Test the deep copy method behavior of the callable object.
 
-        This test verifies that deepcopy creates a new object with the same wrapped function.
+        This test verifies that deepcopy creates a new object with the same wrapped function. This method may be
+        overwritten to include validation beyond checking that the function is correct.
 
         Args:
             test_object: A fixture providing a BaseCallable instance.
@@ -217,13 +348,12 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
         """Test pickling and unpickling of the callable object.
 
         This test verifies that the object can be pickled and unpickled correctly, and that the unpickled object
-        has the same wrapped function.
+        has the same wrapped function. This method may be overwritten to include validation beyond checking that the
+        function is correct.
 
         Args:
             test_object: A fixture providing a BaseCallable instance.
         """
-        import pickle
-
         # Pickle and Unpickle Object
         pickled = pickle.dumps(test_object)
         unpickled = pickle.loads(pickled)
@@ -250,41 +380,82 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
         """
 
     @abstractmethod
-    def test_bind_builtin(self, test_method_object: BaseCallable) -> None:
-        """Test that the callable object can be bound to an instance using the builtin method.
-
-        Args:
-            test_method_object: A fixture providing a BaseCallable instance that wraps a function.
-        """
-
-    @abstractmethod
-    def test_bind_wrapped(self, test_method_object: BaseCallable) -> None:
-        """Test that the wrapped function can be bound to an instance.
-
-        Args:
-            test_method_object: A fixture providing a BaseCallable instance that wraps a function.
-        """
-
-    @abstractmethod
     def test_call_wrapped(self, test_function_object: BaseCallable) -> None:
         """Test that the wrapped function can be called directly.
 
         Args:
-            test_function_object: A fixture providing a BaseCallable instance that wraps a function.
+            test_function_object: A fixture providing a BaseFunction instance that wraps a function.
         """
 
-    @abstractmethod
-    def test_coroutine(self, test_coroutine_object: BaseCallable) -> None:
-        """Test that the callable object correctly handles coroutine functions.
+    def test_binding(self, test_method_object: BaseCallable, test_bind_target: "BindTargetClass") -> None:
+        """Test that the function can be bound to an instance to create a method.
+
+        This test only varifies that a bound method is returned. This method may be overwritten to include validation
+        that the method functions as intended.
 
         Args:
-            test_coroutine_object: A fixture providing a BaseCallable instance that wraps a coroutine function.
+            test_method_object: A fixture providing a BaseCallable instance that wraps a function.
+            test_bind_target: A fixture providing an instance to bind the method to.
         """
+        bound_method = test_method_object.__get__(test_bind_target, self.BindTargetClass)
+        assert bound_method.__self__ is test_bind_target
 
-    @abstractmethod
-    def test_as_function_coroutine(self, test_coroutine_object: BaseCallable) -> None:
-        """Test that the callable object wrapping a coroutine can be converted to a coroutine function.
+    def test_bind_builtin(self, test_method_object: BaseCallable, test_bind_target: "BindTargetClass") -> None:
+        """Test that the callable object can be bound to an instance using the builtin method.
+
+        This test only varifies that a bound method is returned. This method may be overwritten to include validation
+        that the method functions as intended.
 
         Args:
-            test_coroutine_object: A fixture providing a BaseCallable instance that wraps a coroutine function.
+            test_method_object: A fixture providing a BaseCallable instance that wraps a function.
+            test_bind_target: A fixture providing an instance to bind the method to.
         """
+        bound_method = test_method_object.bind_builtin(test_bind_target, self.BindTargetClass)
+        assert isinstance(bound_method, MethodType)
+        assert bound_method.__func__ is test_method_object
+        assert bound_method.__self__ is test_bind_target
+
+    def test_bind_wrapped(self, test_method_object: BaseCallable, test_bind_target: "BindTargetClass") -> None:
+        """Test that the wrapped function can be bound to an instance.
+
+        This test only varifies that a bound method is returned. This method may be overwritten to include validation
+        that the method functions as intended.
+
+        Args:
+            test_method_object: A fixture providing a BaseCallable instance that wraps a function.
+            test_bind_target: A fixture providing an instance to bind the method to.
+        """
+        bound_method = test_method_object.bind_wrapped(test_bind_target, self.BindTargetClass)
+        assert bound_method.__func__ is test_method_object.__func__
+        assert bound_method.__self__ is test_bind_target
+
+    def test_descriptor_protocol(self, test_method_object: BaseCallable) -> None:
+        """Test that the callable implements the descriptor protocol for method binding.
+
+        This test only varifies that the descriptor returns a bound method. This method may be overwritten to include
+        validation that the method functions as intended.
+
+        Args:
+            test_method_object: A fixture providing a BaseCallable instance that wraps a function.
+        """
+        class BindTarget:
+            new_method = test_method_object
+
+        instance = BindTarget()
+        assert isinstance(instance.new_method, MethodType)
+        assert instance.new_method.__self__ is instance
+
+    def test_attribute_copying(self) -> None:
+        """Test that attributes from the wrapped function are correctly copied to the callable object."""
+        # Create a temporary function
+        def temp_func(x: int, y: int = 2) -> int:
+            return x + y
+        
+        # Create an attribute in the function
+        temp_func.new_attribute = "test"
+        
+        # Create a callable object
+        test_object = self.TestClass(temp_func)
+        
+        # Validate the new attribute is present and the same
+        assert test_object.new_attribute == temp_func.new_attribute

@@ -1,16 +1,5 @@
 """__init__.py
-Examples for the versioning package.
-
-This module serves as an initialization file for the versioning examples package. It contains examples that demonstrate
-how to use the versioning classes in the baseobjects package, such as Version and TriNumberVersion.
-
-Typical usage example:
-
-  # Import the examples
-  from examples.versioning import trinumberversion_example, version_example
-
-  # Run a specific example
-  trinumberversion_example.basic_usage_example()
+Examples for the operations package.
 """
 # Header #
 __package_name__ = "baseobjects"

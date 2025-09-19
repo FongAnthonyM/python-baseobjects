@@ -1,5 +1,9 @@
 """callables.py
 Type hints for callables.
+
+This module provides type hint definitions for various callable objects used throughout the baseobjects package.
+It includes type hints for general callables, object methods, and property-related methods (getters, setters, and
+deleters). These type hints help with static type checking and improve code documentation.
 """
 # Header #
 __package_name__ = "baseobjects"

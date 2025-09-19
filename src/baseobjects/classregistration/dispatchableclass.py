@@ -1,5 +1,10 @@
 """dispatchableclass.py
-An abstract class which dispatches a subclasses or itself.
+An abstract class which registers subclasses and dispatches itself to subclasses when __new__ is called.
+
+This module provides the DispatchableClass class, which extends BaseRegisteredClass to add automatic dispatching
+functionality. When instantiated, it can automatically select and instantiate the appropriate subclass based on the
+provided arguments. This enables factory-like behavior where the correct implementation is chosen at runtime based
+on input parameters, without requiring explicit conditional logic.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -19,13 +24,20 @@ from typing import Any
 # Third-Party Packages #
 
 # Local Packages #
-from baseobjects.classregistration.baseregisteredclass import BaseRegisteredClass
+from .baseregisteredclass import BaseRegisteredClass
 
 
 # Definitions #
 # Classes #
 class DispatchableClass(BaseRegisteredClass):
-    """An abstract class which registers subclasses, allowing subclass dispatching."""
+    """An abstract class which registers subclasses and dispatches itself to subclasses when __new__ is called.
+
+    DispatchableClass extends BaseRegisteredClass to add automatic dispatching functionality. When instantiated, it can
+    dispatch itself to the correct subclass based on the provided arguments. This enables factory-like behavior where
+    the correct implementation is chosen at runtime based on input parameters, without requiring explicit conditional
+    logic. However, DispatchableClass does not implement class registration and dispatching, so it must be implemented
+    in a subclass.
+    """
 
     # Class Methods #
     @classmethod

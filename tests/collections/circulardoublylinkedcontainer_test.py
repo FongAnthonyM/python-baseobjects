@@ -712,7 +712,7 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         # Verify data
         assert data == ["C", "B", "A", "C", "B", "A"]
 
-    def test_edge_case_empty_container_operations(self, empty_container: CircularDoublyLinkedContainer) -> None:
+    def test_empty_container_operations(self, empty_container: CircularDoublyLinkedContainer) -> None:
         """Test operations on an empty container.
 
         This test verifies that operations on an empty container behave correctly.

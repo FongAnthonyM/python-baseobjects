@@ -9,6 +9,8 @@ This example demonstrates:
 3. Outputting binary values in different types (int, bool, str)
 4. Handling edge cases
 """
+
+
 # Imports #
 # Standard Libraries #
 

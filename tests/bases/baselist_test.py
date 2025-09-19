@@ -260,7 +260,7 @@ class TestBaseList(BaseObjectTestSuite):
         assert populated_test_list[::2] == ["value0", "value2", "value4"]
         assert populated_test_list[::-1] == ["value4", "value3", "value2", "value1", "value0"]
 
-    def test_list_edge_cases(self) -> None:
+    def test_list_s(self) -> None:
         """Test edge cases for BaseList."""
         # Test empty list
         empty_list = self.TestClass()

@@ -1,10 +1,10 @@
-"""basefunctionobjecttestsuite.py
+"""basefunctiontestsuite.py
 Base class for test suites which test BaseFunction and its subclasses.
 
-This module provides a base test suite for testing the BaseFunction class and its subclasses. It defines
-abstract methods for testing the core functionality of function objects, including binding to instances,
-binding to attributes, descriptor protocol, and custom method types. It inherits from BaseCallableTestSuite
-to include tests for the callable behavior of functions.
+This module provides a base test suite for testing the BaseFunction class and its subclasses. It defines abstract
+methods for testing the core functionality of function objects, including binding to instances, binding to attributes,
+descriptor protocol, and custom method types. It inherits from BaseCallableTestSuite to include tests for the callable
+behavior of functions.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -20,20 +20,20 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 from abc import abstractmethod
-import copy
-from typing import Any, Type, Callable
+from types import MethodType
+from typing import Any, Type
 
 # Third-Party Packages #
 import pytest
 
 # Local Packages #
-from ...bases import BaseFunction, BaseMethod
-from .basecallabletestsuite import BaseCallableTestSuite, example_method, example_function, example_coroutine
+from ...bases import BaseFunction
+from .basecallabletestsuite import BaseCallableTestSuite
 
 
 # Definitions #
 # Classes #
-class BaseFunctionObjectTestSuite(BaseCallableTestSuite):
+class BaseFunctionTestSuite(BaseCallableTestSuite):
     """Base class for test suites which test BaseFunction and its subclasses.
 
     This class provides common functionality for test suites that test function objects, including fixtures and
@@ -46,31 +46,8 @@ class BaseFunctionObjectTestSuite(BaseCallableTestSuite):
 
     # Attributes #
     TestClass: Type[BaseFunction]
-    BindTargetClass: Type[Any]
 
     # Instance Methods #
-    def create_bind_target(self, *args: Any, **kwargs) -> Any:
-        """Create a test instance to bind methods to.
-
-        Args:
-            *args: Positional arguments to pass to the class constructor.
-            **kwargs: Keyword arguments to pass to the class constructor.
-
-        Returns:
-            The test instance.
-        """
-        return self.BindTargetClass(*args, **kwargs)
-
-    # Fixtures
-    @pytest.fixture
-    def test_bind_target(self) -> Any:
-        """Create a test instance to bind methods to.
-
-        Returns:
-            Any: An instance to bind methods to.
-        """
-        return self.create_bind_target()
-
     # Tests
     @abstractmethod
     def test_instance_creation(self, *args: Any, **kwargs: Any) -> None:
@@ -100,26 +77,6 @@ class BaseFunctionObjectTestSuite(BaseCallableTestSuite):
         """
 
     @abstractmethod
-    def test_attribute_copying(self) -> None:
-        """Test that attributes from the wrapped function are correctly copied to the callable object."""
-
-    @abstractmethod
-    def test_bind_builtin(self, test_method_object: BaseFunction) -> None:
-        """Test that the callable object can be bound to an instance using the builtin method.
-
-        Args:
-            test_method_object: A fixture providing a BaseFunction instance that wraps a function.
-        """
-
-    @abstractmethod
-    def test_bind_wrapped(self, test_method_object: BaseFunction) -> None:
-        """Test that the wrapped function can be bound to an instance.
-
-        Args:
-            test_method_object: A fixture providing a BaseFunction instance that wraps a function.
-        """
-
-    @abstractmethod
     def test_call_wrapped(self, test_function_object: BaseFunction) -> None:
         """Test that the wrapped function can be called directly.
 
@@ -127,53 +84,56 @@ class BaseFunctionObjectTestSuite(BaseCallableTestSuite):
             test_function_object: A fixture providing a BaseFunction instance that wraps a function.
         """
 
-    @abstractmethod
-    def test_coroutine(self, test_coroutine_object: BaseFunction) -> None:
-        """Test that the callable object correctly handles coroutine functions.
-
-        Args:
-            test_coroutine_object: A fixture providing a BaseFunction instance that wraps a coroutine function.
-        """
-
-    @abstractmethod
-    def test_as_function_coroutine(self, test_coroutine_object: BaseFunction) -> None:
-        """Test that the callable object wrapping a coroutine can be converted to a coroutine function.
-
-        Args:
-            test_coroutine_object: A fixture providing a BaseFunction instance that wraps a coroutine function.
-        """
-
-    @abstractmethod
-    def test_bind(self, test_object: BaseFunction, test_instance: Any) -> None:
+    def test_bind(self, test_method_object: BaseFunction, test_bind_target: "BindTargetClass") -> None:
         """Test that the function can be bound to an instance to create a method.
 
-        Args:
-            test_object: A fixture providing a BaseFunction instance.
-            test_instance: A fixture providing an instance to bind the function to.
-        """
+        This test only varifies that a bound method is returned. This method may be overwritten to include validation
+        that the method functions as intended.
 
-    @abstractmethod
-    def test_bind_to_attribute(self, test_object: BaseFunction, test_instance: Any) -> None:
+        Args:
+            test_method_object: A fixture providing a BaseCallable instance that wraps a function.
+            test_bind_target: A fixture providing an instance to bind the method to.
+        """
+        bound_method = test_method_object.bind(test_bind_target, self.BindTargetClass)
+        assert isinstance(bound_method, test_method_object.method_type)
+        assert bound_method.__self__ is test_bind_target
+
+    def test_bind_to_attribute(self, test_method_object: BaseFunction) -> None:
         """Test that the function can be bound to an instance and set as an attribute.
 
-        Args:
-            test_object: A fixture providing a BaseFunction instance.
-            test_instance: A fixture providing an instance to bind the function to.
-        """
+        This test only varifies that a bound method is returned and bound to the target instance's attribute. This
+        method may be overwritten to include validation that the method functions as intended.
 
-    @abstractmethod
-    def test_descriptor_protocol(self, test_object: BaseFunction, test_instance: Any) -> None:
+        Args:
+            test_method_object: A fixture providing a BaseFunction instance that wraps a function.
+        """
+        new_bind_target = self.create_bind_target()
+        bound_method = test_method_object.bind_to_attribute(new_bind_target, self.BindTargetClass)
+        assert isinstance(bound_method, test_method_object.method_type)
+        assert bound_method.__self__ is new_bind_target
+        assert hasattr(new_bind_target, test_method_object.__wrapped__.__name__)
+
+        bound_method_named = test_method_object.bind_to_attribute(
+            new_bind_target,
+            self.BindTargetClass,
+            name="named_method",
+        )
+        assert isinstance(bound_method_named, test_method_object.method_type)
+        assert bound_method_named.__self__ is new_bind_target
+        assert hasattr(new_bind_target, "named_method")
+
+    def test_descriptor_protocol(self, test_method_object: BaseFunction) -> None:
         """Test that the function implements the descriptor protocol for method binding.
 
-        Args:
-            test_object: A fixture providing a BaseFunction instance.
-            test_instance: A fixture providing an instance to bind the function to.
-        """
-
-    @abstractmethod
-    def test_custom_method_type(self, test_instance: Any) -> None:
-        """Test that the function can use a custom method type for binding.
+        This test only varifies that the descriptor returns a bound method. This method may be overwritten to include
+        validation that the method functions as intended.
 
         Args:
-            test_instance: A fixture providing an instance to bind the function to.
+            test_method_object: A fixture providing a BaseFunction instance that wraps a function.
         """
+        class BindTarget:
+            new_method = test_method_object
+
+        instance = BindTarget()
+        assert isinstance(instance.new_method, MethodType)
+        assert instance.new_method.__self__ is instance

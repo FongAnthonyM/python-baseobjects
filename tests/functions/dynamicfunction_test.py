@@ -279,8 +279,6 @@ class TestDynamicFunction(DynamicFunctionTestSuite):
         # Test with default bind_method
         assert test_function_object.bind_method == "bind_builtin"
         bound_function = test_function_object.__get__(test_object_instance, type(test_object_instance))
-
-        # Verify the binding
         assert bound_function.__self__ is test_object_instance
 
         # Call the bound function
@@ -376,7 +374,7 @@ class TestDynamicFunction(DynamicFunctionTestSuite):
         assert result == 7  # 5 + 2 (default y)
         assert instance is test_object_instance
 
-    def test_edge_case_no_function(self) -> None:
+    def test_no_function(self) -> None:
         """Test the edge case where no function is provided."""
         # Create an instance without a function
         instance = self.TestClass()
@@ -391,7 +389,7 @@ class TestDynamicFunction(DynamicFunctionTestSuite):
         with pytest.raises(TypeError):
             instance(3)
 
-    def test_edge_case_change_function(self) -> None:
+    def test_change_function(self) -> None:
         """Test the edge case where the function is changed after creation."""
         # Create an instance with a function
         instance = self.TestClass(add_function)

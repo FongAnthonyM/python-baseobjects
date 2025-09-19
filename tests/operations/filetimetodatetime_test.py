@@ -1,7 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" filetimetodatetime_test.py
+"""filetimetodatetime_test.py
 Tests for the filetime_to_datetime function in the baseobjects package.
+
+This module contains tests for the filetime_to_datetime function, which converts Windows FILETIME values to Python
+datetime objects. It tests various input types (int, float, str, bytes, bytearray) and timezone handling, as well as
+error cases for invalid inputs.
+
+Typical usage example:
+
+  # Run all tests in this module
+  pytest tests/operations/filetimetodatetime_test.py
+
+  # Run a specific test
+  pytest tests/operations/filetimetodatetime_test.py::TestFiletimeToDatetime::test_filetime_to_datetime_int
 """
 # Header #
 __package_name__ = "baseobjects"

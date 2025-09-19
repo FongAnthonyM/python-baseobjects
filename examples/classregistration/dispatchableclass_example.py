@@ -68,26 +68,6 @@ class FileHandler(DispatchableClass):
 
     # Class Methods #
     @classmethod
-    def get_class_information(cls, filename: str, *args: Any, **kwargs: Any) -> Tuple[str]:
-        """Get the class information based on the filename.
-
-        This method extracts the file extension from the filename and returns it as the key to look up the appropriate
-        handler class.
-
-        Args:
-            filename: The name of the file to handle.
-            *args: Additional positional arguments (not used).
-            **kwargs: Additional keyword arguments (not used).
-
-        Returns:
-            A tuple containing the file extension as the key for class lookup.
-        """
-        if "." in filename:
-            extension = filename.split(".")[-1].lower()
-            return (extension,)
-        return ("txt",)  # Default to text handler if no extension
-
-    @classmethod
     def register_class(cls, name: str = None) -> None:
         """Register this class in the class registry.
 
@@ -116,6 +96,26 @@ class FileHandler(DispatchableClass):
             return None
 
         return cls.class_registry.get_class(name)
+
+    @classmethod
+    def get_class_information(cls, filename: str, *args: Any, **kwargs: Any) -> Tuple[str]:
+        """Get the class information based on the filename.
+
+        This method extracts the file extension from the filename and returns it as the key to look up the appropriate
+        handler class.
+
+        Args:
+            filename: The name of the file to handle.
+            *args: Additional positional arguments (not used).
+            **kwargs: Additional keyword arguments (not used).
+
+        Returns:
+            A tuple containing the file extension as the key for class lookup.
+        """
+        if "." in filename:
+            extension = filename.split(".")[-1].lower()
+            return (extension,)
+        return ("txt",)  # Default to text handler if no extension
 
     # Instance Attributes #
     filename: str

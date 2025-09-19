@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" dynamicwrapper_test.py
+"""dynamicwrapper_test.py
 Tests for the DynamicWrapper class in the baseobjects package.
 """
 # Header #
@@ -16,8 +16,6 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-import copy
-import pickle
 from typing import Any
 
 # Third-Party Packages #
@@ -25,7 +23,7 @@ import pytest
 
 # Local Packages #
 from src.baseobjects.wrappers import DynamicWrapper
-from src.baseobjects.testsuite.wrappertestsuite import WrapperTestSuite
+from src.baseobjects.testsuite.wrappers.wrappertestsuite import WrapperTestSuite
 
 
 # Definitions #

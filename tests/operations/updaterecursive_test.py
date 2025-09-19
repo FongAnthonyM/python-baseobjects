@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" updaterecursive_test.py
+"""updaterecursive_test.py
 Tests for the update_recursive function in the baseobjects package.
 """
 # Header #

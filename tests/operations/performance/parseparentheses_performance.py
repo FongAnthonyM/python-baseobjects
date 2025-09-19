@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" parseparentheses_performance.py
+"""parseparentheses_performance.py
 Performance tests_old_ for the parse_parentheses function in the baseobjects.operations package.
 """
 # Header #
@@ -25,8 +25,8 @@ from typing import Any, Callable, List, Set, Union
 import pytest
 
 # Local Packages #
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 from src.baseobjects.operations import parse_parentheses
-from tests.bases.performance.base_performance import ClassPerformanceTest
 
 
 # Definitions #
@@ -148,7 +148,7 @@ def standard_parse_parentheses_bytes(
 
 
 # Classes #
-class TestParseParentheses(ClassPerformanceTest):
+class TestParseParentheses(BasePerformanceTestSuite):
     """Test the performance of the parse_parentheses function.
 
     This class tests_old_ the performance of the parse_parentheses function, which parses expressions with parentheses and

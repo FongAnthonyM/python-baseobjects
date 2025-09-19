@@ -1,5 +1,5 @@
-""" baseclasstestsuite.py
-Base class for test suites which test a class.
+"""basetestsuite.py
+Base class for test suites.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -14,8 +14,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from abc import ABC, abstractmethod
-from typing import Any, Type
+from abc import ABC
 
 # Third-Party Packages #
 
@@ -24,28 +23,5 @@ from typing import Any, Type
 
 # Definitions #
 # Classes #
-class BaseClassTestSuite(ABC):
-    """Base class for test suites which test a class.
-
-    This class provides common functionality for test suites, including fixtures and utility methods. Subclasses should
-    implement the test_instance_creation method and set the TestClass attribute.
-
-    Attributes:
-        TestClass: The class that the test suite is testing.
-    """
-
-    # Attributes #
-    TestClass: Type[Any] | None = None
-
-    # Instance Methods #
-    # Tests
-    @abstractmethod
-    def test_instance_creation(self, *args: Any, **kwargs: Any) -> None:
-        """Test that instances of the class can be created.
-
-        This is an abstract method that must be implemented by subclasses.
-
-        Args:
-            *args: Positional arguments list to pass to the class constructor.
-            **kwargs: Keyword arguments to pass to the class constructor.
-        """
+class BaseTestSuite(ABC):
+    """Base class for test suites."""

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" noxfile.py
+"""noxfile.py
 Nox sessions.
 """
 # Imports #
@@ -37,7 +37,7 @@ nox.options.sessions = (
     "pre-commit",
     "safety",
     "mypy",
-    "tests",
+    "tests_old_",
     "typeguard",
     "xdoctest",
     "docs-build",

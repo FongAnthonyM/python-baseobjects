@@ -1,5 +1,10 @@
 """timedcache.py
 A cache that periodically resets and include its instantiation decorator function.
+
+This module provides the TimedCache class and related components for implementing a time-based cache with multiple
+items. It includes TimedCacheCallable and TimedCacheMethod classes that wrap functions and methods to provide caching
+functionality with automatic expiration after a specified lifetime. The cache can also be limited by size, with a
+configurable replacement policy.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -22,7 +27,7 @@ from typing import Any
 
 # Local Packages #
 from ...typing import AnyCallable
-from ...bases import search_sentinel
+from ...bases import SEARCHSENTINEL
 from ...collections import CircularDoublyLinkedContainer
 from .basetimedcache import BaseTimedCacheCallable, BaseTimedCacheMethod, BaseTimedCache
 
@@ -159,9 +164,9 @@ class TimedCacheCallable(BaseTimedCacheCallable):
             The result of the wrapped function.
         """
         key = self.create_key(args, kwargs, self.typed)
-        cache_item = self.cache_container.get(key, search_sentinel)
+        cache_item = self.cache_container.get(key, SEARCHSENTINEL)
 
-        if cache_item is not search_sentinel:
+        if cache_item is not SEARCHSENTINEL:
             return cache_item.result
         else:
             result = self.__func__(*args, **kwargs)
@@ -179,9 +184,9 @@ class TimedCacheCallable(BaseTimedCacheCallable):
             The result of the wrapped function.
         """
         key = self.create_key(args, kwargs, self.typed)
-        cache_item = self.cache_container.get(key, search_sentinel)
+        cache_item = self.cache_container.get(key, SEARCHSENTINEL)
 
-        if cache_item is not search_sentinel:
+        if cache_item is not SEARCHSENTINEL:
             return cache_item.result
         else:
             result = self.__func__(*args, **kwargs)

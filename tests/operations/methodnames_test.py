@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" methodnames_test.py
+"""methodnames_test.py
 Tests for the method name functions in the baseobjects package.
 """
 # Header #

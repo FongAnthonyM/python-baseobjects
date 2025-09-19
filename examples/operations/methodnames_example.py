@@ -9,6 +9,8 @@ This example demonstrates:
 3. Comparing method names between different objects
 4. Practical applications for method name introspection
 """
+
+
 # Imports #
 # Standard Libraries #
 import datetime

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" filetimetodatetime_performance.py
+"""filetimetodatetime_performance.py
 Performance tests_old_ for the filetime_to_datetime function in the baseobjects.operations package.
 """
 # Header #
@@ -24,8 +24,8 @@ from typing import Any, Union
 import pytest
 
 # Local Packages #
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 from src.baseobjects.operations.filetimetodatetime import filetime_to_datetime, FILETIME_INIT_DATE
-from tests.bases.performance.base_performance import ClassPerformanceTest
 
 
 # Definitions #
@@ -137,7 +137,7 @@ def standard_filetime_to_datetime(timestamp: Union[int, float, str, bytes, bytea
 
 
 # Classes #
-class TestFiletimeToDatetime(ClassPerformanceTest):
+class TestFiletimeToDatetime(BasePerformanceTestSuite):
     """Test the performance of the filetime_to_datetime function.
 
     This class tests_old_ the performance of the filetime_to_datetime function, which converts a Windows filetime to a datetime.

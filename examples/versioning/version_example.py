@@ -9,6 +9,8 @@ This example demonstrates:
 3. Using the Version class for version comparison
 4. Converting versions to different formats
 """
+
+
 # Imports #
 # Standard Libraries #
 from typing import Any, List, Tuple

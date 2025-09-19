@@ -39,6 +39,8 @@ class ExampleCompositeClass(BaseComposite):
         "default_component": (ExampleComponentClass, {})
     }
 
+
+# Tests #
 class TestBaseComposite(BaseCompositeTestSuite):
     """Test the BaseComposite class.
 
@@ -47,20 +49,10 @@ class TestBaseComposite(BaseCompositeTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BaseComposite] = ExampleCompositeClass
     TestComponent: Type[BaseComponent] = ExampleComponentClass
+    TestClass: Type[BaseComposite] = ExampleCompositeClass
 
     # Instance Methods #
-    # Fixtures
-    @pytest.fixture
-    def test_object(self) -> BaseComposite:
-        """Create a test object.
-
-        Returns:
-            A test composite object instance.
-        """
-        return self.TestClass()
-
     # Tests
     def test_copy(self, test_object: BaseComposite) -> None:
         """Test the copy behavior of the object.
@@ -292,79 +284,6 @@ class TestBaseComposite(BaseCompositeTestSuite):
         assert composite.components["test_component"] is component
         assert not isinstance(composite.components["test_component"], CustomComponent)
         assert component.composite is composite
-
-    def test_create_component(self) -> None:
-        """Test the create_component method.
-
-        This test verifies that the create_component method correctly creates and adds a component.
-        """
-        # Create a composite
-        composite = self.TestClass()
-
-        # Create a component
-        component = composite.create_component("created_component", self.TestComponent)
-
-        # Validate
-        assert "created_component" in composite.components
-        assert composite.components["created_component"] is component
-        assert component.composite is composite
-
-    def test_add_component(self) -> None:
-        """Test the add_component method.
-
-        This test verifies that the add_component method correctly adds a component and sets its composite.
-        """
-        # Create a composite
-        composite = self.TestClass()
-
-        # Create a component
-        component = self.TestComponent()
-
-        # Add the component
-        added_component = composite.add_component("added_component", component)
-
-        # Validate
-        assert "added_component" in composite.components
-        assert composite.components["added_component"] is component
-        assert added_component is component
-        assert component.composite is composite
-
-    def test_remove_component(self) -> None:
-        """Test the remove_component method.
-
-        This test verifies that the remove_component method correctly removes a component and clears its composite.
-        """
-        # Create a composite
-        composite = self.TestClass()
-
-        # Create a component
-        component = composite.create_component("test_component", self.TestComponent)
-
-        # Validate
-        assert "test_component" in composite.components
-        assert composite.components["test_component"] is component
-        assert component.composite is composite
-
-        # Remove the component
-        removed_component = composite.remove_component("test_component")
-
-        # Validate
-        assert "test_component" not in composite.components
-        assert removed_component is component
-        assert component.composite is None
-
-    def test_remove_component_error(self) -> None:
-        """Test the remove_component method with a non-existent component.
-
-        This test verifies that the remove_component method raises a KeyError when trying to remove
-        a component that doesn't exist.
-        """
-        # Create a composite
-        composite = self.TestClass()
-
-        # Try to remove a non-existent component
-        with pytest.raises(KeyError):
-            composite.remove_component("non_existent")
 
 
 # Main #

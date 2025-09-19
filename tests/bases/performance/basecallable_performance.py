@@ -107,8 +107,11 @@ class TestBaseCallablePerformance(BasePerformanceTestSuite):
         # Print the performance comparison
         print(f"\nBaseCallable instance creation: {mean_base:.3f} μs or {mean_base / self.call_speed:.3f} cu")
 
-    def test_call_performance(self, test_callable: "TestBaseCallablePerformance.TestCallable", 
-                             test_normal_callable: NormalCallable) -> None:
+    def test_call_performance(
+        self,
+        test_callable: "TestBaseCallablePerformance.TestCallable",
+        test_normal_callable: NormalCallable,
+    ) -> None:
         """Test the performance of the __call__ method of BaseCallable.
 
         This test compares the speed of BaseCallable.__call__() with a normal callable object.

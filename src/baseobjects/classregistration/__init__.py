@@ -1,5 +1,9 @@
 """__init__.py
 Base class for registering and dispatching classes.
+
+This module provides classes for registering and dispatching classes based on input types or other criteria. It includes
+BaseClassRegistry for managing class registrations, BaseRegisteredClass for classes that can be registered, and
+DispatchableClass for classes that can be dynamically selected based on input.
 """
 # Header #
 __package_name__ = "baseobjects"

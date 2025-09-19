@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-""" __init__.py
+"""__init__.py
 Tests for the classregistration module in the baseobjects package.
 """
 # Header #

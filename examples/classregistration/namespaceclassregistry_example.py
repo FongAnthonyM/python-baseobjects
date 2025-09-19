@@ -11,9 +11,10 @@ This example demonstrates:
 5. Handling missing classes and namespaces
 """
 
+
 # Imports #
 # Standard Libraries #
-from typing import Any, Dict, Type
+from typing import Any
 
 # Third-Party Packages #
 from baseobjects.classregistration import NamespaceClassRegistry

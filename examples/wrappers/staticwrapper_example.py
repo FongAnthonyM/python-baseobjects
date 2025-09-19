@@ -27,6 +27,11 @@ from baseobjects.wrappers import StaticWrapper
 # Classes #
 class SimpleObject:
     """A simple object to be wrapped."""
+
+    # Attributes #
+    # Defining attributes in the class namespace ensures the StaticWrapper can make descriptors without calling _wrap()
+    value: int = 0
+    name: str
     
     def __init__(self, value: int = 0):
         self.value = value
@@ -48,6 +53,8 @@ class ComplexObject:
     """A more complex object to be wrapped."""
     
     def __init__(self, items: List[int] = None):
+        # Defining attributes outside the class namespace means that StaticWrapper's _wrap() must be call so they are
+        # available to the StaticWrapper
         self.items = items or []
         self.name = "ComplexObject"
     
@@ -109,12 +116,15 @@ def basic_usage_example():
     print(f"  simple: {simple}")
     print(f"  complex: {complex}")
 
-    # Call wrapped object methods
-    print("\nCalling wrapped object methods without wrapping attributes:")
+    # Default wrapping includes method and attributes defined in the class namespace
+    print("\nCalling wrapped objects:")
     print(f"  wrapper.get_value(): {wrapper.get_value()} == 10")
+    print(f"  wrapper.value: {wrapper.value} == 10")
+    print(f"  wrapper.name: {wrapper.name} == 'SimpleObject'")
+    print(f"  wrapper.items exist: {hasattr(wrapper, 'items')} == False")
 
-    # Call _wrap to create property descriptors
-    wrapper._wrap()
+    # Call _wrap to create property descriptors for attributes no defined in the class namespace (runtime)
+    wrapper._wrap()  # This can be called within the class __init__ but will slow class creation
 
     # Access wrapped object attributes
     print("\nAccessing wrapped object attributes:")
@@ -148,7 +158,7 @@ def custom_wrapper_example():
     print(f"  wrapper.get_combined_str(): {wrapper.get_combined_str()}")
 
     # Call _wrap to create property descriptors for attributes
-    wrapper._wrap()
+    wrapper._wrap()  # This can be called within the class __init__ but will slow class creation
     
     # Access and modify wrapped object attributes
     print("\nAccessing and modifying wrapped object attributes:")
@@ -344,8 +354,9 @@ def compare_wrappers_example():
     
     print("\nStaticWrapper disadvantages:")
     print("  1. Requires explicit _wrap() call to access attributes")
-    print("  2. All instances must wrap the same object types")
-    print("  3. Less flexible with dynamically changing objects")
+    print("  2. Requires explicit _wrap() or _rewrap() call when attributes are added or removed")
+    print("  3. All instances must wrap the same object types")
+    print("  4. Less flexible with dynamically changing objects")
     
     print("\nWhen to use StaticWrapper:")
     print("  - When performance is a critical concern")

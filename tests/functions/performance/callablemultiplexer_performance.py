@@ -214,7 +214,7 @@ class TestMethodMultiplexerPerformance(BasePerformanceTestSuite):
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_class_instance(self) -> "TestMethodMultiplexerPerformance.TestClass":
+    def test_class_instance(self) -> "TestMethodMultiplexerPerformance.ExampleInstanceClass":
         """Create a test class instance for use in tests.
 
         Returns:
@@ -223,7 +223,7 @@ class TestMethodMultiplexerPerformance(BasePerformanceTestSuite):
         return self.ExampleInstanceClass()
 
     @pytest.fixture
-    def test_multiplexer(self, test_class_instance: "TestMethodMultiplexerPerformance.TestClass") -> MethodMultiplexer:
+    def test_multiplexer(self, test_class_instance: "TestMethodMultiplexerPerformance.ExampleInstanceClass") -> MethodMultiplexer:
         """Create a test multiplexer instance for use in tests.
 
         Args:
@@ -237,7 +237,7 @@ class TestMethodMultiplexerPerformance(BasePerformanceTestSuite):
         return multiplexer
 
     # Tests
-    def test_instance_creation(self, test_class_instance: "TestMethodMultiplexerPerformance.TestClass") -> None:
+    def test_instance_creation(self, test_class_instance: "TestMethodMultiplexerPerformance.ExampleInstanceClass") -> None:
         """Test that instances of MethodMultiplexer can be created efficiently.
 
         This test compares the speed of creating MethodMultiplexer instances with creating
@@ -267,7 +267,7 @@ class TestMethodMultiplexerPerformance(BasePerformanceTestSuite):
         print(f"MethodMultiplexer creation: {mean_new:.3f} μs ({percent:.3f}% of dictionary creation time)")
         assert percent < self.speed_tolerance
 
-    def test_call_speed(self, test_multiplexer: MethodMultiplexer, test_class_instance: "TestMethodMultiplexerPerformance.TestClass") -> None:
+    def test_call_speed(self, test_multiplexer: MethodMultiplexer, test_class_instance: "TestMethodMultiplexerPerformance.ExampleInstanceClass") -> None:
         """Test the performance of the __call__ method of MethodMultiplexer.
 
         This test compares the speed of MethodMultiplexer.__call__() with a direct method call.

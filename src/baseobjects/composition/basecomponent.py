@@ -1,5 +1,9 @@
 """basecomponent.py
+A basic component object for use in composite objects.
 
+This module provides the BaseComponent class, which implements the Component part of the Composite design pattern.
+It allows objects to be used as components within composite objects, maintaining a weak reference to their parent
+composite to avoid circular references while enabling bidirectional navigation between components and composites.
 """
 # Header #
 __package_name__ = "baseobjects"

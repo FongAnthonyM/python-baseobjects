@@ -1,7 +1,8 @@
-"""A registry for classes organized by namespaces.
+"""namespaceclassregistry.py
+A registry for classes organized by namespaces.
 
-This module provides the NamespaceClassRegistry class, which extends BaseClassRegistry to organize
-registered classes by namespaces, allowing for more structured class registration and retrieval.
+This module provides the NamespaceClassRegistry class, which extends BaseClassRegistry to organize registered classes by
+namespaces, allowing for more structured class registration and retrieval.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -55,7 +56,7 @@ class NamespaceClassRegistry(BaseClassRegistry):
 
         Args:
             classes: Classes and their namespaces to add, can be an iterable of iterables or a dictionary.
-            head_class: The root class of the registered classes.
+            head_class: The head class of the registered classes.
             *args: Positional arguments for inheritance.
             init: Determines if this object will construct.
             **kwargs: Keyword arguments for inheritance.
@@ -86,7 +87,7 @@ class NamespaceClassRegistry(BaseClassRegistry):
 
         Args:
             classes: Classes to add, can be an iterable of iterables or a dictionary.
-            head_class: The root class of the registered classes.
+            head_class: The head class of the registered classes.
             **kwargs: Keyword arguments for inheritance.
         """
         if isinstance(classes, Mapping):

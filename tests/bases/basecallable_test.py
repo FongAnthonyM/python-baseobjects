@@ -1,9 +1,9 @@
 """basecallable_test.py
 Tests for the BaseCallable class in the baseobjects package.
 
-This module provides tests for the BaseCallable class, which is an abstract base class that implements
-the core functionality for creating callable objects in Python. It wraps an existing function or callable
-and implements the necessary protocols to make the wrapper behave like the wrapped function.
+This module provides tests for the BaseCallable class, which is an abstract base class that implements the core
+functionality for creating callable objects in Python. It wraps an existing function or callable and implements the
+necessary protocols to make the wrapper behave like the wrapped function.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -18,9 +18,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-import copy
-import pickle
-from typing import Any, Type, Callable
+from typing import Any, Type
 
 # Third-Party Packages #
 import pytest

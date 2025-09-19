@@ -22,7 +22,7 @@ from typing import Any
 import pytest
 
 # Local Packages #
-from .bases import BaseObjectTestSuite
+from ..bases import BaseObjectTestSuite
 
 
 # Definitions #

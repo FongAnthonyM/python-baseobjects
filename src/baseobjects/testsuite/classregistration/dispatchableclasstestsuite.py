@@ -20,11 +20,10 @@ import pickle
 from typing import Any, Type
 
 # Third-Party Packages #
-import pytest
 
 # Local Packages #
-from baseobjects.classregistration import DispatchableClass, BaseRegisteredClass
-from baseobjects.testsuite.classregistration.baseregisteredclasstestsuite import BaseRegisteredClassTestSuite
+from ...classregistration import DispatchableClass, BaseRegisteredClass
+from .baseregisteredclasstestsuite import BaseRegisteredClassTestSuite
 
 
 # Definitions #

@@ -17,6 +17,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
+import pickle
 from typing import Any, Type
 
 # Third-Party Packages #
@@ -40,12 +41,14 @@ def multiply_function(self, x: int, y: int = 3) -> int:
 
 
 # Helper Classes #
-class TestObject:
+class MethodMultiplexerTestObject:
     """A test class for testing method binding and selection."""
 
     def __init__(self, value: int = 10):
         """Initialize with a value."""
         self.value = value
+        self.method_multiplexer = MethodMultiplexer(instance=self, select="method1")
+        self.method_multiplexer2 = MethodMultiplexer(instance=self, select="method2")
 
     def method1(self, x: int) -> int:
         """A test method that adds x to the value."""
@@ -82,16 +85,16 @@ class TestMethodMultiplexer(BaseCallableTestSuite):
         return registry
 
     @pytest.fixture
-    def test_object_instance(self) -> TestObject:
+    def test_object_instance(self) -> MethodMultiplexerTestObject:
         """Create a test object instance.
 
         Returns:
-            TestObject: An instance of the test object.
+            MethodMultiplexerTestObject: An instance of the test object.
         """
-        return TestObject(value=10)
+        return MethodMultiplexerTestObject(value=10)
 
     @pytest.fixture
-    def test_multiplexer(self, test_registry: FunctionRegistry, test_object_instance: TestObject) -> MethodMultiplexer:
+    def test_multiplexer(self, test_registry: FunctionRegistry, test_object_instance: MethodMultiplexerTestObject) -> MethodMultiplexer:
         """Create a test multiplexer with a registry and object instance.
 
         Args:
@@ -104,7 +107,7 @@ class TestMethodMultiplexer(BaseCallableTestSuite):
         return self.TestClass(registry=test_registry, instance=test_object_instance, select="add")
 
     @pytest.fixture
-    def test_multiplexer_with_methods(self, test_object_instance: TestObject) -> MethodMultiplexer:
+    def test_multiplexer_with_methods(self, test_object_instance: MethodMultiplexerTestObject) -> MethodMultiplexer:
         """Create a test multiplexer with an object and its methods.
 
         Args:
@@ -116,7 +119,7 @@ class TestMethodMultiplexer(BaseCallableTestSuite):
         return self.TestClass(instance=test_object_instance, select="method1")
 
     @pytest.fixture
-    def test_function_object(self, test_registry: FunctionRegistry, test_object_instance: TestObject) -> MethodMultiplexer:
+    def test_function_object(self, test_registry: FunctionRegistry, test_object_instance: MethodMultiplexerTestObject) -> MethodMultiplexer:
         """Create a test callable object that wraps a function.
 
         Args:
@@ -129,7 +132,7 @@ class TestMethodMultiplexer(BaseCallableTestSuite):
         return self.TestClass(registry=test_registry, instance=test_object_instance, select="add")
 
     @pytest.fixture
-    def test_method_object(self, test_object_instance: TestObject) -> MethodMultiplexer:
+    def test_method_object(self, test_object_instance: MethodMultiplexerTestObject) -> MethodMultiplexer:
         """Create a test callable object that wraps a method.
 
         Args:
@@ -151,7 +154,7 @@ class TestMethodMultiplexer(BaseCallableTestSuite):
         # Create an instance with a registry and object
         registry = FunctionRegistry()
         registry["add"] = add_function
-        test_obj = TestObject()
+        test_obj = MethodMultiplexerTestObject()
         instance = self.TestClass(registry=registry, instance=test_obj, select="add")
 
         # Verify it's an instance of the correct class
@@ -255,29 +258,44 @@ class TestMethodMultiplexer(BaseCallableTestSuite):
         # Verify it returns the expected result (method2 multiplies the value by x)
         assert result == 50  # 10 (value) * 5
 
-    @pytest.mark.skip(reason="MethodMultiplexer doesn't implement bind_wrapped the same way as BaseCallable")
     def test_bind_wrapped(self, test_method_object: MethodMultiplexer, test_bind_target: Any) -> None:
         """Test that the wrapped function can be bound to an instance.
 
-        This test is skipped for MethodMultiplexer because it doesn't implement bind_wrapped
-        the same way as BaseCallable.
+        This test verifies that the bind_wrapped method works for CallableMultiplexer.
 
         Args:
-            test_method_object: A fixture providing a MethodMultiplexer instance that wraps a method.
+            test_method_object: A fixture providing a CallableMultiplexer instance that wraps a function.
             test_bind_target: A fixture providing an instance to bind the method to.
         """
+        bound_method = test_method_object.bind_wrapped(test_bind_target, self.BindTargetClass)
+        assert bound_method.__func__ is test_method_object.__func__
+        assert bound_method.__self__ is test_bind_target
 
-    @pytest.mark.skip(
-        reason="MethodMultiplexer doesn't implement the descriptor protocol the same way as BaseCallable")
     def test_descriptor_protocol(self, test_method_object: MethodMultiplexer) -> None:
         """Test that the callable implements the descriptor protocol for method binding.
 
-        This test is skipped for MethodMultiplexer because it doesn't implement the descriptor protocol
-        the same way as BaseCallable.
+        This test verifies that the descriptor protocol works for CallableMultiplexer.
 
         Args:
-            test_method_object: A fixture providing a MethodMultiplexer instance that wraps a function.
+            test_method_object: A fixture providing a CallableMultiplexer instance that wraps a function.
         """
+
+        class BindTarget:
+            def __init__(self, value: int = 10):
+                """Initialize with a value."""
+                self.value = value
+                self.method_multiplexer = MethodMultiplexer(instance=self, select="method1")
+
+            def method1(self, x: int) -> int:
+                """A test method that adds x to the value."""
+                return self.value + x
+
+            def method2(self, x: int) -> int:
+                """A test method that multiplies the value by x."""
+                return self.value * x
+
+        instance = BindTarget()
+        assert instance.method_multiplexer(5) == 15
 
     @pytest.mark.skip(reason="MethodMultiplexer doesn't copy attributes from the wrapped function")
     def test_attribute_copying(self) -> None:
@@ -367,7 +385,7 @@ class TestMethodMultiplexer(BaseCallableTestSuite):
         def custom_method(self, x: int) -> int:
             return self.value ** x
 
-        test_obj.custom_method = custom_method.__get__(test_obj, TestObject)
+        test_obj.custom_method = custom_method.__get__(test_obj, MethodMultiplexerTestObject)
 
         # Add the method to the registry
         test_multiplexer_with_methods.add_method("custom", test_obj.custom_method)
@@ -387,7 +405,7 @@ class TestMethodMultiplexer(BaseCallableTestSuite):
     def test_no_selection(self) -> None:
         """Test the edge case where no function is selected."""
         # Create a multiplexer without a selection
-        test_obj = TestObject()
+        test_obj = MethodMultiplexerTestObject()
         multiplexer = self.TestClass(registry=FunctionRegistry(), instance=test_obj)
 
         # Verify no function is selected
@@ -444,6 +462,20 @@ class TestMethodMultiplexer(BaseCallableTestSuite):
 
         # Verify it still returns the expected result
         assert result == 5  # 3 + 2 (default y)
+
+    def test_pickle_object(self, test_multiplexer: MethodMultiplexer) -> None:
+        """Test that the CallableMultiplexer can be pickled and unpickled."""
+        item = MethodMultiplexerTestObject()
+        item.method_multiplexer.select("method2")
+
+        pickled = pickle.dumps(item)
+        unpickled = pickle.loads(pickled)
+
+        unpickled.value = 100
+        assert unpickled.method_multiplexer(5) == 500
+
+        unpickled.method_multiplexer.select("method1")
+        assert unpickled.method_multiplexer(5) == 105
 
 
 # Main #

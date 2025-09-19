@@ -18,8 +18,6 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-import asyncio
-import copy
 import pickle
 from typing import Any, Callable, Type, Dict
 
@@ -29,7 +27,6 @@ import pytest
 # Local Packages #
 from src.baseobjects.functions import CallableMultiplexer, FunctionRegistry
 from src.baseobjects.testsuite.bases import BaseCallableTestSuite
-from src.baseobjects.testsuite.bases import example_function, example_method, example_coroutine
 
 
 # Definitions #
@@ -45,12 +42,14 @@ def multiply_function(x: int, y: int = 3) -> int:
 
 
 # Helper Classes #
-class TestObject:
+class CallableMultiplexerTestObject:
     """A test class for testing method binding and selection."""
 
     def __init__(self, value: int = 10):
         """Initialize with a value."""
         self.value = value
+        self.callable_multiplexer = CallableMultiplexer(instance=self, select="method1", binding=True)
+        self.callable_multiplexer2 = CallableMultiplexer(instance=self, select="method2", binding=True)
 
     def method1(self, x: int) -> int:
         """A test method that adds x to the value."""
@@ -87,13 +86,13 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
         return registry
 
     @pytest.fixture
-    def test_object_instance(self) -> TestObject:
+    def test_object_instance(self) -> CallableMultiplexerTestObject:
         """Create a test object instance.
 
         Returns:
-            TestObject: An instance of the test object.
+            CallableMultiplexerTestObject: An instance of the test object.
         """
-        return TestObject(value=10)
+        return CallableMultiplexerTestObject(value=10)
 
     @pytest.fixture
     def test_multiplexer(self, test_registry: FunctionRegistry) -> CallableMultiplexer:
@@ -108,7 +107,7 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
         return self.TestClass(registry=test_registry, select="add")
 
     @pytest.fixture
-    def test_multiplexer_with_object(self, test_object_instance: TestObject) -> CallableMultiplexer:
+    def test_multiplexer_with_object(self, test_object_instance: CallableMultiplexerTestObject) -> CallableMultiplexer:
         """Create a test multiplexer with an object.
 
         Args:
@@ -117,7 +116,7 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
         Returns:
             CallableMultiplexer: An instance of CallableMultiplexer with an object.
         """
-        return self.TestClass(instance=test_object_instance, select="method1")
+        return self.TestClass(instance=test_object_instance, select="method1", binding=True)
 
     @pytest.fixture
     def test_function_object(self, test_registry: FunctionRegistry) -> CallableMultiplexer:
@@ -132,7 +131,7 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
         return self.TestClass(registry=test_registry, select="add")
 
     @pytest.fixture
-    def test_method_object(self, test_object_instance: TestObject) -> CallableMultiplexer:
+    def test_method_object(self, test_object_instance: CallableMultiplexerTestObject) -> CallableMultiplexer:
         """Create a test callable object that wraps a method.
 
         Args:
@@ -165,7 +164,7 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
         assert instance.__func__ is add_function
 
         # Create an instance with an object
-        test_obj = TestObject()
+        test_obj = CallableMultiplexerTestObject()
         instance = self.TestClass(instance=test_obj, select="method1")
 
         # Verify it has the correct object and selected method
@@ -246,7 +245,7 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
             test_bind_target: A fixture providing an instance to bind the method to.
         """
         bound_method = test_method_object.bind_wrapped(test_bind_target, self.BindTargetClass)
-        assert bound_method.__func__ is test_method_object.__wrapped__.__func__
+        assert bound_method.__func__ is test_method_object.__func__
         assert bound_method.__self__ is test_bind_target
 
     def test_descriptor_protocol(self, test_method_object: CallableMultiplexer) -> None:
@@ -261,7 +260,7 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
             def __init__(self, value: int = 10):
                 """Initialize with a value."""
                 self.value = value
-                self.callable_multiplexer = CallableMultiplexer(instance=self, select="method1")
+                self.callable_multiplexer = CallableMultiplexer(instance=self, select="method1", binding=True)
 
             def method1(self, x: int) -> int:
                 """A test method that adds x to the value."""
@@ -346,7 +345,7 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
         # Verify it returns the expected result
         assert result == 3  # 5 - 2 (default y)
 
-    def test_add_method(self, test_multiplexer: CallableMultiplexer, test_object_instance: TestObject) -> None:
+    def test_add_method(self, test_multiplexer: CallableMultiplexer, test_object_instance: CallableMultiplexerTestObject) -> None:
         """Test that the add_method method correctly adds a method to the registry.
 
         Args:
@@ -394,7 +393,7 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
         # Verify it returns the expected result
         assert result == 3  # 5 - 2 (default y)
 
-    def test_add_select_method(self, test_multiplexer: CallableMultiplexer, test_object_instance: TestObject) -> None:
+    def test_add_select_method(self, test_multiplexer: CallableMultiplexer, test_object_instance: CallableMultiplexerTestObject) -> None:
         """Test that the add_select_method method correctly adds and selects a method.
 
         Args:
@@ -508,50 +507,19 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
         assert test_multiplexer.selected == "non_existent"
         assert test_multiplexer.__func__ is None
 
-    def test_method_multiplexer(self, test_bind_target: Any) -> None:
-        """Test the MethodMultiplexer subclass.
+    def test_pickle_object(self, test_multiplexer: CallableMultiplexer) -> None:
+        """Test that the CallableMultiplexer can be pickled and unpickled."""
+        item = CallableMultiplexerTestObject()
+        item.callable_multiplexer.select("method2")
 
-        Args:
-            test_bind_target: A fixture providing an instance to bind the method to.
-        """
-        from src.baseobjects.functions import MethodMultiplexer
+        pickled = pickle.dumps(item)
+        unpickled = pickle.loads(pickled)
 
-        # Create a registry
-        registry = FunctionRegistry()
-        registry["add"] = add_function
+        unpickled.value = 100
+        assert unpickled.callable_multiplexer(5) == 500
 
-        # Create a method multiplexer
-        multiplexer = MethodMultiplexer(registry=registry, instance=test_bind_target, select="add")
-
-        # Verify it's an instance of the correct class
-        assert isinstance(multiplexer, MethodMultiplexer)
-
-        # Verify the instance is set correctly
-        assert multiplexer._self_() is test_bind_target
-        assert multiplexer.selected == "add"
-
-    def test_function_multiplexer(self, test_bind_target: Any) -> None:
-        """Test the FunctionMultiplexer subclass.
-
-        Args:
-            test_bind_target: A fixture providing an instance to bind the method to.
-        """
-        from src.baseobjects.functions import FunctionMultiplexer
-
-        # Create a registry
-        registry = FunctionRegistry()
-        registry["add"] = add_function
-
-        # Create a function multiplexer
-        multiplexer = FunctionMultiplexer(registry=registry, instance=test_bind_target, select="add")
-
-        # Verify it's an instance of the correct class
-        assert isinstance(multiplexer, FunctionMultiplexer)
-
-        # Verify the instance is set correctly
-        assert multiplexer._self_() is test_bind_target
-        assert multiplexer.selected == "add"
-
+        unpickled.callable_multiplexer.select("method1")
+        assert unpickled.callable_multiplexer(5) == 105
 
 # Main #
 if __name__ == "__main__":

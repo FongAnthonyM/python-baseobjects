@@ -14,7 +14,6 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from abc import abstractmethod
 import copy
 import pickle
 from typing import Any, Type
@@ -23,8 +22,8 @@ from typing import Any, Type
 import pytest
 
 # Local Packages #
-from baseobjects.classregistration import BaseClassRegistry
-from baseobjects.testsuite.bases.baseobjecttestsuite import BaseObjectTestSuite
+from ...classregistration import BaseClassRegistry
+from ..bases import BaseObjectTestSuite
 
 
 # Definitions #

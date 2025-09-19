@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" parse_parenthese_test.py
+"""parse_parenthese_test.py
 Tests for the parse_parentheses function in the baseobjects package.
 """
 # Header #

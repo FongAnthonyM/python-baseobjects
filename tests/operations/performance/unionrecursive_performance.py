@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" unionrecursive_performance.py
+"""unionrecursive_performance.py
 Performance tests_old_ for the union_recursive function in the baseobjects.operations package.
 """
 # Header #
@@ -25,8 +25,8 @@ from typing import Any, Dict
 import pytest
 
 # Local Packages #
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 from src.baseobjects.operations import union_recursive
-from tests.bases.performance.base_performance import ClassPerformanceTest
 
 
 # Definitions #
@@ -68,7 +68,7 @@ def standard_union_non_recursive(d: Mapping, other: Mapping) -> Dict[str, Any]:
 
 
 # Classes #
-class TestUnionRecursive(ClassPerformanceTest):
+class TestUnionRecursive(BasePerformanceTestSuite):
     """Test the performance of the union_recursive function.
 
     This class tests_old_ the performance of the union_recursive function, which unions a mapping object and its contained

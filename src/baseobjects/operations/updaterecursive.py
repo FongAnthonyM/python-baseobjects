@@ -23,7 +23,7 @@ from collections.abc import Mapping, Iterable
 
 # Definitions #
 # Functions #
-def _update_recursive(d: Mapping, updates: Mapping) -> Mapping:
+def _update_recursive(d: Mapping, updates: Iterable) -> Mapping:
     """Updates a mapping object and its contained mappings based on another mapping.
 
     Args:
@@ -33,10 +33,13 @@ def _update_recursive(d: Mapping, updates: Mapping) -> Mapping:
     Returns:
         The original mapping that has been updated.
     """
-    d.update(
-        (key, update_recursive(d.get(key, {}), value) if isinstance(value, Mapping) else value)
-        for key, value in updates.items()
-    )
+    for key, value in updates:
+        #  Get the existing value, defaulting to empty dict if not present
+        if isinstance(value, Mapping) and isinstance((existing := d.get(key, None)), Mapping):
+            d[key] = _update_recursive(existing, value.items())
+        else:
+            # For non-Mapping values, simply update
+            d[key] = value
     return d
 
 
@@ -50,11 +53,4 @@ def update_recursive(d: Mapping, updates: Iterable | Mapping) -> Mapping:
     Returns:
         The original mapping that has been updated.
     """
-    if isinstance(updates, Mapping):
-        updates = updates.items()
-
-    d.update(
-        (key, _update_recursive(d.get(key, {}), value) if isinstance(value, Mapping) else value)
-        for key, value in updates
-    )
-    return d
+    return _update_recursive(d, updates.items() if isinstance(updates, Mapping) else updates)

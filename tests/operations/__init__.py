@@ -1,5 +1,5 @@
-""" __init__.py
-Package initialization for tests_old_.operations.
+"""__init__.py
+Tests for the operations module in the baseobjects package.
 """
 # Header #
 __package_name__ = "baseobjects"

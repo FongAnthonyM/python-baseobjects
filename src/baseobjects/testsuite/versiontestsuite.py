@@ -1,8 +1,8 @@
-""" versiontestsuite.py
-Specialized test suite for version classes in the baseobjects package.
+"""versiontestsuite.py
+Specialized test suite for version classes in the Versions package.
 """
 # Header #
-__package_name__ = "baseobjects"
+__package_name__ = "Versions"
 
 __author__ = "Anthony Fong"
 __credits__ = ["Anthony Fong"]
@@ -20,11 +20,10 @@ from abc import abstractmethod
 from typing import Any, Type
 
 # Third-Party Packages #
-import pytest
 
 # Local Packages #
 from ..versioning.version import Version
-from .baseobjecttestsuite import BaseObjectTestSuite
+from .bases import BaseObjectTestSuite
 
 
 # Definitions #
@@ -32,7 +31,7 @@ from .baseobjecttestsuite import BaseObjectTestSuite
 class VersionTestSuite(BaseObjectTestSuite):
     """Base test suite for version classes.
 
-    This class provides common test functionality for version classes, including tests for comparison operations,
+    This class provides common test functionality for version classes, including tests_old_ for comparison operations,
     type conversions, and serialization. Subclasses should set the TestClass attribute and may override or extend
     the test methods.
 
@@ -41,126 +40,103 @@ class VersionTestSuite(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[Version] | None = None
+    TestClass: Type[Version]
 
     # Instance Methods #
-    # Fixtures
-    @abstractmethod
-    @pytest.fixture
-    def test_version(self) -> Version:
-        """Create a test version instance for use in tests.
-
-        Returns:
-            Version: An instance of the test class.
-        """
-
-    @abstractmethod
-    @pytest.fixture
-    def test_version_with_values(self) -> Version:
-        """Create a test version instance with specific values for use in tests.
-
-        Returns:
-            Version: An instance of the test class with specific values.
-        """
-
     # Tests
     @abstractmethod
-    def test_instance_creation(self) -> None:
-        """Test that instances of the class can be created.
+    def test_copy(self, test_object: Version) -> None:
+        """Test the copy behavior of a version object.
 
-        This test verifies that instances of the version class can be created.
+        This test verifies that copy creates a new version object with the same attributes.
+
+        Args:
+            test_object: A fixture providing a test version object instance.
         """
+        # Copy Version Object
+        obj_copy = copy.copy(test_object)
 
-    def test_pickling(self, test_version_with_values: Version) -> None:
-        """Test pickling and unpickling of the version object.
+        # Validate
+        assert obj_copy is not test_object
+
+    @abstractmethod
+    def test_copy_method(self, test_object: Version) -> None:
+        """Test the copy method behavior of a version object.
+
+        This test verifies that copy creates a new version object with the same attributes.
+
+        Args:
+            test_object: A fixture providing a test version object instance.
+        """
+        # Copy Version Object
+        obj_copy = test_object.copy()
+
+        # Validate
+        assert obj_copy is not test_object
+
+    @abstractmethod
+    def test_deepcopy(self, test_object: Version, memo: dict | None = None) -> None:
+        """Test the deep copy behavior of a version object.
+
+        This test verifies that deepcopy creates a new version object with new mutable attributes but the same immutable
+        attributes.
+
+        Args:
+            test_object: A fixture providing a test version object instance.
+            memo: A memo dictionary to pass to deepcopy.
+        """
+        # Deep Copy Version Object
+        if memo is None:
+            memo = {}
+        obj_deepcopy = copy.deepcopy(test_object, memo=memo)
+
+        # Validate
+        assert obj_deepcopy is not test_object
+
+    @abstractmethod
+    def test_deepcopy_method(self, test_object: Version, memo: dict | None = None) -> None:
+        """Test the deepcopy method behavior of a version object.
+
+        This test verifies that deepcopy creates a new version object with new mutable attributes but the same immutable
+        attributes.
+
+        Args:
+            test_object: A fixture providing a test version object instance.
+            memo: A memo dictionary to pass to deepcopy.
+        """
+        # Deep Copy Version Object
+        if memo is None:
+            memo = {}
+        obj_deepcopy = test_object.deepcopy(memo=memo)
+
+        # Validate
+        assert obj_deepcopy is not test_object
+
+    @abstractmethod
+    def test_pickling(self, test_object: Any) -> None:
+        """Test pickling and unpickling of a version object.
 
         This test verifies that the version object can be pickled and unpickled correctly.
 
         Args:
-            test_version_with_values: A fixture providing a version instance with values.
+            test_object: A fixture providing a test version object instance.
         """
-        pickled = pickle.dumps(test_version_with_values)
+        # Pickle and Unpickle Version Object
+        pickled = pickle.dumps(test_object)
         unpickled = pickle.loads(pickled)
-        assert unpickled is not test_version_with_values
-        assert isinstance(unpickled, self.TestClass)
-        assert unpickled == test_version_with_values
 
-    def test_copy(self, test_version_with_values: Version) -> None:
-        """Test copying a version object.
+        # Validate
+        assert unpickled is not test_object
 
-        This test verifies that version objects can be copied correctly.
+    def test_hash(self, test_object: Version) -> None:
+        """Test the __hash__ method of Version.
 
-        Args:
-            test_version_with_values: A fixture providing a version instance with values.
-        """
-        new = copy.copy(test_version_with_values)
-        assert new is not test_version_with_values
-        assert isinstance(new, self.TestClass)
-        assert new == test_version_with_values
-
-    def test_deepcopy(self, test_version_with_values: Version) -> None:
-        """Test deep copying a version object.
-
-        This test verifies that version objects can be deep copied correctly.
+        This test verifies that the __hash__ method returns the id of the object.
 
         Args:
-            test_version_with_values: A fixture providing a version instance with values.
+            test_object: A fixture providing a TestVersion instance.
         """
-        new = copy.deepcopy(test_version_with_values)
-        assert new is not test_version_with_values
-        assert isinstance(new, self.TestClass)
-        assert new == test_version_with_values
-
-    @abstractmethod
-    def test_creation_with_values(self) -> None:
-        """Test that instances of the class can be created with specific values.
-
-        This test verifies that instances of the version class can be created with specific values.
-        """
-
-    @abstractmethod
-    def test_creation_from_string(self) -> None:
-        """Test that instances of the class can be created from a string.
-
-        This test verifies that instances of the version class can be created from a string.
-        """
-
-    @abstractmethod
-    def test_creation_from_iterable(self) -> None:
-        """Test that instances of the class can be created from an iterable.
-
-        This test verifies that instances of the version class can be created from an iterable.
-        """
-
-    @abstractmethod
-    def test_str(self, test_version_with_values: Version) -> None:
-        """Test the __str__ method of the version class.
-
-        This test verifies that the __str__ method returns the correct string representation.
-
-        Args:
-            test_version_with_values: A fixture providing a version instance with values.
-        """
-
-    @abstractmethod
-    def test_list(self, test_version_with_values: Version) -> None:
-        """Test the list method of the version class.
-
-        This test verifies that the list method returns the correct list representation.
-
-        Args:
-            test_version_with_values: A fixture providing a version instance with values.
-        """
-
-    @abstractmethod
-    def test_tuple(self, test_version_with_values: Version) -> None:
-        """Test the tuple method of the version class.
-
-        This test verifies that the tuple method returns the correct tuple representation.
-
-        Args:
-            test_version_with_values: A fixture providing a version instance with values.
-        """
+        assert hash(test_object) == id(test_object)
 
     @abstractmethod
     def test_equality(self) -> None:

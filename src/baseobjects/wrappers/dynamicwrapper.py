@@ -36,18 +36,19 @@ class DynamicWrapper(BaseObject):
     attributes/functions will change based on the objects in the list. Since the available attributes/functions cannot be
     evaluated until runtime, an IDE's auto-complete cannot display all the callable options.
 
-    _attribute_as_parents is the list of attributes of this object that contains the objects that will be used for the
-    dynamic calling. This class and subclasses can still have its own defined attributes and functions that are called.
-    Which attribute/method is used for the call is handled in the same manner as inheritance where it will check if the
-    attribute/method is present in this object, if not it will check in the next object in the list. Therefore, it is
-    important to ensure the order of _attribute_as_parents is the order of descending inheritance.
+    _wrapped_map_ is the list of attributes which contain the objects that will be used for the dynamic calling. This class
+    and its subclasses can still have its own defined attributes and functions that are called. The attribute/method
+    that is called is handled in the same manner as inheritance where it will check if the attribute/method is present
+    in this object, if not, it will check in the next object in the list. Therefore, it is important to ensure the order
+    of _attribute_as_parents is the order of descending inheritance.
 
     Class Attributes:
-        _wrap_attributes: The list of attribute names that will contain the objects to dynamically wrap where the order
-            is descending inheritance.
+        _wrapped_map_: The list of attribute names that will contain the objects to dynamically wrap where the order is
+           descending inheritance.
     """
 
-    _wrap_attributes: list[str] = []
+    # Attribute #
+    _wrapped_map_: list[str] = []
 
     # Magic Methods #
     # Attribute Access
@@ -67,7 +68,7 @@ class DynamicWrapper(BaseObject):
         try:
             return object.__getattribute__(self, name)
         except AttributeError:
-            for attribute in self._wrap_attributes:
+            for attribute in self._wrapped_map_:
                 try:
                     return getattr(object.__getattribute__(self, attribute), name)
                 except AttributeError:
@@ -82,9 +83,9 @@ class DynamicWrapper(BaseObject):
             value: Whatever the attribute will contain.
         """
         # Check if item is in self and if not check in object parents
-        if name not in self._wrap_attributes and name not in dir(self):
+        if name not in self._wrapped_map_ and name not in dir(self):
             # Iterate through all indirect parents to find attribute
-            for attribute in self._wrap_attributes:
+            for attribute in self._wrapped_map_:
                 if attribute in dir(self):
                     parent_object = getattr(self, attribute)
                     if name in dir(parent_object):
@@ -100,9 +101,9 @@ class DynamicWrapper(BaseObject):
             name: The name of the attribute to delete.
         """
         # Check if item is in self and if not check in object parents
-        if name not in self._wrap_attributes and name not in dir(self):
+        if name not in self._wrapped_map_ and name not in dir(self):
             # Iterate through all indirect parents to find attribute
-            for attribute in self._wrap_attributes:
+            for attribute in self._wrapped_map_:
                 if attribute in dir(self):
                     parent_object = getattr(self, attribute)
                     if name in dir(parent_object):

@@ -25,18 +25,27 @@ from typing import Any, Callable, Dict, Type
 import pytest
 
 # Local Packages #
-from baseobjects.functions.functionregistry import FunctionRegistry
-from baseobjects.testsuite.bases import BaseObjectTestSuite
+from src.baseobjects.functions.functionregistry import FunctionRegistry
+from src.baseobjects.testsuite.bases import BaseObjectTestSuite
 
 
 # Definitions #
 # Functions #
 def picklable_func() -> str:
-    """A function that can be pickled for testing."""
+    """A picklable function."""
     return "picklable_func"
 
+
+def func1() -> str:
+    return "func1"
+
+
+def func2(arg: str) -> str:
+    return f"func2_{arg}"
+
+
 # Classes #
-class TestObject:
+class RegistryTestObject:
     """A test object with functions for testing FunctionRegistry."""
 
     def __init__(self, name: str = "test") -> None:
@@ -61,6 +70,7 @@ class TestObject:
         return f"{cls.__name__}_class_method"
 
 
+# Tests #
 class TestFunctionRegistry(BaseObjectTestSuite):
     """Test suite for the FunctionRegistry class.
 
@@ -80,12 +90,6 @@ class TestFunctionRegistry(BaseObjectTestSuite):
         Returns:
             A dictionary mapping function names to functions.
         """
-        def func1() -> str:
-            return "func1"
-
-        def func2(arg: str) -> str:
-            return f"func2_{arg}"
-
         return {
             "func1": func1,
             "func2": func2,
@@ -101,13 +105,13 @@ class TestFunctionRegistry(BaseObjectTestSuite):
         return self.TestClass()
 
     @pytest.fixture
-    def test_instance(self) -> TestObject:
+    def test_instance(self) -> RegistryTestObject:
         """Create a test object with methods.
 
         Returns:
-            A TestObject instance.
+            A RegistryTestObject instance.
         """
-        return TestObject()
+        return RegistryTestObject()
 
     @pytest.fixture
     def populated_registry(self, test_functions: Dict[str, Callable]) -> FunctionRegistry:
@@ -279,14 +283,14 @@ class TestFunctionRegistry(BaseObjectTestSuite):
             else:
                 assert registry[name]() == func()
 
-    def test_init_with_object(self, test_instance: TestObject) -> None:
+    def test_init_with_object(self, test_instance: RegistryTestObject) -> None:
         """Test initialization with an object.
 
         This test verifies that FunctionRegistry can be initialized with an object whose
         methods will be added to the registry.
 
         Args:
-            test_instance: A fixture providing a TestObject instance.
+            test_instance: A fixture providing a RegistryTestObject instance.
         """
         registry = self.TestClass(object_=test_instance)
 
@@ -300,20 +304,20 @@ class TestFunctionRegistry(BaseObjectTestSuite):
         # Note: These are unbound methods, so we need to pass self for instance methods
         assert registry["method1"](test_instance) == test_instance.method1()
         assert registry["method2"](test_instance, "arg") == test_instance.method2("arg")
-        assert registry["static_method"]() == TestObject.static_method()
-        assert registry["class_method"](TestObject) == TestObject.class_method()
+        assert registry["static_method"]() == RegistryTestObject.static_method()
+        assert registry["class_method"](RegistryTestObject) == RegistryTestObject.class_method()
 
-    def test_init_with_objects(self, test_instance: TestObject) -> None:
+    def test_init_with_objects(self, test_instance: RegistryTestObject) -> None:
         """Test initialization with multiple objects.
 
         This test verifies that FunctionRegistry can be initialized with multiple objects
         whose methods will be added to the registry.
 
         Args:
-            test_instance: A fixture providing a TestObject instance.
+            test_instance: A fixture providing a RegistryTestObject instance.
         """
         # Create another test object
-        another_object = TestObject(name="another")
+        another_object = RegistryTestObject(name="another")
 
         registry = self.TestClass(objects=[test_instance, another_object])
 
@@ -327,17 +331,17 @@ class TestFunctionRegistry(BaseObjectTestSuite):
         # Note: These are unbound methods, so we need to pass self for instance methods
         assert registry["method1"](test_instance) == test_instance.method1()
         assert registry["method2"](test_instance, "arg") == test_instance.method2("arg")
-        assert registry["static_method"]() == TestObject.static_method()
-        assert registry["class_method"](TestObject) == TestObject.class_method()
+        assert registry["static_method"]() == RegistryTestObject.static_method()
+        assert registry["class_method"](RegistryTestObject) == RegistryTestObject.class_method()
 
-    def test_update_from_object(self, test_object: FunctionRegistry, test_instance: TestObject) -> None:
+    def test_update_from_object(self, test_object: FunctionRegistry, test_instance: RegistryTestObject) -> None:
         """Test updating the registry from an object.
 
         This test verifies that the registry can be updated with methods from an object.
 
         Args:
             test_object: A fixture providing an empty FunctionRegistry instance.
-            test_instance: A fixture providing a TestObject instance.
+            test_instance: A fixture providing a RegistryTestObject instance.
         """
         # Update the registry from the test object
         test_object.update_from_object(test_instance)
@@ -352,20 +356,20 @@ class TestFunctionRegistry(BaseObjectTestSuite):
         # Note: These are unbound methods, so we need to pass self for instance methods
         assert test_object["method1"](test_instance) == test_instance.method1()
         assert test_object["method2"](test_instance, "arg") == test_instance.method2("arg")
-        assert test_object["static_method"]() == TestObject.static_method()
-        assert test_object["class_method"](TestObject) == TestObject.class_method()
+        assert test_object["static_method"]() == RegistryTestObject.static_method()
+        assert test_object["class_method"](RegistryTestObject) == RegistryTestObject.class_method()
 
-    def test_update_from_objects(self, test_object: FunctionRegistry, test_instance: TestObject) -> None:
+    def test_update_from_objects(self, test_object: FunctionRegistry, test_instance: RegistryTestObject) -> None:
         """Test updating the registry from multiple objects.
 
         This test verifies that the registry can be updated with methods from multiple objects.
 
         Args:
             test_object: A fixture providing an empty FunctionRegistry instance.
-            test_instance: A fixture providing a TestObject instance.
+            test_instance: A fixture providing a RegistryTestObject instance.
         """
         # Create another test object
-        another_object = TestObject(name="another")
+        another_object = RegistryTestObject(name="another")
 
         # Update the registry from the test objects
         test_object.update_from_objects(test_instance, another_object)
@@ -380,17 +384,17 @@ class TestFunctionRegistry(BaseObjectTestSuite):
         # Note: These are unbound methods, so we need to pass self for instance methods
         assert test_object["method1"](test_instance) == test_instance.method1()
         assert test_object["method2"](test_instance, "arg") == test_instance.method2("arg")
-        assert test_object["static_method"]() == TestObject.static_method()
-        assert test_object["class_method"](TestObject) == TestObject.class_method()
+        assert test_object["static_method"]() == RegistryTestObject.static_method()
+        assert test_object["class_method"](RegistryTestObject) == RegistryTestObject.class_method()
 
-    def test_construct(self, test_functions: Dict[str, Callable], test_instance: TestObject) -> None:
+    def test_construct(self, test_functions: Dict[str, Callable], test_instance: RegistryTestObject) -> None:
         """Test the construct method.
 
         This test verifies that the construct method correctly sets up the registry.
 
         Args:
             test_functions: A fixture providing a dictionary of test functions.
-            test_instance: A fixture providing a TestObject instance.
+            test_instance: A fixture providing a RegistryTestObject instance.
         """
         # Create a registry without initialization
         registry = self.TestClass(init=False)
@@ -417,10 +421,10 @@ class TestFunctionRegistry(BaseObjectTestSuite):
         # Note: These are unbound methods, so we need to pass self for instance methods
         assert registry["method1"](test_instance) == test_instance.method1()
         assert registry["method2"](test_instance, "arg") == test_instance.method2("arg")
-        assert registry["static_method"]() == TestObject.static_method()
-        assert registry["class_method"](TestObject) == TestObject.class_method()
+        assert registry["static_method"]() == RegistryTestObject.static_method()
+        assert registry["class_method"](RegistryTestObject) == RegistryTestObject.class_method()
 
-    def test_edge_case_empty_object(self) -> None:
+    def test_empty_object(self) -> None:
         """Test edge case where an object with no methods is provided."""
         # Create an object with no methods
         class EmptyObject:
@@ -435,7 +439,7 @@ class TestFunctionRegistry(BaseObjectTestSuite):
         # Note: The registry may contain built-in methods from object
         assert not any(name.startswith("custom_") for name in registry)
 
-    def test_edge_case_non_callable_attributes(self) -> None:
+    def test_non_callable_attributes(self) -> None:
         """Test edge case where an object has non-callable attributes."""
         # Create an object with non-callable attributes
         class ObjectWithAttributes:
@@ -461,7 +465,7 @@ class TestFunctionRegistry(BaseObjectTestSuite):
         assert "attr2" not in registry
         assert "attr3" not in registry
 
-    def test_edge_case_overriding_functions(self) -> None:
+    def test_overriding_functions(self) -> None:
         """Test edge case where functions with the same name are provided."""
         # Create two functions with the same name
         def func1() -> str:
@@ -486,7 +490,7 @@ class TestFunctionRegistry(BaseObjectTestSuite):
         assert "func1" in registry
         assert registry["func1"]() == "func1_version2"
 
-    def test_edge_case_object_with_same_method_names(self) -> None:
+    def test_object_with_same_method_names(self) -> None:
         """Test edge case where multiple objects with the same method names are provided."""
         # Create two objects with the same method names
         class Object1:
@@ -510,7 +514,7 @@ class TestFunctionRegistry(BaseObjectTestSuite):
         # The method from obj1 should be overridden
         assert registry["custom_method"](obj1) != "custom_method_from_object1"
 
-    def test_edge_case_object_with_property(self) -> None:
+    def test_object_with_property(self) -> None:
         """Test edge case where an object has a property."""
         # Create an object with a property
         class ObjectWithProperty:

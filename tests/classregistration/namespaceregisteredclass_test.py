@@ -16,14 +16,14 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import copy
 import pickle
-from typing import Any, ClassVar, Optional, Type
+from typing import Any, ClassVar, Type
 
 # Third-Party Packages #
 import pytest
 
 # Local Packages #
-from baseobjects.classregistration import NamespaceRegisteredClass, NamespaceClassRegistry
-from baseobjects.testsuite.classregistration import NamespaceRegisteredClassTestSuite
+from src.baseobjects.classregistration import NamespaceRegisteredClass
+from src.baseobjects.testsuite.classregistration import NamespaceRegisteredClassTestSuite
 
 
 # Definitions #

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" timezoneoffset_performance.py
+"""timezoneoffset_performance.py
 Performance tests_old_ for the timezone_offset function in the baseobjects.operations package.
 """
 # Header #
@@ -24,8 +24,8 @@ import zoneinfo
 import pytest
 
 # Local Packages #
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 from src.baseobjects.operations.timezoneoffset import timezone_offset, INIT_DATE
-from tests.bases.performance.base_performance import ClassPerformanceTest
 
 
 # Definitions #
@@ -70,7 +70,7 @@ class CustomTimezone(tzinfo):
         return f"CustomTZ({self.hours})"
 
 
-class TestTimezoneOffset(ClassPerformanceTest):
+class TestTimezoneOffset(BasePerformanceTestSuite):
     """Test the performance of the timezone_offset function.
 
     This class tests_old_ the performance of the timezone_offset function, which gets the offset of a given timezone.

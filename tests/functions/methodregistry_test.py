@@ -25,21 +25,30 @@ from typing import Any, Callable, Dict, Type
 # Third-Party Packages #
 import pytest
 
-from baseobjects import BaseObject
+
 # Local Packages #
-from baseobjects.functions.methodregistry import BaseMethodRegistry, BoundMethodRegistry, MethodRegistry
-from baseobjects.functions.functionregistry import FunctionRegistry
-from baseobjects.testsuite.bases import BaseObjectTestSuite
+from src.baseobjects.functions.methodregistry import BaseMethodRegistry, BoundMethodRegistry, MethodRegistry
+from src.baseobjects.functions.functionregistry import FunctionRegistry
+from src.baseobjects.testsuite.bases import BaseObjectTestSuite
 
 
 # Definitions #
 # Functions #
 def picklable_func() -> str:
-    """A function that can be pickled for testing."""
+    """A picklable function."""
     return "picklable_func"
 
+
+def func1() -> str:
+    return "func1"
+
+
+def func2(arg: str) -> str:
+    return f"func2_{arg}"
+
+
 # Classes #
-class TestObject:
+class RegistryTestObject:
     """A test object with methods for testing MethodRegistry."""
 
     def __init__(self, name: str = "test") -> None:
@@ -64,11 +73,11 @@ class TestObject:
         return f"{cls.__name__}_class_method"
 
 
+# Tests #
 class TestBaseMethodRegistry(BaseObjectTestSuite):
     """Test suite for the BaseMethodRegistry class.
 
-    This class tests the functionality of the BaseMethodRegistry class, which is a registry
-    that holds methods.
+    This class tests the functionality of the BaseMethodRegistry class, which is a registry that holds methods.
     """
 
     # Attributes #
@@ -83,12 +92,6 @@ class TestBaseMethodRegistry(BaseObjectTestSuite):
         Returns:
             A dictionary mapping method names to methods.
         """
-        def func1() -> str:
-            return "func1"
-
-        def func2(arg: str) -> str:
-            return f"func2_{arg}"
-
         return {
             "func1": func1,
             "func2": func2,
@@ -104,13 +107,13 @@ class TestBaseMethodRegistry(BaseObjectTestSuite):
         return self.TestClass()
 
     @pytest.fixture
-    def test_instance(self) -> TestObject:
+    def test_instance(self) -> RegistryTestObject:
         """Create a test object with methods.
 
         Returns:
-            A TestObject instance.
+            A RegistryTestObject instance.
         """
-        return TestObject()
+        return RegistryTestObject()
 
     @pytest.fixture
     def populated_registry(self, test_methods: Dict[str, Callable]) -> BaseMethodRegistry:
@@ -160,7 +163,7 @@ class TestBaseMethodRegistry(BaseObjectTestSuite):
             assert key in populated_registry
             assert new[key] == populated_registry[key]
             assert id(new[key]) == id(populated_registry[key])
-            
+
     def test_copy_method(self, populated_registry: BaseMethodRegistry) -> None:
         """Test the copy method behavior of BaseMethodRegistry.
 
@@ -283,14 +286,14 @@ class TestBaseMethodRegistry(BaseObjectTestSuite):
             else:
                 assert registry[name]() == func()
 
-    def test_init_with_object(self, test_instance: TestObject) -> None:
+    def test_init_with_object(self, test_instance: RegistryTestObject) -> None:
         """Test initialization with an object.
 
         This test verifies that BaseMethodRegistry can be initialized with an object whose
         methods will be added to the registry.
 
         Args:
-            test_instance: A fixture providing a TestObject instance.
+            test_instance: A fixture providing a RegistryTestObject instance.
         """
         registry = self.TestClass(object_=test_instance)
 
@@ -304,20 +307,20 @@ class TestBaseMethodRegistry(BaseObjectTestSuite):
         # Note: These are unbound methods, so we need to pass self for instance methods
         assert registry["method1"](test_instance) == test_instance.method1()
         assert registry["method2"](test_instance, "arg") == test_instance.method2("arg")
-        assert registry["static_method"]() == TestObject.static_method()
-        assert registry["class_method"](TestObject) == TestObject.class_method()
+        assert registry["static_method"]() == RegistryTestObject.static_method()
+        assert registry["class_method"](RegistryTestObject) == RegistryTestObject.class_method()
 
-    def test_init_with_objects(self, test_instance: TestObject) -> None:
+    def test_init_with_objects(self, test_instance: RegistryTestObject) -> None:
         """Test initialization with multiple objects.
 
         This test verifies that BaseMethodRegistry can be initialized with multiple objects
         whose methods will be added to the registry.
 
         Args:
-            test_instance: A fixture providing a TestObject instance.
+            test_instance: A fixture providing a RegistryTestObject instance.
         """
         # Create another test object
-        another_object = TestObject(name="another")
+        another_object = RegistryTestObject(name="another")
 
         registry = self.TestClass(objects=[test_instance, another_object])
 
@@ -331,17 +334,17 @@ class TestBaseMethodRegistry(BaseObjectTestSuite):
         # Note: These are unbound methods, so we need to pass self for instance methods
         assert registry["method1"](test_instance) == test_instance.method1()
         assert registry["method2"](test_instance, "arg") == test_instance.method2("arg")
-        assert registry["static_method"]() == TestObject.static_method()
-        assert registry["class_method"](TestObject) == TestObject.class_method()
+        assert registry["static_method"]() == RegistryTestObject.static_method()
+        assert registry["class_method"](RegistryTestObject) == RegistryTestObject.class_method()
 
-    def test_construct(self, test_methods: Dict[str, Callable], test_instance: TestObject) -> None:
+    def test_construct(self, test_methods: Dict[str, Callable], test_instance: RegistryTestObject) -> None:
         """Test the construct method.
 
         This test verifies that the construct method correctly sets up the registry.
 
         Args:
             test_methods: A fixture providing a dictionary of test methods.
-            test_instance: A fixture providing a TestObject instance.
+            test_instance: A fixture providing a RegistryTestObject instance.
         """
         # Create a registry without initialization
         registry = self.TestClass(init=False)
@@ -368,8 +371,8 @@ class TestBaseMethodRegistry(BaseObjectTestSuite):
         # Note: These are unbound methods, so we need to pass self for instance methods
         assert registry["method1"](test_instance) == test_instance.method1()
         assert registry["method2"](test_instance, "arg") == test_instance.method2("arg")
-        assert registry["static_method"]() == TestObject.static_method()
-        assert registry["class_method"](TestObject) == TestObject.class_method()
+        assert registry["static_method"]() == RegistryTestObject.static_method()
+        assert registry["class_method"](RegistryTestObject) == RegistryTestObject.class_method()
 
     def test_func_property(self, populated_registry: BaseMethodRegistry) -> None:
         """Test the __func__ property.
@@ -386,15 +389,15 @@ class TestBaseMethodRegistry(BaseObjectTestSuite):
         # Test setting the __func__ property
         new_registry = FunctionRegistry()
         new_registry["new_func"] = lambda: "new_func"
-        
+
         populated_registry.__func__ = new_registry
-        
+
         # Verify the data attribute was updated
         assert populated_registry.data is new_registry
         assert "new_func" in populated_registry
         assert populated_registry["new_func"]() == "new_func"
 
-    def test_edge_case_empty_object(self) -> None:
+    def test_empty_object(self) -> None:
         """Test edge case where an object with no methods is provided."""
 
         # Create an object with no methods
@@ -410,7 +413,7 @@ class TestBaseMethodRegistry(BaseObjectTestSuite):
         # Note: The registry may contain built-in methods from object
         assert not any(name.startswith("custom_") for name in registry)
 
-    def test_edge_case_non_callable_attributes(self) -> None:
+    def test_non_callable_attributes(self) -> None:
         """Test edge case where an object has non-callable attributes."""
 
         # Create an object with non-callable attributes
@@ -437,7 +440,7 @@ class TestBaseMethodRegistry(BaseObjectTestSuite):
         assert "attr2" not in registry
         assert "attr3" not in registry
 
-    def test_edge_case_overriding_methods(self) -> None:
+    def test_overriding_methods(self) -> None:
         """Test edge case where methods with the same name are provided."""
 
         # Create two methods with the same name
@@ -463,7 +466,7 @@ class TestBaseMethodRegistry(BaseObjectTestSuite):
         assert "method1" in registry
         assert registry["method1"]() == "method1_version2"
 
-    def test_edge_case_object_with_same_method_names(self) -> None:
+    def test_object_with_same_method_names(self) -> None:
         """Test edge case where multiple objects with the same method names are provided."""
 
         # Create two objects with the same method names
@@ -488,7 +491,7 @@ class TestBaseMethodRegistry(BaseObjectTestSuite):
         # The method from obj1 should be overridden
         assert registry["custom_method"](obj1) != "custom_method_from_object1"
 
-    def test_edge_case_object_with_property(self) -> None:
+    def test_object_with_property(self) -> None:
         """Test edge case where an object has a property."""
 
         # Create an object with a property
@@ -518,7 +521,7 @@ class TestBaseMethodRegistry(BaseObjectTestSuite):
         registry = BaseMethodRegistry()
 
         # Create a bound registry with a temporary instance
-        bound_registry = BoundMethodRegistry(registry=registry, instance=TestObject())
+        bound_registry = BoundMethodRegistry(registry=registry, instance=RegistryTestObject())
 
         # The instance should be garbage collected after this point
         # Accessing __self__ should return None
@@ -528,8 +531,8 @@ class TestBaseMethodRegistry(BaseObjectTestSuite):
 class TestBoundMethodRegistry(BaseObjectTestSuite):
     """Test suite for the BoundMethodRegistry class.
 
-    This class tests the functionality of the BoundMethodRegistry class, which is a registry
-    that holds methods bound to an instance.
+    This class tests the functionality of the BoundMethodRegistry class, which is a registry that holds methods bound to
+    an instance.
     """
 
     # Attributes #
@@ -544,12 +547,6 @@ class TestBoundMethodRegistry(BaseObjectTestSuite):
         Returns:
             A dictionary mapping method names to methods.
         """
-        def func1() -> str:
-            return "func1"
-
-        def func2(arg: str) -> str:
-            return f"func2_{arg}"
-
         return {
             "func1": func1,
             "func2": func2,
@@ -565,13 +562,13 @@ class TestBoundMethodRegistry(BaseObjectTestSuite):
         return self.TestClass()
 
     @pytest.fixture
-    def test_instance(self) -> TestObject:
+    def test_instance(self) -> RegistryTestObject:
         """Create a test object with methods.
 
         Returns:
-            A TestObject instance.
+            A RegistryTestObject instance.
         """
-        return TestObject()
+        return RegistryTestObject()
 
     @pytest.fixture
     def base_registry(self, test_methods: Dict[str, Callable]) -> BaseMethodRegistry:
@@ -586,17 +583,17 @@ class TestBoundMethodRegistry(BaseObjectTestSuite):
         return BaseMethodRegistry(methods=test_methods)
 
     @pytest.fixture
-    def bound_registry(self, base_registry: BaseMethodRegistry, test_instance: TestObject) -> BoundMethodRegistry:
+    def bound_registry(self, base_registry: BaseMethodRegistry, test_instance: RegistryTestObject) -> BoundMethodRegistry:
         """Create a BoundMethodRegistry bound to a test instance.
 
         Args:
             base_registry: A fixture providing a BaseMethodRegistry.
-            test_instance: A fixture providing a TestObject instance.
+            test_instance: A fixture providing a RegistryTestObject instance.
 
         Returns:
             A BoundMethodRegistry bound to the test instance.
         """
-        return self.TestClass(registry=base_registry, instance=test_instance, owner=TestObject)
+        return self.TestClass(registry=base_registry, instance=test_instance, owner=RegistryTestObject)
 
     # Tests
     def test_instance_creation(self, *args: Any, **kwargs: Any) -> None:
@@ -615,44 +612,184 @@ class TestBoundMethodRegistry(BaseObjectTestSuite):
         assert isinstance(obj, BaseMethodRegistry)
         assert isinstance(obj.data, FunctionRegistry)
 
-    def test_init_with_registry_and_instance(self, base_registry: BaseMethodRegistry, test_instance: TestObject) -> None:
+    def test_copy(self, bound_registry: BoundMethodRegistry) -> None:
+        """Test the copy behavior of BoundMethodRegistry.
+
+        This test verifies that the copy method creates a new registry with references to the same methods
+        (shallow copy) and preserves the binding to the instance.
+
+        Args:
+            bound_registry: A fixture providing a BoundMethodRegistry bound to a test instance.
+        """
+        # Copy Object
+        new = copy.copy(bound_registry)
+
+        # Validate
+        assert id(new) != id(bound_registry)
+        assert isinstance(new, type(bound_registry))
+        assert len(new) == len(bound_registry)
+        for key in new:
+            assert key in bound_registry
+            assert new[key] == bound_registry[key]
+            assert id(new[key]) == id(bound_registry[key])
+
+        # Verify the instance binding was preserved
+        assert new.__self__ is bound_registry.__self__
+        assert new.__owner__ is bound_registry.__owner__
+
+    def test_copy_method(self, bound_registry: BoundMethodRegistry) -> None:
+        """Test the copy method behavior of BoundMethodRegistry.
+
+        This test verifies that the copy method creates a new registry with references to the same methods
+        (shallow copy) and preserves the binding to the instance.
+
+        Args:
+            bound_registry: A fixture providing a BoundMethodRegistry bound to a test instance.
+        """
+        # Copy Object
+        new = bound_registry.copy()
+
+        # Validate
+        assert id(new) != id(bound_registry)
+        assert isinstance(new, type(bound_registry))
+        assert len(new) == len(bound_registry)
+        for key in new:
+            assert key in bound_registry
+            assert new[key] == bound_registry[key]
+            assert id(new[key]) == id(bound_registry[key])
+
+        # Verify the instance binding was preserved
+        assert new.__self__ is bound_registry.__self__
+        assert new.__owner__ is bound_registry.__owner__
+
+    def test_deepcopy(self, bound_registry: BoundMethodRegistry, memo: dict | None = None) -> None:
+        """Test the deepcopy behavior of BoundMethodRegistry.
+
+        This test verifies that the deepcopy method creates a new registry with references to the same methods
+        (since methods are not deep-copied) and preserves the binding to the instance.
+
+        Args:
+            bound_registry: A fixture providing a BoundMethodRegistry bound to a test instance.
+            memo: A memo dictionary to pass to deepcopy.
+        """
+        # Deep Copy Object
+        if memo is None:
+            memo = {}
+        new = copy.deepcopy(bound_registry, memo=memo)
+
+        # Validate
+        assert id(new) != id(bound_registry)
+        assert isinstance(new, type(bound_registry))
+        assert len(new) == len(bound_registry)
+        for key in new:
+            assert key in bound_registry
+            assert new[key] == bound_registry[key]
+            # Methods are not deep-copied, so the ids should be the same
+            assert id(new[key]) == id(bound_registry[key])
+
+        # Verify the instance binding was preserved
+        assert new.__self__ is not bound_registry.__self__
+        assert new.__owner__ is bound_registry.__owner__
+
+    def test_deepcopy_method(self, bound_registry: BoundMethodRegistry, memo: dict | None = None) -> None:
+        """Test the deepcopy method behavior of BoundMethodRegistry.
+
+        This test verifies that the deepcopy method creates a new registry with references to the same methods
+        (since methods are not deep-copied) and preserves the binding to the instance.
+
+        Args:
+            bound_registry: A fixture providing a BoundMethodRegistry bound to a test instance.
+            memo: A memo dictionary to pass to deepcopy.
+        """
+        # Deep Copy Object
+        if memo is None:
+            memo = {}
+        new = bound_registry.deepcopy(memo=memo)
+
+        # Validate
+        assert id(new) != id(bound_registry)
+        assert isinstance(new, type(bound_registry))
+        assert len(new) == len(bound_registry)
+        for key in new:
+            assert key in bound_registry
+            assert new[key] == bound_registry[key]
+            # Methods are not deep-copied, so the ids should be the same
+            assert id(new[key]) == id(bound_registry[key])
+
+        # Verify the instance binding was preserved
+        assert new.__self__ is not bound_registry.__self__
+        assert new.__owner__ is bound_registry.__owner__
+
+    def test_pickling(self, base_registry: BaseMethodRegistry, test_instance: RegistryTestObject) -> None:
+        """Test pickling and unpickling of the object.
+
+        This test verifies that the object can be pickled and unpickled correctly,
+        preserving the binding to the instance.
+
+        Args:
+            base_registry: A fixture providing a BaseMethodRegistry.
+            test_instance: A fixture providing a RegistryTestObject instance.
+        """
+        # Add the picklable function to the registry
+        base_registry["picklable_func"] = picklable_func
+
+        # Create a bound registry
+        bound_registry = self.TestClass(registry=base_registry, instance=test_instance, owner=RegistryTestObject)
+
+        # Pickle and Unpickle Object
+        items = (bound_registry, test_instance)
+        pickled = pickle.dumps(items)
+        unpickled_registry, unpickled_instance = pickle.loads(pickled)
+
+        # Validate
+        assert unpickled_registry is not bound_registry
+        assert isinstance(unpickled_registry, type(bound_registry))
+        assert len(unpickled_registry) == len(bound_registry)
+        assert "picklable_func" in unpickled_registry
+        assert unpickled_registry["picklable_func"]() == "picklable_func"
+
+        # Verify the instance binding was preserved
+        assert unpickled_registry.__self__ is not bound_registry.__self__
+        assert unpickled_registry.__owner__ is bound_registry.__owner__
+
+    def test_init_with_registry_and_instance(self, base_registry: BaseMethodRegistry, test_instance: RegistryTestObject) -> None:
         """Test initialization with a registry and instance.
 
         This test verifies that BoundMethodRegistry can be initialized with a registry and instance.
 
         Args:
             base_registry: A fixture providing a BaseMethodRegistry.
-            test_instance: A fixture providing a TestObject instance.
+            test_instance: A fixture providing a RegistryTestObject instance.
         """
-        bound_registry = self.TestClass(registry=base_registry, instance=test_instance, owner=TestObject)
+        bound_registry = self.TestClass(registry=base_registry, instance=test_instance, owner=RegistryTestObject)
 
         # Verify the registry was set correctly
         assert bound_registry.data is base_registry.data
-        
+
         # Verify the instance was set correctly
         assert bound_registry.__self__ is test_instance
-        
-        # Verify the owner was set correctly
-        assert bound_registry.__owner__ is TestObject
 
-    def test_self_property(self, test_instance: TestObject) -> None:
+        # Verify the owner was set correctly
+        assert bound_registry.__owner__ is RegistryTestObject
+
+    def test_self_property(self, test_instance: RegistryTestObject) -> None:
         """Test the __self__ property.
 
         This test verifies that the __self__ property returns the bound instance.
 
         Args:
-            test_instance: A fixture providing a TestObject instance.
+            test_instance: A fixture providing a RegistryTestObject instance.
         """
         # Create a bound registry
         bound_registry = self.TestClass(instance=test_instance)
-        
+
         # Verify the __self__ property returns the bound instance
         assert bound_registry.__self__ is test_instance
-        
+
         # Test setting the __self__ property
-        new_instance = TestObject(name="new")
+        new_instance = RegistryTestObject(name="new")
         bound_registry.__self__ = new_instance
-        
+
         # Verify the bound instance was updated
         assert bound_registry.__self__ is new_instance
 
@@ -663,39 +800,39 @@ class TestBoundMethodRegistry(BaseObjectTestSuite):
         """
         # Create a bound registry with no instance
         bound_registry = self.TestClass()
-        
+
         # Verify the __self__ property returns None
         assert bound_registry.__self__ is None
-        
+
         # Test setting the __self__ property to None
         bound_registry.__self__ = None
-        
+
         # Verify the bound instance is still None
         assert bound_registry.__self__ is None
 
-    def test_construct(self, base_registry: BaseMethodRegistry, test_instance: TestObject) -> None:
+    def test_construct(self, base_registry: BaseMethodRegistry, test_instance: RegistryTestObject) -> None:
         """Test the construct method.
 
         This test verifies that the construct method correctly sets up the registry.
 
         Args:
             base_registry: A fixture providing a BaseMethodRegistry.
-            test_instance: A fixture providing a TestObject instance.
+            test_instance: A fixture providing a RegistryTestObject instance.
         """
         # Create a registry without initialization
         bound_registry = self.TestClass(init=False)
 
         # Construct the registry
-        bound_registry.construct(registry=base_registry, instance=test_instance, owner=TestObject)
+        bound_registry.construct(registry=base_registry, instance=test_instance, owner=RegistryTestObject)
 
         # Verify the registry was set correctly
         assert bound_registry.data is base_registry.data
-        
+
         # Verify the instance was set correctly
         assert bound_registry.__self__ is test_instance
-        
+
         # Verify the owner was set correctly
-        assert bound_registry.__owner__ is TestObject
+        assert bound_registry.__owner__ is RegistryTestObject
 
 
 class TestMethodRegistry(BaseObjectTestSuite):
@@ -717,12 +854,6 @@ class TestMethodRegistry(BaseObjectTestSuite):
         Returns:
             A dictionary mapping method names to methods.
         """
-        def func1() -> str:
-            return "func1"
-
-        def func2(arg: str) -> str:
-            return f"func2_{arg}"
-
         return {
             "func1": func1,
             "func2": func2,
@@ -738,13 +869,13 @@ class TestMethodRegistry(BaseObjectTestSuite):
         return self.TestClass()
 
     @pytest.fixture
-    def test_instance(self) -> TestObject:
+    def test_instance(self) -> RegistryTestObject:
         """Create a test object with methods.
 
         Returns:
-            A TestObject instance.
+            A RegistryTestObject instance.
         """
-        return TestObject()
+        return RegistryTestObject()
 
     @pytest.fixture
     def populated_registry(self, test_methods: Dict[str, Callable]) -> MethodRegistry:
@@ -889,14 +1020,14 @@ class TestMethodRegistry(BaseObjectTestSuite):
         assert "picklable_func" in unpickled
         assert unpickled["picklable_func"]() == "picklable_func"
 
-    def test_descriptor_protocol(self, populated_registry: MethodRegistry, test_instance: TestObject) -> None:
+    def test_descriptor_protocol(self, populated_registry: MethodRegistry, test_instance: RegistryTestObject) -> None:
         """Test the descriptor protocol.
 
         This test verifies that the __get__ method returns a BoundMethodRegistry when accessed through an instance.
 
         Args:
             populated_registry: A fixture providing a populated MethodRegistry instance.
-            test_instance: A fixture providing a TestObject instance.
+            test_instance: A fixture providing a RegistryTestObject instance.
         """
         # Create a class with a MethodRegistry descriptor
         class DescriptorTest:
@@ -904,19 +1035,19 @@ class TestMethodRegistry(BaseObjectTestSuite):
 
         # Create an instance of the class
         instance = DescriptorTest()
-        
+
         # Access the descriptor through the instance
         bound_registry = instance.registry
-        
+
         # Verify the result is a BoundMethodRegistry
         assert isinstance(bound_registry, BoundMethodRegistry)
-        
+
         # Verify the registry is bound to the instance
         assert bound_registry.__self__ is instance
-        
+
         # Verify the registry is bound to the correct owner
         assert bound_registry.__owner__ is DescriptorTest
-        
+
         # Verify the registry has the same data as the original
         assert bound_registry.data is populated_registry.data
 

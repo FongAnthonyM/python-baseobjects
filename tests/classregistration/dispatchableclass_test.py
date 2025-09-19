@@ -22,8 +22,8 @@ from typing import Any, ClassVar, Optional, Type, Tuple
 import pytest
 
 # Local Packages #
-from baseobjects.classregistration import DispatchableClass, BaseClassRegistry
-from baseobjects.testsuite.classregistration import DispatchableClassTestSuite
+from src.baseobjects.classregistration import DispatchableClass, BaseClassRegistry
+from src.baseobjects.testsuite.classregistration import DispatchableClassTestSuite
 
 
 # Definitions #
@@ -63,7 +63,7 @@ class TestDispatchableClass(DispatchableClassTestSuite):
     """
 
     # Class Definitions #
-    class BaseTestDispatchableClass(DispatchableClass):
+    class ExampleDispatchableClass(DispatchableClass):
         """A base test subclass of DispatchableClass for testing purposes."""
 
         # Class Attributes #
@@ -113,28 +113,18 @@ class TestDispatchableClass(DispatchableClassTestSuite):
                 return default
             return cls.class_registry.get_class(name, default)
 
-    class TypeADispatchable(BaseTestDispatchableClass):
-        """A subclass of BaseTestDispatchableClass for testing dispatching to type A."""
+    class TypeADispatchable(ExampleDispatchableClass):
+        """A subclass of ExampleDispatchableClass for testing dispatching to type A."""
         class_registration = True
 
-    class TypeBDispatchable(BaseTestDispatchableClass):
-        """A subclass of BaseTestDispatchableClass for testing dispatching to type B."""
+    class TypeBDispatchable(ExampleDispatchableClass):
+        """A subclass of ExampleDispatchableClass for testing dispatching to type B."""
         class_registration = True
 
     # Attributes #
-    TestClass: Type[BaseTestDispatchableClass] = BaseTestDispatchableClass
+    TestClass: Type[ExampleDispatchableClass] = ExampleDispatchableClass
 
     # Instance Methods #
-    # Fixtures
-    @pytest.fixture
-    def test_object(self) -> "TestDispatchableClass.BaseTestDispatchableClass":
-        """Create a test object for use in tests.
-
-        Returns:
-            BaseTestDispatchableClass: An instance of the test class.
-        """
-        return self.TestClass()
-
     # Tests
     def test_copy(self, test_object: Any) -> None:
         """Test the copy behavior of the object.

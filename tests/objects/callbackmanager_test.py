@@ -294,7 +294,7 @@ class TestCallbackManager(BaseObjectTestSuite):
         test_object.call_conditional(false_condition, test_callback)
         assert len(result) == 0
 
-    def test_edge_case_empty_callbacks(self, test_object: CallbackManager) -> None:
+    def test_empty_callbacks(self, test_object: CallbackManager) -> None:
         """Test behavior with empty callbacks.
 
         This test verifies that calling a non-existent callback raises a KeyError.
@@ -303,7 +303,7 @@ class TestCallbackManager(BaseObjectTestSuite):
         with pytest.raises(KeyError):
             test_object.call_callback("non_existent_callback")
 
-    def test_edge_case_overwrite_callback(self, test_object_with_callbacks: CallbackManager) -> None:
+    def test_overwrite_callback(self, test_object_with_callbacks: CallbackManager) -> None:
         """Test overwriting an existing callback.
 
         This test verifies that registering a callback with an existing name overwrites the previous callback.
@@ -843,7 +843,8 @@ class TestCallbackManager(BaseObjectTestSuite):
         assert call_count == 2
         assert len(tasks) == 0  # All tasks should be completed
 
-    def test_join_tasks(self, test_object: CallbackManager) -> None:
+    @pytest.mark.asyncio
+    async def test_join_tasks(self, test_object: CallbackManager) -> None:
         """Test joining tasks synchronously.
 
         This test verifies that join_tasks waits for all tasks to complete.

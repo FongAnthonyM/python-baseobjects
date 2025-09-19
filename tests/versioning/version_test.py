@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" version_test.py
+"""version_test.py
 Tests for the Version class in the baseobjects package.
 
 This module contains tests for the Version abstract class, which provides the base functionality

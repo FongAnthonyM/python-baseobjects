@@ -55,9 +55,13 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
     Attributes:
         _kwarg: The name of the kwarg to use of parsing the args for the class to use for dispatching.
         _parse_method: The default method for parsing the args for the class to use for dispatching.
+        _default_parse: The default class to use for dispatching if the kwarg is not found.
         parse: The method for parsing the args for the class to use for dispatching.
         arg_position: The index of the arg to use for dispatching.
-        dispatcher: The single dispatcher to use for this object.
+        registry: The registry of functions to dispatch to.
+        dispatch_cache: The cache of functions to dispatch to.
+        cache_token: The cache token for the dispatch function.
+        dispatch_function: The function which dispatches to the correct function.
 
     Args:
         kwarg: Either the name of kwarg to dispatch with or the method to wrap.
@@ -78,6 +82,8 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
     registry: dict[type[Any], AnyCallable]
     dispatch_cache: WeakKeyDictionary[type[Any], AnyCallable]
     cache_token: Any | None = None
+
+    dispatch_function: AnyCallable
 
     # Properties #
     @property
@@ -110,6 +116,38 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         # Object Creation #
         if init:
             self.construct(func=func, kwarg=kwarg, *args, **kwargs)
+
+    def __setstate__(self, state: Any) -> None:
+        """Sets the object's state from a pickled state.
+
+        This method is called by the pickle module when deserializing the object. It restores the object's state from
+        the data that was previously returned by __getstate__ during pickling. The method handles different state
+        formats to properly restore both __dict__ and __slots__ attributes.
+
+        The method handles four different cases based on the type of state:
+        1. None: No state to restore, so nothing is done
+        2. dict: The state represents __dict__ attributes, which are updated into the object's __dict__
+        3. tuple[None, dict]: The state represents __slots__ attributes, which are set individually
+        4. tuple[dict, dict]: The state represents both __dict__ and __slots__ attributes, which are restored accordingly
+
+        If the state is of an unexpected type, a TypeError is raised.
+
+        By default, the state can be one of the following types with the corresponding behavior:
+            None: Will not set any state.
+            dict: Will set the __dict__ attribute to the state.
+            tuple[None, dict]: Will set the slot values to the second dict of the tuple.
+            tuple[dict, dict]: Will set the __dict__ attribute to the first dict of the tuple and set the slot values
+                to the second dict of the tuple.
+
+        Args:
+            state: An object which can be used to set the state of this object. This should be the value previously
+                returned by __getstate__.
+
+        Raises:
+            TypeError: If the state is not None, dict, or tuple.
+        """
+        super().__setstate__(state)
+        self.create_dispatcher_function()
 
     # Instance Methods #
     # Constructors
@@ -146,12 +184,10 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         """Creates the dispatcher function for this object."""
         if isinstance(self.__wrapped__, classmethod):
             def dispatch_function(self_, *args, **kwargs):
-                method = self.dispatch(self.parse(args, kwargs))
-                return method.__get__(None, self_)(*args, **kwargs)
+                return self.dispatch(self.parse(args, kwargs)).__get__(None, self_)(*args, **kwargs)
         else:
             def dispatch_function(self_, *args, **kwargs):
-                method = self.dispatch(self.parse(args, kwargs, is_method=True))
-                return method.__get__(self_)(*args, **kwargs)
+                return self.dispatch(self.parse(args, kwargs, is_method=True)).__get__(self_)(*args, **kwargs)
 
         dispatch_function.__isabstractmethod__ = getattr(self.__wrapped__, '__isabstractmethod__', False)
         dispatch_function.registry = self.registry
@@ -301,7 +337,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         Returns:
             A function which dispatches the correct bound method.
         """
-        return self.dispatch_function.__get__(instance, owner)
+        return self.dispatch_function.__get__(instance, owner) if instance is not None else self
 
     # Method Dispatching
     def dispatch_call(self, *args: Any, **kwargs: Any) -> Any:

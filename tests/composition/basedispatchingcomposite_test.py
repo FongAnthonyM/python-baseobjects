@@ -122,6 +122,7 @@ class ExampleDispatchingCompositeClass(BaseDispatchingComposite):
 
         return {}
 
+
 # Tests #
 class TestBaseDispatchingComposite(BaseDispatchingCompositeTestSuite):
     """Test the BaseDispatchingComposite class.

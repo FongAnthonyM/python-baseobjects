@@ -1,4 +1,5 @@
-""" __init__.py
+"""__init__.py
+Performance tests for the wrapper classes in the baseobjects.wrappers package.
 
 """
 # Header #
@@ -10,3 +11,9 @@ __copyright__ = "Copyright 2021, Anthony Fong"
 __license__ = "MIT"
 
 __version__ = "1.12.0"
+
+
+# Imports #
+# Local Packages #
+from .staticwrapper_performance import TestStaticWrapperPerformance
+from .dynamicwrapper_performance import TestDynamicWrapperPerformance

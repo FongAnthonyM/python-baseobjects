@@ -11,6 +11,8 @@ This example demonstrates:
 5. Dynamic attribute resolution
 6. Performance comparison with normal attribute access
 """
+
+
 # Imports #
 # Standard Libraries #
 import time

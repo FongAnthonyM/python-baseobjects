@@ -1,5 +1,9 @@
 """__init__.py
 Types to be used for type hints.
+
+This module serves as the entry point for the typing subpackage, which provides type hint definitions used
+throughout the baseobjects package. It imports and re-exports all type definitions from the generic and callables
+modules, making them available for import directly from the typing subpackage.
 """
 # Header #
 __package_name__ = "baseobjects"

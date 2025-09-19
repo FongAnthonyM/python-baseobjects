@@ -446,7 +446,7 @@ class TestTimedDict(BaseObjectTestSuite):
         assert len(data) == 0
         assert len(timed_dict) == 0
 
-    def test_edge_case_zero_lifetime(self) -> None:
+    def test_zero_lifetime(self) -> None:
         """Test the behavior with a zero lifetime."""
         # Create dictionary with zero lifetime
         td = self.TestClass({"a": 1, "b": 2})
@@ -460,7 +460,7 @@ class TestTimedDict(BaseObjectTestSuite):
         # Dictionary should already be empty after setting lifetime to zero
         assert len(td) == 0
 
-    def test_edge_case_negative_lifetime(self) -> None:
+    def test_negative_lifetime(self) -> None:
         """Test the behavior with a negative lifetime."""
         # Create dictionary with negative lifetime
         td = self.TestClass({"a": 1, "b": 2})
@@ -474,7 +474,7 @@ class TestTimedDict(BaseObjectTestSuite):
         # Dictionary should already be empty after setting lifetime to a negative value
         assert len(td) == 0
 
-    def test_edge_case_none_lifetime(self) -> None:
+    def test_none_lifetime(self) -> None:
         """Test the behavior with a None lifetime."""
         # Create dictionary with None lifetime
         td = self.TestClass({"a": 1, "b": 2})

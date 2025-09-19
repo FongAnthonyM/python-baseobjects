@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" staticwrapper_test.py
+"""staticwrapper_test.py
 Tests for the StaticWrapper class in the baseobjects package.
 """
 # Header #
@@ -16,8 +16,6 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-import copy
-import pickle
 from typing import Any
 
 # Third-Party Packages #
@@ -25,7 +23,7 @@ import pytest
 
 # Local Packages #
 from src.baseobjects.wrappers import StaticWrapper
-from src.baseobjects.testsuite.wrappertestsuite import WrapperTestSuite
+from src.baseobjects.testsuite.wrappers.wrappertestsuite import WrapperTestSuite
 
 
 # Definitions #

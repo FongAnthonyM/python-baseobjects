@@ -1,10 +1,10 @@
 """basemethodtestsuite.py
 Base class for test suites which test BaseMethod and its subclasses.
 
-This module provides a base test suite for testing the BaseMethod class and its subclasses. It defines
-abstract methods for testing the core functionality of method objects, including binding to instances,
-weak references, binding to attributes, and non-binding methods. It inherits from BaseMethodTestSuite
-to include tests for the callable behavior of methods.
+This module provides a base test suite for testing the BaseMethod class and its subclasses. It defines abstract methods
+for testing the core functionality of method objects, including binding to instances, weak references, binding to
+attributes, and non-binding methods. It inherits from BaseMethodTestSuite to include tests for the callable behavior of
+methods.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -21,14 +21,17 @@ __version__ = "1.12.0"
 # Standard Libraries #
 from abc import abstractmethod
 import copy
+import gc
+import pickle
 from typing import Any, Type
+import weakref
 
 # Third-Party Packages #
 import pytest
 
 # Local Packages #
 from ...bases import BaseMethod
-from .basecallabletestsuite import BaseCallableTestSuite, example_method, example_coroutine
+from .basecallabletestsuite import BaseCallableTestSuite
 
 
 # Definitions #
@@ -49,28 +52,7 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
     BindTargetClass: Type[Any]
 
     # Instance Methods #
-    def create_bind_target(self, *args: Any, **kwargs) -> Any:
-        """Create a test instance to bind methods to.
-
-        Args:
-            *args: Positional arguments to pass to the class constructor.
-            **kwargs: Keyword arguments to pass to the class constructor.
-
-        Returns:
-            The test instance.
-        """
-        return self.BindTargetClass(*args, **kwargs)
-
     # Fixtures
-    @pytest.fixture
-    def test_bind_target(self) -> Any:
-        """Create a test instance to bind methods to.
-
-        Returns:
-            Any: An instance to bind methods to.
-        """
-        return self.create_bind_target()
-
     @pytest.fixture
     def test_object(self, test_method_object: BaseMethod, *args: Any, **kwargs: Any) -> BaseMethod:
         """Create a test object.
@@ -180,8 +162,6 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
         Args:
             test_object: A fixture providing a BaseMethod instance.
         """
-        import pickle
-
         # Pickle and Unpickle Object
         pickled = pickle.dumps(test_object)
         unpickled = pickle.loads(pickled)
@@ -194,10 +174,10 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
 
     @abstractmethod
     def test_call(self, test_method_object: BaseMethod) -> None:
-        """Test that the method object can be called and correctly delegates to the wrapped function.
+        """Test that the method object can be called and correctly delegates to the wrapped method.
 
         Args:
-            test_method_object: A fixture providing a BaseMethod instance that wraps a function.
+            test_method_object: A fixture providing a BaseMethod instance that wraps a method.
         """
 
     @abstractmethod
@@ -205,81 +185,115 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
         """Test that the method object can be converted to a standard Python function.
 
         Args:
-            test_method_object: A fixture providing a BaseMethod instance that wraps a function.
-        """
-
-    @abstractmethod
-    def test_bind_builtin(self, test_method_object: BaseMethod) -> None:
-        """Test that the method object can be bound to an instance using the builtin method.
-
-        Args:
-            test_method_object: A fixture providing a BaseMethod instance that wraps a function.
-        """
-
-    @abstractmethod
-    def test_bind_wrapped(self, test_method_object: BaseMethod) -> None:
-        """Test that the wrapped function can be bound to an instance.
-
-        Args:
-            test_method_object: A fixture providing a BaseMethod instance that wraps a function.
+            test_method_object: A fixture providing a BaseMethod instance that wraps a method.
         """
 
     @abstractmethod
     def test_call_wrapped(self, test_method_object: BaseMethod) -> None:
-        """Test that the wrapped function can be called directly.
+        """Test that the wrapped method can be called directly.
 
         Args:
-            test_method_object: A fixture providing a BaseMethod instance that wraps a function.
+            test_method_object: A fixture providing a BaseMethod instance that wraps a method.
         """
-
+        
     @abstractmethod
-    def test_coroutine(self, test_coroutine_object: BaseMethod) -> None:
-        """Test that the method object correctly handles coroutine functions.
-
-        Args:
-            test_coroutine_object: A fixture providing a BaseMethod instance that wraps a coroutine function.
-        """
-
-    @abstractmethod
-    def test_as_function_coroutine(self, test_coroutine_object: BaseMethod) -> None:
-        """Test that the method object wrapping a coroutine can be converted to a coroutine function.
-
-        Args:
-            test_coroutine_object: A fixture providing a BaseMethod instance that wraps a coroutine function.
-        """
-
-    @abstractmethod
-    def test_binding(self, test_instance: Any) -> None:
-        """Test that the method can be bound to an instance.
-
-        Args:
-            test_instance: A fixture providing an instance to bind the method to.
-        """
-
-    @abstractmethod
-    def test_call_binding(self, test_object: BaseMethod) -> None:
+    def test_call_binding(self, test_method_object: BaseMethod) -> None:
         """Test that the bound method correctly passes the instance as the first argument when called.
 
         Args:
-            test_object: A fixture providing a bound BaseMethod instance.
+            test_method_object: A fixture providing a BaseMethod instance that wraps a method.
         """
 
-    @abstractmethod
-    def test_weak_reference(self, test_instance: Any) -> None:
-        """Test that the method maintains a weak reference to the bound instance.
+    def test_bind_self(self, test_bind_target: "BindTargetClass") -> None:
+        """Test that the function can be bound to an instance to create a method.
+
+        This test only varifies that a bound method is returned. This method may be overwritten to include validation
+        that the method functions as intended.
 
         Args:
-            test_instance: A fixture providing an instance to bind the method to.
+            test_bind_target: A fixture providing an instance to bind the method to.
         """
+        method_object = self.create_method_object()
+        bound_method = method_object.bind_self(test_bind_target, self.BindTargetClass)
+        assert bound_method is method_object
+        assert bound_method.__self__ is test_bind_target
 
-    @abstractmethod
+        unbound_method_object = self.create_method_object(is_binding=False)
+        unbound_method = unbound_method_object.bind_self(test_bind_target, self.BindTargetClass)
+        assert unbound_method is unbound_method_object
+        assert unbound_method.__self__ is None
+
     def test_bind_to_attribute(self) -> None:
-        """Test that the method can be bound to an instance and set as an attribute."""
+        """Test that the method can be bound to an instance and set as an attribute.
 
-    @abstractmethod
-    def test_non_binding_method(self, test_instance: Any) -> None:
-        """Test that a method with is_binding=False does not bind to instances.
+        This test only varifies that a bound method is returned and bound to the target instance's attribute. This
+        method may be overwritten to include validation that the method functions as intended.
+        """
+        method_object = self.create_method_object()
+        new_bind_target = self.create_bind_target()
+        bound_method = method_object.bind_to_attribute(new_bind_target, self.BindTargetClass)
+        assert method_object is bound_method
+        assert bound_method.__self__ is new_bind_target
+        assert hasattr(new_bind_target, method_object.__wrapped__.__name__)
+
+        new_method_object = self.create_method_object()
+        bound_method_named = new_method_object.bind_to_attribute(
+            new_bind_target,
+            self.BindTargetClass,
+            name="named_method",
+        )
+        assert bound_method_named is new_method_object
+        assert bound_method_named.__self__ is new_bind_target
+        assert hasattr(new_bind_target, "named_method")
+
+        assert bound_method_named is not bound_method
+        assert bound_method_named.__wrapped__ is bound_method.__wrapped__
+
+    def test_descriptor_protocol(self, test_method_object: BaseMethod) -> None:
+        """Test that the method implements the descriptor protocol for method binding.
+
+        This test only varifies that the descriptor returns a bound method. This method may be overwritten to include
+        validation that the method functions as intended.
 
         Args:
-            test_instance: A fixture providing an instance to attempt binding with.
+            test_method_object: A fixture providing a BaseMethod instance that wraps a method.
         """
+        method_object = self.create_method_object()
+        class BindTarget:
+            new_method = method_object
+
+        instance = BindTarget()
+        assert instance.new_method is method_object
+        assert instance.new_method.__self__ is instance
+
+    def test_weak_reference(self) -> None:
+        """Test that the method maintains a weak reference to the bound instance."""
+        # Create a method
+        method = self.create_method_object()
+
+        # Create a new scope to control the lifetime of the instance
+        def inner_scope():
+            # Create a local instance
+            local_instance = self.create_bind_target()
+
+            # Bind the method to the local instance
+            method.__self__ = local_instance
+
+            # Verify it's bound to the correct instance
+            assert method.__self__ is local_instance
+
+            # Return a weak reference to the local instance
+            return weakref.ref(local_instance)
+
+        # Get a weak reference to the local instance
+        weak_ref = inner_scope()
+
+        # Force garbage collection
+        gc.collect()
+
+        # Verify the local instance has been garbage collected
+        assert weak_ref() is None
+
+        # Verify the method's bound instance is now None
+        assert method.__self__ is None
+        

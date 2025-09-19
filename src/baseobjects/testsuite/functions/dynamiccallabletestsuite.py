@@ -1,9 +1,9 @@
 """dynamiccallabletestsuite.py
 Base class for test suites which test DynamicCallable and its subclasses.
 
-This module provides a base test suite for testing the DynamicCallable class and its subclasses. It defines
-abstract methods for testing the core functionality of dynamic callable objects, including multiplexed binding
-and callback functionality.
+This module provides a base test suite for testing the DynamicCallable class and its subclasses. It defines abstract
+methods for testing the core functionality of dynamic callable objects, including multiplexed binding and callback
+functionality.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -22,11 +22,10 @@ from abc import abstractmethod
 from typing import Any, Type
 
 # Third-Party Packages #
-import pytest
 
 # Local Packages #
 from ...functions.dynamiccallable import DynamicCallable
-from ..bases.basecallabletestsuite import BaseCallableTestSuite, example_function, example_method, example_coroutine
+from ..bases.basecallabletestsuite import BaseCallableTestSuite
 
 
 # Definitions #
@@ -75,22 +74,6 @@ class DynamicCallableTestSuite(BaseCallableTestSuite):
         """
 
     @abstractmethod
-    def test_bind_builtin(self, test_method_object: DynamicCallable) -> None:
-        """Test that the callable object can be bound to an instance using the builtin method.
-
-        Args:
-            test_method_object: A fixture providing a DynamicCallable instance that wraps a function.
-        """
-
-    @abstractmethod
-    def test_bind_wrapped(self, test_method_object: DynamicCallable) -> None:
-        """Test that the wrapped function can be bound to an instance.
-
-        Args:
-            test_method_object: A fixture providing a DynamicCallable instance that wraps a function.
-        """
-
-    @abstractmethod
     def test_call_wrapped(self, test_function_object: DynamicCallable) -> None:
         """Test that the wrapped function can be called directly.
 
@@ -98,50 +81,91 @@ class DynamicCallableTestSuite(BaseCallableTestSuite):
             test_function_object: A fixture providing a DynamicCallable instance that wraps a function.
         """
 
-    @abstractmethod
-    def test_coroutine(self, test_coroutine_object: DynamicCallable) -> None:
-        """Test that the callable object correctly handles coroutine functions.
+    def test_bind_method_property(self) -> None:
+        """Test that the bind_method property correctly gets and sets the binding method."""
+        method_object = self.create_method_object()
 
-        Args:
-            test_coroutine_object: A fixture providing a DynamicCallable instance that wraps a coroutine function.
-        """
+        # Set the bind_method property
+        method_object.bind_method = "bind_wrapped"
 
-    @abstractmethod
-    def test_as_function_coroutine(self, test_coroutine_object: DynamicCallable) -> None:
-        """Test that the callable object wrapping a coroutine can be converted to a coroutine function.
+        # Verify the property was set correctly
+        assert method_object.bind_method == "bind_wrapped"
+        assert method_object.bind_multiplexer.selected == "bind_wrapped"
 
-        Args:
-            test_coroutine_object: A fixture providing a DynamicCallable instance that wraps a coroutine function.
-        """
+        # Set it back to the default
+        method_object.bind_method = "bind_builtin"
 
-    @abstractmethod
-    def test_bind_method_property(self, test_method_object: DynamicCallable) -> None:
-        """Test that the bind_method property correctly gets and sets the binding method.
+        # Verify it was set back correctly
+        assert method_object.bind_method == "bind_builtin"
+        assert method_object.bind_multiplexer.selected == "bind_builtin"
 
-        Args:
-            test_method_object: A fixture providing a DynamicCallable instance that wraps a function.
-        """
+    def test_call_method_property(self) -> None:
+        """Test that the call_method property correctly gets and sets the call method."""
+        method_object = self.create_method_object()
 
-    @abstractmethod
-    def test_call_method_property(self, test_function_object: DynamicCallable) -> None:
-        """Test that the call_method property correctly gets and sets the call method.
+        # Set the call_method property
+        method_object.call_method = "call_wrapped"
 
-        Args:
-            test_function_object: A fixture providing a DynamicCallable instance that wraps a function.
-        """
+        # Verify the property was set correctly
+        assert method_object.call_method == "call_wrapped"
+        assert method_object.call_multiplexer.selected == "call_wrapped"
 
-    @abstractmethod
-    def test_bind_multiplexer(self, test_method_object: DynamicCallable) -> None:
+        # Set it back to the default
+        method_object.call_method = "call_wrapped"
+
+        # Verify it was set correctly
+        assert method_object.call_method == "call_wrapped"
+        assert method_object.call_multiplexer.selected == "call_wrapped"
+
+    def test_bind_multiplexer(self, test_method_object: DynamicCallable, test_bind_target: Any) -> None:
         """Test that the bind_multiplexer correctly delegates to the selected binding method.
 
-        Args:
-            test_method_object: A fixture providing a DynamicCallable instance that wraps a function.
-        """
+        This test verifies that the bind_multiplexer correctly delegates to the selected binding method. This method may
+        be overwritten to include validation beyond checking that the function is correct.
 
-    @abstractmethod
+        Args:
+            test_method_object: A fixture providing a DynamicCallable instance that wraps a method.
+            test_bind_target: A fixture providing an instance to bind the method to.
+        """
+        # Test with default bind_method (bind_builtin)
+        assert test_method_object.bind_method == "bind_builtin"
+        bound_method = test_method_object.__get__(test_bind_target, type(test_bind_target))
+        assert bound_method.__self__ is test_bind_target
+
+        # Change the bind_method to bind_wrapped
+        test_method_object.bind_method = "bind_wrapped"
+        assert test_method_object.bind_method == "bind_wrapped"
+
+        # Test with bind_wrapped
+        bound_method = test_method_object.__get__(test_bind_target, type(test_bind_target))
+        assert bound_method.__func__ is test_method_object.__func__
+        assert bound_method.__self__ is test_bind_target
+
     def test_call_multiplexer(self, test_function_object: DynamicCallable) -> None:
         """Test that the call_multiplexer correctly delegates to the selected call method.
 
+        This test verifies that the call_multiplexer correctly delegates to the selected call method. This method may be
+        overwritten to include validation beyond checking that the function is correct.
+
         Args:
             test_function_object: A fixture providing a DynamicCallable instance that wraps a function.
         """
+        # Test with default call_method (call_wrapped)
+        assert test_function_object.call_method == "call_wrapped"
+        result = test_function_object(3)
+        assert result == 5  # 3 + 2 (default y)
+
+        # Add a custom call method to the call_multiplexer
+        def custom_call(self, *args, **kwargs):
+            # Multiply the result by 2
+            return self.call_wrapped(*args, **kwargs) * 2
+
+        test_function_object.call_multiplexer.add_function("custom_call", custom_call)
+
+        # Change the call_method to custom_call
+        test_function_object.call_method = "custom_call"
+        assert test_function_object.call_method == "custom_call"
+
+        # Test with custom_call
+        result = test_function_object(3)
+        assert result == 10  # (3 + 2) * 2

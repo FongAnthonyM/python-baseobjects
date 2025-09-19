@@ -1,5 +1,9 @@
 """__init__.py
-bases provides several base classes.
+The composition package provides classes for implementing the Composite design pattern.
+
+This package includes classes for creating composite objects (BaseComposite, BaseDispatchingComposite,
+DispatchableComposite) and component objects (BaseComponent) that can be used together to build complex object
+hierarchies. The Composite pattern allows clients to treat individual objects and compositions of objects uniformly.
 """
 # Header #
 __package_name__ = "baseobjects"

@@ -20,8 +20,8 @@ from typing import Any, Type
 import pytest
 
 # Local Packages #
-from baseobjects.classregistration import BaseClassRegistry
-from baseobjects.testsuite.classregistration import BaseClassRegistryTestSuite
+from src.baseobjects.classregistration import BaseClassRegistry
+from src.baseobjects.testsuite.classregistration import BaseClassRegistryTestSuite
 
 
 # Definitions #

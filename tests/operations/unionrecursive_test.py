@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" unionrecursive_test.py
+"""unionrecursive_test.py
 Tests for the union_recursive function in the baseobjects package.
 """
 # Header #

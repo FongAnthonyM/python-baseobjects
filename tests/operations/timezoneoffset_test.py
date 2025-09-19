@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" timezoneoffset_test.py
+"""timezoneoffset_test.py
 Tests for the timezone_offset function in the baseobjects package.
 """
 # Header #

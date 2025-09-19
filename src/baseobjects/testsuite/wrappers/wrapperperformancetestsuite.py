@@ -22,7 +22,8 @@ from typing import Any, Type
 import pytest
 
 # Local Packages #
-from baseobjects.testsuite.bases import BasePerformanceTestSuite
+from ..bases import BasePerformanceTestSuite
+
 
 # Definitions #
 # Classes #

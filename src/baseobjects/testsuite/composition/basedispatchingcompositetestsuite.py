@@ -1,4 +1,4 @@
-""" basedispatchingcompositetestsuite.py
+"""basedispatchingcompositetestsuite.py
 Base test suite for BaseDispatchingComposite and its subclasses.
 """
 # Header #
@@ -20,10 +20,9 @@ import pickle
 from typing import Any, Type
 
 # Third-Party Packages #
-import pytest
 
 # Local Packages #
-from ..composition import BaseDispatchingComposite, BaseComponent
+from ...composition import BaseDispatchingComposite
 from .basecompositetestsuite import BaseCompositeTestSuite
 
 
@@ -32,7 +31,7 @@ from .basecompositetestsuite import BaseCompositeTestSuite
 class BaseDispatchingCompositeTestSuite(BaseCompositeTestSuite):
     """Base test suite for children of BaseDispatchingComposite.
 
-    This class provides common test functionality for child classes of BaseDispatchingComposite, including tests for
+    This class provides common test functionality for child classes of BaseDispatchingComposite, including tests_old_ for
     component type dispatching. Subclasses should set the TestClass attribute and may override or extend the test methods.
 
     Attributes:

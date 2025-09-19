@@ -1,4 +1,4 @@
-""" dispatchablecompositetestsuite.py
+"""dispatchablecompositetestsuite.py
 Base test suite for DispatchableComposite and its subclasses.
 """
 # Header #

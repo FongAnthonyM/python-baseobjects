@@ -15,7 +15,6 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any
 
 # Third-Party Packages #
 from baseobjects.functions import DynamicCallable
@@ -93,16 +92,15 @@ class WrappingDynamicCallable(DynamicCallable):
 class NonWrappingDynamicCallable(DynamicCallable):
     """A custom non-wrapping implementation of DynamicCallable that defines functionality directly.
     
-    This class demonstrates how to extend DynamicCallable without relying on a wrapped function.
-    Instead, it implements its own functionality directly through custom methods registered
-    with the call_multiplexer.
+    This class demonstrates how to extend DynamicCallable without relying on a wrapped function. Instead, it implements
+    its own functionality directly through custom methods registered with the call_multiplexer.
     """
     
     def __init__(self, *args, **kwargs):
         """Initialize the NonWrappingDynamicCallable.
         
-        This constructor initializes the object without requiring a wrapped function.
-        It registers custom methods with the call_multiplexer and sets a default call method.
+        This constructor initializes the object without requiring a wrapped function. It registers custom methods with
+        the call_multiplexer and sets a default call method.
         
         Args:
             *args: Arguments for the parent class.

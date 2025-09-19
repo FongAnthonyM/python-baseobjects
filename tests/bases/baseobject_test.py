@@ -26,7 +26,7 @@ import pytest
 
 # Local Packages #
 from src.baseobjects.bases import BaseObject
-from src.baseobjects.testsuite.bases import BaseObjectTestSuite
+from src.baseobjects.testsuite import BaseObjectTestSuite
 
 
 # Classes #

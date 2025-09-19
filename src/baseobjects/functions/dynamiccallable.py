@@ -151,7 +151,21 @@ class DynamicMethod(DynamicCallable, BaseMethod):
     """An abstract method class that has multiplexed binding and callback."""
 
     # Attributes #
-    default_call_method: str = "call_binding"
+    default_bind_method: str = "bind_self"
+    default_call_method: str = "call_wrapped"
+
+    # Calling
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        """This call delegates callback to a MethodMultiplexer.
+
+        Args:
+            *args: Positional arguments of the wrapped function.
+            **kwargs: Keyword arguments of the wrapped function.
+
+        Returns:
+            The output of the wrapped function.
+        """
+        return self.call_multiplexer(self._self_(), *args, **kwargs)
 
 
 class DynamicFunction(DynamicCallable, BaseFunction):

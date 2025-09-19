@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" methodnames_performance.py
+"""methodnames_performance.py
 Performance tests_old_ for the method name functions in the baseobjects.operations package.
 """
 # Header #
@@ -23,13 +23,13 @@ from typing import Any, Generator, List, Tuple
 import pytest
 
 # Local Packages #
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 from src.baseobjects.operations import (
     iter_method_names,
     iter_public_method_names,
     get_method_names,
     get_public_method_names,
 )
-from tests.bases.performance.base_performance import ClassPerformanceTest
 
 
 # Definitions #
@@ -89,7 +89,7 @@ def standard_get_public_method_names(obj: Any) -> Tuple[str, ...]:
 
 
 # Classes #
-class TestMethodNames(ClassPerformanceTest):
+class TestMethodNames(BasePerformanceTestSuite):
     """Test the performance of the method name functions.
 
     This class tests_old_ the performance of the functions that retrieve method names from objects.

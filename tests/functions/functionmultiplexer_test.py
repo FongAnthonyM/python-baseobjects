@@ -40,7 +40,7 @@ def multiply_function(x: int, y: int = 3) -> int:
 
 
 # Helper Classes #
-class TestObject:
+class FunctionMultiplexerTestObject:
     """A test class for testing method binding and selection."""
 
     def __init__(self, value: int = 10):
@@ -83,13 +83,13 @@ class TestFunctionMultiplexer(BaseCallableTestSuite):
         return registry
 
     @pytest.fixture
-    def test_object_instance(self) -> TestObject:
+    def test_object_instance(self) -> FunctionMultiplexerTestObject:
         """Create a test object instance.
 
         Returns:
-            TestObject: An instance of the test object.
+            FunctionMultiplexerTestObject: An instance of the test object.
         """
-        return TestObject(value=10)
+        return FunctionMultiplexerTestObject(value=10)
 
     @pytest.fixture
     def test_multiplexer(self, test_registry: FunctionRegistry) -> FunctionMultiplexer:
@@ -104,7 +104,7 @@ class TestFunctionMultiplexer(BaseCallableTestSuite):
         return self.TestClass(registry=test_registry, select="add")
 
     @pytest.fixture
-    def test_multiplexer_with_object(self, test_object_instance: TestObject) -> FunctionMultiplexer:
+    def test_multiplexer_with_object(self, test_object_instance: FunctionMultiplexerTestObject) -> FunctionMultiplexer:
         """Create a test multiplexer with an object.
 
         Args:
@@ -128,7 +128,7 @@ class TestFunctionMultiplexer(BaseCallableTestSuite):
         return self.TestClass(registry=test_registry, select="add")
 
     @pytest.fixture
-    def test_method_object(self, test_object_instance: TestObject) -> FunctionMultiplexer:
+    def test_method_object(self, test_object_instance: FunctionMultiplexerTestObject) -> FunctionMultiplexer:
         """Create a test callable object that wraps a method.
 
         Args:
@@ -161,7 +161,7 @@ class TestFunctionMultiplexer(BaseCallableTestSuite):
         assert instance.__func__ is add_function
 
         # Create an instance with an object
-        test_obj = TestObject()
+        test_obj = FunctionMultiplexerTestObject()
         instance = self.TestClass(instance=test_obj, select="method1")
 
         # Verify it has the correct object and selected method

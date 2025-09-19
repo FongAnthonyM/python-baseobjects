@@ -1,5 +1,9 @@
 """filetimetodatetime.py
 A function to convert a filetime to a datetime.
+
+This module provides functions for converting Windows FILETIME values to Python datetime objects. It supports
+multiple input formats including integers, floats, strings, and byte arrays. The module handles timezone
+conversions and maintains the precision of the original FILETIME value.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -16,6 +20,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 from datetime import datetime, timedelta, timezone
 from datetime import tzinfo as TZInfo
+from typing import Literal
 
 # Third-Party Packages #
 
@@ -30,12 +35,17 @@ FILETIME_INIT_DATE = datetime(1601, 1, 1, tzinfo=timezone.utc)  # The initial da
 
 # Functions #
 @singlekwargdispatch
-def filetime_to_datetime(timestamp: int | float | str | bytes, tzinfo: TZInfo | None = timezone.utc) -> datetime:
+def filetime_to_datetime(
+    timestamp: int | float | str | bytes,
+    tzinfo: TZInfo | None = timezone.utc,
+    byteorder: Literal["little", "big"] = "little",
+) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:
         timestamp: The filetime to convert to a datetime.
         tzinfo: The timezone of the datetime.
+        byteorder: The byte order of bytes to use for the conversion, either 'little' or 'big' if the input is bytes.
 
     Returns:
         The datetime of the filetime.
@@ -80,17 +90,22 @@ def _filetime_to_datetime(timestamp: float | str, tzinfo: TZInfo | None = None) 
 
 @filetime_to_datetime.register(bytes)
 @filetime_to_datetime.register(bytearray)
-def _filetime_to_datetime(timestamp: bytes | bytearray, tzinfo: TZInfo | None = None) -> datetime:
+def _filetime_to_datetime(
+    timestamp: bytes | bytearray,
+    tzinfo: TZInfo | None = None,
+    byteorder: Literal["little", "big"] = "little",
+) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:
         timestamp: The filetime to convert to a datetime.
         tzinfo: The timezone of the datetime.
+        byteorder: The byte order of bytes to use for the conversion, either 'little' or 'big'.
 
     Returns:
         The datetime of the filetime.
     """
-    delta = timedelta(microseconds=int.from_bytes(timestamp, "little") / 10)
+    delta = timedelta(microseconds=int.from_bytes(timestamp, byteorder=byteorder) / 10)
     if tzinfo is None:
         return FILETIME_INIT_DATE.replace(tzinfo=tzinfo) + delta
     else:
