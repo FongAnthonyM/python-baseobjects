@@ -8,9 +8,13 @@
    :hidden:
    :maxdepth: 1
 
-   usage
-   reference
+   installation
+   baseobjects
+   composition
+   coaching-tools
+   tutorials
    testing
+   reference
    contributing
    Code of Conduct <codeofconduct>
    License <license>
