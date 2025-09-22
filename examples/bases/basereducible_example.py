@@ -24,10 +24,10 @@ from baseobjects.bases import BaseReducible
 # Classes #
 class Person(BaseReducible):
     """A simple class that inherits from BaseReducible using __dict__."""
-    
+
     def __init__(self, name: str = "", age: int = 0, *args: Any, **kwargs: Any):
         """Initialize a Person object.
-        
+
         Args:
             name: The person's name
             age: The person's age
@@ -36,10 +36,10 @@ class Person(BaseReducible):
         """
         super().__init__(*args, **kwargs)
         self.construct(name=name, age=age)
-    
+
     def construct(self, name: str, age: int, *args: Any, **kwargs: Any) -> None:
         """Construct the Person object.
-        
+
         Args:
             name: The person's name
             age: The person's age
@@ -53,12 +53,12 @@ class Person(BaseReducible):
 
 class SlottedPerson(BaseReducible):
     """A class that inherits from BaseReducible using __slots__."""
-    
+
     __slots__ = ("name", "age", "friends")
-    
+
     def __init__(self, name: str = "", age: int = 0, *args: Any, **kwargs: Any):
         """Initialize a SlottedPerson object.
-        
+
         Args:
             name: The person's name
             age: The person's age
@@ -67,10 +67,10 @@ class SlottedPerson(BaseReducible):
         """
         super().__init__(*args, **kwargs)
         self.construct(name=name, age=age)
-    
+
     def construct(self, name: str, age: int, *args: Any, **kwargs: Any) -> None:
         """Construct the SlottedPerson object.
-        
+
         Args:
             name: The person's name
             age: The person's age
@@ -84,12 +84,12 @@ class SlottedPerson(BaseReducible):
 
 class HybridPerson(BaseReducible):
     """A class that inherits from BaseReducible using both __slots__ and __dict__."""
-    
+
     __slots__ = ("name", "age")
-    
+
     def __init__(self, name: str = "", age: int = 0, *args: Any, **kwargs: Any):
         """Initialize a HybridPerson object.
-        
+
         Args:
             name: The person's name
             age: The person's age
@@ -98,10 +98,10 @@ class HybridPerson(BaseReducible):
         """
         super().__init__(*args, **kwargs)
         self.construct(name=name, age=age)
-    
+
     def construct(self, name: str, age: int, *args: Any, **kwargs: Any) -> None:
         """Construct the HybridPerson object.
-        
+
         Args:
             name: The person's name
             age: The person's age
@@ -118,29 +118,29 @@ class HybridPerson(BaseReducible):
 def dict_based_example():
     """Demonstrate pickling and unpickling of dict-based BaseReducible objects."""
     print("\nDict-Based BaseReducible Example:")
-    
+
     # Create a Person instance
     person = Person("Alice", 30)
     print(f"Original person: {person.name}, {person.age}")
-    
+
     # Add some friends
     person.friends.append("Bob")
     person.friends.append("Charlie")
     print(f"Friends: {person.friends}")
-    
+
     # Pickle the object
     print("\nPickling the person object...")
     pickled_data = pickle.dumps(person)
     print(f"Pickled data size: {len(pickled_data)} bytes")
-    
+
     # Unpickle the object
     print("\nUnpickling the person object...")
     unpickled_person = pickle.loads(pickled_data)
-    
+
     # Verify the unpickled object
     print(f"Unpickled person: {unpickled_person.name}, {unpickled_person.age}")
     print(f"Unpickled friends: {unpickled_person.friends}")
-    
+
     # Compare original and unpickled objects
     print("\nComparing original and unpickled objects:")
     print(f"Same object? {person is unpickled_person} == False")
@@ -153,29 +153,29 @@ def dict_based_example():
 def slotted_example():
     """Demonstrate pickling and unpickling of slotted BaseReducible objects."""
     print("\nSlotted BaseReducible Example:")
-    
+
     # Create a SlottedPerson instance
     person = SlottedPerson("Bob", 25)
     print(f"Original slotted person: {person.name}, {person.age}")
-    
+
     # Add some friends
     person.friends.append("Alice")
     person.friends.append("Dave")
     print(f"Friends: {person.friends}")
-    
+
     # Pickle the object
     print("\nPickling the slotted person object...")
     pickled_data = pickle.dumps(person)
     print(f"Pickled data size: {len(pickled_data)} bytes")
-    
+
     # Unpickle the object
     print("\nUnpickling the slotted person object...")
     unpickled_person = pickle.loads(pickled_data)
-    
+
     # Verify the unpickled object
     print(f"Unpickled slotted person: {unpickled_person.name}, {unpickled_person.age}")
     print(f"Unpickled friends: {unpickled_person.friends}")
-    
+
     # Compare original and unpickled objects
     print("\nComparing original and unpickled objects:")
     print(f"Same object? {person is unpickled_person} == False")
@@ -183,7 +183,7 @@ def slotted_example():
     print(f"Same age? {person.age == unpickled_person.age} == True")
     print(f"Same friends list? {person.friends == unpickled_person.friends} == True")
     print(f"Same friends object? {id(person.friends) == id(unpickled_person.friends)} == False")
-    
+
     # Demonstrate that __slots__ restricts attribute assignment
     try:
         person.new_attribute = "This will fail"
@@ -195,37 +195,37 @@ def slotted_example():
 def hybrid_example():
     """Demonstrate pickling and unpickling of hybrid BaseReducible objects with both __slots__ and __dict__."""
     print("\nHybrid BaseReducible Example:")
-    
+
     # Create a HybridPerson instance
     person = HybridPerson("Charlie", 40)
     print(f"Original hybrid person: {person.name}, {person.age}")
-    
+
     # Add some friends and hobbies
     person.friends.append("Alice")
     person.hobbies.append("Reading")
     person.hobbies.append("Hiking")
     print(f"Friends: {person.friends}")
     print(f"Hobbies: {person.hobbies}")
-    
+
     # Add a dynamic attribute (goes to __dict__)
     person.favorite_color = "Blue"
     print(f"Favorite color: {person.favorite_color}")
-    
+
     # Pickle the object
     print("\nPickling the hybrid person object...")
     pickled_data = pickle.dumps(person)
     print(f"Pickled data size: {len(pickled_data)} bytes")
-    
+
     # Unpickle the object
     print("\nUnpickling the hybrid person object...")
     unpickled_person = pickle.loads(pickled_data)
-    
+
     # Verify the unpickled object
     print(f"Unpickled hybrid person: {unpickled_person.name}, {unpickled_person.age}")
     print(f"Unpickled friends: {unpickled_person.friends}")
     print(f"Unpickled hobbies: {unpickled_person.hobbies}")
     print(f"Unpickled favorite color: {unpickled_person.favorite_color}")
-    
+
     # Compare original and unpickled objects
     print("\nComparing original and unpickled objects:")
     print(f"Same object? {person is unpickled_person} == False")
@@ -234,7 +234,7 @@ def hybrid_example():
     print(f"Same friends list? {person.friends == unpickled_person.friends} == True")
     print(f"Same hobbies list? {person.hobbies == unpickled_person.hobbies} == True")
     print(f"Same favorite color? {person.favorite_color == unpickled_person.favorite_color} == True")
-    
+
     # Demonstrate that __slots__ restricts attribute assignment for slot names
     try:
         person.name = "Updated Name"

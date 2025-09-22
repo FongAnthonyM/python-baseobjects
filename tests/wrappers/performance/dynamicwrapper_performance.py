@@ -34,6 +34,7 @@ class DynamicWrapperTestObject(DynamicWrapper):
 
     This class uses DynamicWrapper to wrap ExampleOne and ExampleTwo objects.
     """
+
     _wrapped_map_ = ["_first", "_second"]
 
     def __init__(self, first: Any = None, second: Any = None) -> None:
@@ -68,6 +69,7 @@ class TestDynamicWrapperPerformance(WrapperPerformanceTestSuite):
         timeit_runs: The number of runs to use for timeit measurements.
         speed_tolerance: The maximum percentage of time a new implementation can take compared to the old one.
     """
+
     # Attributes #
     TestClass = DynamicWrapperTestObject
 
@@ -96,6 +98,7 @@ class TestDynamicWrapperPerformance(WrapperPerformanceTestSuite):
 
         This test compares the speed of creating a DynamicWrapper instance with creating a standard object.
         """
+
         def wrapper_creation() -> None:
             _ = self.TestClass(self.ExampleOne(), self.ExampleTwo())
 
@@ -107,7 +110,9 @@ class TestDynamicWrapperPerformance(WrapperPerformanceTestSuite):
         print(f"\n{self.TestClass.__name__} creation: {mean_new:.3f} μs")
         # No assertion here, just measuring performance
 
-    def test_getattr_performance(self, test_object: DynamicWrapperTestObject, test_example_one: "WrapperPerformanceTestSuite.ExampleOne") -> None:
+    def test_getattr_performance(
+        self, test_object: DynamicWrapperTestObject, test_example_one: "WrapperPerformanceTestSuite.ExampleOne"
+    ) -> None:
         """Test the performance of the __getattr__ method.
 
         This test compares the speed of accessing attributes through __getattr__ with direct attribute access.
@@ -116,6 +121,7 @@ class TestDynamicWrapperPerformance(WrapperPerformanceTestSuite):
             test_object: A fixture providing a DynamicWrapperTestObject.
             test_example_one: A fixture providing an ExampleOne object.
         """
+
         def dynamic_access() -> None:
             _ = test_object.one
 
@@ -135,7 +141,9 @@ class TestDynamicWrapperPerformance(WrapperPerformanceTestSuite):
         print(f"\n{self.TestClass.__name__} __getattr__: {mean_new:.3f} μs ({percent:.3f}% of direct access time)")
         assert percent < self.speed_tolerance
 
-    def test_setattr_performance(self, test_object: DynamicWrapperTestObject, test_example_one: "WrapperPerformanceTestSuite.ExampleOne") -> None:
+    def test_setattr_performance(
+        self, test_object: DynamicWrapperTestObject, test_example_one: "WrapperPerformanceTestSuite.ExampleOne"
+    ) -> None:
         """Test the performance of the __setattr__ method.
 
         This test compares the speed of setting attributes through __setattr__ with direct attribute setting.
@@ -144,6 +152,7 @@ class TestDynamicWrapperPerformance(WrapperPerformanceTestSuite):
             test_object: A fixture providing a DynamicWrapperTestObject.
             test_example_one: A fixture providing an ExampleOne object.
         """
+
         def dynamic_set() -> None:
             test_object.one = "test"
 

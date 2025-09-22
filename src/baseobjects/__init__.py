@@ -5,6 +5,7 @@ This package contains a collection of base classes and utility tools for Python 
 classes, metaclasses, composition tools, and various utility functions that can be used as building blocks for more
 complex applications.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

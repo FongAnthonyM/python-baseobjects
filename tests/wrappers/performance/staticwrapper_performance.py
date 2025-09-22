@@ -34,9 +34,10 @@ class StaticWrapperTestObject(StaticWrapper):
 
     This class uses StaticWrapper to wrap ExampleOne and ExampleTwo objects.
     """
+
     _wrapped_map_: list[[str, type[Any]], ...] = [
         ("_first", WrapperPerformanceTestSuite.ExampleOne),
-        ("_second", WrapperPerformanceTestSuite.ExampleTwo)
+        ("_second", WrapperPerformanceTestSuite.ExampleTwo),
     ]
 
     def __init__(self, first: Any = None, second: Any = None) -> None:
@@ -72,6 +73,7 @@ class TestStaticWrapperPerformance(WrapperPerformanceTestSuite):
         timeit_runs: The number of runs to use for timeit measurements.
         speed_tolerance: The maximum percentage of time a new implementation can take compared to the old one.
     """
+
     # Attributes #
     TestClass = StaticWrapperTestObject
 
@@ -92,6 +94,7 @@ class TestStaticWrapperPerformance(WrapperPerformanceTestSuite):
 
         This test compares the speed of creating a StaticWrapper instance with creating a standard object.
         """
+
         def wrapper_creation() -> None:
             _ = self.TestClass(self.ExampleOne(), self.ExampleTwo())
 
@@ -111,6 +114,7 @@ class TestStaticWrapperPerformance(WrapperPerformanceTestSuite):
         Args:
             test_object: A fixture providing a StaticWrapperTestObject.
         """
+
         def wrap_method() -> None:
             test_object._wrap()
 

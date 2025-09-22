@@ -11,6 +11,7 @@ Typical usage example:
   if version > "1.0.0":
       print(f"Version {version} is newer than 1.0.0")
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

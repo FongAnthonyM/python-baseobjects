@@ -41,9 +41,11 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
         speed_tolerance: The maximum speed tolerance in microseconds.
         TestClass: The class being tested.
     """
+
     # Class Definitions #
     class TestDynamicDecorator(DynamicDecorator):
         """A subclass of DynamicDecorator for testing purposes."""
+
         # Magic Methods #
         def __init__(self) -> None:
             """Initialize with a simple function."""
@@ -55,6 +57,7 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
 
     class TestBaseDecorator(BaseDecorator):
         """A subclass of BaseDecorator for testing purposes."""
+
         # Magic Methods #
         def __init__(self) -> None:
             """Initialize with a simple function."""
@@ -97,6 +100,7 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
         This test compares the speed of creating DynamicDecorator instances with creating
         BaseDecorator instances and standard Python functions.
         """
+
         # Define the performance test functions
         def create_dynamic_decorator() -> None:
             self.TestClass()
@@ -124,15 +128,25 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
         dynamic_to_base_percent = (mean_dynamic / mean_base) * 100
 
         # Print the performance comparison
-        print(f"\nNormal function creation: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
-        print(f"BaseDecorator creation: {mean_base:.3f} μs ({(mean_base / mean_normal):.3f}% of normal function creation time)")
-        print(f"DynamicDecorator creation: {mean_dynamic:.3f} μs ({dynamic_to_normal_percent:.3f}% of normal function creation time, {dynamic_to_base_percent:.3f}% of BaseDecorator creation time)")
-        
+        print(
+            f"\nNormal function creation: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
+        print(
+            f"BaseDecorator creation: {mean_base:.3f} μs ({(mean_base / mean_normal):.3f}% of normal function creation time)"
+        )
+        print(
+            f"DynamicDecorator creation: {mean_dynamic:.3f} μs ({dynamic_to_normal_percent:.3f}% of normal function creation time, {dynamic_to_base_percent:.3f}% of BaseDecorator creation time)"
+        )
+
         # Assert that the performance is within acceptable limits
         assert dynamic_to_normal_percent < self.speed_tolerance
         assert dynamic_to_base_percent < self.speed_tolerance * 1.5  # Allow more overhead compared to BaseDecorator
 
-    def test_call_speed(self, test_dynamic_decorator: "TestDynamicDecoratorPerformance.TestDynamicDecorator", test_base_decorator: "TestDynamicDecoratorPerformance.TestBaseDecorator") -> None:
+    def test_call_speed(
+        self,
+        test_dynamic_decorator: "TestDynamicDecoratorPerformance.TestDynamicDecorator",
+        test_base_decorator: "TestDynamicDecoratorPerformance.TestBaseDecorator",
+    ) -> None:
         """Test the performance of the __call__ method of DynamicDecorator.
 
         This test compares the speed of DynamicDecorator.__call__() with BaseDecorator.__call__()
@@ -142,6 +156,7 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
             test_dynamic_decorator: A fixture providing a TestDynamicDecorator instance.
             test_base_decorator: A fixture providing a TestBaseDecorator instance.
         """
+
         # Create a normal function to compare against
         def normal(x: int) -> int:
             return x * 2
@@ -175,10 +190,14 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
         dynamic_to_base_percent = (mean_dynamic / mean_base) * 100
 
         # Print the performance comparison
-        print(f"\nNormal function call: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nNormal function call: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"BaseDecorator call: {mean_base:.3f} μs ({(mean_base / mean_normal):.3f}% of normal function call time)")
-        print(f"DynamicDecorator call: {mean_dynamic:.3f} μs ({dynamic_to_normal_percent:.3f}% of normal function call time, {dynamic_to_base_percent:.3f}% of BaseDecorator call time)")
-        
+        print(
+            f"DynamicDecorator call: {mean_dynamic:.3f} μs ({dynamic_to_normal_percent:.3f}% of normal function call time, {dynamic_to_base_percent:.3f}% of BaseDecorator call time)"
+        )
+
         # Assert that the performance is within acceptable limits
         assert dynamic_to_normal_percent < self.speed_tolerance
         assert dynamic_to_base_percent < self.speed_tolerance * 1.5  # Allow more overhead compared to BaseDecorator
@@ -186,13 +205,15 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
     def test_construct_call_speed(self) -> None:
         """Test the performance of the construct_call method of DynamicDecorator.
 
-        This test compares the speed of DynamicDecorator.construct_call() with 
+        This test compares the speed of DynamicDecorator.construct_call() with
         BaseDecorator.construct_call() and a normal decorator.
         """
+
         # Create a normal decorator to compare against
         def normal_decorator(func):
             def wrapper(*args, **kwargs):
                 return func(*args, **kwargs)
+
             return wrapper
 
         def test_func(x):
@@ -227,10 +248,16 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
         dynamic_to_base_percent = (mean_dynamic / mean_base) * 100
 
         # Print the performance comparison
-        print(f"\nNormal decorator construction: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
-        print(f"BaseDecorator.construct_call: {mean_base:.3f} μs ({(mean_base / mean_normal):.3f}% of normal decorator construction time)")
-        print(f"DynamicDecorator.construct_call: {mean_dynamic:.3f} μs ({dynamic_to_normal_percent:.3f}% of normal decorator construction time, {dynamic_to_base_percent:.3f}% of BaseDecorator construction time)")
-        
+        print(
+            f"\nNormal decorator construction: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
+        print(
+            f"BaseDecorator.construct_call: {mean_base:.3f} μs ({(mean_base / mean_normal):.3f}% of normal decorator construction time)"
+        )
+        print(
+            f"DynamicDecorator.construct_call: {mean_dynamic:.3f} μs ({dynamic_to_normal_percent:.3f}% of normal decorator construction time, {dynamic_to_base_percent:.3f}% of BaseDecorator construction time)"
+        )
+
         # Assert that the performance is within acceptable limits
         assert dynamic_to_normal_percent < self.speed_tolerance
         assert dynamic_to_base_percent < self.speed_tolerance * 1.5  # Allow more overhead compared to BaseDecorator
@@ -243,45 +270,47 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
         """
         # Create a dynamic decorator with multiple callback functions
         decorator = self.TestClass()
-        
+
         # Define different callback functions
         def callback1(func: Callable) -> Callable:
             def wrapper(*args, **kwargs):
                 # Add 1 to the result
                 return func(*args, **kwargs) + 1
+
             return wrapper
-            
+
         def callback2(func: Callable) -> Callable:
             def wrapper(*args, **kwargs):
                 # Multiply the result by 2
                 return func(*args, **kwargs) * 2
+
             return wrapper
-        
+
         # Add the callbacks to the decorator
         decorator.add_callback = callback1
         decorator.multiply_callback = callback2
-        
+
         # Define a test function
         def test_func(x):
             return x
-        
+
         # Define the performance test functions
         def switch_callbacks() -> None:
             decorator.call = callback1
             decorated1 = decorator.construct_call(test_func)
             result1 = decorated1(5)  # Should be 6 (5 + 1)
-            
+
             decorator.call = callback2
             decorated2 = decorator.construct_call(test_func)
             result2 = decorated2(5)  # Should be 10 (5 * 2)
-            
+
             assert result1 == 6
             assert result2 == 10
-        
+
         # Calculate the mean time in microseconds
         time = timeit.timeit(switch_callbacks, number=self.timeit_runs // 100)
         mean_time = time / (self.timeit_runs // 100) * 1000000
-        
+
         # Print the performance result
         print(f"\nSwitching between callbacks: {mean_time:.3f} μs")
         # No direct comparison, just ensure it's reasonably fast
@@ -293,6 +322,7 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
         This test measures the performance overhead when using a more complex decorator
         with multiple layers of wrapping.
         """
+
         # Create a more complex decorator function
         def complex_decorator(func):
             def outer_wrapper(*args, **kwargs):
@@ -300,88 +330,91 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
                 args = list(args)
                 if args:
                     args[0] += 1
-                
+
                 # Call the function
                 result = func(*args, **kwargs)
-                
+
                 # Do some post-processing
                 return result * 2
+
             return outer_wrapper
-        
+
         # Create a dynamic decorator with similar functionality
         class ComplexDynamicDecorator(DynamicDecorator):
             def __init__(self):
                 super().__init__(lambda x: x)
-                
+
             def call(self, *args, **kwargs):
                 # Do some pre-processing
                 args = list(args)
                 if args:
                     args[0] += 1
-                
+
                 # Call the function
                 result = self.func(*args, **kwargs)
-                
+
                 # Do some post-processing
                 return result * 2
-        
+
         # Create a base decorator with similar functionality
         class ComplexBaseDecorator(BaseDecorator):
             def __init__(self):
                 super().__init__(lambda x: x)
-                
+
             def call(self, *args, **kwargs):
                 # Do some pre-processing
                 args = list(args)
                 if args:
                     args[0] += 1
-                
+
                 # Call the function
                 result = self.func(*args, **kwargs)
-                
+
                 # Do some post-processing
                 return result * 2
-        
+
         # Create instances
         dynamic_decorator = ComplexDynamicDecorator()
         base_decorator = ComplexBaseDecorator()
-        
+
         # Define a test function
         def test_func(x):
             return x
-        
+
         # Define the performance test functions
         def use_dynamic_decorator():
             decorated = dynamic_decorator.construct_call(test_func)
             return decorated(5)
-            
+
         def use_base_decorator():
             decorated = base_decorator.construct_call(test_func)
             return decorated(5)
-            
+
         def use_normal_decorator():
             decorated = complex_decorator(test_func)
             return decorated(5)
-        
+
         # Calculate the mean time in microseconds
         dynamic_time = timeit.timeit(use_dynamic_decorator, number=self.timeit_runs // 10)
         mean_dynamic = dynamic_time / (self.timeit_runs // 10) * 1000000
-        
+
         base_time = timeit.timeit(use_base_decorator, number=self.timeit_runs // 10)
         mean_base = base_time / (self.timeit_runs // 10) * 1000000
-        
+
         normal_time = timeit.timeit(use_normal_decorator, number=self.timeit_runs // 10)
         mean_normal = normal_time / (self.timeit_runs // 10) * 1000000
-        
+
         # Calculate percentages
         dynamic_to_normal_percent = (mean_dynamic / mean_normal) * 100
         dynamic_to_base_percent = (mean_dynamic / mean_base) * 100
-        
+
         # Print the performance comparison
         print(f"\nComplex normal decorator: {mean_normal:.3f} μs")
         print(f"Complex BaseDecorator: {mean_base:.3f} μs ({(mean_base / mean_normal):.3f}% of normal decorator time)")
-        print(f"Complex DynamicDecorator: {mean_dynamic:.3f} μs ({dynamic_to_normal_percent:.3f}% of normal decorator time, {dynamic_to_base_percent:.3f}% of BaseDecorator time)")
-        
+        print(
+            f"Complex DynamicDecorator: {mean_dynamic:.3f} μs ({dynamic_to_normal_percent:.3f}% of normal decorator time, {dynamic_to_base_percent:.3f}% of BaseDecorator time)"
+        )
+
         # Assert that the performance is within acceptable limits
         assert dynamic_to_normal_percent < self.speed_tolerance * 2  # Allow more overhead for complex operations
         assert dynamic_to_base_percent < self.speed_tolerance * 1.5  # Allow more overhead compared to BaseDecorator

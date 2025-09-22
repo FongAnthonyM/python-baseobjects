@@ -109,13 +109,13 @@ class TestFiletimeToDatetime:
         filetime to a datetime object.
         """
         # Test with a simple bytes (10000 in little-endian)
-        result = filetime_to_datetime(b'\x10\x27\x00\x00\x00\x00\x00\x00', None)
+        result = filetime_to_datetime(b"\x10\x27\x00\x00\x00\x00\x00\x00", None)
         # 0x2710 = 10000, divided by 10 = 1000 microseconds
         expected = FILETIME_INIT_DATE.replace(tzinfo=None) + timedelta(microseconds=1000.0)
         assert result == expected
 
         # Test with a different bytes value
-        result = filetime_to_datetime(b'\x40\x42\x0f\x00\x00\x00\x00\x00', None)
+        result = filetime_to_datetime(b"\x40\x42\x0f\x00\x00\x00\x00\x00", None)
         # 0x0f4240 = 1000000, divided by 10 = 100000 microseconds
         expected = FILETIME_INIT_DATE.replace(tzinfo=None) + timedelta(microseconds=100000.0)
         assert result == expected
@@ -127,13 +127,13 @@ class TestFiletimeToDatetime:
         filetime to a datetime object.
         """
         # Test with a simple bytearray (10000 in little-endian)
-        result = filetime_to_datetime(bytearray(b'\x10\x27\x00\x00\x00\x00\x00\x00'), None)
+        result = filetime_to_datetime(bytearray(b"\x10\x27\x00\x00\x00\x00\x00\x00"), None)
         # 0x2710 = 10000, divided by 10 = 1000 microseconds
         expected = FILETIME_INIT_DATE.replace(tzinfo=None) + timedelta(microseconds=1000.0)
         assert result == expected
 
         # Test with a different bytearray value
-        result = filetime_to_datetime(bytearray(b'\x40\x42\x0f\x00\x00\x00\x00\x00'), None)
+        result = filetime_to_datetime(bytearray(b"\x40\x42\x0f\x00\x00\x00\x00\x00"), None)
         # 0x0f4240 = 1000000, divided by 10 = 100000 microseconds
         expected = FILETIME_INIT_DATE.replace(tzinfo=None) + timedelta(microseconds=100000.0)
         assert result == expected

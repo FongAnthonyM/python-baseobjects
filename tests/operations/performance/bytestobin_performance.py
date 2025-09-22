@@ -74,6 +74,7 @@ class TestBytesToBin(BasePerformanceTestSuite):
 
     This class tests_old_ the performance of the bytes_to_bin function, which converts bytes to a tuple of binary values.
     """
+
     # Attributes #
     timeit_runs: int = 100000
     speed_tolerance: int = 150
@@ -87,7 +88,7 @@ class TestBytesToBin(BasePerformanceTestSuite):
         Returns:
             bytes: Test bytes.
         """
-        return b'\x01\x02\x03\x04\x05'
+        return b"\x01\x02\x03\x04\x05"
 
     # Tests
     def test_bytes_to_bin_big_endian_speed(self, test_bytes: bytes) -> None:
@@ -98,6 +99,7 @@ class TestBytesToBin(BasePerformanceTestSuite):
         Args:
             test_bytes: A fixture providing test bytes.
         """
+
         def custom_implementation() -> None:
             bytes_to_bin(test_bytes, byteorder="big")
 
@@ -125,6 +127,7 @@ class TestBytesToBin(BasePerformanceTestSuite):
         Args:
             test_bytes: A fixture providing test bytes.
         """
+
         def custom_implementation() -> None:
             bytes_to_bin(test_bytes, byteorder="little")
 
@@ -152,6 +155,7 @@ class TestBytesToBin(BasePerformanceTestSuite):
         Args:
             test_bytes: A fixture providing test bytes.
         """
+
         def int_output_type() -> None:
             bytes_to_bin(test_bytes, out_type=int)
 

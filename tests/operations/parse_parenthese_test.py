@@ -53,21 +53,21 @@ class TestParseParentheses:
         # Check first element: ['first', ['inner']]
         assert isinstance(result[0][0], list)
         assert len(result[0][0]) == 2
-        assert result[0][0][0] == 'first'
+        assert result[0][0][0] == "first"
         assert isinstance(result[0][0][1], list)
-        assert result[0][0][1][0] == 'inner'
+        assert result[0][0][1][0] == "inner"
 
         # Check second element: ['second']
         assert isinstance(result[0][1], list)
         assert len(result[0][1]) == 1
-        assert result[0][1][0] == 'second'
+        assert result[0][1][0] == "second"
 
         # Check third element: ['wrong', ['thing']]
         assert isinstance(result[0][2], list)
         assert len(result[0][2]) == 2
-        assert result[0][2][0] == 'wrong'
+        assert result[0][2][0] == "wrong"
         assert isinstance(result[0][2][1], list)
-        assert result[0][2][1][0] == 'thing'
+        assert result[0][2][1][0] == "thing"
 
     def test_bytes_parse_parentheses(self) -> None:
         """Test parsing a bytes expression with parentheses.
@@ -91,14 +91,14 @@ class TestParseParentheses:
         # Check second element
         assert isinstance(result[0][1], list)
         assert len(result[0][1]) == 1
-        assert result[0][1][0] == b'second'
+        assert result[0][1][0] == b"second"
 
         # Check third element
         assert isinstance(result[0][2], list)
         assert len(result[0][2]) == 2
-        assert result[0][2][0] == b'wrong'
+        assert result[0][2][0] == b"wrong"
         assert isinstance(result[0][2][1], list)
-        assert result[0][2][1][0] == b'thing'
+        assert result[0][2][1][0] == b"thing"
 
     def test_unbalanced_parentheses(self) -> None:
         """Test parsing an expression with unbalanced parentheses.

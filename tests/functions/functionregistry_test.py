@@ -4,6 +4,7 @@ Unit tests for the FunctionRegistry class.
 This module provides tests for the FunctionRegistry class, which is a registry that holds functions.
 It inherits from BaseDict and provides functionality to store and retrieve functions by name.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -426,6 +427,7 @@ class TestFunctionRegistry(BaseObjectTestSuite):
 
     def test_empty_object(self) -> None:
         """Test edge case where an object with no methods is provided."""
+
         # Create an object with no methods
         class EmptyObject:
             pass
@@ -441,6 +443,7 @@ class TestFunctionRegistry(BaseObjectTestSuite):
 
     def test_non_callable_attributes(self) -> None:
         """Test edge case where an object has non-callable attributes."""
+
         # Create an object with non-callable attributes
         class ObjectWithAttributes:
             def __init__(self):
@@ -467,6 +470,7 @@ class TestFunctionRegistry(BaseObjectTestSuite):
 
     def test_overriding_functions(self) -> None:
         """Test edge case where functions with the same name are provided."""
+
         # Create two functions with the same name
         def func1() -> str:
             return "func1_version1"
@@ -492,6 +496,7 @@ class TestFunctionRegistry(BaseObjectTestSuite):
 
     def test_object_with_same_method_names(self) -> None:
         """Test edge case where multiple objects with the same method names are provided."""
+
         # Create two objects with the same method names
         class Object1:
             def custom_method(self) -> str:
@@ -516,6 +521,7 @@ class TestFunctionRegistry(BaseObjectTestSuite):
 
     def test_object_with_property(self) -> None:
         """Test edge case where an object has a property."""
+
         # Create an object with a property
         class ObjectWithProperty:
             @property

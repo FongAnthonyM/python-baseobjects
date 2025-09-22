@@ -23,6 +23,7 @@ These classes are particularly useful for creating decorators, method factories,
 patterns that require customizable callable objects with specific behaviors. They handle edge cases like proper
 pickling, coroutine support, and attribute preservation that are often overlooked in custom callable implementations.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -54,12 +55,12 @@ from .basereducible import BaseReducible
 class BaseCallable(BaseReducible):
     """An abstract class that implements the core functionality for creating callable objects.
 
-    BaseCallable provides a foundation for creating custom callable objects in Python. It wraps an existing function or 
-    callable and implements the necessary protocols to make the wrapper behave like the wrapped function, including 
+    BaseCallable provides a foundation for creating custom callable objects in Python. It wraps an existing function or
+    callable and implements the necessary protocols to make the wrapper behave like the wrapped function, including
     attribute copying, docstring preservation, and proper handling of coroutines.
 
-    The class implements both the callable protocol (through __call__) and the descriptor protocol (through __get__), 
-    allowing instances to be called directly and to be bound to instances when accessed as attributes. It also provides 
+    The class implements both the callable protocol (through __call__) and the descriptor protocol (through __get__),
+    allowing instances to be called directly and to be bound to instances when accessed as attributes. It also provides
     utilities for creating function wrappers and binding to instances.
 
     When a function is wrapped by BaseCallable, all its attributes, including docstrings and annotations, are preserved.
@@ -88,8 +89,8 @@ class BaseCallable(BaseReducible):
     def __func__(self, value: AnyCallable | None) -> None:
         """Sets the function which this callable wraps.
 
-        This setter validates that the provided value is callable or a descriptor, then sets it as the wrapped function. 
-        It also copies all relevant attributes from the wrapped function to this object, including docstrings, 
+        This setter validates that the provided value is callable or a descriptor, then sets it as the wrapped function.
+        It also copies all relevant attributes from the wrapped function to this object, including docstrings,
         annotations, and other metadata.
 
         Args:
@@ -152,12 +153,12 @@ class BaseCallable(BaseReducible):
     def __new__(cls, func: AnyCallable | None = None, *args: Any, **kwargs: Any) -> "BaseCallable":
         """Dispatches either an unbound instance or a bound instance if the given function is a method.
 
-        This method creates a new instance of the class and handles the special case where the provided function is 
-        already a bound method. In that case, it extracts the underlying function and the instance it's bound to, then 
+        This method creates a new instance of the class and handles the special case where the provided function is
+        already a bound method. In that case, it extracts the underlying function and the instance it's bound to, then
         creates a new callable bound to the same instance.
 
         Args:
-            func: The function or method to wrap. If this is a bound method, the new callable will also be bound to the 
+            func: The function or method to wrap. If this is a bound method, the new callable will also be bound to the
                 same instance.
             *args: Positional arguments for building an instance.
             **kwargs: Keyword arguments for building an instance.
@@ -212,7 +213,7 @@ class BaseCallable(BaseReducible):
     ) -> None:
         """The constructor for this object.
 
-        This method initializes the callable object with the provided function and other arguments. It sets the wrapped 
+        This method initializes the callable object with the provided function and other arguments. It sets the wrapped
         function and calls the parent class's construct method to handle any additional initialization.
 
         Args:
@@ -231,7 +232,7 @@ class BaseCallable(BaseReducible):
 
         Args:
             instance: The object to bind the method to. This becomes the 'self' parameter when the method is called.
-            owner: The class of the object being bound to. This parameter is included for API consistency but is not 
+            owner: The class of the object being bound to. This parameter is included for API consistency but is not
                 used in this method.
 
         Returns:
@@ -286,10 +287,13 @@ class BaseCallable(BaseReducible):
         """
         # Create appropriate wrapper function based on whether the wrapped function is a coroutine
         if self._is_coroutine:
+
             async def wrapper_function(*args: Any, **kwargs: Any) -> Any:
                 """A function which wraps a callable."""
                 return await self(*args, **kwargs)
+
         else:
+
             def wrapper_function(*args: Any, **kwargs: Any) -> Any:
                 """A function which wraps a callable."""
                 return self(*args, **kwargs)
@@ -323,13 +327,13 @@ class BaseCallable(BaseReducible):
 class BaseMethod(BaseCallable):
     """An abstract class that implements the structure for creating method-like callable objects.
 
-    BaseMethod extends BaseCallable to create callable objects that behave like methods, maintaining a reference to the 
-    instance they're bound to and properly handling method binding semantics. This class is particularly useful for 
+    BaseMethod extends BaseCallable to create callable objects that behave like methods, maintaining a reference to the
+    instance they're bound to and properly handling method binding semantics. This class is particularly useful for
     creating custom method types, method factories, and method decorators.
 
-    Unlike regular functions, methods are bound to a specific instance and receive that instance as their first argument 
-    (typically named 'self'). BaseMethod implements this behavior by storing a weak reference to the bound instance and 
-    using it when the method is called. The weak reference prevents memory leaks that could occur if the method held a 
+    Unlike regular functions, methods are bound to a specific instance and receive that instance as their first argument
+    (typically named 'self'). BaseMethod implements this behavior by storing a weak reference to the bound instance and
+    using it when the method is called. The weak reference prevents memory leaks that could occur if the method held a
     strong reference to the instance.
 
     When a BaseMethod is accessed through an instance (e.g., `instance.method`), it returns itself with the instance
@@ -337,7 +341,7 @@ class BaseMethod(BaseCallable):
     from the weak reference and passes it as the first argument to the wrapped function.
 
     Attributes:
-        _self_: A weak reference to the object this method is bound to. Using a weak reference prevents circular 
+        _self_: A weak reference to the object this method is bound to. Using a weak reference prevents circular
             references that could lead to memory leaks.
         __owner__: The class of the object this method is bound to. This is used for proper method binding and to
             support inheritance.
@@ -545,8 +549,8 @@ class BaseMethod(BaseCallable):
 class BaseFunction(BaseCallable):
     """An abstract class that implements the structure for creating function-like callable objects.
 
-    BaseFunction extends BaseCallable to create callable objects that behave like functions but can be converted to 
-    methods when bound to instances. This class is particularly useful for creating decorators, function factories, and 
+    BaseFunction extends BaseCallable to create callable objects that behave like functions but can be converted to
+    methods when bound to instances. This class is particularly useful for creating decorators, function factories, and
     other callable objects that need to support both function-like and method-like behavior.
 
     When a BaseFunction is accessed through an instance (e.g., `instance.func`), it creates a new method of type
@@ -558,7 +562,7 @@ class BaseFunction(BaseCallable):
     control over the binding process, which is useful for implementing decorators and other advanced patterns.
 
     Attributes:
-        method_type: The type of method to create when binding this function to an instance. By default, this is 
+        method_type: The type of method to create when binding this function to an instance. By default, this is
                     BaseMethod, but it can be customized to use different method implementations. This allows
                     for customizing the behavior of bound methods.
     """

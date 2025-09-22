@@ -146,10 +146,7 @@ def basic_callback_example():
     def on_error(error_code: int, message: str) -> None:
         print(f"Error {error_code}: {message}")
 
-    callback_manager.register_callbacks({
-        "warning": on_warning,
-        "error": on_error
-    })
+    callback_manager.register_callbacks({"warning": on_warning, "error": on_error})
 
     print("\nCalling multiple registered callbacks:")
     callback_manager.call_callback("warning", "Disk space is low")
@@ -173,17 +170,11 @@ def conditional_callback_example():
     # Demonstrate using call_conditional directly
     print("Using call_conditional directly with static methods:")
     print("Calling with priority 3 (should not execute):")
-    callback_manager.call_conditional(
-        lambda: is_important(3),
-        lambda: process_message("Low priority message", 3)
-    )
+    callback_manager.call_conditional(lambda: is_important(3), lambda: process_message("Low priority message", 3))
     print("(Did not print)")
 
     print("Calling with priority 7 (should execute):")
-    callback_manager.call_conditional(
-        lambda: is_important(7),
-        lambda: process_message("High priority message", 7)
-    )
+    callback_manager.call_conditional(lambda: is_important(7), lambda: process_message("High priority message", 7))
 
     # Define condition and callback function
     mutable_state = {}
@@ -288,7 +279,7 @@ async def basic_callback_example_async():
         print(f"Async error {error_code}: {message}")
 
     callback_manager.register_callbacks(
-        callbacks_async={"warning_async": on_warning_async,"error_async": on_error_async}
+        callbacks_async={"warning_async": on_warning_async, "error_async": on_error_async}
     )
 
     print("\nCalling multiple registered async callbacks:")
@@ -316,15 +307,13 @@ async def conditional_callback_example_async():
     print("Using call_conditional_async directly:")
     print("Calling with priority 3 (should not execute):")
     await callback_manager.call_conditional_async(
-        lambda: is_important_async(3),
-        lambda: process_message_async("Low priority message", 3)
+        lambda: is_important_async(3), lambda: process_message_async("Low priority message", 3)
     )
     print("(Did not print)")
 
     print("Calling with priority 7 (should execute):")
     await callback_manager.call_conditional_async(
-        lambda: is_important_async(7),
-        lambda: process_message_async("High priority message", 7)
+        lambda: is_important_async(7), lambda: process_message_async("High priority message", 7)
     )
 
     # Define async condition and callback function with mutable state
@@ -376,6 +365,7 @@ async def task_management_example_async():
         if limited_true_async.count <= 5:
             return True
         return False
+
     limited_true_async.count = 0
 
     async def task_callback_async() -> None:
@@ -384,15 +374,12 @@ async def task_management_example_async():
         print(f"Starting task {task_id}")
         await asyncio.sleep(0.2)  # Simulate work
         print(f"Completed task {task_id}")
+
     task_callback_async.counter = 1
 
     # Demonstrate call_while_condition_async
     print("Using call_while_condition_async to run 5 tasks:")
-    await callback_manager.call_while_condition_async(
-        limited_true_async,
-        task_callback_async,
-        tasks
-    )
+    await callback_manager.call_while_condition_async(limited_true_async, task_callback_async, tasks)
     print("All tasks completed")
 
     # Reset counter
@@ -401,11 +388,7 @@ async def task_management_example_async():
 
     # Demonstrate enqueue_call_while_condition_async
     print("\nUsing enqueue_call_while_condition_async to run 5 tasks concurrently:")
-    await callback_manager.enqueue_call_while_condition_async(
-        limited_true_async,
-        task_callback_async,
-        tasks
-    )
+    await callback_manager.enqueue_call_while_condition_async(limited_true_async, task_callback_async, tasks)
     print("All tasks completed")
 
     # Demonstrate join_tasks_async with timeout
@@ -463,10 +446,7 @@ async def scheduler_example_async():
     async_scheduler = callback_manager.create_scheduler()
 
     # Add async callbacks to the scheduler
-    async_scheduler.callback_map.extend([
-        (async_task1, task1_queue),
-        (async_task2, task2_queue)
-    ])
+    async_scheduler.callback_map.extend([(async_task1, task1_queue), (async_task2, task2_queue)])
 
     # Execute the async scheduler
     print("Executing schedule_async_callbacks:")
@@ -489,35 +469,23 @@ async def scheduler_example_async():
 
     # Register conditional callbacks
     callback_manager.register_conditional_callback(
-        "async_condition1",
-        async_task1,
-        condition1,
-        "call_conditional_async",
-        is_async=True
+        "async_condition1", async_task1, condition1, "call_conditional_async", is_async=True
     )
 
     callback_manager.register_conditional_callback(
-        "async_condition2",
-        async_task2,
-        condition2,
-        "call_conditional_async",
-        is_async=True
+        "async_condition2", async_task2, condition2, "call_conditional_async", is_async=True
     )
 
     # Create a conditional scheduler
     print("Creating and registering a conditional scheduler:")
     callback_manager.register_conditional_scheduler(
-        "conditional_scheduler",
-        condition_names=["async_condition1", "async_condition2"]
+        "conditional_scheduler", condition_names=["async_condition1", "async_condition2"]
     )
 
     # Start the conditional scheduler
     print("Starting the conditional scheduler:")
     tasks = deque()
-    await callback_manager.start_scheduler_async(
-        callback_manager.schedulers["conditional_scheduler"],
-        tasks
-    )
+    await callback_manager.start_scheduler_async(callback_manager.schedulers["conditional_scheduler"], tasks)
 
     # Wait for tasks to complete
     await asyncio.sleep(0.3)
@@ -535,21 +503,15 @@ async def scheduler_example_async():
         async_task3,
         condition1,  # Reuse the first condition
         "call_conditional_async",
-        is_async=True
+        is_async=True,
     )
 
     # Map the new conditional to the existing scheduler
-    callback_manager.map_conditionals_to_scheduler(
-        "conditional_scheduler",
-        ["async_condition3"]
-    )
+    callback_manager.map_conditionals_to_scheduler("conditional_scheduler", ["async_condition3"])
 
     # Start the scheduler again
     print("Starting the updated scheduler:")
-    await callback_manager.start_scheduler_async(
-        callback_manager.schedulers["conditional_scheduler"],
-        tasks
-    )
+    await callback_manager.start_scheduler_async(callback_manager.schedulers["conditional_scheduler"], tasks)
 
     # Wait for tasks to complete
     await asyncio.sleep(0.3)

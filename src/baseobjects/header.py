@@ -5,6 +5,7 @@ This module contains metadata about the baseobjects package, including version i
 licensing information. It serves as a central location for package metadata that can be imported and used by other
 modules in the package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

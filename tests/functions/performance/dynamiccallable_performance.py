@@ -40,9 +40,11 @@ class TestDynamicCallablePerformance(BasePerformanceTestSuite):
         speed_tolerance: The maximum speed tolerance in microseconds.
         TestClass: The class being tested.
     """
+
     # Class Definitions #
     class TestDynamicCallable(DynamicCallable):
         """A subclass of DynamicCallable for testing purposes."""
+
         # Magic Methods #
         def __init__(self) -> None:
             """Initialize with a simple function."""
@@ -76,6 +78,7 @@ class TestDynamicCallablePerformance(BasePerformanceTestSuite):
         This test compares the speed of creating DynamicCallable instances with creating
         standard Python functions.
         """
+
         # Define the performance test functions
         def create_dynamic_callable() -> None:
             self.TestClass()
@@ -93,7 +96,9 @@ class TestDynamicCallablePerformance(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNormal function creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nNormal function creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"DynamicCallable creation: {mean_new:.3f} μs ({percent:.3f}% of normal function creation time)")
         assert percent < self.speed_tolerance
 
@@ -105,6 +110,7 @@ class TestDynamicCallablePerformance(BasePerformanceTestSuite):
         Args:
             test_callable: A fixture providing a TestDynamicCallable instance.
         """
+
         # Create a normal function to compare against
         def normal(x: int) -> int:
             return x * 2
@@ -128,7 +134,9 @@ class TestDynamicCallablePerformance(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNormal function call: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nNormal function call: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"DynamicCallable call: {mean_new:.3f} μs ({percent:.3f}% of normal function call time)")
         assert percent < self.speed_tolerance
 
@@ -137,6 +145,7 @@ class TestDynamicCallablePerformance(BasePerformanceTestSuite):
 
         This test measures the performance overhead when using a more complex function.
         """
+
         # Create a more complex function
         def complex_func(x, y=1, z=2, *args, **kwargs):
             result = x * y + z
@@ -168,7 +177,9 @@ class TestDynamicCallablePerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(f"\nComplex function call: {mean_old:.3f} μs")
-        print(f"DynamicCallable with complex function: {mean_new:.3f} μs ({percent:.3f}% of complex function call time)")
+        print(
+            f"DynamicCallable with complex function: {mean_new:.3f} μs ({percent:.3f}% of complex function call time)"
+        )
         assert percent < self.speed_tolerance * 1.5  # Allow more overhead for complex functions
 
 
@@ -183,16 +194,18 @@ class TestDynamicMethodPerformance(BasePerformanceTestSuite):
         speed_tolerance: The maximum speed tolerance in microseconds.
         TestClass: The class being tested.
     """
+
     # Class Definitions #
     class ExampleInstanceClass:
         """A class to test method binding."""
-        
+
         def method1(self, x: int) -> int:
             """Test method."""
             return x * 2
 
     class TestDynamicMethod(DynamicMethod):
         """A subclass of DynamicMethod for testing purposes."""
+
         # Magic Methods #
         def __init__(self, instance: Any = None) -> None:
             """Initialize with a simple function and instance."""
@@ -220,7 +233,9 @@ class TestDynamicMethodPerformance(BasePerformanceTestSuite):
         return self.ExampleInstanceClass()
 
     @pytest.fixture
-    def test_method(self, test_class_instance: "TestDynamicMethodPerformance.ExampleInstanceClass") -> "TestDynamicMethodPerformance.TestDynamicMethod":
+    def test_method(
+        self, test_class_instance: "TestDynamicMethodPerformance.ExampleInstanceClass"
+    ) -> "TestDynamicMethodPerformance.TestDynamicMethod":
         """Create a test method instance for use in tests.
 
         Args:
@@ -241,6 +256,7 @@ class TestDynamicMethodPerformance(BasePerformanceTestSuite):
         Args:
             test_class_instance: A fixture providing a TestClass instance.
         """
+
         # Define the performance test functions
         def create_dynamic_method() -> None:
             self.TestClass(instance=test_class_instance)
@@ -258,11 +274,17 @@ class TestDynamicMethodPerformance(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNormal method access: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nNormal method access: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"DynamicMethod creation: {mean_new:.3f} μs ({percent:.3f}% of normal method access time)")
         assert percent < self.speed_tolerance
 
-    def test_call_speed(self, test_method: "TestDynamicMethodPerformance.TestDynamicMethod", test_class_instance: "TestDynamicMethodPerformance.ExampleInstanceClass") -> None:
+    def test_call_speed(
+        self,
+        test_method: "TestDynamicMethodPerformance.TestDynamicMethod",
+        test_class_instance: "TestDynamicMethodPerformance.ExampleInstanceClass",
+    ) -> None:
         """Test the performance of the __call__ method of DynamicMethod.
 
         This test compares the speed of DynamicMethod.__call__() with a normal method call.
@@ -332,16 +354,18 @@ class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
         speed_tolerance: The maximum speed tolerance in microseconds.
         TestClass: The class being tested.
     """
+
     # Class Definitions #
     class TestClass:
         """A class to test method binding."""
-        
+
         def method1(self, x: int) -> int:
             """Test method."""
             return x * 2
 
     class TestDynamicFunction(DynamicFunction):
         """A subclass of DynamicFunction for testing purposes."""
+
         # Magic Methods #
         def __init__(self) -> None:
             """Initialize with a simple function."""
@@ -384,6 +408,7 @@ class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
         This test compares the speed of creating DynamicFunction instances with creating
         standard Python functions.
         """
+
         # Define the performance test functions
         def create_dynamic_function() -> None:
             self.TestClass()
@@ -401,7 +426,9 @@ class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNormal function creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nNormal function creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"DynamicFunction creation: {mean_new:.3f} μs ({percent:.3f}% of normal function creation time)")
         assert percent < self.speed_tolerance
 
@@ -413,6 +440,7 @@ class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
         Args:
             test_function: A fixture providing a TestDynamicFunction instance.
         """
+
         # Create a normal function to compare against
         def normal(x: int) -> int:
             return x * 2
@@ -436,11 +464,17 @@ class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNormal function call: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nNormal function call: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"DynamicFunction call: {mean_new:.3f} μs ({percent:.3f}% of normal function call time)")
         assert percent < self.speed_tolerance
 
-    def test_get_descriptor_speed(self, test_function: "TestDynamicFunctionPerformance.TestDynamicFunction", test_class_instance: "TestDynamicFunctionPerformance.TestClass") -> None:
+    def test_get_descriptor_speed(
+        self,
+        test_function: "TestDynamicFunctionPerformance.TestDynamicFunction",
+        test_class_instance: "TestDynamicFunctionPerformance.TestClass",
+    ) -> None:
         """Test the performance of the __get__ method of DynamicFunction.
 
         This test compares the speed of DynamicFunction.__get__() with a normal method binding.
@@ -449,15 +483,16 @@ class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
             test_function: A fixture providing a TestDynamicFunction instance.
             test_class_instance: A fixture providing a TestClass instance.
         """
+
         # Create a class with the dynamic function as a class attribute
         class TestDescriptorClass:
             dynamic_func = test_function
-            
+
             def normal_method(self, x: int) -> int:
                 return x * 2
-        
+
         test_descriptor_instance = TestDescriptorClass()
-        
+
         # Define the performance test functions
         def get_dynamic_function() -> None:
             test_descriptor_instance.dynamic_func
@@ -475,7 +510,9 @@ class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNormal method descriptor: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nNormal method descriptor: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"DynamicFunction descriptor: {mean_new:.3f} μs ({percent:.3f}% of normal method descriptor time)")
         assert percent < self.speed_tolerance
 

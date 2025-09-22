@@ -18,6 +18,7 @@ Typical usage example:
   # Create from components
   new_version = TriNumberVersion(major=2, minor=0, patch=0)
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

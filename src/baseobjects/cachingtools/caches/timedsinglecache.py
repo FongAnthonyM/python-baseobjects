@@ -6,6 +6,7 @@ stores only a single result at a time. Unlike the standard timed cache, this imp
 cached result whenever a new function call with different arguments is made. This is useful for functions where
 only the most recent result needs to be cached, saving memory while still providing caching benefits.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

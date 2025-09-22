@@ -1,6 +1,7 @@
 """namespaceregisteredclasstestsuite.py
 Base test suite for NamespaceRegisteredClass and its subclasses.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -130,6 +131,7 @@ class NamespaceRegisteredClassTestSuite(BaseRegisteredClassTestSuite):
 
     def test_init_subclass_with_registration(self) -> None:
         """Test that subclasses are registered when class_registration is True."""
+
         # Create a subclass with registration enabled
         class RegisteredSubclass(self.TestClass):
             class_registration = True
@@ -145,6 +147,7 @@ class NamespaceRegisteredClassTestSuite(BaseRegisteredClassTestSuite):
 
     def test_init_subclass_with_custom_namespace_and_name(self) -> None:
         """Test that subclasses are registered with custom namespace and name."""
+
         # Create a subclass with custom namespace and name
         class CustomNamespaceAndNameClass(self.TestClass, namespace="custom_namespace", name="CustomName"):
             class_registration = True
@@ -153,10 +156,14 @@ class NamespaceRegisteredClassTestSuite(BaseRegisteredClassTestSuite):
         assert CustomNamespaceAndNameClass.class_registry is not None
         assert "custom_namespace" in CustomNamespaceAndNameClass.class_registry
         assert "CustomName" in CustomNamespaceAndNameClass.class_registry["custom_namespace"]
-        assert CustomNamespaceAndNameClass.class_registry["custom_namespace"]["CustomName"][0] == CustomNamespaceAndNameClass
+        assert (
+            CustomNamespaceAndNameClass.class_registry["custom_namespace"]["CustomName"][0]
+            == CustomNamespaceAndNameClass
+        )
 
     def test_init_subclass_with_class_registry_namespace_and_name(self) -> None:
         """Test that subclasses are registered with class_registry_namespace and class_registry_name."""
+
         # Create a subclass with class_registry_namespace and class_registry_name
         class ClassRegistryNamespaceAndNameClass(self.TestClass):
             class_registration = True
@@ -167,7 +174,10 @@ class NamespaceRegisteredClassTestSuite(BaseRegisteredClassTestSuite):
         assert ClassRegistryNamespaceAndNameClass.class_registry is not None
         assert "registry_namespace" in ClassRegistryNamespaceAndNameClass.class_registry
         assert "RegistryName" in ClassRegistryNamespaceAndNameClass.class_registry["registry_namespace"]
-        assert ClassRegistryNamespaceAndNameClass.class_registry["registry_namespace"]["RegistryName"][0] is ClassRegistryNamespaceAndNameClass
+        assert (
+            ClassRegistryNamespaceAndNameClass.class_registry["registry_namespace"]["RegistryName"][0]
+            is ClassRegistryNamespaceAndNameClass
+        )
 
     def test_init_subclass_without_registration(self) -> None:
         """Test that subclasses are not registered when class_registration is False."""
@@ -196,6 +206,7 @@ class NamespaceRegisteredClassTestSuite(BaseRegisteredClassTestSuite):
             *args: Positional arguments to pass to the register_class method.
             **kwargs: Keyword arguments to pass to the register_class method.
         """
+
         class NewTestSubclass(self.TestClass):
             class_registration = False
 
@@ -250,4 +261,7 @@ class NamespaceRegisteredClassTestSuite(BaseRegisteredClassTestSuite):
         # Verify class was registered with _module_ as namespace
         assert "custom_module" in ModuleAttributeClass.class_registry
         assert ModuleAttributeClass.__name__ in ModuleAttributeClass.class_registry["custom_module"]
-        assert ModuleAttributeClass.class_registry["custom_module"][ModuleAttributeClass.__name__][0] is ModuleAttributeClass
+        assert (
+            ModuleAttributeClass.class_registry["custom_module"][ModuleAttributeClass.__name__][0]
+            is ModuleAttributeClass
+        )

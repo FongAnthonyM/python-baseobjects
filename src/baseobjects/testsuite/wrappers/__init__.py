@@ -1,6 +1,7 @@
 """__init__.py
 testsuite provides test suite classes.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

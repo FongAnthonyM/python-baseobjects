@@ -1,6 +1,7 @@
 """functionregistry.py
 A registry which holds functions.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

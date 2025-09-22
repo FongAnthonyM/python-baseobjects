@@ -37,6 +37,7 @@ class TestLinkedNodePerformance(BasePerformanceTestSuite):
     This test suite measures the performance of various operations on LinkedNode objects
     and compares them with standard Python implementations.
     """
+
     # Attributes #
     timeit_runs: int = 100000
     speed_tolerance: float = 150.0
@@ -72,6 +73,7 @@ class TestLinkedNodePerformance(BasePerformanceTestSuite):
 
         This test measures the speed of creating a LinkedNode.
         """
+
         def create_node() -> None:
             LinkedNode("test_data")
 
@@ -80,7 +82,9 @@ class TestLinkedNodePerformance(BasePerformanceTestSuite):
         mean_time = time_taken / self.timeit_runs * 1000000
 
         # Print the performance measurement
-        print(f"\nLinkedNode creation: {mean_time:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nLinkedNode creation: {mean_time:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         # No comparison here, just measuring the absolute time
 
     def test_access_speed_performance(self, linked_nodes: List[LinkedNode]) -> None:
@@ -119,6 +123,7 @@ class TestCircularDoublyLinkedContainerPerformance(BasePerformanceTestSuite):
     This test suite measures the performance of various operations on CircularDoublyLinkedContainer objects
     and compares them with standard Python list implementations.
     """
+
     # Attributes #
     timeit_runs: int = 10000  # Reduced for more complex operations
     speed_tolerance: float = 200.0  # Higher tolerance for linked structures
@@ -170,6 +175,7 @@ class TestCircularDoublyLinkedContainerPerformance(BasePerformanceTestSuite):
 
         This test compares the speed of creating an empty CircularDoublyLinkedContainer with a normal list.
         """
+
         def create_container() -> None:
             CircularDoublyLinkedContainer()
 
@@ -186,8 +192,12 @@ class TestCircularDoublyLinkedContainerPerformance(BasePerformanceTestSuite):
         percent = (mean_container / mean_list) * 100
 
         # Print the performance comparison
-        print(f"\nStandard list creation: {mean_list:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
-        print(f"CircularDoublyLinkedContainer creation: {mean_container:.3f} μs ({percent:.3f}% of standard list creation time)")
+        print(
+            f"\nStandard list creation: {mean_list:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
+        print(
+            f"CircularDoublyLinkedContainer creation: {mean_container:.3f} μs ({percent:.3f}% of standard list creation time)"
+        )
         assert percent < self.speed_tolerance
 
     def test_append_speed_performance(self, test_container: CircularDoublyLinkedContainer, normal_list: list) -> None:
@@ -217,11 +227,17 @@ class TestCircularDoublyLinkedContainerPerformance(BasePerformanceTestSuite):
         percent = (mean_container / mean_list) * 100
 
         # Print the performance comparison
-        print(f"\nStandard list append: {mean_list:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
-        print(f"CircularDoublyLinkedContainer append: {mean_container:.3f} μs ({percent:.3f}% of standard list append time)")
+        print(
+            f"\nStandard list append: {mean_list:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
+        print(
+            f"CircularDoublyLinkedContainer append: {mean_container:.3f} μs ({percent:.3f}% of standard list append time)"
+        )
         assert percent < self.speed_tolerance
 
-    def test_get_item_speed_performance(self, populated_test_container: CircularDoublyLinkedContainer, populated_normal_list: list) -> None:
+    def test_get_item_speed_performance(
+        self, populated_test_container: CircularDoublyLinkedContainer, populated_normal_list: list
+    ) -> None:
         """Test the performance of getting an item from a CircularDoublyLinkedContainer.
 
         This test compares the speed of getting an item from a CircularDoublyLinkedContainer with a normal list.
@@ -248,8 +264,12 @@ class TestCircularDoublyLinkedContainerPerformance(BasePerformanceTestSuite):
         percent = (mean_container / mean_list) * 100
 
         # Print the performance comparison
-        print(f"\nStandard list get item: {mean_list:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
-        print(f"CircularDoublyLinkedContainer get item: {mean_container:.3f} μs ({percent:.3f}% of standard list get item time)")
+        print(
+            f"\nStandard list get item: {mean_list:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
+        print(
+            f"CircularDoublyLinkedContainer get item: {mean_container:.3f} μs ({percent:.3f}% of standard list get item time)"
+        )
         assert percent < self.speed_tolerance
 
     def test_insert_speed_performance(self, test_container: CircularDoublyLinkedContainer, normal_list: list) -> None:
@@ -281,11 +301,17 @@ class TestCircularDoublyLinkedContainerPerformance(BasePerformanceTestSuite):
         percent = (mean_container / mean_list) * 100
 
         # Print the performance comparison
-        print(f"\nStandard list insert: {mean_list:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
-        print(f"CircularDoublyLinkedContainer insert: {mean_container:.3f} μs ({percent:.3f}% of standard list insert time)")
+        print(
+            f"\nStandard list insert: {mean_list:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
+        print(
+            f"CircularDoublyLinkedContainer insert: {mean_container:.3f} μs ({percent:.3f}% of standard list insert time)"
+        )
         assert percent < self.speed_tolerance
 
-    def test_pop_speed_performance(self, populated_test_container: CircularDoublyLinkedContainer, populated_normal_list: list) -> None:
+    def test_pop_speed_performance(
+        self, populated_test_container: CircularDoublyLinkedContainer, populated_normal_list: list
+    ) -> None:
         """Test the performance of popping an item from a CircularDoublyLinkedContainer.
 
         This test compares the speed of popping an item from a CircularDoublyLinkedContainer with a normal list.
@@ -294,6 +320,7 @@ class TestCircularDoublyLinkedContainerPerformance(BasePerformanceTestSuite):
             populated_test_container: A fixture providing a populated CircularDoublyLinkedContainer instance.
             populated_normal_list: A fixture providing a populated normal list.
         """
+
         # We need to repopulate after each pop to avoid emptying the containers
         def pop_and_repopulate_container() -> None:
             try:
@@ -324,7 +351,9 @@ class TestCircularDoublyLinkedContainerPerformance(BasePerformanceTestSuite):
         print(f"CircularDoublyLinkedContainer pop: {mean_container:.3f} μs ({percent:.3f}% of standard list pop time)")
         assert percent < self.speed_tolerance
 
-    def test_iteration_speed_performance(self, populated_test_container: CircularDoublyLinkedContainer, populated_normal_list: list) -> None:
+    def test_iteration_speed_performance(
+        self, populated_test_container: CircularDoublyLinkedContainer, populated_normal_list: list
+    ) -> None:
         """Test the performance of iterating over a CircularDoublyLinkedContainer.
 
         This test compares the speed of iterating over a CircularDoublyLinkedContainer with a normal list.
@@ -333,6 +362,7 @@ class TestCircularDoublyLinkedContainerPerformance(BasePerformanceTestSuite):
             populated_test_container: A fixture providing a populated CircularDoublyLinkedContainer instance.
             populated_normal_list: A fixture providing a populated normal list.
         """
+
         def iterate_container() -> None:
             for node in populated_test_container:
                 pass
@@ -351,8 +381,12 @@ class TestCircularDoublyLinkedContainerPerformance(BasePerformanceTestSuite):
         percent = (mean_container / mean_list) * 100
 
         # Print the performance comparison
-        print(f"\nStandard list iteration: {mean_list:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
-        print(f"CircularDoublyLinkedContainer iteration: {mean_container:.3f} μs ({percent:.3f}% of standard list iteration time)")
+        print(
+            f"\nStandard list iteration: {mean_list:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
+        print(
+            f"CircularDoublyLinkedContainer iteration: {mean_container:.3f} μs ({percent:.3f}% of standard list iteration time)"
+        )
         assert percent < self.speed_tolerance
 
     def test_shift_left_speed_performance(self, populated_test_container: CircularDoublyLinkedContainer) -> None:
@@ -363,6 +397,7 @@ class TestCircularDoublyLinkedContainerPerformance(BasePerformanceTestSuite):
         Args:
             populated_test_container: A fixture providing a populated CircularDoublyLinkedContainer instance.
         """
+
         def shift_left() -> None:
             populated_test_container.shift_left(1)
 
@@ -382,6 +417,7 @@ class TestCircularDoublyLinkedContainerPerformance(BasePerformanceTestSuite):
         Args:
             populated_test_container: A fixture providing a populated CircularDoublyLinkedContainer instance.
         """
+
         def shift_right() -> None:
             populated_test_container.shift_right(1)
 

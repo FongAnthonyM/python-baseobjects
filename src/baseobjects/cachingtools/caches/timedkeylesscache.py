@@ -6,6 +6,7 @@ cache that stores only a single result regardless of the input arguments. Unlike
 function arguments to create cache keys, making it suitable for functions where the result is expected to be the
 same regardless of input, but may change over time.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

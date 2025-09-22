@@ -5,6 +5,7 @@ This module provides the BaseComponent class, which implements the Component par
 It allows objects to be used as components within composite objects, maintaining a weak reference to their parent
 composite to avoid circular references while enabling bidirectional navigation between components and composites.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

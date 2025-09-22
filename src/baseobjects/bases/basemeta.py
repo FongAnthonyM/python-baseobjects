@@ -10,6 +10,7 @@ class creation and behavior. The BaseMeta class extends Python's ABCMeta (Abstra
 support for copying and deep copying of metaclass instances (i.e., classes created with this metaclass). This is
 particularly important for frameworks that need to manipulate or duplicate class definitions at runtime.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

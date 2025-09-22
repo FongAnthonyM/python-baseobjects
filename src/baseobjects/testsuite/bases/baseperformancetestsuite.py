@@ -1,6 +1,7 @@
 """baseperformancetestsuite.py
 Base class for test suites which test the performance.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -53,6 +54,7 @@ class StatsMicro(Stats):
     This class overrides the print_stats and print_line methods to display times in microseconds, which is more
     appropriate for performance testing of small functions.
     """
+
     def print_stats(self, *amount: Any) -> "StatsMicro":
         """Print the statistics for the profiled code.
 

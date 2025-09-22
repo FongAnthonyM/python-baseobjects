@@ -5,6 +5,7 @@ This module provides the BaseComposite class, which implements the Composite des
 composed of other objects (components) and provides methods for adding, removing, and managing these components.
 The composite pattern enables clients to treat individual objects and compositions of objects uniformly.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -59,7 +60,7 @@ class BaseComposite(BaseObject):
         component_types: dict[str, tuple[type, dict[str, Any]]] | None = None,
         components: dict[str, Any] | None = None,
         init: bool = True,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         # Attributes #
         self.components: dict[str, Any] = self.components.copy()
@@ -83,7 +84,7 @@ class BaseComposite(BaseObject):
         component_kwargs: dict[str, dict[str, Any]] | None = None,
         component_types: dict[str, tuple[type, dict[str, Any]]] | None = None,
         components: dict[str, Any] | None = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Constructs this object.
 

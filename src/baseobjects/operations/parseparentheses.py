@@ -1,6 +1,7 @@
 """parseparentheses.py
 Parses expressions with parentheses and returns a nested list of extracted elements.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -27,13 +28,13 @@ from ..functions import singlekwargdispatch
 # Definitions #
 # Regular Expressions #
 rb_parentheses = rb"\(|\)"
-rb_double_quote_group = rb'"((?:[^"]|\\.)*)(?<!\\)"' 
+rb_double_quote_group = rb'"((?:[^"]|\\.)*)(?<!\\)"'
 rb_single_quote_group = rb"'((?:[^']|\\.)*)(?<!\\)'"
 rb_group_between_characters = rb"[^, '\"\(\)]+"
 rb_expression = rb"|".join((rb_parentheses, rb_double_quote_group, rb_single_quote_group, rb_group_between_characters))
 
 r_parentheses = r"\(|\)"
-r_double_quote_group = r'"((?:[^"]|\\.)*)(?<!\\)"' 
+r_double_quote_group = r'"((?:[^"]|\\.)*)(?<!\\)"'
 r_single_quote_group = r"'((?:[^']|\\.)*)(?<!\\)'"
 r_group_between_characters = r"[^, '\"\(\)]+"
 r_expression = r"|".join((r_parentheses, r_double_quote_group, r_single_quote_group, r_group_between_characters))
@@ -114,11 +115,11 @@ def _parse_parentheses(
     list_bank = deque([[]])
     for match_object in re.finditer(r_expression, expression.strip()):
         match (token := match_object[0]):
-            case '(':
+            case "(":
                 new_list = []
                 list_bank[-1].append(new_list)
                 list_bank.append(new_list)
-            case ')':
+            case ")":
                 try:
                     list_bank.pop()
                 except IndexError:
@@ -163,11 +164,11 @@ def _parse_parentheses(
     list_bank = deque([[]])
     for match_object in re.finditer(rb_expression, expression.strip()):
         match (token := match_object[0]):
-            case b'(':
+            case b"(":
                 new_list = []
                 list_bank[-1].append(new_list)
                 list_bank.append(new_list)
-            case b')':
+            case b")":
                 try:
                     list_bank.pop()
                 except IndexError:

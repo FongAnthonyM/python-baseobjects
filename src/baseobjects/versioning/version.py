@@ -13,6 +13,7 @@ Typical usage example:
   version = CustomVersion("1.0")
   print(f"Version: {version}")
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

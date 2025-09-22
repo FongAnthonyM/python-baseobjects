@@ -142,6 +142,7 @@ class TestFiletimeToDatetime(BasePerformanceTestSuite):
 
     This class tests_old_ the performance of the filetime_to_datetime function, which converts a Windows filetime to a datetime.
     """
+
     # Attributes #
     timeit_runs: int = 100000
     speed_tolerance: int = 150
@@ -232,7 +233,7 @@ class TestFiletimeToDatetime(BasePerformanceTestSuite):
         This test compares the speed of filetime_to_datetime with a standard implementation for bytes input.
         """
         # 10000000 in little-endian bytes
-        timestamp = b'\x80\x96\x98\x00\x00\x00\x00\x00'
+        timestamp = b"\x80\x96\x98\x00\x00\x00\x00\x00"
 
         def custom_implementation() -> None:
             filetime_to_datetime(timestamp, None)
@@ -259,7 +260,7 @@ class TestFiletimeToDatetime(BasePerformanceTestSuite):
         This test compares the speed of filetime_to_datetime with a standard implementation for bytearray input.
         """
         # 10000000 in little-endian bytearray
-        timestamp = bytearray(b'\x80\x96\x98\x00\x00\x00\x00\x00')
+        timestamp = bytearray(b"\x80\x96\x98\x00\x00\x00\x00\x00")
 
         def custom_implementation() -> None:
             filetime_to_datetime(timestamp, None)
@@ -277,7 +278,9 @@ class TestFiletimeToDatetime(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNew (filetime_to_datetime bytearray): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
+        print(
+            f"\nNew (filetime_to_datetime bytearray): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+        )
         assert percent < self.speed_tolerance
 
     def test_filetime_to_datetime_timezone_speed(self) -> None:
@@ -327,8 +330,8 @@ class TestFiletimeToDatetime(BasePerformanceTestSuite):
         int_timestamp = 10000000000
         float_timestamp = 10000000.0
         str_timestamp = "10000000"
-        bytes_timestamp = b'\x80\x96\x98\x00\x00\x00\x00\x00'
-        bytearray_timestamp = bytearray(b'\x80\x96\x98\x00\x00\x00\x00\x00')
+        bytes_timestamp = b"\x80\x96\x98\x00\x00\x00\x00\x00"
+        bytearray_timestamp = bytearray(b"\x80\x96\x98\x00\x00\x00\x00\x00")
 
         def custom_implementation_int() -> None:
             filetime_to_datetime(int_timestamp, None)
@@ -377,14 +380,16 @@ class TestFiletimeToDatetime(BasePerformanceTestSuite):
         # Calculate the average time for all types
         new_avg_time = (int_new_time + float_new_time + str_new_time + bytes_new_time + bytearray_new_time) / 5
         old_avg_time = (int_old_time + float_old_time + str_old_time + bytes_old_time + bytearray_old_time) / 5
-        
+
         # Convert to microseconds
         mean_new = new_avg_time / self.timeit_runs * 1000000
         mean_old = old_avg_time / self.timeit_runs * 1000000
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNew (filetime_to_datetime dispatch): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
+        print(
+            f"\nNew (filetime_to_datetime dispatch): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+        )
         assert percent < self.speed_tolerance
 
 

@@ -49,18 +49,18 @@ class TestNamespaceClassRegistry(BaseClassRegistryTestSuite):
         """
         registry = self.create_test_registry(*args, **kwargs)
         registry.register_class(
-            self.ExampleClass1,  
-            namespace="test_namespace", 
+            self.ExampleClass1,
+            namespace="test_namespace",
             name="ExampleClass1",
         )
         registry.register_class(
-            self.ExampleClass2,   
-            namespace="test_namespace", 
+            self.ExampleClass2,
+            namespace="test_namespace",
             name="ExampleClass2",
             class_kwargs={"arg1": "value1"},
         )
         return registry
-    
+
     # Tests
     def test_init_with_classes_dict(self) -> None:
         """Test initializing with a classes dictionary."""
@@ -95,7 +95,7 @@ class TestNamespaceClassRegistry(BaseClassRegistryTestSuite):
         assert registry["test_namespace"]["ExampleClass1"][0] == self.ExampleClass1
         assert registry["test_namespace"]["ExampleClass2"][0] == self.ExampleClass2
         assert registry["test_namespace"]["ExampleClass2"][1] == {"arg1": "value1"}
-    
+
     def test_register_class(self, *args: Any, **kwargs: Any) -> None:
         """Test the register_class method.
 
@@ -117,10 +117,10 @@ class TestNamespaceClassRegistry(BaseClassRegistryTestSuite):
 
     def test_register_classes(self, *args: Any, **kwargs: Any) -> None:
         """Test registering multiple classes.
-        
-         Args:
-            *args: Positional arguments to pass to use in testing the register_classes method.
-            **kwargs: Keyword arguments to pass to use in testing the register_classes method.
+
+        Args:
+           *args: Positional arguments to pass to use in testing the register_classes method.
+           **kwargs: Keyword arguments to pass to use in testing the register_classes method.
         """
         # Register multiple classes
         test_registry = self.create_test_registry(*args, **kwargs)
@@ -219,8 +219,10 @@ class TestNamespaceClassRegistry(BaseClassRegistryTestSuite):
 
         # Register the class
         populated_registry.register_class(
-            TestClassWithKwargs, namespace="test_namespace", name="TestClassWithKwargs",
-            class_kwargs={"arg1": "default_value"}
+            TestClassWithKwargs,
+            namespace="test_namespace",
+            name="TestClassWithKwargs",
+            class_kwargs={"arg1": "default_value"},
         )
 
         # Get a new instance with additional keyword arguments
@@ -248,14 +250,15 @@ class TestNamespaceClassRegistry(BaseClassRegistryTestSuite):
 
         # Register the class
         populated_registry.register_class(
-            TestClassWithKwargs, namespace="test_namespace", name="TestClassWithKwargs",
-            class_kwargs={"arg1": "default_value"}
+            TestClassWithKwargs,
+            namespace="test_namespace",
+            name="TestClassWithKwargs",
+            class_kwargs={"arg1": "default_value"},
         )
 
         # Get a new instance without using default keyword arguments
         instance = populated_registry.get_new(
-            "test_namespace", "TestClassWithKwargs", with_kwargs=False,
-            class_kwargs={"arg2": "custom_value"}
+            "test_namespace", "TestClassWithKwargs", with_kwargs=False, class_kwargs={"arg2": "custom_value"}
         )
 
         # Verify instance was created with only the provided keyword arguments

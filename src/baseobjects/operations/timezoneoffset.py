@@ -1,6 +1,7 @@
 """timezoneoffset.py
 A function that gets the offset of a give timezone.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

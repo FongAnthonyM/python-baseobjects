@@ -1,6 +1,7 @@
 """methodregistry.py
 A registry which holds Methods.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -184,14 +185,14 @@ class BoundMethodRegistry(BaseMethodRegistry):
     # Descriptor
     def __get__(self, instance: Any, owner: type[Any] | None = None) -> "BoundMethodRegistry":
         """Descriptor protocol implementation for binding the registry to an instance.
-        
+
         This method is called when the registry is accessed as an attribute of another object. It returns a new
         BoundMethodRegistry that is bound to the provided instance.
-        
+
         Args:
             instance: The instance to bind this registry to.
             owner: The class of the instance.
-            
+
         Returns:
             A new BoundMethodRegistry bound to the provided instance.
         """
@@ -200,16 +201,16 @@ class BoundMethodRegistry(BaseMethodRegistry):
     # Container Methods
     def __getitem__(self, key: str) -> AnyCallable:
         """Gets a method from the registry and binds it to the instance.
-        
+
         This method retrieves a function from the underlying registry using the provided keyand binds it to the instance
         this registry is bound to, creating a bound method.
-        
+
         Args:
             key: The key of the function to retrieve from the registry.
-            
+
         Returns:
             The function bound as a method to the instance.
-            
+
         Raises:
             KeyError: If the key is not found in the registry.
         """
@@ -248,7 +249,7 @@ class BoundMethodRegistry(BaseMethodRegistry):
 
 class MethodRegistry(BaseMethodRegistry):
     """A registry which holds functions and binds them as methods to instances.
-    
+
     This class extends BaseMethodRegistry to provide descriptor protocol functionality, allowing the registry to be used
     as a class attribute. When accessed through an instance, it returns a BoundMethodRegistry that binds the functions
     to that instance.
@@ -262,7 +263,7 @@ class MethodRegistry(BaseMethodRegistry):
         Args:
             instance: The instance to bind this registry to.
             owner: The class of the instance.
-            
+
         Returns:
             A new BoundMethodRegistry bound to the provided instance.
         """

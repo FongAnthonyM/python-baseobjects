@@ -1,10 +1,11 @@
 """basedecorator_test.py
 Tests for the BaseDecorator class in the baseobjects package.
 
-This module provides tests for the BaseDecorator class, which extends BaseFunction to create decorator-like callable 
-objects. It provides utilities for creating decorators with and without arguments, and for applying decorators to 
+This module provides tests for the BaseDecorator class, which extends BaseFunction to create decorator-like callable
+objects. It provides utilities for creating decorators with and without arguments, and for applying decorators to
 functions and methods.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -38,8 +39,7 @@ from src.baseobjects.testsuite.bases import example_function, example_coroutine
 class ConcreteDecorator(BaseDecorator):
     """A concrete implementation of BaseDecorator for testing purposes."""
 
-    def __init__(self, func: Callable | None = None, prefix: str = "Decorated: ", *args: Any,
-                 **kwargs: Any) -> None:
+    def __init__(self, func: Callable | None = None, prefix: str = "Decorated: ", *args: Any, **kwargs: Any) -> None:
         """Initialize the decorator with a prefix.
 
         Args:
@@ -208,6 +208,7 @@ class TestBaseDecorator(BaseDecoratorTestSuite):
 
         This test verifies that the decorator can be used in the standard Python way.
         """
+
         # Define a function to be decorated
         @self.TestClass
         def test_func(x: int, y: int = 2) -> int:
@@ -233,6 +234,7 @@ class TestBaseDecorator(BaseDecoratorTestSuite):
             *args: Positional arguments to pass to the decorator.
             **kwargs: Keyword arguments to pass to the decorator.
         """
+
         # Define a function to be decorated with arguments
         @self.TestClass(*args, **kwargs)
         def test_func(x: int, y: int = 2) -> int:
@@ -281,6 +283,7 @@ class TestBaseDecorator(BaseDecoratorTestSuite):
 
         This test verifies that a concrete decorator can be used in the standard Python way.
         """
+
         # Use the decorator directly
         @ConcreteDecorator
         def direct_func() -> str:
@@ -395,6 +398,7 @@ class TestBaseDecorator(BaseDecoratorTestSuite):
 
     def test_coroutine_decorator(self) -> None:
         """Test the edge case where the decorator is applied to a coroutine function."""
+
         # Define a coroutine to be decorated
         @self.TestClass
         async def test_coro(x: int, y: int = 2) -> int:

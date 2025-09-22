@@ -1,9 +1,10 @@
 """methodmultiplexer_test.py
 Tests for the MethodMultiplexer class in the baseobjects package.
 
-This module provides tests for the MethodMultiplexer class, which is a callable that selects between different 
+This module provides tests for the MethodMultiplexer class, which is a callable that selects between different
 functions or methods to be used as the call method, always binding them to the stored instance.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -94,7 +95,9 @@ class TestMethodMultiplexer(BaseCallableTestSuite):
         return MethodMultiplexerTestObject(value=10)
 
     @pytest.fixture
-    def test_multiplexer(self, test_registry: FunctionRegistry, test_object_instance: MethodMultiplexerTestObject) -> MethodMultiplexer:
+    def test_multiplexer(
+        self, test_registry: FunctionRegistry, test_object_instance: MethodMultiplexerTestObject
+    ) -> MethodMultiplexer:
         """Create a test multiplexer with a registry and object instance.
 
         Args:
@@ -119,7 +122,9 @@ class TestMethodMultiplexer(BaseCallableTestSuite):
         return self.TestClass(instance=test_object_instance, select="method1")
 
     @pytest.fixture
-    def test_function_object(self, test_registry: FunctionRegistry, test_object_instance: MethodMultiplexerTestObject) -> MethodMultiplexer:
+    def test_function_object(
+        self, test_registry: FunctionRegistry, test_object_instance: MethodMultiplexerTestObject
+    ) -> MethodMultiplexer:
         """Create a test callable object that wraps a function.
 
         Args:
@@ -352,6 +357,7 @@ class TestMethodMultiplexer(BaseCallableTestSuite):
         Args:
             test_multiplexer: A fixture providing a MethodMultiplexer instance.
         """
+
         # Define a new function that accepts self as first parameter
         def subtract(self, x: int, y: int = 2) -> int:
             return x - y
@@ -383,7 +389,7 @@ class TestMethodMultiplexer(BaseCallableTestSuite):
 
         # Add a new method to the test object
         def custom_method(self, x: int) -> int:
-            return self.value ** x
+            return self.value**x
 
         test_obj.custom_method = custom_method.__get__(test_obj, MethodMultiplexerTestObject)
 

@@ -10,6 +10,7 @@ The SentinelObject class implements a registry pattern to ensure that only one i
 identifier. This means that two SentinelObject instances created with the same identifier will be the same object,
 allowing for identity comparisons (using the `is` operator) rather than equality comparisons.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

@@ -1,6 +1,7 @@
 """unionrecursive.py
 Unions a mapping object and its contained mappings within another mapping.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

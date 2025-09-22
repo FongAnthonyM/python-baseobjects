@@ -1,6 +1,7 @@
 """dispatchablecompositetestsuite.py
 Base test suite for DispatchableComposite and its subclasses.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

@@ -6,6 +6,7 @@ for testing the core functionality of method objects, including binding to insta
 attributes, and non-binding methods. It inherits from BaseMethodTestSuite to include tests for the callable behavior of
 methods.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -195,7 +196,7 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
         Args:
             test_method_object: A fixture providing a BaseMethod instance that wraps a method.
         """
-        
+
     @abstractmethod
     def test_call_binding(self, test_method_object: BaseMethod) -> None:
         """Test that the bound method correctly passes the instance as the first argument when called.
@@ -259,6 +260,7 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
             test_method_object: A fixture providing a BaseMethod instance that wraps a method.
         """
         method_object = self.create_method_object()
+
         class BindTarget:
             new_method = method_object
 
@@ -296,4 +298,3 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
 
         # Verify the method's bound instance is now None
         assert method.__self__ is None
-        

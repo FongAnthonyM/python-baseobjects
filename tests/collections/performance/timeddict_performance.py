@@ -37,9 +37,11 @@ class TestTimedDictPerformance(BasePerformanceTestSuite):
     This test suite measures the performance of various operations on TimedDict objects
     and compares them with standard Python dictionary implementations.
     """
+
     # Class Definitions #
     class NormalDict(dict):
         """A normal Python dictionary for comparison with TimedDict."""
+
         pass
 
     # Attributes #
@@ -96,6 +98,7 @@ class TestTimedDictPerformance(BasePerformanceTestSuite):
 
         This test compares the speed of creating an empty TimedDict with a normal dict.
         """
+
         def create_timed() -> None:
             TimedDict()
 
@@ -112,7 +115,9 @@ class TestTimedDictPerformance(BasePerformanceTestSuite):
         percent = (mean_timed / mean_dict) * 100
 
         # Print the performance comparison
-        print(f"\nStandard dict creation: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nStandard dict creation: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"TimedDict creation: {mean_timed:.3f} μs ({percent:.3f}% of standard dict creation time)")
         assert percent < self.speed_tolerance
 
@@ -139,8 +144,12 @@ class TestTimedDictPerformance(BasePerformanceTestSuite):
         percent = (mean_timed / mean_dict) * 100
 
         # Print the performance comparison
-        print(f"\nStandard dict populated creation: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
-        print(f"TimedDict populated creation: {mean_timed:.3f} μs ({percent:.3f}% of standard dict populated creation time)")
+        print(
+            f"\nStandard dict populated creation: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
+        print(
+            f"TimedDict populated creation: {mean_timed:.3f} μs ({percent:.3f}% of standard dict populated creation time)"
+        )
         assert percent < self.speed_tolerance
 
     def test_get_item_speed_performance(self, populated_test_dict: TimedDict, populated_normal_dict: dict) -> None:
@@ -170,7 +179,9 @@ class TestTimedDictPerformance(BasePerformanceTestSuite):
         percent = (mean_timed / mean_dict) * 100
 
         # Print the performance comparison
-        print(f"\nStandard dict get item: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nStandard dict get item: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"TimedDict get item: {mean_timed:.3f} μs ({percent:.3f}% of standard dict get item time)")
         assert percent < self.speed_tolerance
 
@@ -202,7 +213,9 @@ class TestTimedDictPerformance(BasePerformanceTestSuite):
         percent = (mean_timed / mean_dict) * 100
 
         # Print the performance comparison
-        print(f"\nStandard dict set item: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nStandard dict set item: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"TimedDict set item: {mean_timed:.3f} μs ({percent:.3f}% of standard dict set item time)")
         assert percent < self.speed_tolerance
 
@@ -215,6 +228,7 @@ class TestTimedDictPerformance(BasePerformanceTestSuite):
             populated_test_dict: A fixture providing a populated TimedDict instance.
             populated_normal_dict: A fixture providing a populated normal dict.
         """
+
         def clear_timed() -> None:
             populated_test_dict.clear()
 
@@ -231,7 +245,9 @@ class TestTimedDictPerformance(BasePerformanceTestSuite):
         percent = (mean_timed / mean_dict) * 100
 
         # Print the performance comparison
-        print(f"\nStandard dict clear: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nStandard dict clear: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"TimedDict clear: {mean_timed:.3f} μs ({percent:.3f}% of standard dict clear time)")
         assert percent < self.speed_tolerance
 

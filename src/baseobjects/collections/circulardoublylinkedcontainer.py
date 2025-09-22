@@ -6,6 +6,7 @@ circular doubly linked list data structure. This container is particularly effic
 frequently changes size, as it allows for constant-time insertions and deletions at any position once a reference
 to that position is obtained. The circular nature of the container enables efficient traversal in both directions.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

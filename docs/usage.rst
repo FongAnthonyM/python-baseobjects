@@ -19,7 +19,7 @@ The baseobjects library provides a variety of base classes and utilities for Pyt
 Here are some examples of how to use the main components:
 
 Using BaseObject
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 The ``BaseObject`` class is the foundation of the library, providing basic functionality like copying:
 
@@ -67,7 +67,7 @@ The composition module allows you to create composite objects with components:
        """A composite class that holds and manages components."""
        # Class Attributes #
        default_component_types = {
-           "printing": (PrintingComponent, {}), 
+           "printing": (PrintingComponent, {}),
            "adding": (AddingComponent, {})
        }
 

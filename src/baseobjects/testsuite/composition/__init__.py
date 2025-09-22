@@ -1,6 +1,7 @@
 """__init__.py
 Provides test suite classes for composition.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

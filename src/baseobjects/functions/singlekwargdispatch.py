@@ -5,6 +5,7 @@ The normal single dispatching requires at least one arg for dispatching. This ob
 allows the first kwarg to be used for dispatching if no args are provided. Furthermore, a kwarg name can be
 specified to have the dispatcher use that kwarg instead of the first kwarg.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -183,13 +184,16 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
     def create_dispatcher_function(self) -> AnyCallable:
         """Creates the dispatcher function for this object."""
         if isinstance(self.__wrapped__, classmethod):
+
             def dispatch_function(self_, *args, **kwargs):
                 return self.dispatch(self.parse(args, kwargs)).__get__(None, self_)(*args, **kwargs)
+
         else:
+
             def dispatch_function(self_, *args, **kwargs):
                 return self.dispatch(self.parse(args, kwargs, is_method=True)).__get__(self_)(*args, **kwargs)
 
-        dispatch_function.__isabstractmethod__ = getattr(self.__wrapped__, '__isabstractmethod__', False)
+        dispatch_function.__isabstractmethod__ = getattr(self.__wrapped__, "__isabstractmethod__", False)
         dispatch_function.registry = self.registry
         update_wrapper(dispatch_function, self.__wrapped__)
         if isinstance(self.__wrapped__, classmethod):
@@ -260,11 +264,8 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
                 return partial(self._register, cls=cls)
         else:
             if func is not None:
-                raise TypeError(
-                    f"Invalid first argument to `registry()`. "
-                    f"{cls!r} is not a class or union type."
-                )
-            ann = getattr(cls, '__annotations__', {})
+                raise TypeError(f"Invalid first argument to `registry()`. " f"{cls!r} is not a class or union type.")
+            ann = getattr(cls, "__annotations__", {})
             if not ann:
                 raise TypeError(
                     f"Invalid first argument to `registry()`: {cls!r}. "
@@ -281,22 +282,16 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
                 argname = self._kwarg
             if not _is_valid_dispatch_type(cls):
                 if _is_union_type(cls):
-                    raise TypeError(
-                        f"Invalid annotation for {argname!r}. "
-                        f"{cls!r} not all arguments are classes."
-                    )
+                    raise TypeError(f"Invalid annotation for {argname!r}. " f"{cls!r} not all arguments are classes.")
                 else:
-                    raise TypeError(
-                        f"Invalid annotation for {argname!r}. "
-                        f"{cls!r} is not a class."
-                    )
+                    raise TypeError(f"Invalid annotation for {argname!r}. " f"{cls!r} is not a class.")
 
         if _is_union_type(cls):
             for arg in get_args(cls):
                 self.registry[arg] = func
         else:
             self.registry[cls] = func
-        if self.cache_token is None and hasattr(cls, '__abstractmethods__'):
+        if self.cache_token is None and hasattr(cls, "__abstractmethods__"):
             self.cache_token = get_cache_token()
         self.dispatch_cache.clear()
         return func

@@ -7,6 +7,7 @@ organizing items into logical groups while still being able to iterate through a
 list. The class supports named groups, parent-child relationships, and various operations for manipulating the
 hierarchical structure.
 """
+
 # Future Imports #
 from __future__ import annotations
 
@@ -700,8 +701,9 @@ class GroupedList(BaseList):
         values = list(value)
 
         if len(indices) != len(values):
-            raise ValueError("attempt to assign sequence of size {} to slice of size {}".format(
-                len(values), len(indices)))
+            raise ValueError(
+                "attempt to assign sequence of size {} to slice of size {}".format(len(values), len(indices))
+            )
 
         for i, val in zip(indices, values):
             self.set_item(i, val)
@@ -953,8 +955,7 @@ class GroupedList(BaseList):
         return self.as_flat_list().index(item, *args)
 
     def reverse(self) -> None:
-        """Reverses the order of items in this GroupedList and all child groups.
-        """
+        """Reverses the order of items in this GroupedList and all child groups."""
         self.data.reverse()
         for item in self.data:
             if isinstance(item, GroupedList) and self.check_if_child(item):

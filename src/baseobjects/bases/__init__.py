@@ -25,6 +25,7 @@ The bases package includes the following key components:
 These classes provide a solid foundation for building complex object hierarchies with consistent behavior
 and functionality.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

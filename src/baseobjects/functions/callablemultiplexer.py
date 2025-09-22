@@ -1,6 +1,7 @@
 """callablemultiplexer.py
 Callables which select between either functions or methods to be used as the call method.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -190,7 +191,7 @@ class CallableMultiplexer(BaseMethod):
         else:
             self.build_registry()
 
-        super().construct( *args, instance=instance, owner=owner, is_binding=is_binding, **kwargs)
+        super().construct(*args, instance=instance, owner=owner, is_binding=is_binding, **kwargs)
 
         if select is not None:
             self.select(select)
@@ -344,4 +345,3 @@ class FunctionMultiplexer(CallableMultiplexer):
             The output of the wrapped function.
         """
         return self.__wrapped__(*args, **kwargs)
-

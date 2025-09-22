@@ -1,6 +1,7 @@
 """baseclassregistry_test.py
 Tests for the BaseClassRegistry class in the baseobjects package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -50,6 +51,7 @@ class ConcreteClassRegistry(BaseClassRegistry):
             The requested class or the default value.
         """
         return self.get(name, default)
+
 
 # Tests #
 class TestBaseClassRegistry(BaseClassRegistryTestSuite):

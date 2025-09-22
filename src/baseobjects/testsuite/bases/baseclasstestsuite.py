@@ -1,6 +1,7 @@
 """baseclasstestsuite.py
 Base class for test suites which test a class.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

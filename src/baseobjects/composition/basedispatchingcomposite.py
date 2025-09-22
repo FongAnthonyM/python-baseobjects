@@ -6,6 +6,7 @@ dynamically determine which component types to instantiate based on input argume
 retrieve component classes organized by namespaces, and provides an abstract method for dispatching component types
 that should be implemented by subclasses.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

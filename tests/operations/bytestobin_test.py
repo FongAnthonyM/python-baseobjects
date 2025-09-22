@@ -41,17 +41,17 @@ class TestBytesToBin:
         byte order.
         """
         # Test with a simple byte
-        result = bytes_to_bin(b'\x01', byteorder="big")
+        result = bytes_to_bin(b"\x01", byteorder="big")
         expected = (0, 0, 0, 0, 0, 0, 0, 1)
         assert result == expected
 
         # Test with multiple bytes
-        result = bytes_to_bin(b'\x01\x02', byteorder="big")
+        result = bytes_to_bin(b"\x01\x02", byteorder="big")
         expected = (0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0)
         assert result == expected
 
         # Test with all bits set
-        result = bytes_to_bin(b'\xff', byteorder="big")
+        result = bytes_to_bin(b"\xff", byteorder="big")
         expected = (1, 1, 1, 1, 1, 1, 1, 1)
         assert result == expected
 
@@ -62,17 +62,17 @@ class TestBytesToBin:
         byte order.
         """
         # Test with a simple byte
-        result = bytes_to_bin(b'\x01', byteorder="little")
+        result = bytes_to_bin(b"\x01", byteorder="little")
         expected = (0, 0, 0, 1, 0, 0, 0, 0)
         assert result == expected
 
         # Test with multiple bytes
-        result = bytes_to_bin(b'\x01\x02', byteorder="little")
+        result = bytes_to_bin(b"\x01\x02", byteorder="little")
         expected = (0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0)
         assert result == expected
 
         # Test with all bits set
-        result = bytes_to_bin(b'\xff', byteorder="little")
+        result = bytes_to_bin(b"\xff", byteorder="little")
         expected = (1, 1, 1, 1, 1, 1, 1, 1)
         assert result == expected
 
@@ -83,21 +83,21 @@ class TestBytesToBin:
         output types.
         """
         # Test with bool output type
-        result = bytes_to_bin(b'\x01', byteorder="big", out_type=bool)
+        result = bytes_to_bin(b"\x01", byteorder="big", out_type=bool)
         expected = (False, False, False, False, False, False, False, True)
         assert result == expected
 
         # Test with str output type
-        result = bytes_to_bin(b'\x01', byteorder="big", out_type=str)
-        expected = ('False', 'False', 'False', 'False', 'False', 'False', 'False', 'True')
+        result = bytes_to_bin(b"\x01", byteorder="big", out_type=str)
+        expected = ("False", "False", "False", "False", "False", "False", "False", "True")
         assert result == expected
 
         # Custom output type function
         def custom_type(value: bool) -> str:
             return "1" if value else "0"
 
-        result = bytes_to_bin(b'\x01', byteorder="big", out_type=custom_type)
-        expected = ('0', '0', '0', '0', '0', '0', '0', '1')
+        result = bytes_to_bin(b"\x01", byteorder="big", out_type=custom_type)
+        expected = ("0", "0", "0", "0", "0", "0", "0", "1")
         assert result == expected
 
     def test_bytes_to_bin_empty_bytes(self) -> None:
@@ -105,10 +105,10 @@ class TestBytesToBin:
 
         This test verifies that the bytes_to_bin function correctly handles empty bytes.
         """
-        result = bytes_to_bin(b'', byteorder="big")
+        result = bytes_to_bin(b"", byteorder="big")
         assert result == ()
 
-        result = bytes_to_bin(b'', byteorder="little")
+        result = bytes_to_bin(b"", byteorder="little")
         assert result == ()
 
     def test_bytes_to_bin_invalid_byteorder(self) -> None:
@@ -117,7 +117,7 @@ class TestBytesToBin:
         This test verifies that the bytes_to_bin function raises a ValueError when an invalid byte order is provided.
         """
         with pytest.raises(ValueError, match="byteorder must be either 'little' or 'big'"):
-            bytes_to_bin(b'\x01', byteorder="invalid")
+            bytes_to_bin(b"\x01", byteorder="invalid")
 
 
 # Main #

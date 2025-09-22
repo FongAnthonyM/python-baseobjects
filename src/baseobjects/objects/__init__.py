@@ -5,6 +5,7 @@ This module serves as an initialization file for the objects package, which prov
 with specific functionality. It imports and exposes classes like AutomaticProperties and CallbackManager,
 making them available for direct import from the objects package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

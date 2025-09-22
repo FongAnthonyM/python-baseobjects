@@ -1,10 +1,11 @@
 """dynamicdecorator_test.py
 Tests for the DynamicDecorator class in the baseobjects package.
 
-This module provides tests for the DynamicDecorator class, which is an abstract decorator class that has multiplexed 
-binding and callback functionality. It tests the core functionality of DynamicDecorator, including instance creation, 
+This module provides tests for the DynamicDecorator class, which is an abstract decorator class that has multiplexed
+binding and callback functionality. It tests the core functionality of DynamicDecorator, including instance creation,
 decorator usage, binding, and multiplexed callback.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -68,7 +69,7 @@ class TestClass:
 class TestDynamicDecorator(DynamicDecoratorTestSuite):
     """Test the DynamicDecorator class.
 
-    This class tests the functionality of the DynamicDecorator class, which is an abstract decorator class that has 
+    This class tests the functionality of the DynamicDecorator class, which is an abstract decorator class that has
     multiplexed binding and callback functionality.
     """
 
@@ -358,6 +359,7 @@ class TestDynamicDecorator(DynamicDecoratorTestSuite):
 
         # Verify it's a partial function
         from functools import partial
+
         assert isinstance(partial_decorator, partial)
 
         # Create a function to decorate

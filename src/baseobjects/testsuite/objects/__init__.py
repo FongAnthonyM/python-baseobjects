@@ -1,6 +1,7 @@
 """__init__.py
 Test suites for objects in the baseobjects package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

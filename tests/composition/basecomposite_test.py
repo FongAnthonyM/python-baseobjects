@@ -1,6 +1,7 @@
 """basecomposite_test.py
 Tests for the BaseComposite class in the baseobjects package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -34,6 +35,7 @@ class ExampleComponentClass(BaseComponent):
 
 class ExampleCompositeClass(BaseComposite):
     """A test composite class for testing BaseComposite."""
+
     # Class Attributes #
     default_component_types: ClassVar[dict[str, tuple[type, dict[str, Any]]]] = {
         "default_component": (ExampleComponentClass, {})
@@ -190,6 +192,7 @@ class TestBaseComposite(BaseCompositeTestSuite):
 
         This test verifies that a composite can be created with no components.
         """
+
         # Create a composite class with no default components
         class EmptyComposite(BaseComposite):
             default_component_types = {}
@@ -205,6 +208,7 @@ class TestBaseComposite(BaseCompositeTestSuite):
 
         This test verifies that component_kwargs are correctly passed to the component constructors.
         """
+
         # Create a component class that takes a value parameter
         class ValueComponent(BaseComponent):
             def __init__(self, value: int = 0, **kwargs: Any) -> None:
@@ -213,9 +217,7 @@ class TestBaseComposite(BaseCompositeTestSuite):
 
         # Create a composite class that uses ValueComponent
         class ValueComposite(BaseComposite):
-            default_component_types = {
-                "value_component": (ValueComponent, {})
-            }
+            default_component_types = {"value_component": (ValueComponent, {})}
 
         # Create a composite with component_kwargs
         component_kwargs = {"value_component": {"value": 42}}
@@ -231,6 +233,7 @@ class TestBaseComposite(BaseCompositeTestSuite):
 
         This test verifies that component_types are correctly used to create components.
         """
+
         # Create a component class
         class CustomComponent(BaseComponent):
             pass

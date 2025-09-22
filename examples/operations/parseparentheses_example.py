@@ -26,21 +26,21 @@ from baseobjects.operations import parse_parentheses
 def basic_usage_example():
     """Demonstrate basic usage of parse_parentheses."""
     print("\nBasic parse_parentheses Usage:")
-    
+
     # Simple expression with parentheses
     expression = "a (b c) d"
-    
+
     # Parse the expression
     result = parse_parentheses(expression)
-    
+
     print(f"Expression: '{expression}'")
     print(f"Parsed result: {result}")
     print(f"Expected: ['a', ['b', 'c'], 'd']")
-    
+
     # Another simple example
     expression = "function(arg1, arg2)"
     result = parse_parentheses(expression)
-    
+
     print(f"\nExpression: '{expression}'")
     print(f"Parsed result: {result}")
     print(f"Expected: ['function', ['arg1', 'arg2']]")
@@ -49,29 +49,29 @@ def basic_usage_example():
 def nested_parentheses_example():
     """Demonstrate parsing expressions with nested parentheses."""
     print("\nNested Parentheses Example:")
-    
+
     # Expression with nested parentheses
     expression = "a (b (c d) e) f"
-    
+
     # Parse the expression
     result = parse_parentheses(expression)
-    
+
     print(f"Expression: '{expression}'")
     print(f"Parsed result: {result}")
     print(f"Expected: ['a', ['b', ['c', 'd'], 'e'], 'f']")
-    
+
     # More complex nested expression
     expression = "function(arg1, nested_func(arg2, arg3), arg4)"
     result = parse_parentheses(expression)
-    
+
     print(f"\nExpression: '{expression}'")
     print(f"Parsed result: {result}")
     print(f"Expected: ['function', ['arg1', 'nested_func', ['arg2', 'arg3'], 'arg4']]")
-    
+
     # Deeply nested expression
     expression = "a (b (c (d (e))))"
     result = parse_parentheses(expression)
-    
+
     print(f"\nExpression: '{expression}'")
     print(f"Parsed result: {result}")
     print(f"Expected: ['a', ['b', ['c', ['d', ['e']]]]]")
@@ -80,33 +80,33 @@ def nested_parentheses_example():
 def filtering_example():
     """Demonstrate filtering parsed elements."""
     print("\nFiltering Example:")
-    
+
     # Expression with various elements
     expression = "function(arg1, 123, 'string', True)"
-    
+
     # Parse with include filter (only include certain elements)
-    include_set = {'function', 'arg1', 'True'}
+    include_set = {"function", "arg1", "True"}
     result_include = parse_parentheses(expression, include=include_set)
-    
+
     print(f"Expression: '{expression}'")
     print(f"Include set: {include_set}")
     print(f"Parsed result with include filter: {result_include}")
     print(f"Expected: ['function', ['arg1', 'True']]")
-    
+
     # Parse with exclude filter (exclude certain elements)
-    exclude_set = {'123', 'string'}
+    exclude_set = {"123", "string"}
     result_exclude = parse_parentheses(expression, exclude=exclude_set)
-    
+
     print(f"\nExpression: '{expression}'")
     print(f"Exclude set: {exclude_set}")
     print(f"Parsed result with exclude filter: {result_exclude}")
     print(f"Expected: ['function', ['arg1', 'True']]")
-    
+
     # Combine include and exclude filters
-    include_set = {'function', 'arg1', '123', 'True'}
-    exclude_set = {'123'}
+    include_set = {"function", "arg1", "123", "True"}
+    exclude_set = {"123"}
     result_combined = parse_parentheses(expression, include=include_set, exclude=exclude_set)
-    
+
     print(f"\nExpression: '{expression}'")
     print(f"Include set: {include_set}")
     print(f"Exclude set: {exclude_set}")
@@ -117,27 +117,27 @@ def filtering_example():
 def casting_example():
     """Demonstrate casting parsed elements to different types."""
     print("\nCasting Example:")
-    
+
     # Expression with numeric values
     expression = "calculate(1, 2, 3, 4)"
-    
+
     # Define a cast function to convert strings to integers where possible
     def cast_to_int(s):
         try:
             return int(s)
         except ValueError:
             return s
-    
+
     # Parse with casting
     result = parse_parentheses(expression, cast=cast_to_int)
-    
+
     print(f"Expression: '{expression}'")
     print(f"Parsed result with int casting: {result}")
     print(f"Expected: ['calculate', [1, 2, 3, 4]]")
-    
+
     # Expression with mixed types
     expression = "mixed(1, 2.5, 'text', True)"
-    
+
     # Define a more complex cast function
     def smart_cast(s):
         s = s.strip()
@@ -147,16 +147,16 @@ def casting_example():
             try:
                 return float(s)
             except ValueError:
-                if s.lower() == 'true':
+                if s.lower() == "true":
                     return True
-                elif s.lower() == 'false':
+                elif s.lower() == "false":
                     return False
                 else:
                     return s
-    
+
     # Parse with smart casting
     result = parse_parentheses(expression, cast=smart_cast)
-    
+
     print(f"\nExpression: '{expression}'")
     print(f"Parsed result with smart casting: {result}")
     print(f"Expected: ['mixed', [1, 2.5, 'text', True]]")
@@ -165,27 +165,27 @@ def casting_example():
 def different_input_types_example():
     """Demonstrate parsing different input types."""
     print("\nDifferent Input Types Example:")
-    
+
     # String input (default)
     str_expression = "function(arg1, arg2)"
     str_result = parse_parentheses(str_expression)
-    
+
     print(f"String expression: '{str_expression}'")
     print(f"Parsed result: {str_result}")
     print(f"Expected: ['function', ['arg1', 'arg2']]")
-    
+
     # Bytes input
     bytes_expression = b"function(arg1, arg2)"
     bytes_result = parse_parentheses(bytes_expression)
-    
+
     print(f"\nBytes expression: {bytes_expression}")
     print(f"Parsed result: {bytes_result}")
     print(f"Expected: [b'function', [b'arg1', b'arg2']]")
-    
+
     # Bytearray input
     bytearray_expression = bytearray(b"function(arg1, arg2)")
     bytearray_result = parse_parentheses(bytearray_expression)
-    
+
     print(f"\nBytearray expression: {bytearray_expression}")
     print(f"Parsed result: {bytearray_result}")
     print(f"Expected: [b'function', [b'arg1', b'arg2']]")
@@ -194,10 +194,10 @@ def different_input_types_example():
 def error_handling_example():
     """Demonstrate error handling with parse_parentheses."""
     print("\nError Handling Example:")
-    
+
     # Unbalanced parentheses (missing closing parenthesis)
     unbalanced_expression = "function(arg1, arg2"
-    
+
     print(f"Unbalanced expression (missing closing parenthesis): '{unbalanced_expression}'")
     try:
         result = parse_parentheses(unbalanced_expression)
@@ -205,10 +205,10 @@ def error_handling_example():
     except ValueError as e:
         print(f"ValueError: {e}")
         print("Expected: ValueError about unbalanced parentheses")
-    
+
     # Unbalanced parentheses (extra closing parenthesis)
     unbalanced_expression = "function(arg1, arg2))"
-    
+
     print(f"\nUnbalanced expression (extra closing parenthesis): '{unbalanced_expression}'")
     try:
         result = parse_parentheses(unbalanced_expression)
@@ -216,10 +216,10 @@ def error_handling_example():
     except ValueError as e:
         print(f"ValueError: {e}")
         print("Expected: ValueError about unbalanced parentheses")
-    
+
     # Invalid input type
     invalid_input = 123
-    
+
     print(f"\nInvalid input type (int): {invalid_input}")
     try:
         result = parse_parentheses(invalid_input)
@@ -232,23 +232,23 @@ def error_handling_example():
 def quoted_strings_example():
     """Demonstrate handling quoted strings in expressions."""
     print("\nQuoted Strings Example:")
-    
+
     # Expression with quoted strings
-    expression = 'function("quoted string", \'another quoted string\')'
-    
+    expression = "function(\"quoted string\", 'another quoted string')"
+
     # Parse the expression
     result = parse_parentheses(expression)
-    
+
     print(f"Expression: '{expression}'")
     print(f"Parsed result: {result}")
     print(f"Expected: ['function', ['\"quoted string\"', \"'another quoted string'\"]]")
-    
+
     # Expression with escaped quotes
     expression = 'function("string with \\"escaped\\" quotes")'
-    
+
     # Parse the expression
     result = parse_parentheses(expression)
-    
+
     print(f"\nExpression with escaped quotes: '{expression}'")
     print(f"Parsed result: {result}")
     print(f"Expected: ['function', ['\"string with \\\"escaped\\\" quotes\"']]")
@@ -257,40 +257,40 @@ def quoted_strings_example():
 def practical_example():
     """Demonstrate a practical use case for parse_parentheses."""
     print("\nPractical Example - Simple Expression Evaluator:")
-    
+
     # Define a simple expression evaluator
     def evaluate_expression(expr):
         # Parse the expression
         parsed = parse_parentheses(expr)
-        
+
         # Evaluate the parsed expression
         return evaluate_parsed(parsed)
-    
+
     def evaluate_parsed(parsed):
         if not parsed:
             return 0
-        
+
         # If the first element is an operator, apply it to the rest
-        if parsed[0] == '+':
+        if parsed[0] == "+":
             return sum(evaluate_parsed(item) for item in parsed[1:])
-        elif parsed[0] == '*':
+        elif parsed[0] == "*":
             result = 1
             for item in parsed[1:]:
                 result *= evaluate_parsed(item)
             return result
-        elif parsed[0] == '-':
+        elif parsed[0] == "-":
             if len(parsed) == 2:
                 return -evaluate_parsed(parsed[1])
             else:
                 return evaluate_parsed(parsed[1]) - sum(evaluate_parsed(item) for item in parsed[2:])
-        elif parsed[0] == '/':
+        elif parsed[0] == "/":
             if len(parsed) < 3:
                 return 1
             result = evaluate_parsed(parsed[1])
             for item in parsed[2:]:
                 result /= evaluate_parsed(item)
             return result
-        
+
         # If it's a list, evaluate it recursively
         if isinstance(parsed, list):
             if len(parsed) == 1:
@@ -298,13 +298,13 @@ def practical_example():
             else:
                 # Assume the first element is the operator
                 return evaluate_parsed(parsed)
-        
+
         # If it's a number (as a string), convert it
         try:
             return float(parsed)
         except (ValueError, TypeError):
             return 0
-    
+
     # Test the evaluator with some expressions
     expressions = [
         "(+ 1 2 3)",
@@ -314,12 +314,12 @@ def practical_example():
         "(+ 1 (* 2 3) (- 10 5))",
         "(* (+ 1 2) (- 10 5))",
     ]
-    
+
     for expr in expressions:
         result = evaluate_expression(expr)
         print(f"Expression: '{expr}'")
         print(f"Evaluated result: {result}")
-        
+
         # Calculate expected result for verification
         if expr == "(+ 1 2 3)":
             expected = 1 + 2 + 3
@@ -335,7 +335,7 @@ def practical_example():
             expected = (1 + 2) * (10 - 5)
         else:
             expected = "unknown"
-        
+
         print(f"Expected: {expected}")
         print()
 

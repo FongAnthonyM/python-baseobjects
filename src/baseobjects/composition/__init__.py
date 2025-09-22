@@ -5,6 +5,7 @@ This package includes classes for creating composite objects (BaseComposite, Bas
 DispatchableComposite) and component objects (BaseComponent) that can be used together to build complex object
 hierarchies. The Composite pattern allows clients to treat individual objects and compositions of objects uniformly.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

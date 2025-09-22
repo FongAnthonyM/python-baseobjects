@@ -4,6 +4,7 @@ Tests for the SentinelObject class in the baseobjects package.
 This module provides tests for the SentinelObject class, which implements a singleton pattern through a registry
 mechanism, ensuring that only one instance exists for each unique identifier.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -111,7 +112,9 @@ class TestSentinelObject(BaseObjectTestSuite):
         assert test_object.identity == test_object_same_id.identity
         assert id(test_object) == id(test_object_same_id)
 
-    def test_different_objects_different_ids(self, test_object: SentinelObject, test_object_different_id: SentinelObject) -> None:
+    def test_different_objects_different_ids(
+        self, test_object: SentinelObject, test_object_different_id: SentinelObject
+    ) -> None:
         """Test that SentinelObject creates different objects for different IDs.
 
         This test verifies that two SentinelObject instances created with different IDs are different objects.
@@ -137,10 +140,10 @@ class TestSentinelObject(BaseObjectTestSuite):
         # Validate
         assert isinstance(test_object_bytes_id.identity, bytes)
         assert test_object_bytes_id.identity == b"BYTES_TEST_SENTINEL"
-        
+
         assert isinstance(test_object_int_id.identity, int)
         assert test_object_int_id.identity == 42
-        
+
         assert test_object_bytes_id is not test_object_int_id
 
     def test_registry(self) -> None:
@@ -148,22 +151,22 @@ class TestSentinelObject(BaseObjectTestSuite):
         # Clear registry before test (for isolation)
         original_registry = self.TestClass.sentinel_registry.copy()
         self.TestClass.sentinel_registry.clear()
-        
+
         try:
             # Create sentinel objects
             sentinel1 = self.TestClass("REGISTRY_TEST_1")
             sentinel2 = self.TestClass("REGISTRY_TEST_2")
-            
+
             # Validate registry
             assert len(self.TestClass.sentinel_registry) == 2
             assert "REGISTRY_TEST_1" in self.TestClass.sentinel_registry
             assert "REGISTRY_TEST_2" in self.TestClass.sentinel_registry
             assert self.TestClass.sentinel_registry["REGISTRY_TEST_1"] is sentinel1
             assert self.TestClass.sentinel_registry["REGISTRY_TEST_2"] is sentinel2
-            
+
             # Create another sentinel with existing ID
             sentinel1_again = self.TestClass("REGISTRY_TEST_1")
-            
+
             # Validate registry didn't change
             assert len(self.TestClass.sentinel_registry) == 2
             assert sentinel1_again is sentinel1

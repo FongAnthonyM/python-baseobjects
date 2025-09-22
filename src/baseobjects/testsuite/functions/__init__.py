@@ -1,6 +1,7 @@
 """__init__.py
 Functions test suite package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

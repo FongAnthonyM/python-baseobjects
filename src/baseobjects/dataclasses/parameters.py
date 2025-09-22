@@ -1,6 +1,7 @@
 """parameters.py
 A dataclass (NamedTuple) that holds parameters for any function.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

@@ -110,6 +110,7 @@ class TestExcelDateToDatetime(BasePerformanceTestSuite):
 
     This class tests_old_ the performance of the excel_date_to_datetime function, which converts an Excel date to a datetime.
     """
+
     # Attributes #
     timeit_runs: int = 100000
     speed_tolerance: int = 150
@@ -165,7 +166,9 @@ class TestExcelDateToDatetime(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNew (excel_date_to_datetime float): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
+        print(
+            f"\nNew (excel_date_to_datetime float): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+        )
         assert percent < self.speed_tolerance
 
     def test_excel_date_to_datetime_str_speed(self) -> None:
@@ -217,7 +220,9 @@ class TestExcelDateToDatetime(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNew (excel_date_to_datetime bytes): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
+        print(
+            f"\nNew (excel_date_to_datetime bytes): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+        )
         assert percent < self.speed_tolerance
 
     def test_excel_date_to_datetime_dispatch_speed(self) -> None:
@@ -277,7 +282,9 @@ class TestExcelDateToDatetime(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNew (excel_date_to_datetime dispatch): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
+        print(
+            f"\nNew (excel_date_to_datetime dispatch): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+        )
         assert percent < self.speed_tolerance
 
 

@@ -77,6 +77,7 @@ def _(value: str) -> str:
     """
     return f"String: '{value}' (length: {len(value)})"
 
+
 @convert_value.register(tuple)
 @convert_value.register(list)
 def _(value) -> str:
@@ -122,6 +123,7 @@ def _(data: Any, format_as: str, precision: int = 2) -> str:
     """
     if format_as.lower() == "json":
         import json
+
         try:
             return f"JSON: {json.dumps(data, indent=precision)}"
         except (TypeError, ValueError):
@@ -168,110 +170,113 @@ def _(data: Any, format_as: int, precision: int = 2) -> str:
     else:
         return f"Cannot apply numeric formatting to {type(data).__name__}"
 
+
 # Classes #
 class Shape:
     """Base class for shapes."""
+
     pass
 
 
 class Circle(Shape):
     """A circle shape."""
-    
+
     def __init__(self, radius: float):
         """Initialize a circle with a radius.
-        
+
         Args:
             radius: The radius of the circle.
         """
         self.radius = radius
-    
+
     def __str__(self) -> str:
         return f"Circle(radius={self.radius})"
 
 
 class Rectangle(Shape):
     """A rectangle shape."""
-    
+
     def __init__(self, width: float, height: float):
         """Initialize a rectangle with width and height.
-        
+
         Args:
             width: The width of the rectangle.
             height: The height of the rectangle.
         """
         self.width = width
         self.height = height
-    
+
     def __str__(self) -> str:
         return f"Rectangle(width={self.width}, height={self.height})"
 
 
 class Triangle(Shape):
     """A triangle shape."""
-    
+
     def __init__(self, base: float, height: float):
         """Initialize a triangle with base and height.
-        
+
         Args:
             base: The base of the triangle.
             height: The height of the triangle.
         """
         self.base = base
         self.height = height
-    
+
     def __str__(self) -> str:
         return f"Triangle(base={self.base}, height={self.height})"
 
 
 class ShapeProcessor:
     """A class that processes shapes using singlekwargdispatch."""
-    
+
     @singlekwargdispatch
     def calculate_area(self, shape: Shape) -> float:
         """Calculate the area of a shape.
-        
+
         This is the default implementation that raises NotImplementedError.
-        
+
         Args:
             shape: The shape to calculate the area of.
-            
+
         Raises:
             NotImplementedError: If the shape type is not supported.
         """
         raise NotImplementedError(f"Area calculation not implemented for {type(shape).__name__}")
-    
+
     @calculate_area.register
     def _(self, shape: Circle) -> float:
         """Calculate the area of a circle.
-        
+
         Args:
             shape: The circle to calculate the area of.
-            
+
         Returns:
             The area of the circle.
         """
         import math
-        return math.pi * shape.radius ** 2
-    
+
+        return math.pi * shape.radius**2
+
     @calculate_area.register
     def _(self, shape: Rectangle) -> float:
         """Calculate the area of a rectangle.
-        
+
         Args:
             shape: The rectangle to calculate the area of.
-            
+
         Returns:
             The area of the rectangle.
         """
         return shape.width * shape.height
-    
+
     @calculate_area.register
     def _(self, shape: Triangle) -> float:
         """Calculate the area of a triangle.
-        
+
         Args:
             shape: The triangle to calculate the area of.
-            
+
         Returns:
             The area of the triangle.
         """
@@ -280,82 +285,82 @@ class ShapeProcessor:
 
 class DataProcessor:
     """A class that processes data using singlekwargdispatch with keyword arguments."""
-    
+
     @singlekwargdispatch(kwarg="data")
     def process(self, prefix: str, data: Any) -> str:
         """Process data based on its type.
-        
+
         This is the default implementation that converts the data to a string.
-        
+
         Args:
             prefix: A prefix to add to the processed data.
             data: The data to process.
-            
+
         Returns:
             The processed data as a string.
         """
         return f"{prefix}: {str(data)}"
-    
+
     @process.register
     def _(self, prefix: str, data: int) -> str:
         """Process integer data.
-        
+
         Args:
             prefix: A prefix to add to the processed data.
             data: The integer data to process.
-            
+
         Returns:
             The processed integer data.
         """
         return f"{prefix}: Integer {data} (squared = {data ** 2})"
-    
+
     @process.register
     def _(self, prefix: str, data: float) -> str:
         """Process float data.
-        
+
         Args:
             prefix: A prefix to add to the processed data.
             data: The float data to process.
-            
+
         Returns:
             The processed float data.
         """
         return f"{prefix}: Float {data:.2f} (doubled = {data * 2:.2f})"
-    
+
     @process.register
     def _(self, prefix: str, data: str) -> str:
         """Process string data.
-        
+
         Args:
             prefix: A prefix to add to the processed data.
             data: The string data to process.
-            
+
         Returns:
             The processed string data.
         """
         return f"{prefix}: String '{data}' (length = {len(data)})"
-    
+
     @process.register
     def _(self, prefix: str, data: list) -> str:
         """Process list data.
-        
+
         Args:
             prefix: A prefix to add to the processed data.
             data: The list data to process.
-            
+
         Returns:
             The processed list data.
         """
         return f"{prefix}: List {data} (length = {len(data)})"
-    
+
     @process.register
     def _(self, prefix: str, data: dict) -> str:
         """Process dictionary data.
-        
+
         Args:
             prefix: A prefix to add to the processed data.
             data: The dictionary data to process.
-            
+
         Returns:
             The processed dictionary data.
         """
@@ -364,32 +369,32 @@ class DataProcessor:
 
 class MultiParameterProcessor:
     """A class that processes data using singlekwargdispatch with multiple parameters."""
-    
+
     @singlekwargdispatch(kwarg="format_type")
     def format_data(self, value: Any, description: str, format_type: Any) -> str:
         """Format data based on the format_type.
-        
+
         This is the default implementation that returns a simple string representation.
-        
+
         Args:
             value: The value to format.
             description: A description of the value.
             format_type: The type of formatting to apply.
-            
+
         Returns:
             The formatted data as a string.
         """
         return f"{description}: {value} (default format)"
-    
+
     @format_data.register
     def _(self, value: Any, description: str, format_type: str) -> str:
         """Format data with a string format type.
-        
+
         Args:
             value: The value to format.
             description: A description of the value.
             format_type: The string format type.
-            
+
         Returns:
             The formatted data as a string.
         """
@@ -399,30 +404,30 @@ class MultiParameterProcessor:
             return f"{description.lower()}: {str(value).lower()}"
         else:
             return f"{description}: {value} (unknown string format: {format_type})"
-    
+
     @format_data.register
     def _(self, value: Any, description: str, format_type: int) -> str:
         """Format data with an integer format type.
-        
+
         Args:
             value: The value to format.
             description: A description of the value.
             format_type: The integer format type (specifies padding).
-            
+
         Returns:
             The formatted data as a string.
         """
         return f"{description.ljust(format_type)}: {value}"
-    
+
     @format_data.register
     def _(self, value: Any, description: str, format_type: bool) -> str:
         """Format data with a boolean format type.
-        
+
         Args:
             value: The value to format.
             description: A description of the value.
             format_type: If True, adds extra formatting.
-            
+
         Returns:
             The formatted data as a string.
         """
@@ -505,30 +510,30 @@ def method_singlekwargdispatch_example():
 
     # Positional dispatching with methods
     print("Positional method dispatching:")
-    
+
     # Create a shape processor
     processor = ShapeProcessor()
-    
+
     # Create some shapes
     circle = Circle(radius=5)
     rectangle = Rectangle(width=4, height=6)
     triangle = Triangle(base=3, height=8)
-    
+
     # Calculate areas using positional dispatching
     print("Calculating areas using positional dispatching:")
-    
+
     # Circle area
     area = processor.calculate_area(circle)
     print(f"Area of {circle} = {area:.2f}")
-    
+
     # Rectangle area
     area = processor.calculate_area(rectangle)
     print(f"Area of {rectangle} = {area:.2f}")
-    
+
     # Triangle area
     area = processor.calculate_area(triangle)
     print(f"Area of {triangle} = {area:.2f}")
-    
+
     # Try with an unsupported shape type
     print("\nTrying with an unsupported shape type:")
     try:
@@ -543,92 +548,68 @@ def method_singlekwargdispatch_example():
     # Create processor
 
     processor = DataProcessor()
-    
+
     # Integer
     result = processor.process(prefix="Result", data=42)
     print(result)
-    
+
     # Float
     result = processor.process(prefix="Result", data=3.14159)
     print(result)
-    
+
     # String
     result = processor.process(prefix="Result", data="Hello, world!")
     print(result)
-    
+
     # List
     result = processor.process(prefix="Result", data=[1, 2, 3, 4, 5])
     print(result)
-    
+
     # Dictionary
     result = processor.process(prefix="Result", data={"name": "John", "age": 30})
     print(result)
-    
+
     # Default case (tuple)
     result = processor.process(prefix="Result", data=(1, 2, 3))
     print(result)
-    
+
     print()
 
 
 def flexible_keyword_dispatching_example():
     """Demonstrates singlekwargdispatch with the dispatching keyword not as the first argument."""
     print("Flexible Keyword Dispatching Example:\n")
-    
+
     # Create a multi-parameter processor
     processor = MultiParameterProcessor()
-    
+
     # Process data with different format types
     print("Processing data with different format types:")
-    
+
     # String format type (uppercase)
-    result = processor.format_data(
-        value=42,
-        description="The answer",
-        format_type="uppercase"
-    )
+    result = processor.format_data(value=42, description="The answer", format_type="uppercase")
     print(result)
-    
+
     # String format type (lowercase)
-    result = processor.format_data(
-        value="Mixed CASE Text",
-        description="Sample Text",
-        format_type="lowercase"
-    )
+    result = processor.format_data(value="Mixed CASE Text", description="Sample Text", format_type="lowercase")
     print(result)
-    
+
     # Integer format type (padding)
-    result = processor.format_data(
-        value=3.14159,
-        description="Pi",
-        format_type=15
-    )
+    result = processor.format_data(value=3.14159, description="Pi", format_type=15)
     print(result)
-    
+
     # Boolean format type (True)
-    result = processor.format_data(
-        value="Important information",
-        description="Alert",
-        format_type=True
-    )
+    result = processor.format_data(value="Important information", description="Alert", format_type=True)
     print(result)
-    
+
     # Boolean format type (False)
-    result = processor.format_data(
-        value="Regular information",
-        description="Info",
-        format_type=False
-    )
+    result = processor.format_data(value="Regular information", description="Info", format_type=False)
     print(result)
-    
+
     # Default case
-    result = processor.format_data(
-        value="Some data",
-        description="Data",
-        format_type=None
-    )
+    result = processor.format_data(value="Some data", description="Data", format_type=None)
     print(result)
-    
+
     print()
 
 
@@ -639,6 +620,6 @@ if __name__ == "__main__":
 
     # Using singlekwargdispatch as a method with positional arguments
     method_singlekwargdispatch_example()
-    
+
     # Using singlekwargdispatch with the dispatching keyword not as the first argument
     flexible_keyword_dispatching_example()

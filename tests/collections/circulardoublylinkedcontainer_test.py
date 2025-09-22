@@ -5,6 +5,7 @@ This module provides tests for the CircularDoublyLinkedContainer class, which is
 doubly linked to one another to store data. It tests the functionality of CircularDoublyLinkedContainer including its
 properties, methods for adding, removing, and manipulating nodes, and iteration capabilities.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -105,11 +106,11 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         # Validate
         assert obj_copy is not test_object
         assert isinstance(obj_copy, self.TestClass)
-        
+
         # Check that the nodes are the same (shallow copy)
         assert obj_copy.first_node is test_object.first_node
         assert len(obj_copy.nodes) == len(test_object.nodes)
-        
+
         # Verify we can iterate through both containers and get the same data
         for node1, node2 in zip(obj_copy, test_object):
             assert node1 is node2
@@ -129,11 +130,11 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         # Validate
         assert obj_copy is not test_object
         assert isinstance(obj_copy, self.TestClass)
-        
+
         # Check that the nodes are the same (shallow copy)
         assert obj_copy.first_node is test_object.first_node
         assert len(obj_copy.nodes) == len(test_object.nodes)
-        
+
         # Verify we can iterate through both containers and get the same data
         for node1, node2 in zip(obj_copy, test_object):
             assert node1 is node2
@@ -156,11 +157,11 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         # Validate
         assert obj_deepcopy is not test_object
         assert isinstance(obj_deepcopy, self.TestClass)
-        
+
         # Check that the nodes are different (deep copy)
         assert obj_deepcopy.first_node is not test_object.first_node
         assert len(obj_deepcopy.nodes) == len(test_object.nodes)
-        
+
         # Verify we can iterate through both containers and get the same data
         # but the nodes should be different objects
         for node1, node2 in zip(obj_deepcopy, test_object):
@@ -184,11 +185,11 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         # Validate
         assert obj_deepcopy is not test_object
         assert isinstance(obj_deepcopy, self.TestClass)
-        
+
         # Check that the nodes are different (deep copy)
         assert obj_deepcopy.first_node is not test_object.first_node
         assert len(obj_deepcopy.nodes) == len(test_object.nodes)
-        
+
         # Verify we can iterate through both containers and get the same data
         # but the nodes should be different objects
         for node1, node2 in zip(obj_deepcopy, test_object):
@@ -210,18 +211,20 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         # Validate
         assert unpickled is not test_object
         assert isinstance(unpickled, self.TestClass)
-        
+
         # Check that the nodes are different objects
         assert unpickled.first_node is not test_object.first_node
         assert len(unpickled.nodes) == len(test_object.nodes)
-        
+
         # Verify we can iterate through both containers and get the same data
         # but the nodes should be different objects
         data1 = [node.data for node in unpickled]
         data2 = [node.data for node in test_object]
         assert data1 == data2
 
-    def test_is_empty_property(self, empty_container: CircularDoublyLinkedContainer, simple_container: CircularDoublyLinkedContainer) -> None:
+    def test_is_empty_property(
+        self, empty_container: CircularDoublyLinkedContainer, simple_container: CircularDoublyLinkedContainer
+    ) -> None:
         """Test the is_empty property.
 
         This test verifies that the is_empty property correctly indicates whether the container is empty.
@@ -232,10 +235,10 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Test empty container
         assert empty_container.is_empty is True
-        
+
         # Test non-empty container
         assert simple_container.is_empty is False
-        
+
         # Test after clearing
         simple_container.clear()
         assert simple_container.is_empty is True
@@ -250,13 +253,15 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Get the last node
         last_node = simple_container.last_node
-        
+
         # Verify it's the last node
         assert last_node.data == "C"
         assert last_node.next is simple_container.first_node
         assert simple_container.first_node.previous is last_node
 
-    def test_len(self, empty_container: CircularDoublyLinkedContainer, simple_container: CircularDoublyLinkedContainer) -> None:
+    def test_len(
+        self, empty_container: CircularDoublyLinkedContainer, simple_container: CircularDoublyLinkedContainer
+    ) -> None:
         """Test the __len__ method.
 
         This test verifies that the length of the container is correctly reported.
@@ -267,14 +272,14 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Test empty container
         assert len(empty_container) == 0
-        
+
         # Test non-empty container
         assert len(simple_container) == 3
-        
+
         # Test after adding an item
         simple_container.append("D")
         assert len(simple_container) == 4
-        
+
         # Test after removing an item
         simple_container.pop()
         assert len(simple_container) == 3
@@ -291,7 +296,7 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         assert simple_container[0].data == "A"
         assert simple_container[1].data == "B"
         assert simple_container[2].data == "C"
-        
+
         # Test negative indices
         assert simple_container[-1].data == "C"
         assert simple_container[-2].data == "B"
@@ -307,7 +312,7 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Iterate and collect data
         data = [node.data for node in simple_container]
-        
+
         # Verify data
         assert data == ["A", "B", "C"]
 
@@ -321,10 +326,10 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Shift left by 1
         simple_container << 1
-        
+
         # Verify first node has changed
         assert simple_container.first_node.data == "B"
-        
+
         # Verify data order
         data = [node.data for node in simple_container]
         assert data == ["B", "C", "A"]
@@ -339,10 +344,10 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Shift right by 1
         simple_container >> 1
-        
+
         # Verify first node has changed
         assert simple_container.first_node.data == "C"
-        
+
         # Verify data order
         data = [node.data for node in simple_container]
         assert data == ["C", "A", "B"]
@@ -357,20 +362,20 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Append data
         node1 = empty_container.append("A")
-        
+
         # Verify node was added
         assert node1.data == "A"
         assert empty_container.first_node is node1
         assert len(empty_container) == 1
-        
+
         # Append more data
         node2 = empty_container.append("B")
-        
+
         # Verify node was added
         assert node2.data == "B"
         assert empty_container.first_node is node1
         assert len(empty_container) == 2
-        
+
         # Verify circular links
         assert node1.next is node2
         assert node2.next is node1
@@ -388,15 +393,15 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         # Create nodes
         node1 = LinkedNode(data="A")
         node2 = LinkedNode(data="B")
-        
+
         # Append nodes
         empty_container.append(node1)
         empty_container.append(node2)
-        
+
         # Verify nodes were added
         assert empty_container.first_node is node1
         assert len(empty_container) == 2
-        
+
         # Verify circular links
         assert node1.next is node2
         assert node2.next is node1
@@ -413,23 +418,23 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Insert at beginning
         node = simple_container.insert("X", 0)
-        
+
         # Verify node was inserted
         assert node.data == "X"
         assert simple_container.first_node is node
         assert len(simple_container) == 4
-        
+
         # Verify data order
         data = [n.data for n in simple_container]
         assert data == ["X", "A", "B", "C"]
-        
+
         # Insert in middle
         node = simple_container.insert("Y", 2)
-        
+
         # Verify node was inserted
         assert node.data == "Y"
         assert len(simple_container) == 5
-        
+
         # Verify data order
         data = [n.data for n in simple_container]
         assert data == ["X", "A", "Y", "B", "C"]
@@ -444,14 +449,14 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Create node
         node = LinkedNode(data="X")
-        
+
         # Insert at beginning
         simple_container.insert(node, 0)
-        
+
         # Verify node was inserted
         assert simple_container.first_node is node
         assert len(simple_container) == 4
-        
+
         # Verify data order
         data = [n.data for n in simple_container]
         assert data == ["X", "A", "B", "C"]
@@ -466,18 +471,18 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Get a node to remove
         node = simple_container[1]  # Node with data "B"
-        
+
         # Remove the node
         simple_container.remove_node(node)
-        
+
         # Verify node was removed
         assert len(simple_container) == 2
         assert node not in simple_container.nodes
-        
+
         # Verify data order
         data = [n.data for n in simple_container]
         assert data == ["A", "C"]
-        
+
         # Verify links were updated
         assert simple_container.first_node.next.data == "C"
         assert simple_container.first_node.previous.data == "C"
@@ -492,22 +497,22 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Pop from middle
         node = simple_container.pop(1)
-        
+
         # Verify node was popped
         assert node.data == "B"
         assert len(simple_container) == 2
-        
+
         # Verify data order
         data = [n.data for n in simple_container]
         assert data == ["A", "C"]
-        
+
         # Pop from end (default)
         node = simple_container.pop()
-        
+
         # Verify node was popped
         assert node.data == "C"
         assert len(simple_container) == 1
-        
+
         # Verify data
         assert simple_container.first_node.data == "A"
 
@@ -521,7 +526,7 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Clear container
         simple_container.clear()
-        
+
         # Verify container is empty
         assert simple_container.is_empty is True
         assert simple_container.first_node is None
@@ -538,13 +543,13 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Get a node to move
         node = simple_container[2]  # Node with data "C"
-        
+
         # Move node to start
         simple_container.move_node_start(node)
-        
+
         # Verify node is now first
         assert simple_container.first_node is node
-        
+
         # Verify data order
         data = [n.data for n in simple_container]
         assert data == ["C", "A", "B"]
@@ -559,13 +564,13 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Get a node to move
         node = simple_container[0]  # Node with data "A"
-        
+
         # Move node to end
         simple_container.move_node_end(node)
-        
+
         # Verify node is now last
         assert simple_container.last_node is node
-        
+
         # Verify data order
         data = [n.data for n in simple_container]
         assert data == ["B", "C", "A"]
@@ -580,10 +585,10 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Get a node to move
         node = simple_container[0]  # Node with data "A"
-        
+
         # Move node to index 1
         simple_container.move_node(node, 1)
-        
+
         # Verify data order
         data = [n.data for n in simple_container]
         assert data == ["B", "A", "C"]
@@ -598,20 +603,20 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Shift left by 1
         simple_container.shift_left(1)
-        
+
         # Verify first node has changed
         assert simple_container.first_node.data == "B"
-        
+
         # Verify data order
         data = [n.data for n in simple_container]
         assert data == ["B", "C", "A"]
-        
+
         # Shift left by 2
         simple_container.shift_left(2)
-        
+
         # Verify first node has changed
         assert simple_container.first_node.data == "A"
-        
+
         # Verify data order
         data = [n.data for n in simple_container]
         assert data == ["A", "B", "C"]
@@ -626,20 +631,20 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Shift right by 1
         simple_container.shift_right(1)
-        
+
         # Verify first node has changed
         assert simple_container.first_node.data == "C"
-        
+
         # Verify data order
         data = [n.data for n in simple_container]
         assert data == ["C", "A", "B"]
-        
+
         # Shift right by 2
         simple_container.shift_right(2)
-        
+
         # Verify first node has changed
         assert simple_container.first_node.data == "A"
-        
+
         # Verify data order
         data = [n.data for n in simple_container]
         assert data == ["A", "B", "C"]
@@ -654,7 +659,7 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Iterate and collect data
         data = [node.data for node in simple_container.forward_iter()]
-        
+
         # Verify data
         assert data == ["A", "B", "C"]
 
@@ -668,7 +673,7 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Iterate and collect data
         data = [node.data for node in simple_container.reverse_iter()]
-        
+
         # Verify data
         assert data == ["C", "B", "A"]
 
@@ -682,13 +687,13 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Create cycle
         cycle = simple_container.forward_cycle()
-        
+
         # Get first 6 items (2 complete cycles)
         data = []
         for _ in range(6):
             node = next(cycle)
             data.append(node.data)
-        
+
         # Verify data
         assert data == ["A", "B", "C", "A", "B", "C"]
 
@@ -702,13 +707,13 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Create cycle
         cycle = simple_container.reverse_cycle()
-        
+
         # Get first 6 items (2 complete cycles)
         data = []
         for _ in range(6):
             node = next(cycle)
             data.append(node.data)
-        
+
         # Verify data
         assert data == ["C", "B", "A", "C", "B", "A"]
 
@@ -722,17 +727,17 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         """
         # Test iteration on empty container
         assert list(empty_container) == []
-        
+
         # Test forward_iter on empty container
         assert list(empty_container.forward_iter()) == []
-        
+
         # Test reverse_iter on empty container
         assert list(empty_container.reverse_iter()) == []
-        
+
         # Test clear on empty container
         empty_container.clear()
         assert empty_container.is_empty is True
-        
+
         # Test pop on empty container (should raise IndexError)
         with pytest.raises(AttributeError):
             empty_container.pop()

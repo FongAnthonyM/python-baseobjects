@@ -4,6 +4,7 @@ Tests for the LinkedNode class in the baseobjects package.
 This module provides tests for the LinkedNode class, which is a node in a circular doubly linked container.
 It tests the functionality of LinkedNode including its properties, construction, and methods.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -70,16 +71,16 @@ class TestLinkedNode(BaseObjectTestSuite):
         node1 = self.TestClass(data="node1")
         node2 = self.TestClass(data="node2")
         node3 = self.TestClass(data="node3")
-        
+
         # Link the nodes in a circular fashion
         node1.next = node2
         node2.next = node3
         node3.next = node1
-        
+
         node1.previous = node3
         node2.previous = node1
         node3.previous = node2
-        
+
         return node1, node2, node3
 
     @pytest.fixture
@@ -115,7 +116,7 @@ class TestLinkedNode(BaseObjectTestSuite):
         node1 = self.TestClass(data="node1")
         node2 = self.TestClass(data="node2", previous=node1)
         node1.next = node2
-        
+
         assert node1.next is node2
         assert node2.previous is node1
 
@@ -166,7 +167,7 @@ class TestLinkedNode(BaseObjectTestSuite):
         """
         # Set up a mutable data object
         test_object.data = ["mutable", "data"]
-        
+
         # Deep Copy Object
         if memo is None:
             memo = {}
@@ -191,7 +192,7 @@ class TestLinkedNode(BaseObjectTestSuite):
         """
         # Set up a mutable data object
         test_object.data = ["mutable", "data"]
-        
+
         # Deep Copy Object
         if memo is None:
             memo = {}
@@ -233,7 +234,7 @@ class TestLinkedNode(BaseObjectTestSuite):
             linked_nodes: A fixture providing a tuple of linked nodes.
         """
         node1, node2, node3 = linked_nodes
-        
+
         # Test previous references
         assert node1.previous is node3
         assert node2.previous is node1
@@ -248,7 +249,7 @@ class TestLinkedNode(BaseObjectTestSuite):
             linked_nodes: A fixture providing a tuple of linked nodes.
         """
         node1, node2, node3 = linked_nodes
-        
+
         # Test next references
         assert node1.next is node2
         assert node2.next is node3
@@ -258,16 +259,16 @@ class TestLinkedNode(BaseObjectTestSuite):
         """Test the previous setter property."""
         node1 = self.TestClass(data="node1")
         node2 = self.TestClass(data="node2")
-        
+
         # Set previous
         node1.previous = node2
-        
+
         # Verify
         assert node1.previous is node2
-        
+
         # Set to None
         node1.previous = None
-        
+
         # Verify
         assert node1.previous is None
 
@@ -275,16 +276,16 @@ class TestLinkedNode(BaseObjectTestSuite):
         """Test the next setter property."""
         node1 = self.TestClass(data="node1")
         node2 = self.TestClass(data="node2")
-        
+
         # Set next
         node1.next = node2
-        
+
         # Verify
         assert node1.next is node2
-        
+
         # Set to None
         node1.next = None
-        
+
         # Verify
         assert node1.next is None
 
@@ -294,10 +295,10 @@ class TestLinkedNode(BaseObjectTestSuite):
         node1 = self.TestClass(data="node1")
         node2 = self.TestClass()
         node3 = self.TestClass()
-        
+
         # Construct node2 with data and links
         node2.construct(data="node2", previous=node1, next_=node3)
-        
+
         # Verify
         assert node2.data == "node2"
         assert node2.previous is node1
@@ -308,19 +309,19 @@ class TestLinkedNode(BaseObjectTestSuite):
         # Create nodes
         node1 = self.TestClass(data="node1")
         node2 = self.TestClass(data="node2")
-        
+
         # Create circular reference
         node1.next = node2
         node2.previous = node1
         node2.next = node1
         node1.previous = node2
-        
+
         # Verify circular reference
         assert node1.next is node2
         assert node2.next is node1
         assert node1.previous is node2
         assert node2.previous is node1
-        
+
         # Verify we can traverse the circle
         current = node1
         for _ in range(4):  # Traverse the circle twice

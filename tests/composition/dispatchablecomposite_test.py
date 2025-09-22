@@ -1,6 +1,7 @@
 """dispatchablecomposite_test.py
 Tests for the DispatchableComposite class in the baseobjects package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -207,13 +208,15 @@ class ExampleDispatchableComposite(DispatchableComposite):
 
 class TypeADispatchable(ExampleDispatchableComposite):
     """A subclass of ExampleDispatchableComposite for testing dispatching to type A."""
+
     class_registration = True
 
 
 class TypeBDispatchable(ExampleDispatchableComposite):
     """A subclass of ExampleDispatchableComposite for testing dispatching to type B."""
+
     class_registration = True
-        
+
 
 # Tests #
 class TestDispatchableComposite(DispatchableCompositeTestSuite):
@@ -414,7 +417,7 @@ class TestDispatchableComposite(DispatchableCompositeTestSuite):
 
     def test_class_dispatch(self, *args: Any, **kwargs: Any) -> None:
         """Test class dispatching.
-        
+
         Args:
             *args: Positional arguments to test the class dispatching.
             **kwargs: Keyword arguments to test the class dispatching.

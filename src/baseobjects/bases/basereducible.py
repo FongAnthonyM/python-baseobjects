@@ -10,6 +10,7 @@ The BaseReducible class serves as a foundation for objects that need to be seria
 properly preserved during these operations. This is particularly important for classes that use __slots__ for memory
 optimization or to restrict attribute assignment.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

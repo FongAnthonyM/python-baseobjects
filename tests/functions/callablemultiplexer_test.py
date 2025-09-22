@@ -1,10 +1,11 @@
 """callablemultiplexer_test.py
 Tests for the CallableMultiplexer class in the baseobjects package.
 
-This module provides tests for the CallableMultiplexer class, which is a callable that selects between different 
-functions or methods to be used as the call method. It has a registry to store functions/methods and can also use 
+This module provides tests for the CallableMultiplexer class, which is a callable that selects between different
+functions or methods to be used as the call method. It has a registry to store functions/methods and can also use
 methods from a wrapped object.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -256,6 +257,7 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
         Args:
             test_method_object: A fixture providing a CallableMultiplexer instance that wraps a function.
         """
+
         class BindTarget:
             def __init__(self, value: int = 10):
                 """Initialize with a value."""
@@ -325,6 +327,7 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
         Args:
             test_multiplexer: A fixture providing a CallableMultiplexer instance.
         """
+
         # Define a new function
         def subtract(x: int, y: int = 2) -> int:
             return x - y
@@ -345,7 +348,9 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
         # Verify it returns the expected result
         assert result == 3  # 5 - 2 (default y)
 
-    def test_add_method(self, test_multiplexer: CallableMultiplexer, test_object_instance: CallableMultiplexerTestObject) -> None:
+    def test_add_method(
+        self, test_multiplexer: CallableMultiplexer, test_object_instance: CallableMultiplexerTestObject
+    ) -> None:
         """Test that the add_method method correctly adds a method to the registry.
 
         Args:
@@ -375,6 +380,7 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
         Args:
             test_multiplexer: A fixture providing a CallableMultiplexer instance.
         """
+
         # Define a new function
         def subtract(x: int, y: int = 2) -> int:
             return x - y
@@ -393,7 +399,9 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
         # Verify it returns the expected result
         assert result == 3  # 5 - 2 (default y)
 
-    def test_add_select_method(self, test_multiplexer: CallableMultiplexer, test_object_instance: CallableMultiplexerTestObject) -> None:
+    def test_add_select_method(
+        self, test_multiplexer: CallableMultiplexer, test_object_instance: CallableMultiplexerTestObject
+    ) -> None:
         """Test that the add_select_method method correctly adds and selects a method.
 
         Args:
@@ -520,6 +528,7 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
 
         unpickled.callable_multiplexer.select("method1")
         assert unpickled.callable_multiplexer(5) == 105
+
 
 # Main #
 if __name__ == "__main__":

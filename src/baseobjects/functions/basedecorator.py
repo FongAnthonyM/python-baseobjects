@@ -5,6 +5,7 @@ This module provides the BaseDecorator class, which extends BaseFunction to crea
 enables the creation of both simple decorators and decorators that accept arguments, handling both regular functions and
 coroutine functions.
 """
+
 # Futures Imports #
 from __future__ import annotations
 

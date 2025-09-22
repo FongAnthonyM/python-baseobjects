@@ -6,6 +6,7 @@ for working with functions and methods. It imports and exposes classes like Base
 function registries, making them available for direct import from the functions package. These tools enable
 advanced function manipulation, method dispatching, and callable object management.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

@@ -1,6 +1,7 @@
 """bytestobin.py
 A function to convert bytes to a tuple of binary values.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

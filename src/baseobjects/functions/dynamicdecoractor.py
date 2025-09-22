@@ -1,6 +1,7 @@
 """dynamicdecoractor.py
 An abstract class which implements a dynamic decorator with multiplexed callback.
 """
+
 # Futures Imports #
 from __future__ import annotations
 
@@ -30,7 +31,7 @@ from .dynamiccallable import DynamicFunction
 class DynamicDecorator(BaseDecorator, DynamicFunction):
     """An abstract decorator class that has multiplexed binding and callback.
 
-    This class combines the functionality of BaseDecorator for creating decorators and DynamicFunction for providing 
+    This class combines the functionality of BaseDecorator for creating decorators and DynamicFunction for providing
     multiplexed callback capabilities. The BaseDecorator class operates slightly faster than this class, but this class
     allows for efficient switching between different binding and callback functions/methods. This can be useful for
     runtime multiplexing of binding and callback functions/methods.

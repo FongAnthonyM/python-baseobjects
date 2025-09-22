@@ -37,9 +37,11 @@ class TestBaseListPerformance(BasePerformanceTestSuite):
     This test suite measures the performance of various operations on BaseList objects
     and compares them with standard Python lists and UserList.
     """
+
     # Class Definitions #
     class TestList(BaseList):
         """A concrete subclass of BaseList for testing purposes."""
+
         pass
 
     # Attributes #
@@ -108,9 +110,13 @@ class TestBaseListPerformance(BasePerformanceTestSuite):
         percent_std = (mean_base / mean_std) * 100
 
         # Print the performance comparison
-        print(f"\nStandard list creation: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nStandard list creation: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"UserList creation: {mean_user:.3f} μs ({mean_user / mean_std:.3f}x standard list)")
-        print(f"BaseList creation: {mean_base:.3f} μs ({percent_user:.3f}% of UserList creation time, {percent_std:.3f}% of standard list creation time)")
+        print(
+            f"BaseList creation: {mean_base:.3f} μs ({percent_user:.3f}% of UserList creation time, {percent_std:.3f}% of standard list creation time)"
+        )
         assert percent_user < self.speed_tolerance * 2  # Allow more overhead compared to UserList
         assert percent_std < self.speed_tolerance * 3  # Allow more overhead compared to standard list
 
@@ -157,9 +163,13 @@ class TestBaseListPerformance(BasePerformanceTestSuite):
         percent_std = (mean_base / mean_std) * 100
 
         # Print the performance comparison
-        print(f"\nStandard list item access: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nStandard list item access: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"UserList item access: {mean_user:.3f} μs ({mean_user / mean_std:.3f}x standard list)")
-        print(f"BaseList item access: {mean_base:.3f} μs ({percent_user:.3f}% of UserList item access time, {percent_std:.3f}% of standard list item access time)")
+        print(
+            f"BaseList item access: {mean_base:.3f} μs ({percent_user:.3f}% of UserList item access time, {percent_std:.3f}% of standard list item access time)"
+        )
         assert percent_user < self.speed_tolerance * 1.5  # Allow some overhead compared to UserList
         assert percent_std < self.speed_tolerance * 2  # Allow more overhead compared to standard list
 
@@ -207,9 +217,13 @@ class TestBaseListPerformance(BasePerformanceTestSuite):
         percent_std = (mean_base / mean_std) * 100
 
         # Print the performance comparison
-        print(f"\nStandard list item setting: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nStandard list item setting: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"UserList item setting: {mean_user:.3f} μs ({mean_user / mean_std:.3f}x standard list)")
-        print(f"BaseList item setting: {mean_base:.3f} μs ({percent_user:.3f}% of UserList item setting time, {percent_std:.3f}% of standard list item setting time)")
+        print(
+            f"BaseList item setting: {mean_base:.3f} μs ({percent_user:.3f}% of UserList item setting time, {percent_std:.3f}% of standard list item setting time)"
+        )
         assert percent_user < self.speed_tolerance * 1.5  # Allow some overhead compared to UserList
         assert percent_std < self.speed_tolerance * 2  # Allow more overhead compared to standard list
 
@@ -258,9 +272,13 @@ class TestBaseListPerformance(BasePerformanceTestSuite):
         percent_std = (mean_base / mean_std) * 100
 
         # Print the performance comparison
-        print(f"\nStandard list append: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nStandard list append: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"UserList append: {mean_user:.3f} μs ({mean_user / mean_std:.3f}x standard list)")
-        print(f"BaseList append: {mean_base:.3f} μs ({percent_user:.3f}% of UserList append time, {percent_std:.3f}% of standard list append time)")
+        print(
+            f"BaseList append: {mean_base:.3f} μs ({percent_user:.3f}% of UserList append time, {percent_std:.3f}% of standard list append time)"
+        )
         assert percent_user < self.speed_tolerance * 1.5  # Allow some overhead compared to UserList
         assert percent_std < self.speed_tolerance * 2  # Allow more overhead compared to standard list
 
@@ -312,9 +330,13 @@ class TestBaseListPerformance(BasePerformanceTestSuite):
         percent_std = (mean_base / mean_std) * 100
 
         # Print the performance comparison
-        print(f"\nStandard list extend: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nStandard list extend: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"UserList extend: {mean_user:.3f} μs ({mean_user / mean_std:.3f}x standard list)")
-        print(f"BaseList extend: {mean_base:.3f} μs ({percent_user:.3f}% of UserList extend time, {percent_std:.3f}% of standard list extend time)")
+        print(
+            f"BaseList extend: {mean_base:.3f} μs ({percent_user:.3f}% of UserList extend time, {percent_std:.3f}% of standard list extend time)"
+        )
         assert percent_user < self.speed_tolerance * 1.5  # Allow some overhead compared to UserList
         assert percent_std < self.speed_tolerance * 2  # Allow more overhead compared to standard list
 
@@ -350,23 +372,33 @@ class TestBaseListPerformance(BasePerformanceTestSuite):
             test_std_list.pop(index)  # Remove the inserted item to keep the list size constant
 
         # Calculate the mean time in microseconds for BaseList insert
-        base_time = timeit.timeit(insert_into_base_list, number=self.timeit_runs // 10)  # Reduce runs for insert operations
+        base_time = timeit.timeit(
+            insert_into_base_list, number=self.timeit_runs // 10
+        )  # Reduce runs for insert operations
         mean_base = base_time / (self.timeit_runs // 10) * 1000000
 
         # Calculate the mean time in microseconds for UserList insert
-        user_time = timeit.timeit(insert_into_user_list, number=self.timeit_runs // 10)  # Reduce runs for insert operations
+        user_time = timeit.timeit(
+            insert_into_user_list, number=self.timeit_runs // 10
+        )  # Reduce runs for insert operations
         mean_user = user_time / (self.timeit_runs // 10) * 1000000
         percent_user = (mean_base / mean_user) * 100
 
         # Calculate the mean time in microseconds for standard list insert
-        std_time = timeit.timeit(insert_into_std_list, number=self.timeit_runs // 10)  # Reduce runs for insert operations
+        std_time = timeit.timeit(
+            insert_into_std_list, number=self.timeit_runs // 10
+        )  # Reduce runs for insert operations
         mean_std = std_time / (self.timeit_runs // 10) * 1000000
         percent_std = (mean_base / mean_std) * 100
 
         # Print the performance comparison
-        print(f"\nStandard list insert: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nStandard list insert: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"UserList insert: {mean_user:.3f} μs ({mean_user / mean_std:.3f}x standard list)")
-        print(f"BaseList insert: {mean_base:.3f} μs ({percent_user:.3f}% of UserList insert time, {percent_std:.3f}% of standard list insert time)")
+        print(
+            f"BaseList insert: {mean_base:.3f} μs ({percent_user:.3f}% of UserList insert time, {percent_std:.3f}% of standard list insert time)"
+        )
         assert percent_user < self.speed_tolerance * 1.5  # Allow some overhead compared to UserList
         assert percent_std < self.speed_tolerance * 2  # Allow more overhead compared to standard list
 
@@ -386,6 +418,7 @@ class TestBaseListPerformance(BasePerformanceTestSuite):
             test_user_list: A fixture providing a UserList instance.
             test_std_list: A fixture providing a standard list.
         """
+
         def iterate_base_list() -> None:
             for _ in test_list:
                 pass
@@ -413,9 +446,13 @@ class TestBaseListPerformance(BasePerformanceTestSuite):
         percent_std = (mean_base / mean_std) * 100
 
         # Print the performance comparison
-        print(f"\nStandard list iteration: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nStandard list iteration: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"UserList iteration: {mean_user:.3f} μs ({mean_user / mean_std:.3f}x standard list)")
-        print(f"BaseList iteration: {mean_base:.3f} μs ({percent_user:.3f}% of UserList iteration time, {percent_std:.3f}% of standard list iteration time)")
+        print(
+            f"BaseList iteration: {mean_base:.3f} μs ({percent_user:.3f}% of UserList iteration time, {percent_std:.3f}% of standard list iteration time)"
+        )
         assert percent_user < self.speed_tolerance * 1.5  # Allow some overhead compared to UserList
         assert percent_std < self.speed_tolerance * 2  # Allow more overhead compared to standard list
 
@@ -435,6 +472,7 @@ class TestBaseListPerformance(BasePerformanceTestSuite):
             test_user_list: A fixture providing a UserList instance.
             test_std_list: A fixture providing a standard list.
         """
+
         def copy_base_list() -> None:
             test_list.copy()
 
@@ -461,7 +499,9 @@ class TestBaseListPerformance(BasePerformanceTestSuite):
         # Print the performance comparison
         print(f"\nStandard list copy: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
         print(f"UserList copy: {mean_user:.3f} μs ({mean_user / mean_std:.3f}x standard list)")
-        print(f"BaseList copy: {mean_base:.3f} μs ({percent_user:.3f}% of UserList copy time, {percent_std:.3f}% of standard list copy time)")
+        print(
+            f"BaseList copy: {mean_base:.3f} μs ({percent_user:.3f}% of UserList copy time, {percent_std:.3f}% of standard list copy time)"
+        )
         assert percent_user < self.speed_tolerance * 2  # Allow more overhead compared to UserList
         assert percent_std < self.speed_tolerance * 3  # Allow more overhead compared to standard list
 
@@ -481,6 +521,7 @@ class TestBaseListPerformance(BasePerformanceTestSuite):
             test_user_list: A fixture providing a UserList instance.
             test_std_list: A fixture providing a standard list.
         """
+
         def deepcopy_base_list() -> None:
             test_list.deepcopy()
 
@@ -505,9 +546,13 @@ class TestBaseListPerformance(BasePerformanceTestSuite):
         percent_std = (mean_base / mean_std) * 100
 
         # Print the performance comparison
-        print(f"\nStandard list deepcopy: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nStandard list deepcopy: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"UserList deepcopy: {mean_user:.3f} μs ({mean_user / mean_std:.3f}x standard list)")
-        print(f"BaseList deepcopy: {mean_base:.3f} μs ({percent_user:.3f}% of UserList deepcopy time, {percent_std:.3f}% of standard list deepcopy time)")
+        print(
+            f"BaseList deepcopy: {mean_base:.3f} μs ({percent_user:.3f}% of UserList deepcopy time, {percent_std:.3f}% of standard list deepcopy time)"
+        )
         assert percent_user < self.speed_tolerance * 2  # Allow more overhead compared to UserList
         assert percent_std < self.speed_tolerance * 3  # Allow more overhead compared to standard list
 

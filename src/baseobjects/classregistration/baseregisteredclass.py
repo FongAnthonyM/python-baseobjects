@@ -6,6 +6,7 @@ registering subclasses and retrieving them from a registry. BaseRegisteredClass 
 mechanics or contain registered classes but provides the interface for developers to implement their own registration
 and storage mechanisms.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

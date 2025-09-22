@@ -33,6 +33,7 @@ class TestDynamicWrapper(DynamicWrapper):
 
     This class uses DynamicWrapper to wrap ExampleOne and ExampleTwo objects.
     """
+
     _wrapped_map_: list[str] = ["_first", "_second"]
 
     def __init__(self, first: Any = None, second: Any = None) -> None:
@@ -61,6 +62,7 @@ class TestDynamicWrapperWithGetAttr(DynamicWrapper):
 
     This class is used to test how DynamicWrapper handles objects with __getattr__.
     """
+
     _wrapped_map_: list[str] = ["_wrapped_obj"]
 
     def __init__(self, wrapped: Any = None) -> None:
@@ -78,6 +80,7 @@ class NestedDynamicWrapper(DynamicWrapper):
 
     This class wraps another wrapper.
     """
+
     _wrapped_map_: list[str] = ["_wrapped_obj"]
 
     def __init__(self, wrapped: Any = None) -> None:
@@ -125,9 +128,11 @@ class TestDynamicWrapperTests(WrapperTestSuite):
         This test verifies that attributes dynamically created by a wrapped object's __getattr__ are accessible through
         the wrapper.
         """
+
         # Create a test object with an object that has __getattr__
         class ExampleWithGetAttr:
             """An example class with a __getattr__ method."""
+
             def __init__(self) -> None:
                 """Initialize with attributes."""
                 self.existing = "exists"

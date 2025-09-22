@@ -1,6 +1,7 @@
 """timeddict.py
 A dictionary that clears its contents after a specified time has passed.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

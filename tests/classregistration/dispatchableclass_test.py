@@ -1,6 +1,7 @@
 """dispatchableclass_test.py
 Tests for the DispatchableClass class in the baseobjects package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -53,6 +54,7 @@ class ConcreteClassRegistry(BaseClassRegistry):
             The requested class or the default value.
         """
         return self.get(name, default)
+
 
 class TestDispatchableClass(DispatchableClassTestSuite):
     """Test the DispatchableClass class.
@@ -115,10 +117,12 @@ class TestDispatchableClass(DispatchableClassTestSuite):
 
     class TypeADispatchable(ExampleDispatchableClass):
         """A subclass of ExampleDispatchableClass for testing dispatching to type A."""
+
         class_registration = True
 
     class TypeBDispatchable(ExampleDispatchableClass):
         """A subclass of ExampleDispatchableClass for testing dispatching to type B."""
+
         class_registration = True
 
     # Attributes #
@@ -233,7 +237,7 @@ class TestDispatchableClass(DispatchableClassTestSuite):
 
     def test_class_dispatch(self, *args: Any, **kwargs: Any) -> None:
         """Test class dispatching.
-        
+
         Args:
             *args: Positional arguments to test the class dispatching.
             **kwargs: Keyword arguments to test the class dispatching.

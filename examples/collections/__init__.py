@@ -1,6 +1,7 @@
 """__init__.py
 Examples for the collections package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

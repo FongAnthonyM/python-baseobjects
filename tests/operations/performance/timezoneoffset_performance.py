@@ -48,6 +48,7 @@ class CustomTimezone(tzinfo):
 
     This class returns different offsets based on the date provided.
     """
+
     def __init__(self, hours: int = 1, complex_calculation: bool = False):
         self.hours = hours
         self.complex_calculation = complex_calculation
@@ -75,6 +76,7 @@ class TestTimezoneOffset(BasePerformanceTestSuite):
 
     This class tests_old_ the performance of the timezone_offset function, which gets the offset of a given timezone.
     """
+
     # Attributes #
     timeit_runs: int = 100000
     speed_tolerance: int = 150
@@ -147,6 +149,7 @@ class TestTimezoneOffset(BasePerformanceTestSuite):
         Args:
             utc_timezone: A fixture providing the UTC timezone.
         """
+
         def custom_implementation() -> None:
             timezone_offset(utc_timezone)
 
@@ -174,6 +177,7 @@ class TestTimezoneOffset(BasePerformanceTestSuite):
         Args:
             positive_timezone: A fixture providing a positive timezone.
         """
+
         def custom_implementation() -> None:
             timezone_offset(positive_timezone)
 
@@ -201,6 +205,7 @@ class TestTimezoneOffset(BasePerformanceTestSuite):
         Args:
             negative_timezone: A fixture providing a negative timezone.
         """
+
         def custom_implementation() -> None:
             timezone_offset(negative_timezone)
 
@@ -228,6 +233,7 @@ class TestTimezoneOffset(BasePerformanceTestSuite):
         Args:
             custom_timezone: A fixture providing a custom timezone.
         """
+
         def custom_implementation() -> None:
             timezone_offset(custom_timezone)
 
@@ -255,6 +261,7 @@ class TestTimezoneOffset(BasePerformanceTestSuite):
         Args:
             complex_custom_timezone: A fixture providing a complex custom timezone.
         """
+
         def custom_implementation() -> None:
             timezone_offset(complex_custom_timezone)
 
@@ -271,7 +278,9 @@ class TestTimezoneOffset(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNew (timezone_offset complex custom): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
+        print(
+            f"\nNew (timezone_offset complex custom): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+        )
         assert percent < self.speed_tolerance
 
     def test_timezone_offset_zoneinfo_speed(self, zoneinfo_timezone: tzinfo) -> None:
@@ -282,6 +291,7 @@ class TestTimezoneOffset(BasePerformanceTestSuite):
         Args:
             zoneinfo_timezone: A fixture providing a zoneinfo timezone.
         """
+
         def custom_implementation() -> None:
             timezone_offset(zoneinfo_timezone)
 

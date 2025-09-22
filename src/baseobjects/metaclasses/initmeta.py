@@ -1,6 +1,7 @@
 """initmeta.py
 InitMeta is an abstract metaclass that implements an init class method which allows some setup after a class is created.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

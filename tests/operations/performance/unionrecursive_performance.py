@@ -74,6 +74,7 @@ class TestUnionRecursive(BasePerformanceTestSuite):
     This class tests_old_ the performance of the union_recursive function, which unions a mapping object and its contained
     mappings within another mapping.
     """
+
     # Attributes #
     timeit_runs: int = 10000  # Reduced for more complex operations
     speed_tolerance: int = 150
@@ -143,7 +144,7 @@ class TestUnionRecursive(BasePerformanceTestSuite):
             tuple: A tuple containing two large dictionaries.
         """
         d1 = {f"key{i}": i for i in range(100)}
-        d2 = {f"key{i+50}": i+100 for i in range(100)}
+        d2 = {f"key{i+50}": i + 100 for i in range(100)}
         return d1, d2
 
     # Tests
@@ -202,7 +203,9 @@ class TestUnionRecursive(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNew (union_recursive overlapping): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
+        print(
+            f"\nNew (union_recursive overlapping): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+        )
         assert percent < self.speed_tolerance
 
     def test_union_recursive_nested_speed(self, nested_dicts: tuple[Dict[str, Any], Dict[str, Any]]) -> None:
@@ -234,7 +237,9 @@ class TestUnionRecursive(BasePerformanceTestSuite):
         print(f"\nNew (union_recursive nested): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
         assert percent < self.speed_tolerance
 
-    def test_union_recursive_deeply_nested_speed(self, deeply_nested_dicts: tuple[Dict[str, Any], Dict[str, Any]]) -> None:
+    def test_union_recursive_deeply_nested_speed(
+        self, deeply_nested_dicts: tuple[Dict[str, Any], Dict[str, Any]]
+    ) -> None:
         """Test the performance of union_recursive with dictionaries that have deeply nested dictionaries.
 
         This test compares the speed of union_recursive with a standard implementation for dictionaries with deeply nested dictionaries.
@@ -260,7 +265,9 @@ class TestUnionRecursive(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNew (union_recursive deeply nested): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
+        print(
+            f"\nNew (union_recursive deeply nested): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+        )
         assert percent < self.speed_tolerance
 
     def test_union_recursive_mixed_types_speed(self, mixed_type_dicts: tuple[Dict[str, Any], Dict[str, Any]]) -> None:
@@ -289,7 +296,9 @@ class TestUnionRecursive(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNew (union_recursive mixed types): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
+        print(
+            f"\nNew (union_recursive mixed types): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+        )
         assert percent < self.speed_tolerance
 
     def test_union_recursive_vs_non_recursive(self, nested_dicts: tuple[Dict[str, Any], Dict[str, Any]]) -> None:
@@ -347,7 +356,9 @@ class TestUnionRecursive(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNew (union_recursive large dicts): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
+        print(
+            f"\nNew (union_recursive large dicts): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+        )
         assert percent < self.speed_tolerance
 
 

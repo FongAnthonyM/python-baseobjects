@@ -5,6 +5,7 @@ This module provides tests for the BaseTimedCacheCallable class, which is a base
 that resets its cache periodically. It tests the core functionality of BaseTimedCacheCallable, including instance
 creation, caching behavior, cache expiration, and cache clearing.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -265,7 +266,7 @@ class TestBaseTimedCacheCallable(BaseTimedCacheCallableTestSuite):
         # If the class has a cache_container, verify it's empty
         if hasattr(test_function_object, "cache_container") and test_function_object.cache_container is not None:
             assert not test_function_object.cache_container
-    
+
     def test_create_key(self) -> None:
         """Test the create_key method of BaseTimedCacheCallable.
 
@@ -295,7 +296,7 @@ class TestBaseTimedCacheCallable(BaseTimedCacheCallableTestSuite):
         key4 = cache_func.create_key((1, 2), {}, True)
         assert isinstance(key4, _HashedSeq)
         assert len(key4) > 2  # The key includes the arguments and their types
-        
+
     def test_call_caching(self, test_function: tuple[Callable, Callable]) -> None:
         """Test the call_caching method.
 
@@ -634,6 +635,7 @@ class TestBaseTimedCacheCallable(BaseTimedCacheCallableTestSuite):
 
     def test_cache_with_keyword_arguments(self) -> None:
         """Test that keyword arguments are properly handled in caching."""
+
         def test_func(x: int, y: int = 2) -> int:
             nonlocal call_count
             call_count += 1

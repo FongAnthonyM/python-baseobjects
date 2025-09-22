@@ -5,6 +5,7 @@ This module provides a base test suite for testing the DynamicDecorator class an
 methods for testing the core functionality of dynamic decorator objects, including multiplexed binding and callback
 functionality, as well as decorator-specific behavior.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -82,7 +83,7 @@ class DynamicDecoratorTestSuite(BaseDecoratorTestSuite, DynamicFunctionTestSuite
         Args:
             test_function_object: A fixture providing a DynamicDecorator instance that wraps a function.
         """
-        
+
     @abstractmethod
     def test_coroutine(self, test_coroutine_object: DynamicDecorator) -> None:
         """Test that the callable object correctly handles coroutine functions.

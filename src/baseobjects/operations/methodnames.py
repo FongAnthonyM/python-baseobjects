@@ -1,6 +1,7 @@
 """methodnames.py
 Functions for getting method names from objects.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -45,7 +46,7 @@ def iter_public_method_names(obj: Any) -> Generator[str, None, None]:
     Returns:
         The iterator as a generator which iterates over the public method names of an object.
     """
-    return (name for name in iter_method_names(obj) if name[0] != '_')
+    return (name for name in iter_method_names(obj) if name[0] != "_")
 
 
 def get_method_names(obj: Any) -> tuple[str, ...]:
@@ -70,5 +71,3 @@ def get_public_method_names(obj: Any) -> tuple[str, ...]:
         The public method names of an object.
     """
     return tuple(iter_public_method_names(obj))
-
-

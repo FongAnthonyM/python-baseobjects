@@ -1,10 +1,11 @@
 """basecallabletestsuite.py
 Base class for test suites which test BaseCallable and its subclasses.
 
-This module provides a base test suite for testing the BaseCallable class and its subclasses. It defines abstract 
-methods for testing the core functionality of callable objects, including instance creation, function calling, binding, 
+This module provides a base test suite for testing the BaseCallable class and its subclasses. It defines abstract
+methods for testing the core functionality of callable objects, including instance creation, function calling, binding,
 and coroutine support.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -140,7 +141,7 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
             The test instance.
         """
         return self.BindTargetClass(*args, **kwargs)
-    
+
     def create_function_object(self, func: Callable[..., Any] = example_function, *args: Any, **kwargs: Any) -> Any:
         """Create a BaseCallable instance that wraps a function.
 
@@ -153,10 +154,10 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
             The test instance.
         """
         return self.TestClass(func, *args, **kwargs)
-    
+
     def create_method_object(self, func: Callable[..., Any] = example_method, *args: Any, **kwargs: Any) -> Any:
         """Create a BaseCallable instance that wraps a method.
-        
+
         Args:
             func: The method to wrap.
             *args: Positional arguments to pass to the class constructor.
@@ -438,6 +439,7 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
         Args:
             test_method_object: A fixture providing a BaseCallable instance that wraps a function.
         """
+
         class BindTarget:
             new_method = test_method_object
 
@@ -447,15 +449,16 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
 
     def test_attribute_copying(self) -> None:
         """Test that attributes from the wrapped function are correctly copied to the callable object."""
+
         # Create a temporary function
         def temp_func(x: int, y: int = 2) -> int:
             return x + y
-        
+
         # Create an attribute in the function
         temp_func.new_attribute = "test"
-        
+
         # Create a callable object
         test_object = self.TestClass(temp_func)
-        
+
         # Validate the new attribute is present and the same
         assert test_object.new_attribute == temp_func.new_attribute

@@ -1,6 +1,7 @@
 """automaticproperties.py
 An abstract class which creates properties for this class automatically.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

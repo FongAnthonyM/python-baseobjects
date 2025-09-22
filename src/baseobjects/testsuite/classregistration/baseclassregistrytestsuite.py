@@ -1,6 +1,7 @@
 """baseclassregistrytestsuite.py
 Base test suite for BaseClassRegistry and its subclasses.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

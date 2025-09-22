@@ -1,6 +1,7 @@
 """__init__.py
 Examples for the objectss package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

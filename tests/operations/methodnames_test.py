@@ -85,7 +85,7 @@ class TestMethodNames:
         assert "another_public_method" in method_names
         assert "_private_method" in method_names
         assert "__dunder_method__" in method_names
-        
+
         # Non-callable attributes should not be included
         assert "non_callable_attr" not in method_names
 
@@ -107,11 +107,11 @@ class TestMethodNames:
         # Verify that only public methods are included
         assert "public_method" in public_method_names
         assert "another_public_method" in public_method_names
-        
+
         # Private and dunder methods should not be included
         assert "_private_method" not in public_method_names
         assert "__dunder_method__" not in public_method_names
-        
+
         # Non-callable attributes should not be included
         assert "non_callable_attr" not in public_method_names
 
@@ -135,7 +135,7 @@ class TestMethodNames:
         assert "another_public_method" in method_names
         assert "_private_method" in method_names
         assert "__dunder_method__" in method_names
-        
+
         # Non-callable attributes should not be included
         assert "non_callable_attr" not in method_names
 
@@ -157,11 +157,11 @@ class TestMethodNames:
         # Verify that only public methods are included
         assert "public_method" in public_method_names
         assert "another_public_method" in public_method_names
-        
+
         # Private and dunder methods should not be included
         assert "_private_method" not in public_method_names
         assert "__dunder_method__" not in public_method_names
-        
+
         # Non-callable attributes should not be included
         assert "non_callable_attr" not in public_method_names
 
@@ -177,18 +177,18 @@ class TestMethodNames:
         list_obj = [1, 2, 3]
         list_methods = get_method_names(list_obj)
         list_public_methods = get_public_method_names(list_obj)
-        
+
         # Verify some common list methods are included
         assert "append" in list_methods
         assert "append" in list_public_methods
         assert "extend" in list_methods
         assert "extend" in list_public_methods
-        
+
         # Test with a dict
         dict_obj = {"a": 1, "b": 2}
         dict_methods = get_method_names(dict_obj)
         dict_public_methods = get_public_method_names(dict_obj)
-        
+
         # Verify some common dict methods are included
         assert "keys" in dict_methods
         assert "keys" in dict_public_methods

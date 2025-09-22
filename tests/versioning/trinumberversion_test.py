@@ -46,7 +46,7 @@ class TestTriNumberVersion(VersionTestSuite):
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_object(self, *args: Any, **kwargs: Any) ->  TriNumberVersion:
+    def test_object(self, *args: Any, **kwargs: Any) -> TriNumberVersion:
         """Create a test version instance for use in tests.
 
         Args:
@@ -454,7 +454,6 @@ class TestTriNumberVersion(VersionTestSuite):
 
         with pytest.raises(TypeError):
             version >= object()
-
 
 
 # Main #

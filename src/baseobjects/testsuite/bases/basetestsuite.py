@@ -1,6 +1,7 @@
 """basetestsuite.py
 Base class for test suites.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -17,11 +18,20 @@ __version__ = "1.12.0"
 from abc import ABC
 
 # Third-Party Packages #
+from click.testing import CliRunner
+import pytest
 
 # Local Packages #
 
 
 # Definitions #
+# Fixtures #
+@pytest.fixture
+def runner() -> CliRunner:
+    """Fixture for invoking command-line interfaces."""
+    return CliRunner()
+
+
 # Classes #
 class BaseTestSuite(ABC):
     """Base class for test suites."""

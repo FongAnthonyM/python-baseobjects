@@ -4,6 +4,7 @@ Test suite for the AutomaticProperties class.
 This module provides the AutomaticPropertiesTestSuite class which serves as a foundation for testing classes that
 inherit from AutomaticProperties. It includes tests for property creation, access, modification, and deletion.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -54,12 +55,11 @@ class AutomaticPropertiesTestSuite(BaseObjectTestSuite):
         Returns:
             Type[AutomaticProperties]: A test class with properties.
         """
+
         class TestAutomaticProperties(self.TestClass):
             """Test class for AutomaticProperties."""
-            properties = {
-                "test_prop": "_test_prop",
-                "another_prop": "_another_prop"
-            }
+
+            properties = {"test_prop": "_test_prop", "another_prop": "_another_prop"}
 
         return TestAutomaticProperties
 
@@ -269,16 +269,15 @@ class AutomaticPropertiesTestSuite(BaseObjectTestSuite):
 
         This test verifies that the _construct_properties_ method creates properties correctly based on a property map.
         """
+
         # Create Test Class
         class TestClass(self.TestClass):
             """Test class for _construct_properties_."""
+
             pass
 
         # Construct Properties
-        property_map = {
-            "dynamic_prop": "_dynamic_prop",
-            "another_dynamic_prop": "_another_dynamic_prop"
-        }
+        property_map = {"dynamic_prop": "_dynamic_prop", "another_dynamic_prop": "_another_dynamic_prop"}
         TestClass._construct_properties_(property_map)
 
         # Create Test Object

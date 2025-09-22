@@ -7,6 +7,7 @@ BaseRegisteredClassTestSuite, and others, making them available for direct impor
 testsuite.classregistration package. These test suites ensure the proper functioning of class registration and
 dispatching mechanisms in the baseobjects package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

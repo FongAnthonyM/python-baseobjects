@@ -12,6 +12,7 @@ access which is not great for most applications.
 
 Todo: add magic method support for StaticWrapper and DynamicWrapper (requires thorough method resolution handling)
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

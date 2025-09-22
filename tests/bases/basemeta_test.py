@@ -4,6 +4,7 @@ Tests for the BaseMeta class in the baseobjects package.
 This module provides tests for the BaseMeta class, which is an abstract metaclass that inherits from ABCMeta and adds
 functionality for copying and deep copying metaclass objects.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -30,11 +31,13 @@ from src.baseobjects.testsuite.bases import BaseClassTestSuite
 # Classes #
 class BaseTestMeta(BaseMeta):
     """A subclass of BaseMeta for testing purposes."""
+
     pass
 
 
 class BaseTestClass(metaclass=BaseTestMeta):
     """A class that uses BaseTestMeta as its metaclass."""
+
     def __init__(self) -> None:
         """Initialize with some attributes."""
         self.value = 42
@@ -69,6 +72,7 @@ class TestBaseMeta(BaseClassTestSuite):
 
         This test verifies that classes can be created with the metaclass.
         """
+
         # Create a class with the metaclass
         class TestClass(metaclass=self.TestClass):
             pass

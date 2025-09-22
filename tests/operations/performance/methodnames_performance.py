@@ -60,7 +60,7 @@ def standard_iter_public_method_names(obj: Any) -> Generator[str, None, None]:
     """
     for name in dir(obj):
         attr = getattr(obj, name, None)
-        if callable(attr) and name[0] != '_':
+        if callable(attr) and name[0] != "_":
             yield name
 
 
@@ -85,7 +85,7 @@ def standard_get_public_method_names(obj: Any) -> Tuple[str, ...]:
     Returns:
         The public method names of an object.
     """
-    return tuple(name for name in dir(obj) if callable(getattr(obj, name, None)) and name[0] != '_')
+    return tuple(name for name in dir(obj) if callable(getattr(obj, name, None)) and name[0] != "_")
 
 
 # Classes #
@@ -94,6 +94,7 @@ class TestMethodNames(BasePerformanceTestSuite):
 
     This class tests_old_ the performance of the functions that retrieve method names from objects.
     """
+
     # Class Definitions #
     class TestClass:
         """A test class with various methods for testing method name functions."""
@@ -174,6 +175,7 @@ class TestMethodNames(BasePerformanceTestSuite):
         Args:
             test_object: A fixture providing a test object.
         """
+
         def custom_implementation() -> None:
             list(iter_method_names(test_object))
 
@@ -201,6 +203,7 @@ class TestMethodNames(BasePerformanceTestSuite):
         Args:
             test_object: A fixture providing a test object.
         """
+
         def custom_implementation() -> None:
             list(iter_public_method_names(test_object))
 
@@ -228,6 +231,7 @@ class TestMethodNames(BasePerformanceTestSuite):
         Args:
             test_object: A fixture providing a test object.
         """
+
         def custom_implementation() -> None:
             get_method_names(test_object)
 
@@ -255,6 +259,7 @@ class TestMethodNames(BasePerformanceTestSuite):
         Args:
             test_object: A fixture providing a test object.
         """
+
         def custom_implementation() -> None:
             get_public_method_names(test_object)
 
@@ -282,6 +287,7 @@ class TestMethodNames(BasePerformanceTestSuite):
         Args:
             builtin_object: A fixture providing a built-in object.
         """
+
         def iter_method_names_impl() -> None:
             list(iter_method_names(builtin_object))
 

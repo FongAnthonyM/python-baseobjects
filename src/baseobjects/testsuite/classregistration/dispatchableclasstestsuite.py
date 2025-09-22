@@ -1,6 +1,7 @@
 """dispatchableclasstestsuite.py
 Base test suite for DispatchableClass and its subclasses.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

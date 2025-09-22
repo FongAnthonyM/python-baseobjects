@@ -4,6 +4,7 @@ Tests for the singlekwargdispatch decorator in the baseobjects package.
 This module provides tests for the singlekwargdispatch decorator, which extends singledispatch
 to allow keyword arguments to be used for dispatching.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -201,8 +202,7 @@ class TestSingleKwargDispatch(BaseDecoratorTestSuite):
 
     # Tests
     def test_instance_creation(self) -> None:
-        """Test that instances of the decorator class can be created.
-        """
+        """Test that instances of the decorator class can be created."""
         # Create with no parameters
         decorator1 = singlekwargdispatch()
         assert decorator1 is not None
@@ -327,6 +327,7 @@ class TestSingleKwargDispatch(BaseDecoratorTestSuite):
 
         This test verifies that the decorator can be used in the standard Python way.
         """
+
         # Test basic usage
         @singlekwargdispatch
         def test_func(x: Any) -> Any:
@@ -366,6 +367,7 @@ class TestSingleKwargDispatch(BaseDecoratorTestSuite):
 
         This test verifies that the decorator can be used with arguments.
         """
+
         # Define a test function
         def test_function(x: Any) -> Any:
             return x
@@ -392,6 +394,7 @@ class TestSingleKwargDispatch(BaseDecoratorTestSuite):
 
         This test verifies that the kwarg property correctly gets and sets the kwarg name.
         """
+
         # Define a test function with a parameter that matches the kwarg
         def test_function(test_param: Any = None) -> Any:
             return test_param
@@ -413,6 +416,7 @@ class TestSingleKwargDispatch(BaseDecoratorTestSuite):
 
         This test verifies that the set_kwarg method correctly sets the kwarg name.
         """
+
         # Create a decorator instance with a function to avoid getting a partial
         @singlekwargdispatch
         def func(x: Any) -> Any:
@@ -433,6 +437,7 @@ class TestSingleKwargDispatch(BaseDecoratorTestSuite):
 
         This test verifies that the parse_first method correctly parses args and kwargs to determine the dispatch type.
         """
+
         # Create a decorator instance with a function to avoid getting a partial
         @singlekwargdispatch
         def func(x: Any) -> Any:
@@ -462,6 +467,7 @@ class TestSingleKwargDispatch(BaseDecoratorTestSuite):
 
         This test verifies that the parse_kwarg method correctly parses args and kwargs to determine the dispatch type.
         """
+
         # Create a decorator instance with a function and kwarg to avoid getting a partial
         @singlekwargdispatch(kwarg="x")
         def func(x: Any = None) -> Any:
@@ -495,6 +501,7 @@ class TestSingleKwargDispatch(BaseDecoratorTestSuite):
 
         This test verifies that the register method correctly registers functions for specific types.
         """
+
         @singlekwargdispatch
         def func(x: Any) -> Any:
             return f"Default: {x}"
@@ -523,6 +530,7 @@ class TestSingleKwargDispatch(BaseDecoratorTestSuite):
 
         This test verifies that the dispatch method correctly returns the function registered for a given class.
         """
+
         @singlekwargdispatch
         def func(x: Any) -> Any:
             return f"Default: {x}"
@@ -700,6 +708,7 @@ class TestSingleKwargDispatch(BaseDecoratorTestSuite):
 
         This test verifies that the register method correctly handles Union types.
         """
+
         @singlekwargdispatch
         def func(x: Any) -> Any:
             return f"Default: {x}"
@@ -719,6 +728,7 @@ class TestSingleKwargDispatch(BaseDecoratorTestSuite):
 
         This test verifies that the register method correctly handles None type.
         """
+
         @singlekwargdispatch
         def func(x: Any) -> Any:
             return f"Default: {x}"
@@ -737,6 +747,7 @@ class TestSingleKwargDispatch(BaseDecoratorTestSuite):
 
         This test verifies that the register method correctly handles invalid annotations.
         """
+
         @singlekwargdispatch
         def func(x: Any) -> Any:
             return f"Default: {x}"

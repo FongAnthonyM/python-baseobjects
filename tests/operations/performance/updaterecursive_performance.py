@@ -71,6 +71,7 @@ class TestUpdateRecursive(BasePerformanceTestSuite):
     This class tests_old_ the performance of the update_recursive function, which updates a mapping object and its contained
     mappings based on another mapping.
     """
+
     # Attributes #
     timeit_runs: int = 10000  # Reduced for more complex operations
     speed_tolerance: int = 150
@@ -140,7 +141,7 @@ class TestUpdateRecursive(BasePerformanceTestSuite):
             tuple: A tuple containing two large dictionaries.
         """
         d1 = {f"key{i}": i for i in range(100)}
-        d2 = {f"key{i+50}": i+100 for i in range(100)}
+        d2 = {f"key{i+50}": i + 100 for i in range(100)}
         return d1.copy(), d2
 
     # Tests
@@ -203,7 +204,9 @@ class TestUpdateRecursive(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNew (update_recursive overlapping): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
+        print(
+            f"\nNew (update_recursive overlapping): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+        )
         assert percent < self.speed_tolerance
 
     def test_update_recursive_nested_speed(self, nested_dicts: tuple[Dict[str, Any], Dict[str, Any]]) -> None:
@@ -237,7 +240,9 @@ class TestUpdateRecursive(BasePerformanceTestSuite):
         print(f"\nNew (update_recursive nested): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
         assert percent < self.speed_tolerance
 
-    def test_update_recursive_deeply_nested_speed(self, deeply_nested_dicts: tuple[Dict[str, Any], Dict[str, Any]]) -> None:
+    def test_update_recursive_deeply_nested_speed(
+        self, deeply_nested_dicts: tuple[Dict[str, Any], Dict[str, Any]]
+    ) -> None:
         """Test the performance of update_recursive with dictionaries that have deeply nested dictionaries.
 
         This test compares the speed of update_recursive with a standard implementation for dictionaries with deeply nested dictionaries.
@@ -265,7 +270,9 @@ class TestUpdateRecursive(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNew (update_recursive deeply nested): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
+        print(
+            f"\nNew (update_recursive deeply nested): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+        )
         assert percent < self.speed_tolerance
 
     def test_update_recursive_mixed_types_speed(self, mixed_type_dicts: tuple[Dict[str, Any], Dict[str, Any]]) -> None:
@@ -296,7 +303,9 @@ class TestUpdateRecursive(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNew (update_recursive mixed types): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
+        print(
+            f"\nNew (update_recursive mixed types): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+        )
         assert percent < self.speed_tolerance
 
     def test_update_recursive_vs_non_recursive(self, nested_dicts: tuple[Dict[str, Any], Dict[str, Any]]) -> None:
@@ -358,7 +367,9 @@ class TestUpdateRecursive(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNew (update_recursive large dicts): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
+        print(
+            f"\nNew (update_recursive large dicts): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+        )
         assert percent < self.speed_tolerance
 
     def test_update_recursive_iterable_speed(self, overlapping_dicts: tuple[Dict[str, Any], Dict[str, Any]]) -> None:

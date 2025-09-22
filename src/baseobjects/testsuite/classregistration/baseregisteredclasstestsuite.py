@@ -1,6 +1,7 @@
 """baseregisteredclasstestsuite.py
 Base test suite for BaseRegisteredClass and its subclasses.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -51,6 +52,7 @@ class BaseRegisteredClassTestSuite(BaseObjectTestSuite):
         Returns:
             A test subclass of the TestClass.
         """
+
         class TestSubclass(self.TestClass):
             class_registration = True
 
@@ -150,6 +152,7 @@ class BaseRegisteredClassTestSuite(BaseObjectTestSuite):
             *args: Positional arguments to pass to the register_class method.
             **kwargs: Keyword arguments to pass to the register_class method.
         """
+
         class NewTestSubclass(self.TestClass):
             class_registration = False
 

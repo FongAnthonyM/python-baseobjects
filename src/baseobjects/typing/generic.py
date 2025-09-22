@@ -5,6 +5,7 @@ This module provides generic type variables used for type hinting throughout the
 type variables for keys and values, including covariant versions, which are particularly useful for collection
 and mapping types. These type variables help improve type safety and code documentation.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

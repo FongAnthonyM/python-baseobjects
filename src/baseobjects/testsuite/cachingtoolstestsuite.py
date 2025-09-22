@@ -1,6 +1,7 @@
 """cachingtoolstestsuite.py
 Specialized test suite for cache classes in the baseobjects package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -65,7 +66,11 @@ class BaseCacheTestSuite(BaseObjectTestSuite):
 
         return example_func, get_call_count
 
-    def create_test_caching_function(self, *args: Any, **kwargs: Any,) -> tuple[Any, Callable, Callable]:
+    def create_test_caching_function(
+        self,
+        *args: Any,
+        **kwargs: Any,
+    ) -> tuple[Any, Callable, Callable]:
         """Create a cache with a cached function for testing.
 
         Returns:
@@ -88,7 +93,6 @@ class BaseCacheTestSuite(BaseObjectTestSuite):
             - A function that returns the number of times the cached function has been called
         """
         return self.create_example_functions()
-
 
     @pytest.fixture
     def caching_function(self, example_functions: tuple[Callable, Callable]) -> tuple[Any, Callable, Callable]:
@@ -126,7 +130,7 @@ class BaseCacheTestSuite(BaseObjectTestSuite):
         call_method: str | None = None,
         instanced: bool | None = None,
         *args: Any,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Test that instances of the class can be created.
 
@@ -241,7 +245,11 @@ class BaseCacheTestSuite(BaseObjectTestSuite):
         assert cache_copy.func is test_object.func
         assert cache_copy.clear_condition is test_object.clear_condition
 
-    def test_no_cache(self, *args: Any, **kwargs: Any,) -> None:
+    def test_no_cache(
+        self,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         """Test the no caching behavior.
 
         This test verifies that if no_cache is set, the wrapped function is called without caching.
@@ -261,7 +269,11 @@ class BaseCacheTestSuite(BaseObjectTestSuite):
         assert result2 == 4
         assert get_call_count() == 2  # The function should be called each time with no_cache
 
-    def test_caching(self, *args: Any, **kwargs: Any,) -> None:
+    def test_caching(
+        self,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         """Test the caching behavior of the cache class.
 
         This test verifies that the cache correctly caches function results and returns cached results on subsequent
@@ -293,7 +305,11 @@ class BaseCacheTestSuite(BaseObjectTestSuite):
         # Verify that the function was called again
         assert get_call_count() == 2
 
-    def test_cache_clearing(self, *args: Any, **kwargs: Any,) -> None:
+    def test_cache_clearing(
+        self,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         """Test clearing the cache.
 
         This test verifies that the cache can be cleared and that subsequent calls to cached functions result in new
@@ -350,7 +366,7 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
         call_method: str | None = None,
         instanced: bool | None = None,
         *args: Any,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Test that instances of the class can be created.
 
@@ -481,7 +497,11 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
         assert cache_copy.lifetime == test_object.lifetime
         assert cache_copy.expiration == test_object.expiration
 
-    def test_cache_expiration(self, *args: Any, **kwargs: Any,) -> None:
+    def test_cache_expiration(
+        self,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         """Test the expiration of cached items.
 
         This test verifies that cached items expire after the specified lifetime and that subsequent calls
@@ -511,7 +531,11 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
         assert result3 == 4
         assert get_call_count() == 2  # Call count should increase after cache expiration
 
-    def test_clear_condition(self, *args: Any, **kwargs: Any,) -> None:
+    def test_clear_condition(
+        self,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         """Test the clear condition of the cache.
 
         This test verifies that the cache correctly determines when to clear cached items based on their
@@ -542,7 +566,11 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
         assert not caching_func.clear_condition()
 
     @abstractmethod
-    def test_pause_timer(self, *args: Any, **kwargs: Any,) -> None:
+    def test_pause_timer(
+        self,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         """Test pausing the cache timer.
 
         This test verifies that the cache timer can be paused and that cached items do not expire while

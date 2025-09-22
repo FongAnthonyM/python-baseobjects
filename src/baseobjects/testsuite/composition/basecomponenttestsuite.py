@@ -1,6 +1,7 @@
 """basecomponenttestsuite.py
 Base test suite for BaseComponent and its subclasses.
 """
+
 # Header #
 __package_name__ = "Anys"
 
@@ -157,8 +158,7 @@ class BaseComponentTestSuite(BaseObjectTestSuite):
 
         # Validate
         assert unpickled is not test_object
-    
-    
+
     def test_composite_property(self, test_composite: Any) -> None:
         """Test the composite property of the component.
 

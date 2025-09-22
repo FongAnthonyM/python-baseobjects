@@ -5,6 +5,7 @@ This module provides the BaseDict class, which is an abstract base class that in
 UserDict. It combines the dictionary-like behavior of UserDict with the enhanced functionality of BaseObject, such as
 proper copying and deep copying support.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

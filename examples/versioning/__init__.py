@@ -12,6 +12,7 @@ Typical usage example:
   # Run a specific example
   trinumberversion_example.basic_usage_example()
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

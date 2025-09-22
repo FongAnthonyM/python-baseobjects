@@ -1,6 +1,7 @@
 """__init__.py
 Examples for the baseobjects.composition module.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

@@ -45,11 +45,11 @@ class TestUpdateRecursive:
         d1 = {"a": 1, "b": 2}
         d2 = {"c": 3, "d": 4}
         result = update_recursive(d1, d2)
-        
+
         # Verify the result is the updated first dictionary
         assert result is d1
         assert result == {"a": 1, "b": 2, "c": 3, "d": 4}
-        
+
         # Verify the second dictionary is unchanged
         assert d2 == {"c": 3, "d": 4}
 
@@ -63,11 +63,11 @@ class TestUpdateRecursive:
         d1 = {"a": 1, "b": 2, "c": 3}
         d2 = {"b": 20, "c": 30, "d": 40}
         result = update_recursive(d1, d2)
-        
+
         # Verify the result has all keys with values from d2 taking precedence for overlapping keys
         assert result is d1
         assert result == {"a": 1, "b": 20, "c": 30, "d": 40}
-        
+
         # Verify the second dictionary is unchanged
         assert d2 == {"b": 20, "c": 30, "d": 40}
 
@@ -81,11 +81,11 @@ class TestUpdateRecursive:
         d1 = {"a": 1, "b": {"x": 10, "y": 20}}
         d2 = {"c": 3, "b": {"y": 200, "z": 300}}
         result = update_recursive(d1, d2)
-        
+
         # Verify the result has recursively merged the nested dictionaries
         assert result is d1
         assert result == {"a": 1, "b": {"x": 10, "y": 200, "z": 300}, "c": 3}
-        
+
         # Verify the second dictionary is unchanged
         assert d2 == {"c": 3, "b": {"y": 200, "z": 300}}
 
@@ -99,11 +99,11 @@ class TestUpdateRecursive:
         d1 = {"a": {"b": {"c": {"d": 1}}}}
         d2 = {"a": {"b": {"c": {"e": 2}}}}
         result = update_recursive(d1, d2)
-        
+
         # Verify the result has recursively merged the deeply nested dictionaries
         assert result is d1
         assert result == {"a": {"b": {"c": {"d": 1, "e": 2}}}}
-        
+
         # Verify the second dictionary is unchanged
         assert d2 == {"a": {"b": {"c": {"e": 2}}}}
 
@@ -117,11 +117,11 @@ class TestUpdateRecursive:
         d1 = {"a": 1, "b": [1, 2, 3], "c": {"x": 10}}
         d2 = {"d": (4, 5, 6), "c": {"y": 20}}
         result = update_recursive(d1, d2)
-        
+
         # Verify the result has correctly merged the dictionaries
         assert result is d1
         assert result == {"a": 1, "b": [1, 2, 3], "c": {"x": 10, "y": 20}, "d": (4, 5, 6)}
-        
+
         # Verify the second dictionary is unchanged
         assert d2 == {"d": (4, 5, 6), "c": {"y": 20}}
 
@@ -135,11 +135,11 @@ class TestUpdateRecursive:
         d1 = {"a": {"b": {"c": 1}}}
         d2 = {"a": {"b": 2}}
         result = update_recursive(d1, d2)
-        
+
         # Verify the result has replaced the nested mapping with the non-mapping value
         assert result is d1
         assert result == {"a": {"b": 2}}
-        
+
         # Verify the second dictionary is unchanged
         assert d2 == {"a": {"b": 2}}
 
@@ -154,14 +154,14 @@ class TestUpdateRecursive:
         result = update_recursive(d1, d2)
         assert result is d1
         assert result == {"a": 1, "b": 2}
-        
+
         # Test with an empty second dictionary
         d1 = {"a": 1, "b": 2}
         d2 = {}
         result = update_recursive(d1, d2)
         assert result is d1
         assert result == {"a": 1, "b": 2}
-        
+
         # Test with both dictionaries empty
         d1 = {}
         d2 = {}
@@ -179,7 +179,7 @@ class TestUpdateRecursive:
         d1 = {"a": 1, "b": {"x": 10}}
         updates = [("c", 3), ("b", {"y": 20})]
         result = update_recursive(d1, updates)
-        
+
         # Verify the result has correctly merged the dictionary with the iterable
         assert result is d1
         assert result == {"a": 1, "b": {"x": 10, "y": 20}, "c": 3}

@@ -6,6 +6,7 @@ methods for testing the core functionality of function objects, including bindin
 descriptor protocol, and custom method types. It inherits from BaseCallableTestSuite to include tests for the callable
 behavior of functions.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -131,6 +132,7 @@ class BaseFunctionTestSuite(BaseCallableTestSuite):
         Args:
             test_method_object: A fixture providing a BaseFunction instance that wraps a function.
         """
+
         class BindTarget:
             new_method = test_method_object
 

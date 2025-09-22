@@ -1,6 +1,7 @@
 """basedispatchingcomposite_test.py
 Tests for the BaseDispatchingComposite class in the baseobjects package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -42,6 +43,7 @@ class ExampleTypeBComponent(BaseComponent):
 
 class ExampleDispatchingCompositeClass(BaseDispatchingComposite):
     """A test dispatching composite class for testing BaseDispatchingComposite."""
+
     # Class Attributes #
     default_component_types: ClassVar[dict[str, tuple[type, dict[str, Any]]]] = {
         "default_component": (ExampleComponentClass, {})
@@ -66,8 +68,13 @@ class ExampleDispatchingCompositeClass(BaseDispatchingComposite):
 
         # Object Construction #
         if init:
-            self.construct(type_=type_, component_kwargs=component_kwargs, component_types=component_types,
-                           components=components, **kwargs)
+            self.construct(
+                type_=type_,
+                component_kwargs=component_kwargs,
+                component_types=component_types,
+                components=components,
+                **kwargs,
+            )
 
     # Instance Methods #
     # Constructors/Destructors #
@@ -328,6 +335,7 @@ class TestBaseDispatchingComposite(BaseDispatchingCompositeTestSuite):
 
         This test verifies that dispatched component types are combined with explicitly provided component_types.
         """
+
         # Create a component class
         class CustomComponent(BaseComponent):
             pass

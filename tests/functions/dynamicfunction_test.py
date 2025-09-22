@@ -1,10 +1,11 @@
 """dynamicfunction_test.py
 Tests for the DynamicFunction class in the baseobjects package.
 
-This module provides tests for the DynamicFunction class, which is an abstract function class that has multiplexed 
-binding and callback functionality. It tests the core functionality of DynamicFunction, including instance creation, 
+This module provides tests for the DynamicFunction class, which is an abstract function class that has multiplexed
+binding and callback functionality. It tests the core functionality of DynamicFunction, including instance creation,
 function calling, binding, and multiplexed callback.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -82,7 +83,7 @@ class DynamicFunctionTestObject:
 class TestDynamicFunction(DynamicFunctionTestSuite):
     """Test the DynamicFunction class.
 
-    This class tests the functionality of the DynamicFunction class, which is an abstract function class that has 
+    This class tests the functionality of the DynamicFunction class, which is an abstract function class that has
     multiplexed binding and callback functionality.
     """
 

@@ -24,33 +24,33 @@ from baseobjects.bases import BaseCallable, BaseMethod, BaseFunction
 # Classes #
 class Calculator:
     """A simple calculator class to demonstrate BaseCallable functionality."""
-    
+
     def __init__(self, initial_value: int = 0):
         """Initialize the calculator with an initial value.
-        
+
         Args:
             initial_value: The starting value for calculations
         """
         self.value = initial_value
-    
+
     def add(self, x: int) -> int:
         """Add a value to the calculator's current value.
-        
+
         Args:
             x: The value to add
-            
+
         Returns:
             The new calculator value
         """
         self.value += x
         return self.value
-    
+
     def multiply(self, x: int) -> int:
         """Multiply the calculator's current value by a factor.
-        
+
         Args:
             x: The multiplication factor
-            
+
         Returns:
             The new calculator value
         """
@@ -60,7 +60,7 @@ class Calculator:
 
 class CustomCallable(BaseCallable):
     """A custom callable that doubles its input."""
-    
+
     def __init__(self):
         """Initialize with a function that doubles its input."""
         super().__init__(lambda x: x * 2)
@@ -68,15 +68,15 @@ class CustomCallable(BaseCallable):
 
 class CustomMethod(BaseMethod):
     """A custom method that formats a greeting."""
-    
+
     def __init__(self, instance: Any = None):
         """Initialize with a greeting formatter function.
-        
+
         Args:
             instance: The instance to bind to
         """
         super().__init__(lambda self, name: f"Hello, {name}! Your value is {self.value}.", instance)
-    
+
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
         """Call the underlying method."""
         return self.call_binding(*args, **kwargs)
@@ -84,7 +84,7 @@ class CustomMethod(BaseMethod):
 
 class CustomFunction(BaseFunction):
     """A custom function that formats a message."""
-    
+
     def __init__(self):
         """Initialize with a message formatter function."""
         super().__init__(lambda name, message: f"{name} says: {message}")
@@ -94,20 +94,20 @@ class CustomFunction(BaseFunction):
 def basic_basecallable_example():
     """Demonstrate basic usage of BaseCallable."""
     print("\nBasic BaseCallable Example:")
-    
+
     # Create a BaseCallable with a lambda function
     double = BaseCallable(lambda x: x * 2)
     result = double(5)
     print(f"Double 5: {result} == 10")
-    
+
     # Create a BaseCallable with a regular function
     def square(x):
         return x * x
-    
+
     square_callable = BaseCallable(square)
     result = square_callable(4)
     print(f"Square 4: {result} == 16")
-    
+
     # Create a custom callable
     custom = CustomCallable()
     result = custom(7)
@@ -117,22 +117,22 @@ def basic_basecallable_example():
 def basemethod_example():
     """Demonstrate usage of BaseMethod."""
     print("\nBaseMethod Example:")
-    
+
     # Create a calculator instance
     calc = Calculator(10)
-    
+
     # Create a BaseMethod from the calculator's add method
     add_method = BaseMethod(calc.add, calc)
     result = add_method(5)
     print(f"Calculator add 5: {result} == 15")
     print(f"Calculator value: {calc.value} == 15")
-    
+
     # Create a BaseMethod from the calculator's multiply method
     multiply_method = BaseMethod(calc.multiply, calc)
     result = multiply_method(2)
     print(f"Calculator multiply by 2: {result} == 30")
     print(f"Calculator value: {calc.value} == 30")
-    
+
     # Create a custom method
     custom_method = CustomMethod(calc)
     greeting = custom_method("Alice")
@@ -142,12 +142,12 @@ def basemethod_example():
 def basefunction_example():
     """Demonstrate usage of BaseFunction."""
     print("\nBaseFunction Example:")
-    
+
     # Create a BaseFunction with a lambda
     format_message = BaseFunction(lambda name, message: f"{name} says: {message}")
     result = format_message("Bob", "Hello!")
     print(f"Formatted message: {result} == 'Bob says: Hello!'")
-    
+
     # Create a custom function
     custom_function = CustomFunction()
     result = custom_function("Charlie", "Good day!")
@@ -157,27 +157,27 @@ def basefunction_example():
 def binding_example():
     """Demonstrate binding callables to instances and attributes."""
     print("\nBinding Example:")
-    
+
     # Create a calculator instance
     calc = Calculator(5)
-    
+
     # Define a standalone function
     def increment(self, amount):
         self.value += amount
         return self.value
-    
+
     # Create a BaseFunction and bind it to the calculator
     increment_func = BaseFunction(increment)
     bound_increment = increment_func.bind(calc)
     result = bound_increment(3)
     print(f"Bound increment by 3: {result} == 8")
     print(f"Calculator value: {calc.value} == 8")
-    
+
     # Bind a function to an attribute
     def reset(self, value=0):
         self.value = value
         return self.value
-    
+
     reset_func = BaseFunction(reset)
     reset_func.bind_to_attribute(calc, name="reset")
     result = calc.reset(10)
@@ -188,19 +188,19 @@ def binding_example():
 def conversion_example():
     """Demonstrate converting callables to regular functions."""
     print("\nConversion Example:")
-    
+
     # Create a BaseCallable
     double = BaseCallable(lambda x: x * 2)
-    
+
     # Convert to a regular function
     double_func = double.as_function()
     result = double_func(6)
     print(f"Converted function double 6: {result} == 12")
-    
+
     # Create a BaseMethod
     calc = Calculator(10)
     add_method = BaseMethod(calc.add, calc)
-    
+
     # Convert to a regular function
     add_func = add_method.as_function()
     result = add_func(5)

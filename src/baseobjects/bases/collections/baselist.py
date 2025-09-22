@@ -5,6 +5,7 @@ This module provides the BaseList class, which is an abstract base class that in
 UserList. It combines the list-like behavior of UserList with the enhanced functionality of BaseObject, such as proper
 copying and deep copying support.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

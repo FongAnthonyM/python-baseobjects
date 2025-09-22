@@ -14,6 +14,7 @@ Typical usage example:
           # Test specific functionality of MyObject
           pass
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -115,7 +116,6 @@ class BaseObjectTestSuite(BaseClassTestSuite):
 
         # Validate
         assert obj_copy is not test_object
-
 
     @abstractmethod
     def test_deepcopy(self, test_object: BaseObject, memo: dict | None = None) -> None:

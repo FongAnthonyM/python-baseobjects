@@ -12,6 +12,7 @@ The main classes in this module are:
 - CallbackScheduler: A class for scheduling and managing the execution of callbacks
 - CallbackManager: The main class for registering and executing callbacks with conditions
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -70,6 +71,7 @@ class CallbackScheduler(BaseObject):
         schedule: A method multiplexer for selecting and executing synchronous scheduling methods.
         schedule_async: A method multiplexer for selecting and executing asynchronous scheduling methods.
     """
+
     # Class Methods #
     default_schedule: ClassVar[str] = "schedule_callbacks"
     default_schedule_async: ClassVar[str] = "schedule_singleton_async_callbacks_async"
@@ -242,6 +244,7 @@ class CallbackManager(BaseReducible):
         default_caller: The default caller to use when registering callbacks.
         **kwargs: Keyword arguments which may be used for inheritance.
     """
+
     # Attributes #
     default_condition: str = "true_condition"
     default_caller: str = "call_conditional"
@@ -524,7 +527,7 @@ class CallbackManager(BaseReducible):
     def register_callbacks(
         self,
         callbacks: dict[str, Callable] | Iterable[tuple[str, Callable]] | None = None,
-        callbacks_async: dict[str, Callable] | Iterable[tuple[str, Callable]]  | None = None,
+        callbacks_async: dict[str, Callable] | Iterable[tuple[str, Callable]] | None = None,
     ) -> None:
         """Registers synchronous and asynchronous callbacks.
 
@@ -995,7 +998,9 @@ class CallbackManager(BaseReducible):
             scheduler_task.add_done_callback(tasks.remove)  # Remove task from tasks deque when done.
             tasks.append(scheduler_task)  # Add task to tasks deque.
 
-    async def start_scheduler_async(self, scheduler: CallbackScheduler, tasks: deque, *args: Any, **kwargs: Any) -> None:
+    async def start_scheduler_async(
+        self, scheduler: CallbackScheduler, tasks: deque, *args: Any, **kwargs: Any
+    ) -> None:
         """Asynchronously starts the scheduler for callback execution and management.
 
         This method initiates and starts a scheduler if it's not already running. Specifically, it ensures that the

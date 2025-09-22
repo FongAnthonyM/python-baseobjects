@@ -5,6 +5,7 @@ This package contains examples for:
 1. StaticWrapper - A wrapper that provides access to wrapped object attributes and methods with better performance
 2. DynamicWrapper - A flexible wrapper that can handle dynamically changing wrapped objects
 """
+
 # Header #
 __package_name__ = "baseobjects.examples.wrappers"
 

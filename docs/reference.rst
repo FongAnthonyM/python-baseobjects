@@ -6,12 +6,6 @@ Reference
     :backlinks: none
 
 
-baseobjects.__main__
---------------------
-
-.. automodule:: baseobjects.__main__
-   :members:
-
 baseobjects.bases
 ----------------
 
@@ -60,6 +54,18 @@ baseobjects.cachingtools
 .. automodule:: baseobjects.cachingtools
    :members:
 
+baseobjects.cachingtools.caches
+------------------------------
+
+.. automodule:: baseobjects.cachingtools.caches
+   :members:
+
+baseobjects.classregistration
+---------------------------
+
+.. automodule:: baseobjects.classregistration
+   :members:
+
 baseobjects.collections
 ---------------------
 
@@ -102,6 +108,12 @@ baseobjects.operations
 .. automodule:: baseobjects.operations
    :members:
 
+baseobjects.testsuite
+-------------------
+
+.. automodule:: baseobjects.testsuite
+   :members:
+
 baseobjects.typing
 ----------------
 
@@ -112,6 +124,12 @@ baseobjects.versioning
 --------------------
 
 .. automodule:: baseobjects.versioning
+   :members:
+
+baseobjects.warnings
+------------------
+
+.. automodule:: baseobjects.warnings
    :members:
 
 baseobjects.wrappers

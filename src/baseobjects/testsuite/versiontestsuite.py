@@ -1,6 +1,7 @@
 """versiontestsuite.py
 Specialized test suite for version classes in the Versions package.
 """
+
 # Header #
 __package_name__ = "Versions"
 
@@ -179,5 +180,3 @@ class VersionTestSuite(BaseObjectTestSuite):
 
         This test verifies that the __ge__ method correctly compares version instances.
         """
-
-

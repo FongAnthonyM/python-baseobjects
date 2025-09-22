@@ -4,6 +4,7 @@ A class which registers its subclasses with namespace information.
 This module provides the NamespaceRegisteredClass, which extends BaseRegisteredClass to add namespace-based registration
 and retrieval of subclasses.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -98,7 +99,9 @@ class NamespaceRegisteredClass(BaseRegisteredClass):
         cls.class_registry.register_class(cls, namespace, name)
 
     @classmethod
-    def get_registered_class(cls, namespace: str, name: str, module: str | None = None) -> Optional[BaseRegisteredClass]:
+    def get_registered_class(
+        cls, namespace: str, name: str, module: str | None = None
+    ) -> Optional[BaseRegisteredClass]:
         """Gets a subclass from the registry.
 
         Args:

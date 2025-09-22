@@ -1,6 +1,7 @@
 """basecompositetestsuite.py
 Base test suite for BaseComposite and its subclasses.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -43,7 +44,9 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
     TestClass: Type[BaseComposite]
 
     # Instance Methods #
-    def create_components(self, component_types: dict[str, tuple[type, dict[str, Any]]] | None = None) -> dict[str, Any]:
+    def create_components(
+        self, component_types: dict[str, tuple[type, dict[str, Any]]] | None = None
+    ) -> dict[str, Any]:
         """Create components for the test composite.
 
         Args:

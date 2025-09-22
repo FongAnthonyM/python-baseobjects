@@ -4,6 +4,7 @@ A registry for classes organized by namespaces.
 This module provides the NamespaceClassRegistry class, which extends BaseClassRegistry to organize registered classes by
 namespaces, allowing for more structured class registration and retrieval.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -50,7 +51,7 @@ class NamespaceClassRegistry(BaseClassRegistry):
         head_class: type | None = None,
         *args: Any,
         init: bool = True,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Initialize a new NamespaceClassRegistry.
 
@@ -81,7 +82,7 @@ class NamespaceClassRegistry(BaseClassRegistry):
         self,
         classes: dict[str, dict[str, tuple[type, dict[str, Any]]]] | Iterable | None = None,
         head_class: type | None = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Constructs this object.
 

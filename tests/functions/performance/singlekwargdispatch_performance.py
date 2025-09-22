@@ -43,6 +43,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
         timeit_runs: The number of times to run the timeit function.
         speed_tolerance: The maximum speed tolerance in microseconds.
     """
+
     # Class Definitions #
     class DispatchTestClass:
         """A class with methods for testing."""
@@ -126,7 +127,9 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
         return self.DispatchTestClass()
 
     # Tests
-    def test_dispatch_call_speed_with_arg(self, test_class_instance: "TestSingleKwargDispatchPerformance.DispatchTestClass") -> None:
+    def test_dispatch_call_speed_with_arg(
+        self, test_class_instance: "TestSingleKwargDispatchPerformance.DispatchTestClass"
+    ) -> None:
         """Test the performance of the dispatch_call method with a positional argument.
 
         This test compares the speed of singlekwargdispatch.dispatch_call() with a normal singledispatchmethod
@@ -162,12 +165,18 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
         percent_to_baseline = (mean_new / mean_baseline) * 100
 
         # Print the performance comparison
-        print(f"\nManual type check: {mean_baseline:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nManual type check: {mean_baseline:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"singledispatchmethod: {mean_old:.3f} μs ({(mean_old / mean_baseline):.3f}% of manual type check time)")
-        print(f"singlekwargdispatch with arg: {mean_new:.3f} μs ({percent_to_baseline:.3f}% of manual type check time, {percent_to_old:.3f}% of singledispatchmethod time)")
+        print(
+            f"singlekwargdispatch with arg: {mean_new:.3f} μs ({percent_to_baseline:.3f}% of manual type check time, {percent_to_old:.3f}% of singledispatchmethod time)"
+        )
         assert percent_to_old < self.speed_tolerance
 
-    def test_dispatch_call_speed_with_kwarg(self, test_class_instance: "TestSingleKwargDispatchPerformance.DispatchTestClass") -> None:
+    def test_dispatch_call_speed_with_kwarg(
+        self, test_class_instance: "TestSingleKwargDispatchPerformance.DispatchTestClass"
+    ) -> None:
         """Test the performance of the dispatch_call method with a keyword argument.
 
         This test compares the speed of singlekwargdispatch.dispatch_call() with a keyword argument
@@ -204,12 +213,20 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
         percent_to_old = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nManual type check with kwarg: {mean_baseline:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
-        print(f"singledispatchmethod with arg: {mean_old:.3f} μs ({(mean_old / mean_baseline):.3f}% of manual type check time)")
-        print(f"singlekwargdispatch with kwarg: {mean_new:.3f} μs ({percent_to_baseline:.3f}% of manual type check time, {percent_to_old:.3f}% of singledispatchmethod time)")
+        print(
+            f"\nManual type check with kwarg: {mean_baseline:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
+        print(
+            f"singledispatchmethod with arg: {mean_old:.3f} μs ({(mean_old / mean_baseline):.3f}% of manual type check time)"
+        )
+        print(
+            f"singlekwargdispatch with kwarg: {mean_new:.3f} μs ({percent_to_baseline:.3f}% of manual type check time, {percent_to_old:.3f}% of singledispatchmethod time)"
+        )
         assert percent_to_baseline < self.speed_tolerance * 2  # Allow more overhead for kwarg dispatch
 
-    def test_edge_case_multiple_types(self, test_class_instance: "TestSingleKwargDispatchPerformance.DispatchTestClass") -> None:
+    def test_edge_case_multiple_types(
+        self, test_class_instance: "TestSingleKwargDispatchPerformance.DispatchTestClass"
+    ) -> None:
         """Test the performance with an edge case of multiple registered types.
 
         This test measures the performance overhead when dispatching with many registered types.
@@ -217,6 +234,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
         Args:
             test_class_instance: A fixture providing a DispatchTestClass instance.
         """
+
         # Create a class with many registered types
         class ManyTypesDispatch:
             @singlekwargdispatch
@@ -302,7 +320,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
                 return f"Complex: {arg}"
 
         many_types = ManyTypesDispatch()
-        
+
         # Define the performance test functions
         def call_single_kwarg_dispatch() -> None:
             many_types.dispatch(42)
@@ -332,7 +350,9 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
         print(f"singlekwargdispatch with many types: {mean_new:.3f} μs ({percent:.3f}% of singledispatchmethod time)")
         assert percent < self.speed_tolerance * 1.5  # Allow more overhead for many types
 
-    def test_edge_case_nested_dispatch(self, test_class_instance: "TestSingleKwargDispatchPerformance.DispatchTestClass") -> None:
+    def test_edge_case_nested_dispatch(
+        self, test_class_instance: "TestSingleKwargDispatchPerformance.DispatchTestClass"
+    ) -> None:
         """Test the performance with an edge case of nested dispatch.
 
         This test measures the performance overhead when using nested dispatch methods.
@@ -340,6 +360,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
         Args:
             test_class_instance: A fixture providing a DispatchTestClass instance.
         """
+
         # Create a class with nested dispatch
         class NestedDispatch:
             @singlekwargdispatch
@@ -383,7 +404,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
                 return f"Inner Integer: {arg}"
 
         nested = NestedDispatch()
-        
+
         # Define the performance test functions
         def call_nested_kwarg_dispatch() -> None:
             nested.outer_dispatch(42)

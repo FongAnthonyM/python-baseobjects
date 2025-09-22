@@ -5,6 +5,7 @@ This module provides tests for the BaseMethodRegistry, BoundMethodRegistry, and 
 which are registries that hold methods. They inherit from FunctionRegistry and provide functionality
 to store and retrieve methods by name, with proper binding behavior.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -37,6 +38,11 @@ from src.baseobjects.testsuite.bases import BaseObjectTestSuite
 def picklable_func() -> str:
     """A picklable function."""
     return "picklable_func"
+
+
+def picklable_method(self) -> str:
+    """A picklable method."""
+    return "picklable_method"
 
 
 def func1() -> str:
@@ -583,7 +589,9 @@ class TestBoundMethodRegistry(BaseObjectTestSuite):
         return BaseMethodRegistry(methods=test_methods)
 
     @pytest.fixture
-    def bound_registry(self, base_registry: BaseMethodRegistry, test_instance: RegistryTestObject) -> BoundMethodRegistry:
+    def bound_registry(
+        self, base_registry: BaseMethodRegistry, test_instance: RegistryTestObject
+    ) -> BoundMethodRegistry:
         """Create a BoundMethodRegistry bound to a test instance.
 
         Args:
@@ -723,15 +731,15 @@ class TestBoundMethodRegistry(BaseObjectTestSuite):
     def test_pickling(self, base_registry: BaseMethodRegistry, test_instance: RegistryTestObject) -> None:
         """Test pickling and unpickling of the object.
 
-        This test verifies that the object can be pickled and unpickled correctly,
-        preserving the binding to the instance.
+        This test verifies that the object can be pickled and unpickled correctly, preserving the binding to the
+        instance.
 
         Args:
             base_registry: A fixture providing a BaseMethodRegistry.
             test_instance: A fixture providing a RegistryTestObject instance.
         """
         # Add the picklable function to the registry
-        base_registry["picklable_func"] = picklable_func
+        base_registry["picklable_method"] = picklable_method
 
         # Create a bound registry
         bound_registry = self.TestClass(registry=base_registry, instance=test_instance, owner=RegistryTestObject)
@@ -745,14 +753,16 @@ class TestBoundMethodRegistry(BaseObjectTestSuite):
         assert unpickled_registry is not bound_registry
         assert isinstance(unpickled_registry, type(bound_registry))
         assert len(unpickled_registry) == len(bound_registry)
-        assert "picklable_func" in unpickled_registry
-        assert unpickled_registry["picklable_func"]() == "picklable_func"
+        assert "picklable_method" in unpickled_registry
+        assert unpickled_registry["picklable_method"]() == "picklable_method"
 
         # Verify the instance binding was preserved
         assert unpickled_registry.__self__ is not bound_registry.__self__
         assert unpickled_registry.__owner__ is bound_registry.__owner__
 
-    def test_init_with_registry_and_instance(self, base_registry: BaseMethodRegistry, test_instance: RegistryTestObject) -> None:
+    def test_init_with_registry_and_instance(
+        self, base_registry: BaseMethodRegistry, test_instance: RegistryTestObject
+    ) -> None:
         """Test initialization with a registry and instance.
 
         This test verifies that BoundMethodRegistry can be initialized with a registry and instance.
@@ -1029,6 +1039,7 @@ class TestMethodRegistry(BaseObjectTestSuite):
             populated_registry: A fixture providing a populated MethodRegistry instance.
             test_instance: A fixture providing a RegistryTestObject instance.
         """
+
         # Create a class with a MethodRegistry descriptor
         class DescriptorTest:
             registry = populated_registry

@@ -4,6 +4,7 @@ Tests for the BaseReducible class in the baseobjects package.
 This module provides tests for the BaseReducible class, which extends BaseObject to add functionality for object
 reduction and pickling.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -35,6 +36,7 @@ class ReducibleTestObject(BaseReducible):
 
     This class has both normal attributes and slot attributes to test pickling behavior.
     """
+
     __slots__ = ("slot_value",)
 
     # Magic Methods #
@@ -168,6 +170,7 @@ class TestBaseReducible(BaseObjectTestSuite):
 
         This test verifies that __getstate__ returns an empty dict when the object has an empty __dict__.
         """
+
         # Create a class with an empty __dict__
         class EmptyDictReducible(BaseReducible):
             def __init__(self) -> None:
@@ -188,6 +191,7 @@ class TestBaseReducible(BaseObjectTestSuite):
 
         This test verifies that __getstate__ returns a dict when the object has only __dict__.
         """
+
         # Create a class with only __dict__
         class DictOnlyReducible(BaseReducible):
             def __init__(self) -> None:
@@ -210,6 +214,7 @@ class TestBaseReducible(BaseObjectTestSuite):
 
         This test verifies that __getstate__ returns a tuple with (dict, slots_dict) when the object has both.
         """
+
         # Create a class with both __dict__ and __slots__
         class SlottedReducible(BaseReducible):
             __slots__ = ("slot_attr",)

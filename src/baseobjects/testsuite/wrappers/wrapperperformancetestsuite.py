@@ -1,6 +1,7 @@
-""" wrapperperformancetestsuite.py
+"""wrapperperformancetestsuite.py
 Base performance test suite for wrapper classes.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -160,6 +161,7 @@ class WrapperPerformanceTestSuite(BasePerformanceTestSuite):
         Args:
             test_object: A fixture providing a wrapper test object.
         """
+
         def wrapper_access() -> None:
             _ = test_object.one
             _ = test_object.two
@@ -191,6 +193,7 @@ class WrapperPerformanceTestSuite(BasePerformanceTestSuite):
         Args:
             test_object: A fixture providing a wrapper test object.
         """
+
         def wrapper_set() -> None:
             test_object.one = "one"
             test_object.two = "one"
@@ -222,6 +225,7 @@ class WrapperPerformanceTestSuite(BasePerformanceTestSuite):
         Args:
             test_object: A fixture providing a wrapper test object.
         """
+
         def wrapper_call() -> None:
             _ = test_object.method()
 

@@ -24,56 +24,56 @@ from baseobjects.functions import MethodMultiplexer, FunctionRegistry
 # Classes #
 class MathOperations:
     """A class with various mathematical operations.
-    
+
     This class demonstrates how methods can be extracted and used in a multiplexer.
     """
-    
+
     def add(self, a: float, b: float) -> float:
         """Add two numbers.
-        
+
         Args:
             a: The first number.
             b: The second number.
-            
+
         Returns:
             The sum of the two numbers.
         """
         return a + b
-    
+
     def subtract(self, a: float, b: float) -> float:
         """Subtract the second number from the first.
-        
+
         Args:
             a: The first number.
             b: The second number.
-            
+
         Returns:
             The difference between the two numbers.
         """
         return a - b
-    
+
     def multiply(self, a: float, b: float) -> float:
         """Multiply two numbers.
-        
+
         Args:
             a: The first number.
             b: The second number.
-            
+
         Returns:
             The product of the two numbers.
         """
         return a * b
-    
+
     def divide(self, a: float, b: float) -> float:
         """Divide the first number by the second.
-        
+
         Args:
             a: The first number.
             b: The second number.
-            
+
         Returns:
             The quotient of the division.
-            
+
         Raises:
             ValueError: If attempting to divide by zero.
         """
@@ -84,49 +84,49 @@ class MathOperations:
 
 class StringOperations:
     """A class with various string operations.
-    
+
     This class demonstrates how methods can be extracted and used in a multiplexer.
     """
-    
+
     def uppercase(self, text: str) -> str:
         """Convert text to uppercase.
-        
+
         Args:
             text: The text to convert.
-            
+
         Returns:
             The text in uppercase.
         """
         return text.upper()
-    
+
     def lowercase(self, text: str) -> str:
         """Convert text to lowercase.
-        
+
         Args:
             text: The text to convert.
-            
+
         Returns:
             The text in lowercase.
         """
         return text.lower()
-    
+
     def capitalize(self, text: str) -> str:
         """Capitalize the first letter of each word in the text.
-        
+
         Args:
             text: The text to capitalize.
-            
+
         Returns:
             The capitalized text.
         """
         return text.title()
-    
+
     def reverse(self, text: str) -> str:
         """Reverse the text.
-        
+
         Args:
             text: The text to reverse.
-            
+
         Returns:
             The reversed text.
         """
@@ -135,63 +135,63 @@ class StringOperations:
 
 class MethodProcessor:
     """A class that uses MethodMultiplexer to process operations.
-    
+
     This class demonstrates how MethodMultiplexer can be used to select
     between different methods at runtime.
     """
-    
+
     def __init__(self, name: str) -> None:
         """Initialize the processor with a name.
-        
+
         Args:
             name: The name of the processor.
         """
         self.name = name
-        
+
         # Create instances of operation classes
         self.math_ops = MathOperations()
         self.string_ops = StringOperations()
-        
+
         # Create a registry for our methods
         self.registry = FunctionRegistry()
-        
+
         # Add methods to the registry
         self.registry["add"] = self.math_ops.add
         self.registry["subtract"] = self.math_ops.subtract
         self.registry["uppercase"] = self.string_ops.uppercase
         self.registry["lowercase"] = self.string_ops.lowercase
-        
+
         # Create a MethodMultiplexer with our registry
         # The instance parameter is important for method binding
         self.multiplexer = MethodMultiplexer(registry=self.registry, instance=self)
-        
+
         # Default to the add operation
         self.multiplexer.select("add")
-    
+
     def process(self, *args: Any, **kwargs: Any) -> Any:
         """Process the input using the currently selected method.
-        
+
         Args:
             *args: Positional arguments for the method.
             **kwargs: Keyword arguments for the method.
-            
+
         Returns:
             The result of the method.
         """
         return self.multiplexer(*args, **kwargs)
-    
+
     def set_operation(self, operation_name: str) -> None:
         """Set the operation to use for processing.
-        
+
         Args:
             operation_name: The name of the operation to use.
-            
+
         Raises:
             KeyError: If the operation is not in the registry.
         """
         if operation_name not in self.registry:
             raise KeyError(f"Operation '{operation_name}' not found in registry")
-        
+
         self.multiplexer.select(operation_name)
 
 
@@ -199,29 +199,29 @@ class MethodProcessor:
 def method_processor_example():
     """Demonstrates using MethodMultiplexer in a practical application."""
     print("MethodProcessor Example:\n")
-    
+
     # Create a processor
     processor = MethodProcessor("Method Processor")
-    
+
     # Process some data with the default operation (add)
     a, b = 10, 5
     result = processor.process(a, b)
     print(f"Processing with default operation 'add':")
     print(f"processor.process({a}, {b}) = {result}")
-    
+
     # Change the operation and process again
     processor.set_operation("subtract")
     result = processor.process(a, b)
     print(f"\nChanged operation to 'subtract':")
     print(f"processor.process({a}, {b}) = {result}")
-    
+
     # Try a string operation
     text = "HELLO WORLD"
     processor.set_operation("lowercase")
     result = processor.process(text)
     print(f"\nChanged operation to 'lowercase':")
     print(f"processor.process('{text}') = '{result}'")
-    
+
     print()
 
 
@@ -237,11 +237,7 @@ def dynamic_method_multiplexer_example():
     class DataProcessor:
         def __init__(self, name):
             self.name = name
-            self.data = {
-                "numbers": [1, 2, 3, 4, 5],
-                "text": "Hello World",
-                "mixed": [10, "abc", 30, "xyz"]
-            }
+            self.data = {"numbers": [1, 2, 3, 4, 5], "text": "Hello World", "mixed": [10, "abc", 30, "xyz"]}
 
             # Create a MethodMultiplexer that wraps this instance
             # Note: We don't provide a registry - we'll select methods directly from the instance
@@ -353,14 +349,11 @@ def dynamic_method_multiplexer_example():
     # Add a new method to the instance
     def count_items(self):
         """Count the number of items in each data category."""
-        return {
-            "numbers": len(self.data["numbers"]),
-            "text": len(self.data["text"]),
-            "mixed": len(self.data["mixed"])
-        }
+        return {"numbers": len(self.data["numbers"]), "text": len(self.data["text"]), "mixed": len(self.data["mixed"])}
 
     # Add the method to the instance
     import types
+
     processor.count_items = types.MethodType(count_items, processor)
 
     # Select and use the new method

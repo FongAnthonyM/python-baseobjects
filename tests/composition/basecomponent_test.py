@@ -1,6 +1,7 @@
 """basecomponent_test.py
 Tests for the BaseComponent class in the baseobjects package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

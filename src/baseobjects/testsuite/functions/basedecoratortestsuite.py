@@ -5,6 +5,7 @@ This module provides a base test suite for testing the BaseDecorator class and i
 methods for testing the core functionality of decorators, including instance creation, decorator factory behavior, and
 decorator usage.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -83,7 +84,7 @@ class BaseDecoratorTestSuite(BaseFunctionTestSuite):
         Args:
             test_function_object: A fixture providing a BaseDecorator instance that wraps a function.
         """
-        
+
     @abstractmethod
     def test_coroutine(self, test_coroutine_object: BaseDecorator) -> None:
         """Test that the callable object correctly handles coroutine functions.
@@ -156,7 +157,6 @@ class BaseDecoratorTestSuite(BaseFunctionTestSuite):
             *args: Positional arguments to pass to the decorator.
             **kwargs: Keyword arguments to pass to the decorator.
         """
-
 
 
 # Main #

@@ -33,12 +33,12 @@ from src.baseobjects.testsuite.objects import AutomaticPropertiesTestSuite
 # Classes #
 class TestAutomaticPropertiesClass(AutomaticProperties):
     """A concrete implementation of AutomaticProperties for testing."""
-    
+
     # Class Attributes #
     properties = {
         "test_prop": "_test_prop",
         "another_prop": "_another_prop",
-        "complex_prop": ("property_method_factory", "_complex_prop", {})
+        "complex_prop": ("property_method_factory", "_complex_prop", {}),
     }
 
 
@@ -74,13 +74,13 @@ class TestAutomaticProperties(AutomaticPropertiesTestSuite):
         This test verifies that the default_property_function_factory attribute is used when a property is defined
         with just a string.
         """
+
         # Create Test Class
         class TestClass(AutomaticProperties):
             """Test class for default_property_function_factory."""
+
             default_property_function_factory = "property_class_method_factory"
-            properties = {
-                "default_factory_prop": "_default_factory_prop"
-            }
+            properties = {"default_factory_prop": "_default_factory_prop"}
 
         # Create Object
         obj = TestClass()
@@ -96,12 +96,12 @@ class TestAutomaticProperties(AutomaticPropertiesTestSuite):
 
         This test verifies that properties defined in a parent class are available in child classes.
         """
+
         # Create Child Class
         class ChildClass(self.TestClass):
             """Child class for testing property inheritance."""
-            properties = {
-                "child_prop": "_child_prop"
-            }
+
+            properties = {"child_prop": "_child_prop"}
 
         # Create Object
         obj = ChildClass()

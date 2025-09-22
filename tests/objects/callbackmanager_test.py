@@ -63,6 +63,7 @@ class TestCallbackManager(BaseObjectTestSuite):
         Returns:
             CallbackManager: A test CallbackManager instance with callbacks.
         """
+
         def callback1(*args, **kwargs):
             return "callback1 called"
 
@@ -180,6 +181,7 @@ class TestCallbackManager(BaseObjectTestSuite):
 
         This test verifies that a callback can be registered and retrieved.
         """
+
         # Define a test callback
         def test_callback(*args, **kwargs):
             return "test callback called"
@@ -196,6 +198,7 @@ class TestCallbackManager(BaseObjectTestSuite):
 
         This test verifies that multiple callbacks can be registered and retrieved.
         """
+
         # Define test callbacks
         def callback1(*args, **kwargs):
             return "callback1 called"
@@ -204,10 +207,7 @@ class TestCallbackManager(BaseObjectTestSuite):
             return "callback2 called"
 
         # Register callbacks
-        callbacks = {
-            "callback1": callback1,
-            "callback2": callback2
-        }
+        callbacks = {"callback1": callback1, "callback2": callback2}
         test_object.register_callbacks(callbacks)
 
         # Validate
@@ -232,6 +232,7 @@ class TestCallbackManager(BaseObjectTestSuite):
 
         This test verifies that a callback can be called with arguments and they are passed correctly.
         """
+
         # Define a test callback that uses arguments
         def test_callback(arg1, arg2, kwarg1=None, kwarg2=None):
             return f"{arg1}, {arg2}, {kwarg1}, {kwarg2}"
@@ -250,6 +251,7 @@ class TestCallbackManager(BaseObjectTestSuite):
 
         This test verifies that a conditional callback can be registered and retrieved.
         """
+
         # Define test callback and condition
         def test_callback(*args, **kwargs):
             return "test callback called"
@@ -308,6 +310,7 @@ class TestCallbackManager(BaseObjectTestSuite):
 
         This test verifies that registering a callback with an existing name overwrites the previous callback.
         """
+
         # Define a new callback
         def new_callback(*args, **kwargs):
             return "new callback called"
@@ -328,6 +331,7 @@ class TestCallbackManager(BaseObjectTestSuite):
 
         This test verifies that an async callback can be registered and retrieved.
         """
+
         # Define a test async callback
         async def test_async_callback(*args, **kwargs):
             return "async callback called"
@@ -345,6 +349,7 @@ class TestCallbackManager(BaseObjectTestSuite):
 
         This test verifies that an async callback can be called and returns the expected result.
         """
+
         # Define a test async callback
         async def test_async_callback(*args, **kwargs):
             return "async callback called"
@@ -364,6 +369,7 @@ class TestCallbackManager(BaseObjectTestSuite):
 
         This test verifies that the call_async method correctly calls an async function.
         """
+
         # Define a test async function
         async def test_async_function(*args, **kwargs):
             return "async function called"
@@ -464,6 +470,7 @@ class TestCallbackManager(BaseObjectTestSuite):
 
         # Condition that returns True twice then False
         condition_calls = 0
+
         async def condition_async(*args, **kwargs):
             nonlocal condition_calls
             condition_calls += 1
@@ -481,6 +488,7 @@ class TestCallbackManager(BaseObjectTestSuite):
 
         This test verifies that join_tasks_async waits for all tasks to complete.
         """
+
         # Create some tasks
         async def async_task():
             await asyncio.sleep(0.1)
@@ -539,13 +547,16 @@ class TestCallbackManager(BaseObjectTestSuite):
         # Clean up any remaining tasks
         for t in [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]:
             t.cancel()
-        await asyncio.gather(*[t for t in asyncio.all_tasks() if t is not asyncio.current_task()], return_exceptions=True)
+        await asyncio.gather(
+            *[t for t in asyncio.all_tasks() if t is not asyncio.current_task()], return_exceptions=True
+        )
 
     def test_format_conditional_callback(self, test_object: CallbackManager) -> None:
         """Test formatting a conditional callback.
 
         This test verifies that format_conditional_callback correctly formats the callback, condition, and caller.
         """
+
         # Define test callback, condition, and caller
         def test_callback(*args, **kwargs):
             return "test callback called"
@@ -565,7 +576,7 @@ class TestCallbackManager(BaseObjectTestSuite):
             test_caller,
             callback_kwargs={"key1": "value1"},
             condition_kwargs={"key2": "value2"},
-            caller_kwargs={"key3": "value3"}
+            caller_kwargs={"key3": "value3"},
         )
 
         # Validate
@@ -612,6 +623,7 @@ class TestCallbackManager(BaseObjectTestSuite):
         This test verifies that create_conditional_scheduler correctly creates a scheduler with
         the specified conditional callbacks.
         """
+
         # Define test callbacks and conditions
         async def test_callback1(*args, **kwargs):
             return "test callback1 called"
@@ -641,6 +653,7 @@ class TestCallbackManager(BaseObjectTestSuite):
 
         This test verifies that register_conditional_callbacks correctly registers multiple callbacks.
         """
+
         # Define test callbacks and conditions
         def test_callback1(*args, **kwargs):
             return "test callback1 called"
@@ -654,7 +667,7 @@ class TestCallbackManager(BaseObjectTestSuite):
         # Register conditional callbacks
         callbacks = [
             ("test_conditional1", {"callback": test_callback1, "condition": test_condition}),
-            ("test_conditional2", {"callback": test_callback2, "condition": test_condition})
+            ("test_conditional2", {"callback": test_callback2, "condition": test_condition}),
         ]
         test_object.register_conditional_callbacks(callbacks)
 
@@ -670,6 +683,7 @@ class TestCallbackManager(BaseObjectTestSuite):
         This test verifies that register_conditional_scheduler correctly registers a scheduler
         with the specified conditional callbacks.
         """
+
         # Define test callbacks and conditions
         async def test_callback1(*args, **kwargs):
             return "test callback1 called"
@@ -686,8 +700,7 @@ class TestCallbackManager(BaseObjectTestSuite):
 
         # Register a conditional scheduler
         test_object.register_conditional_scheduler(
-            "test_conditional_scheduler",
-            condition_names=["test_conditional1", "test_conditional2"]
+            "test_conditional_scheduler", condition_names=["test_conditional1", "test_conditional2"]
         )
 
         # Validate
@@ -701,6 +714,7 @@ class TestCallbackManager(BaseObjectTestSuite):
         This test verifies that map_conditionals_to_scheduler correctly adds conditional callbacks
         to an existing scheduler.
         """
+
         # Define test callbacks and conditions
         def test_callback1(*args, **kwargs):
             return "test callback1 called"
@@ -741,6 +755,7 @@ class TestCallbackManager(BaseObjectTestSuite):
 
         # Condition that returns True twice then False
         condition_calls = 0
+
         def condition(*args, **kwargs):
             nonlocal condition_calls
             condition_calls += 1
@@ -770,6 +785,7 @@ class TestCallbackManager(BaseObjectTestSuite):
 
         # Condition that returns True twice then False
         condition_calls = 0
+
         async def condition_async(*args, **kwargs):
             nonlocal condition_calls
             condition_calls += 1
@@ -801,6 +817,7 @@ class TestCallbackManager(BaseObjectTestSuite):
 
         # Condition that returns True twice then False
         condition_calls = 0
+
         async def condition_async(*args, **kwargs):
             nonlocal condition_calls
             condition_calls += 1
@@ -831,6 +848,7 @@ class TestCallbackManager(BaseObjectTestSuite):
 
         # Condition that returns True twice then False
         condition_calls = 0
+
         async def condition_async(*args, **kwargs):
             nonlocal condition_calls
             condition_calls += 1

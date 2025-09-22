@@ -37,6 +37,7 @@ def simple_function(x: int) -> int:
 
 class NormalFunction:
     """A normal Python function-like object for comparison with BaseFunction."""
+
     def __init__(self, func: Callable = None) -> None:
         """Initialize with a function."""
         self.func = func or simple_function
@@ -52,9 +53,11 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
     This test suite measures the performance of various operations on BaseFunction objects
     and compares them with standard Python implementations.
     """
+
     # Class Definitions #
     class TestFunction(BaseFunction):
         """A subclass of BaseFunction for testing purposes."""
+
         def __init__(self, func: Callable = None) -> None:
             """Initialize with a function."""
             super().__init__(func or simple_function)
@@ -97,6 +100,7 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
         This test compares the speed of creating BaseFunction instances with creating
         standard Python function-like objects.
         """
+
         def create_base_function() -> None:
             self.TestFunction(simple_function)
 
@@ -138,7 +142,9 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
         percent = (mean_base / mean_normal) * 100
 
         # Print the performance comparison
-        print(f"\nNormal function call: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nNormal function call: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"BaseFunction.__call__: {mean_base:.3f} μs ({percent:.3f}% of normal function call time)")
         assert percent < self.speed_tolerance
 
@@ -147,6 +153,7 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
 
         This test compares the speed of BaseFunction.bind() with creating a method using MethodType.
         """
+
         def test_method(self: Any, x: int) -> int:
             return x * 2
 
@@ -170,7 +177,9 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
         percent = (mean_base / mean_standard) * 100
 
         # Print the performance comparison
-        print(f"\nStandard method binding: {mean_standard:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nStandard method binding: {mean_standard:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"BaseFunction.bind: {mean_base:.3f} μs ({percent:.3f}% of standard method binding time)")
         assert percent < self.speed_tolerance * 2  # Allow more overhead for method creation
 
@@ -182,6 +191,7 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
         Args:
             test_function: A fixture providing a TestFunction instance.
         """
+
         class TestObject:
             pass
 
@@ -203,6 +213,7 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
 
         This test compares the speed of calling a method created by BaseFunction.bind with a normal method.
         """
+
         def test_method(self: Any, x: int) -> int:
             return x * 2
 
@@ -227,7 +238,9 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
         percent = (mean_bound / mean_normal) * 100
 
         # Print the performance comparison
-        print(f"\nNormal method call: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nNormal method call: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"Bound BaseFunction call: {mean_bound:.3f} μs ({percent:.3f}% of normal method call time)")
         assert percent < self.speed_tolerance * 1.5  # Allow some overhead for method call
 
@@ -236,6 +249,7 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
 
         This test compares the speed of binding with the default method_type versus a custom method_type.
         """
+
         # Create a custom method type
         class CustomMethod(BaseMethod):
             pass
@@ -265,7 +279,9 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
         percent = (mean_custom / mean_default) * 100
 
         # Print the performance comparison
-        print(f"\nDefault method_type binding: {mean_default:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nDefault method_type binding: {mean_default:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"Custom method_type binding: {mean_custom:.3f} μs ({percent:.3f}% of default method_type binding time)")
         # The performance should be similar since the only difference is the class used
         assert percent < 120  # Allow up to 20% overhead for custom method type
@@ -279,6 +295,7 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
         Args:
             test_function: A fixture providing a TestFunction instance.
         """
+
         # Create a chain of nested functions
         def inner_function(x: int) -> int:
             return x * 2
@@ -304,7 +321,9 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
         percent = (mean_base / mean_normal) * 100
 
         # Print the performance comparison
-        print(f"\nNested normal function calls: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nNested normal function calls: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
         print(f"Nested BaseFunction calls: {mean_base:.3f} μs ({percent:.3f}% of nested normal function calls time)")
         assert percent < self.speed_tolerance * 1.5  # Allow some overhead for nested calls
 
@@ -317,6 +336,7 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
         Args:
             test_function: A fixture providing a TestFunction instance.
         """
+
         # Create a function that accepts many arguments
         def many_args_function(*args: Any, **kwargs: Any) -> int:
             return len(args) + len(kwargs)
@@ -344,8 +364,12 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
         percent = (mean_base / mean_normal) * 100
 
         # Print the performance comparison
-        print(f"\nNormal function with large args: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
-        print(f"BaseFunction with large args: {mean_base:.3f} μs ({percent:.3f}% of normal function with large args time)")
+        print(
+            f"\nNormal function with large args: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+        )
+        print(
+            f"BaseFunction with large args: {mean_base:.3f} μs ({percent:.3f}% of normal function with large args time)"
+        )
         assert percent < self.speed_tolerance * 2  # Allow more overhead for large argument processing
 
 

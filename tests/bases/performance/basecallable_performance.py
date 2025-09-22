@@ -37,13 +37,16 @@ def simple_function(x: int) -> int:
 
 def simple_coroutine_function(x: int) -> int:
     """A simple coroutine function that doubles its input."""
+
     async def inner():
         return x * 2
+
     return inner()
 
 
 class NormalCallable:
     """A normal Python callable object for comparison with BaseCallable."""
+
     def __init__(self, func: Callable = None) -> None:
         """Initialize with a function."""
         self.func = func or simple_function
@@ -59,9 +62,11 @@ class TestBaseCallablePerformance(BasePerformanceTestSuite):
     This test suite measures the performance of various operations on BaseCallable objects
     and compares them with standard Python implementations.
     """
+
     # Class Definitions #
     class TestCallable(BaseCallable):
         """A subclass of BaseCallable for testing purposes."""
+
         def __init__(self, func: Callable = None) -> None:
             """Initialize with a function."""
             super().__init__(func or simple_function)
@@ -97,6 +102,7 @@ class TestBaseCallablePerformance(BasePerformanceTestSuite):
         This test compares the speed of creating BaseCallable instances with creating
         standard Python callable objects.
         """
+
         def create_base_callable() -> None:
             self.TestCallable(simple_function)
 
@@ -150,6 +156,7 @@ class TestBaseCallablePerformance(BasePerformanceTestSuite):
         Args:
             test_callable: A fixture providing a TestCallable instance.
         """
+
         def get_func() -> None:
             _ = test_callable.__func__
 
@@ -167,7 +174,7 @@ class TestBaseCallablePerformance(BasePerformanceTestSuite):
         # Print the performance results
         print(f"\nBaseCallable.__func__ getter: {mean_get:.3f} μs or {mean_get / self.call_speed:.3f} cu")
         print(f"BaseCallable.__func__ setter: {mean_set:.3f} μs or {mean_set / self.call_speed:.3f} cu")
-        
+
         # No direct comparison, just ensure they're reasonably fast
         assert mean_get < 10  # 10 microseconds is a reasonable threshold for property access
         assert mean_set < 100  # 100 microseconds is a reasonable threshold for property setting
@@ -180,6 +187,7 @@ class TestBaseCallablePerformance(BasePerformanceTestSuite):
         Args:
             test_callable: A fixture providing a TestCallable instance.
         """
+
         def convert_to_function() -> None:
             test_callable.as_function()
 
@@ -200,6 +208,7 @@ class TestBaseCallablePerformance(BasePerformanceTestSuite):
         Args:
             test_callable: A fixture providing a TestCallable instance.
         """
+
         class TestObject:
             def example_method(self, x: int) -> int:
                 return x * 2
@@ -234,6 +243,7 @@ class TestBaseCallablePerformance(BasePerformanceTestSuite):
         Args:
             test_callable: A fixture providing a TestCallable instance.
         """
+
         class TestObject:
             pass
 
@@ -257,6 +267,7 @@ class TestBaseCallablePerformance(BasePerformanceTestSuite):
         This test measures the time it takes to create a BaseCallable with a coroutine function
         compared to a regular function.
         """
+
         def create_with_regular() -> None:
             self.TestCallable(simple_function)
 

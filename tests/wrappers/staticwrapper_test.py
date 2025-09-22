@@ -33,6 +33,7 @@ class ExampleStaticWrapper(StaticWrapper):
 
     This class uses StaticWrapper to wrap ExampleOne and ExampleTwo objects.
     """
+
     _wrapped_map_: list[[str, type[Any]], ...] = [
         ("first", WrapperTestSuite.ExampleOne),
         ("second", WrapperTestSuite.ExampleTwo),
@@ -68,6 +69,7 @@ class ExampleStaticWrapperWithExclude(StaticWrapper):
     This class uses StaticWrapper to wrap ExampleOne and ExampleTwo objects, and excludes specific attributes from
     wrapping.
     """
+
     _wrapped_map_: list[[str, type[Any]], ...] = [
         ("first", WrapperTestSuite.ExampleOne),
         ("second", WrapperTestSuite.ExampleTwo),
@@ -102,6 +104,7 @@ class ExampleStaticWrapperWithGetPrevious(StaticWrapper):
     This class uses StaticWrapper to wrap ExampleOne and ExampleTwo objects, and preserves attributes when changing
     wrapped objects.
     """
+
     _get_previous_wrapped: bool = True
     _set_next_wrapped: bool = True
     _wrapped_map_: list[[str, type[Any]], ...] = [
@@ -135,6 +138,7 @@ class NestedStaticWrapper(StaticWrapper):
 
     This class wraps another wrapper.
     """
+
     _wrapped_map_: list[[str, type[Any]], ...] = [("wrapped", None)]
 
     def __init__(self, wrapped: Any = None) -> None:
@@ -180,6 +184,7 @@ class TestStaticWrapperTests(WrapperTestSuite):
         This test verifies that when _get_previous_wrapped is True, attributes from a wrapped object are preserved when
         the object is replaced.
         """
+
         # Create a simpler test class with _get_previous_wrapped=True
         class SimpleGetPreviousWrapper(StaticWrapper):
             _get_previous_wrapped: bool = True
@@ -225,6 +230,7 @@ class TestStaticWrapperTests(WrapperTestSuite):
         This test verifies that the wrapper can handle None values for wrapped objects
         without raising exceptions during normal operations.
         """
+
         # Create a class that doesn't set attributes in __init__
         class TestNoneWrapper(StaticWrapper):
             _wrapped_map_: list[[str, type[Any]], ...] = [("first", None), ("second", None)]
@@ -258,6 +264,7 @@ class TestStaticWrapperTests(WrapperTestSuite):
         This test verifies that wrappers can be nested, with one wrapper wrapping another wrapper,
         and that attribute access works correctly through multiple levels of wrapping.
         """
+
         # Create a simpler wrapper class for nesting
         class SimpleWrapper(StaticWrapper):
             _wrapped_map_: list[[str, type[Any]], ...] = [("wrapped", self.TestClass)]
@@ -289,6 +296,7 @@ class TestStaticWrapperTests(WrapperTestSuite):
 
         This test verifies that the _class_rewrap method correctly updates property descriptors for wrapped objects.
         """
+
         # Create a class that inherits from StaticWrapper
         class TestClassRewrap(StaticWrapper):
             _wrapped_map_: list[[str, type[Any]], ...] = []  # Start with empty list

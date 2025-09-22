@@ -9,6 +9,7 @@ functionality provided by BaseObject, such as proper copying and deep copying su
 The classes in this package are designed to be subclassed rather than used directly, providing a consistent
 interface and behavior for all collection objects in the baseobjects framework.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

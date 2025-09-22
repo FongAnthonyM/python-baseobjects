@@ -112,6 +112,7 @@ class TestTimezoneOffset:
         This test verifies that the timezone_offset function uses the INIT_DATE constant as the reference date for
         calculating the offset.
         """
+
         # Create a custom timezone class that returns different offsets for different dates
         class CustomTimezone(tzinfo):
             def utcoffset(self, dt):

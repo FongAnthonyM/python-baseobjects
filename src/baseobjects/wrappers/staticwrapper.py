@@ -11,6 +11,7 @@ means subclasses should be designed to wrap the same objects and be used to wrap
 attributes/functions after initialization. These limitations are strict, but it leads to great performance preservation
 when compared to normal object attribute/method access.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

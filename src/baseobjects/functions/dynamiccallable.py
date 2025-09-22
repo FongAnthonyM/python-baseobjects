@@ -1,6 +1,7 @@
 """dynamiccallable.py
 Abstract classes for creating callable classes that has multiplexed callback.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -34,7 +35,7 @@ class DynamicCallable(BaseCallable):
         default_bind_method: The name of the method used when binding this object.
         bind_multiplexer: The multiplexer which control the binding method being use.
         default_call_method: The name of the method used when this object is called.
-        call_multiplexer: The multiplexer which control the call method being use.        
+        call_multiplexer: The multiplexer which control the call method being use.
 
     Args:
         func: The function to wrap.
@@ -45,7 +46,7 @@ class DynamicCallable(BaseCallable):
 
     # Attributes #
     _cast_excluded: set = BaseCallable._cast_excluded | {"bind_multiplexer", "call_multiplexer"}
-    
+
     default_bind_method: str = "bind_builtin"
     bind_multiplexer: MethodMultiplexer
 
@@ -62,7 +63,7 @@ class DynamicCallable(BaseCallable):
     def bind_method(self, value: str) -> None:
         self.bind_multiplexer.select(value)
         self.default_bind_method = value
-    
+
     @property
     def call_method(self) -> str | None:
         """The name of the method used when this object is called."""
@@ -140,11 +141,11 @@ class DynamicCallable(BaseCallable):
         """
         if bind_method is not None:
             self.bind_multiplexer.select(bind_method)
-            
+
         if call_method is not None:
-            self.call_multiplexer.select(call_method)   
-        
-        super().construct(func,*args, **kwargs)
+            self.call_multiplexer.select(call_method)
+
+        super().construct(func, *args, **kwargs)
 
 
 class DynamicMethod(DynamicCallable, BaseMethod):

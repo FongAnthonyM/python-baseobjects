@@ -1,6 +1,7 @@
 """__init__.py
 Base and/or common dataclasses.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

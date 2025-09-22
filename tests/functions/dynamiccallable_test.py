@@ -1,10 +1,11 @@
 """dynamiccallable_test.py
 Tests for the DynamicCallable class in the baseobjects package.
 
-This module provides tests for the DynamicCallable class, which is an abstract callable class that has multiplexed 
-binding and callback functionality. It tests the core functionality of DynamicCallable, including instance creation, 
+This module provides tests for the DynamicCallable class, which is an abstract callable class that has multiplexed
+binding and callback functionality. It tests the core functionality of DynamicCallable, including instance creation,
 function calling, binding, and multiplexed callback.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -61,7 +62,7 @@ class DynamicCallableTestObject:
 class TestDynamicCallable(DynamicCallableTestSuite):
     """Test the DynamicCallable class.
 
-    This class tests the functionality of the DynamicCallable class, which is an abstract callable class that has 
+    This class tests the functionality of the DynamicCallable class, which is an abstract callable class that has
     multiplexed binding and callback functionality.
     """
 
@@ -77,7 +78,7 @@ class TestDynamicCallable(DynamicCallableTestSuite):
         """
         return self.create_method_object()
 
-    #@pytest.mark.skip(reason="DynamicCallable doesn't support pickling of methods")
+    # @pytest.mark.skip(reason="DynamicCallable doesn't support pickling of methods")
     def test_pickling(self, test_object: DynamicCallable) -> None:
         """Test pickling and unpickling of the callable object.
 
@@ -218,6 +219,7 @@ class TestDynamicCallable(DynamicCallableTestSuite):
         Args:
             test_bind_target: A fixture providing an instance to bind the method to.
         """
+
         # Create a method that can work with the test_bind_target
         def compatible_method(self, x: int) -> int:
             """A test method that works with any object as self."""
@@ -266,6 +268,7 @@ class TestDynamicCallable(DynamicCallableTestSuite):
             test_method_object: A fixture providing a DynamicCallable instance that wraps a method.
             test_bind_target: A fixture providing an instance to bind the method to.
         """
+
         # Add a custom bind method to the bind_multiplexer
         def bind_custom(self, instance, owner=None):
             # Create a function that returns a fixed value
@@ -292,6 +295,7 @@ class TestDynamicCallable(DynamicCallableTestSuite):
         Args:
             test_function_object: A fixture providing a DynamicCallable instance that wraps a function.
         """
+
         # Add multiple call methods to the call_multiplexer
         def call_double(self, *args, **kwargs):
             return self.call_wrapped(*args, **kwargs) * 2

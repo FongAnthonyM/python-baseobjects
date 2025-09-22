@@ -4,6 +4,7 @@ Tests for the BaseObject class in the baseobjects package.
 This module provides tests for the BaseObject class, which is an abstract base class that implements fundamental
 functionality that should be available in all objects, such as copying and deep copying.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -164,8 +165,10 @@ class TestBaseObject(BaseObjectTestSuite):
 
         This test verifies that BaseObject works correctly with classes that use __slots__.
         """
+
         class SlottedBaseObject(BaseObject):
             """A BaseObject subclass with __slots__."""
+
             __slots__ = ("slot1", "slot2")
 
             def __init__(self) -> None:
@@ -190,8 +193,10 @@ class TestBaseObject(BaseObjectTestSuite):
 
         This test verifies that BaseObject works correctly with classes that use properties.
         """
+
         class PropertyBaseObject(BaseObject):
             """A BaseObject subclass with properties."""
+
             def __init__(self) -> None:
                 """Initialize with a private attribute."""
                 super().__init__()
@@ -227,8 +232,10 @@ class TestBaseObject(BaseObjectTestSuite):
 
         This test verifies that BaseObject works correctly with classes that use descriptors.
         """
+
         class MyDescriptor:
             """A simple descriptor class."""
+
             def __init__(self, initial_value: Any = None) -> None:
                 """Initialize with an initial value."""
                 self.value = initial_value
@@ -245,6 +252,7 @@ class TestBaseObject(BaseObjectTestSuite):
 
         class DescriptorBaseObject(BaseObject):
             """A BaseObject subclass with a descriptor."""
+
             desc = MyDescriptor("initial")
 
             def __init__(self) -> None:

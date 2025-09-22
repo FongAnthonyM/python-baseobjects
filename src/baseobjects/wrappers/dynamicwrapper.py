@@ -4,6 +4,7 @@ after checking itself. This makes DynamicWrapper very flexible with its wrapped 
 any usage limitation, but it is significantly slower than normal object attribute/method access, because it handles
 every get, set, and delete. Performance would be better if DynamicWrapper was written in C.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

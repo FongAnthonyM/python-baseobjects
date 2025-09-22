@@ -53,26 +53,26 @@ def standard_parse_parentheses_str(
     """
     if exclude is None:
         exclude = set()
-    
+
     # Regular expressions for tokenizing
     r_parentheses = r"\(|\)"
-    r_double_quote_group = r'"((?:[^"]|\\.)*)(?<!\\)"' 
+    r_double_quote_group = r'"((?:[^"]|\\.)*)(?<!\\)"'
     r_single_quote_group = r"'((?:[^']|\\.)*)(?<!\\)'"
-    r_group_between_characters = r"[^,'\"\(\)]+" 
+    r_group_between_characters = r"[^,'\"\(\)]+"
     r_expression = r"|".join((r_parentheses, r_double_quote_group, r_single_quote_group, r_group_between_characters))
-    
+
     # Stack to keep track of nested lists
     stack = deque([[]])
-    
+
     # Parse the expression
     for match in re.finditer(r_expression, expression.strip()):
         token = match[0]
-        if token == '(':
+        if token == "(":
             # Start a new nested list
             new_list = []
             stack[-1].append(new_list)
             stack.append(new_list)
-        elif token == ')':
+        elif token == ")":
             # End the current nested list
             try:
                 stack.pop()
@@ -81,11 +81,11 @@ def standard_parse_parentheses_str(
         elif (not include or token in include) and token not in exclude:
             # Add the token to the current list if it passes the filters
             stack[-1].append(cast(token.strip()))
-    
+
     # Check for unbalanced parentheses
     if len(stack) != 1:
         raise ValueError("Unbalanced parentheses")
-    
+
     return stack[0]
 
 
@@ -111,26 +111,28 @@ def standard_parse_parentheses_bytes(
     """
     if exclude is None:
         exclude = set()
-    
+
     # Regular expressions for tokenizing
     rb_parentheses = rb"\(|\)"
-    rb_double_quote_group = rb'"((?:[^"]|\\.)*)(?<!\\)"' 
+    rb_double_quote_group = rb'"((?:[^"]|\\.)*)(?<!\\)"'
     rb_single_quote_group = rb"'((?:[^']|\\.)*)(?<!\\)'"
-    rb_group_between_characters = rb"[^,'\"\(\)]+" 
-    rb_expression = rb"|".join((rb_parentheses, rb_double_quote_group, rb_single_quote_group, rb_group_between_characters))
-    
+    rb_group_between_characters = rb"[^,'\"\(\)]+"
+    rb_expression = rb"|".join(
+        (rb_parentheses, rb_double_quote_group, rb_single_quote_group, rb_group_between_characters)
+    )
+
     # Stack to keep track of nested lists
     stack = deque([[]])
-    
+
     # Parse the expression
     for match in re.finditer(rb_expression, expression.strip()):
         token = match[0]
-        if token == b'(':
+        if token == b"(":
             # Start a new nested list
             new_list = []
             stack[-1].append(new_list)
             stack.append(new_list)
-        elif token == b')':
+        elif token == b")":
             # End the current nested list
             try:
                 stack.pop()
@@ -139,11 +141,11 @@ def standard_parse_parentheses_bytes(
         elif (not include or token in include) and token not in exclude:
             # Add the token to the current list if it passes the filters
             stack[-1].append(cast(token.strip()))
-    
+
     # Check for unbalanced parentheses
     if len(stack) != 1:
         raise ValueError("Unbalanced parentheses")
-    
+
     return stack[0]
 
 
@@ -154,6 +156,7 @@ class TestParseParentheses(BasePerformanceTestSuite):
     This class tests_old_ the performance of the parse_parentheses function, which parses expressions with parentheses and
     returns a nested list of extracted elements.
     """
+
     # Attributes #
     timeit_runs: int = 10000  # Reduced for more complex operations
     speed_tolerance: int = 150
@@ -212,10 +215,12 @@ class TestParseParentheses(BasePerformanceTestSuite):
         Returns:
             Callable: A function to cast elements.
         """
+
         def cast_to_upper(s: str) -> str:
             if isinstance(s, str):
                 return s.upper()
             return s
+
         return cast_to_upper
 
     # Tests
@@ -227,6 +232,7 @@ class TestParseParentheses(BasePerformanceTestSuite):
         Args:
             simple_expression: A fixture providing a simple expression.
         """
+
         def custom_implementation() -> None:
             parse_parentheses(simple_expression)
 
@@ -254,6 +260,7 @@ class TestParseParentheses(BasePerformanceTestSuite):
         Args:
             complex_expression: A fixture providing a complex expression.
         """
+
         def custom_implementation() -> None:
             parse_parentheses(complex_expression)
 
@@ -281,6 +288,7 @@ class TestParseParentheses(BasePerformanceTestSuite):
         Args:
             bytes_expression: A fixture providing a bytes expression.
         """
+
         def custom_implementation() -> None:
             parse_parentheses(bytes_expression)
 
@@ -300,7 +308,9 @@ class TestParseParentheses(BasePerformanceTestSuite):
         print(f"\nNew (parse_parentheses bytes): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
         assert percent < self.speed_tolerance
 
-    def test_parse_parentheses_filtering_speed(self, simple_expression: str, include_set: set, exclude_set: set) -> None:
+    def test_parse_parentheses_filtering_speed(
+        self, simple_expression: str, include_set: set, exclude_set: set
+    ) -> None:
         """Test the performance of parse_parentheses with filtering.
 
         This test compares the speed of parse_parentheses with a standard implementation when using include/exclude sets.
@@ -310,6 +320,7 @@ class TestParseParentheses(BasePerformanceTestSuite):
             include_set: A fixture providing an include set.
             exclude_set: A fixture providing an exclude set.
         """
+
         def custom_implementation_include() -> None:
             parse_parentheses(simple_expression, include=include_set)
 
@@ -325,22 +336,24 @@ class TestParseParentheses(BasePerformanceTestSuite):
         # Calculate the mean time for include filtering
         include_new_time = timeit.timeit(custom_implementation_include, number=self.timeit_runs)
         include_old_time = timeit.timeit(standard_implementation_include, number=self.timeit_runs)
-        
+
         # Calculate the mean time for exclude filtering
         exclude_new_time = timeit.timeit(custom_implementation_exclude, number=self.timeit_runs)
         exclude_old_time = timeit.timeit(standard_implementation_exclude, number=self.timeit_runs)
-        
+
         # Calculate the average time for both filtering types
         new_avg_time = (include_new_time + exclude_new_time) / 2
         old_avg_time = (include_old_time + exclude_old_time) / 2
-        
+
         # Convert to microseconds
         mean_new = new_avg_time / self.timeit_runs * 1000000
         mean_old = old_avg_time / self.timeit_runs * 1000000
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNew (parse_parentheses filtering): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
+        print(
+            f"\nNew (parse_parentheses filtering): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+        )
         assert percent < self.speed_tolerance
 
     def test_parse_parentheses_casting_speed(self, simple_expression: str, cast_function: Callable) -> None:
@@ -352,6 +365,7 @@ class TestParseParentheses(BasePerformanceTestSuite):
             simple_expression: A fixture providing a simple expression.
             cast_function: A fixture providing a cast function.
         """
+
         def custom_implementation() -> None:
             parse_parentheses(simple_expression, cast=cast_function)
 

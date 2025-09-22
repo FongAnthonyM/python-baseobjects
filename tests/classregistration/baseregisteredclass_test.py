@@ -1,6 +1,7 @@
 """baseregisteredclass_test.py
 Tests for the BaseRegisteredClass class in the baseobjects package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

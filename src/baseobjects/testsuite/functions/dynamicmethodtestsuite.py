@@ -5,6 +5,7 @@ This module provides a base test suite for testing the DynamicMethod class and i
 methods for testing the core functionality of dynamic method objects, including multiplexed binding and callback
 functionality, as well as method-specific behavior.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

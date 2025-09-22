@@ -6,6 +6,7 @@ store and manage classes. It extends BaseDict to provide dictionary-like functio
 and defines the interface for registering and retrieving classes from the registry. Concrete implementations of this
 class can define specific registration and lookup mechanisms.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -46,13 +47,7 @@ class BaseClassRegistry(BaseDict):
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(
-        self,
-        head_class: type | None = None,
-        *args: Any,
-        init: bool = True,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, head_class: type | None = None, *args: Any, init: bool = True, **kwargs: Any) -> None:
         # Parent Initialization #
         super().__init__()
 
@@ -62,11 +57,7 @@ class BaseClassRegistry(BaseDict):
 
     # Instance Methods #
     # Constructors/Destructors
-    def construct(
-        self,
-        head_class: type | None = None,
-        **kwargs: Any
-    ) -> None:
+    def construct(self, head_class: type | None = None, **kwargs: Any) -> None:
         """Constructs this object.
 
         Args:

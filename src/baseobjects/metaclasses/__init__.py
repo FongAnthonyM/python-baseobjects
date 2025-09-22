@@ -1,6 +1,7 @@
 """__init__.py
 Description: More specific objects for the package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

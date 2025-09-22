@@ -4,6 +4,7 @@ Tests for the DeepChainMap class in the baseobjects package.
 This module provides tests for the DeepChainMap class, which is a ChainMap that updates and deletes items from the first
 mapping that contains the key.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -354,11 +355,7 @@ class TestDeepChainMap(BaseObjectTestSuite):
         This test verifies that DeepChainMap works correctly with nested dictionaries.
         """
         # Create a DeepChainMap with nested dictionaries
-        nested_map = self.TestClass(
-            {"a": {"x": 1, "y": 2}},
-            {"b": {"z": 3}},
-            {"a": {"w": 4}}
-        )
+        nested_map = self.TestClass({"a": {"x": 1, "y": 2}}, {"b": {"z": 3}}, {"a": {"w": 4}})
 
         # Test accessing nested values
         assert nested_map["a"] == {"x": 1, "y": 2}  # From first mapping

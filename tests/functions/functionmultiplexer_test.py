@@ -1,9 +1,10 @@
 """functionmultiplexer_test.py
 Tests for the FunctionMultiplexer class in the baseobjects package.
 
-This module provides tests for the FunctionMultiplexer class, which is a callable that selects between different 
+This module provides tests for the FunctionMultiplexer class, which is a callable that selects between different
 functions or methods to be used as the call method, treating them as functions without binding them to the stored instance.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -242,7 +243,8 @@ class TestFunctionMultiplexer(BaseCallableTestSuite):
         """
 
     @pytest.mark.skip(
-        reason="FunctionMultiplexer doesn't implement the descriptor protocol the same way as BaseCallable")
+        reason="FunctionMultiplexer doesn't implement the descriptor protocol the same way as BaseCallable"
+    )
     def test_descriptor_protocol(self, test_method_object: FunctionMultiplexer) -> None:
         """Test that the callable implements the descriptor protocol for method binding.
 
@@ -308,6 +310,7 @@ class TestFunctionMultiplexer(BaseCallableTestSuite):
         Args:
             test_multiplexer: A fixture providing a FunctionMultiplexer instance.
         """
+
         # Define a new function
         def subtract(x: int, y: int = 2) -> int:
             return x - y
