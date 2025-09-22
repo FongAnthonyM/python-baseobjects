@@ -22,11 +22,11 @@ baseobjects
 .. |Read the Docs| image:: https://img.shields.io/readthedocs/python-baseobjects/latest.svg?label=Read%20the%20Docs
    :target: https://python-baseobjects.readthedocs.io/
    :alt: Read the documentation at https://python-baseobjects.readthedocs.io/
-.. |Tests| image:: https://github.com/fongant/python-baseobjects/workflows/Tests/badge.svg
-   :target: https://github.com/fongant/baseobjects/actions?workflow=Tests
+.. |Tests| image:: https://github.com/AnthonyTechnologies/python-baseobjects/workflows/Tests/badge.svg
+   :target: https://github.com/AnthonyTechnologies/baseobjects/actions?workflow=Tests
    :alt: Tests
-.. |Codecov| image:: https://codecov.io/gh/fongant/python-baseobjects/branch/main/graph/badge.svg
-   :target: https://codecov.io/gh/fongant/python-baseobjects
+.. |Codecov| image:: https://codecov.io/gh/AnthonyTechnologies/python-baseobjects/branch/main/graph/badge.svg
+   :target: https://codecov.io/gh/AnthonyTechnologies/python-baseobjects
    :alt: Codecov
 .. |pre-commit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
    :target: https://github.com/pre-commit/pre-commit
@@ -110,7 +110,7 @@ This project was generated from `@cjolowicz`_'s `Hypermodern Python Cookiecutter
 .. _MIT license: https://opensource.org/licenses/MIT
 .. _PyPI: https://pypi.org/
 .. _Hypermodern Python Cookiecutter: https://github.com/cjolowicz/cookiecutter-hypermodern-python
-.. _file an issue: https://github.com/fongant/python-baseobjects/issues
+.. _file an issue: https://github.com/AnthonyTechnologies/python-baseobjects/issues
 .. _pip: https://pip.pypa.io/
 .. github-only
 .. _Contributor Guide: CONTRIBUTING.rst

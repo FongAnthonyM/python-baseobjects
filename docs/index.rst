@@ -14,4 +14,4 @@
    contributing
    Code of Conduct <codeofconduct>
    License <license>
-   Changelog <https://github.com/fongant/python-baseobjects/releases>
+   Changelog <https://github.com/AnthonyTechnologies/python-baseobjects/releases>

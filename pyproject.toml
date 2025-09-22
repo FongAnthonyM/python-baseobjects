@@ -5,8 +5,8 @@ description = "Basic object templates."
 authors = ["Anthony Fong <FongAnthonyM@gmail.com>"]
 license = "MIT"
 readme = "README.rst"
-homepage = "https://github.com/fongant/python-baseobjects"
-repository = "https://github.com/fongant/python-baseobjects"
+homepage = "https://github.com/AnthonyTechnologies/python-baseobjects"
+repository = "https://github.com/AnthonyTechnologies/python-baseobjects"
 documentation = "https://python-baseobjects.readthedocs.io"
 packages = [
     { include = "baseobjects", from = "src" },
@@ -16,7 +16,7 @@ classifiers = [
 ]
 
 [tool.poetry.urls]
-Changelog = "https://github.com/fongant/python-baseobjects/releases"
+Changelog = "https://github.com/AnthonyTechnologies/python-baseobjects/releases"
 
 [tool.poetry.dependencies]
 python = ">=3.11, <4.0"
