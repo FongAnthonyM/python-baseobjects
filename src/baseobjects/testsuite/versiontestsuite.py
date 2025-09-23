@@ -32,7 +32,7 @@ from .bases import BaseObjectTestSuite
 class VersionTestSuite(BaseObjectTestSuite):
     """Base test suite for version classes.
 
-    This class provides common test functionality for version classes, including tests_old_ for comparison operations,
+    This class provides common test functionality for version classes, including tests for comparison operations,
     type conversions, and serialization. Subclasses should set the TestClass attribute and may override or extend
     the test methods.
 

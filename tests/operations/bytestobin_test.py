@@ -29,7 +29,7 @@ from src.baseobjects.operations import bytes_to_bin
 class TestBytesToBin:
     """Test the bytes_to_bin function.
 
-    This class tests_old_ the functionality of the bytes_to_bin function, which converts bytes to a tuple of binary values.
+    This class tests the functionality of the bytes_to_bin function, which converts bytes to a tuple of binary values.
     """
 
     # Instance Methods #

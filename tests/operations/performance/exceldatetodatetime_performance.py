@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """exceldatetodatetime_performance.py
-Performance tests_old_ for the excel_date_to_datetime function in the baseobjects.operations package.
+Performance tests for the excel_date_to_datetime function in the baseobjects.operations package.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -108,7 +108,7 @@ def standard_excel_date_to_datetime(timestamp: Union[int, float, str, bytes], tz
 class TestExcelDateToDatetime(BasePerformanceTestSuite):
     """Test the performance of the excel_date_to_datetime function.
 
-    This class tests_old_ the performance of the excel_date_to_datetime function, which converts an Excel date to a datetime.
+    This class tests the performance of the excel_date_to_datetime function, which converts an Excel date to a datetime.
     """
 
     # Attributes #

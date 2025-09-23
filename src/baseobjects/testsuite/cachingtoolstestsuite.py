@@ -34,7 +34,7 @@ from .bases import BaseObjectTestSuite
 class BaseCacheTestSuite(BaseObjectTestSuite):
     """Base test suite for cache classes.
 
-    This class provides common test functionality for cache classes, including tests_old_ for caching, retrieval,
+    This class provides common test functionality for cache classes, including tests for caching, retrieval,
     and clearing. Subclasses should set the TestClass attribute and may override or extend the test methods.
 
     Attributes:
@@ -134,7 +134,7 @@ class BaseCacheTestSuite(BaseObjectTestSuite):
     ) -> None:
         """Test that instances of the class can be created.
 
-        This method can be overridden by subclasses to perform additional tests_old_ on the instance.
+        This method can be overridden by subclasses to perform additional tests on the instance.
 
         Args:
             typed: Determines if the function's arguments are type sensitive for caching.
@@ -343,7 +343,7 @@ class BaseCacheTestSuite(BaseObjectTestSuite):
 class TimedCacheTestSuite(BaseCacheTestSuite):
     """Base test suite for timed cache classes.
 
-    This class provides common test functionality for timed cache classes, including tests_old_ for cache expiration.
+    This class provides common test functionality for timed cache classes, including tests for cache expiration.
     Subclasses should set the TestClass attribute and may override or extend the test methods.
 
     Attributes:
@@ -370,7 +370,7 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
     ) -> None:
         """Test that instances of the class can be created.
 
-        This method can be overridden by subclasses to perform additional tests_old_ on the instance.
+        This method can be overridden by subclasses to perform additional tests on the instance.
 
         Args:
             typed: Determines if the function's arguments are type sensitive for caching.

@@ -30,7 +30,7 @@ from src.baseobjects.operations.exceldatetodatetime import excel_date_to_datetim
 class TestExcelDateToDatetime:
     """Test the excel_date_to_datetime function.
 
-    This class tests_old_ the functionality of the excel_date_to_datetime function, which converts an Excel date to a
+    This class tests the functionality of the excel_date_to_datetime function, which converts an Excel date to a
     datetime object.
     """
 

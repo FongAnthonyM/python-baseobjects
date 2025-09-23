@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """timezoneoffset_performance.py
-Performance tests_old_ for the timezone_offset function in the baseobjects.operations package.
+Performance tests for the timezone_offset function in the baseobjects.operations package.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -74,7 +74,7 @@ class CustomTimezone(tzinfo):
 class TestTimezoneOffset(BasePerformanceTestSuite):
     """Test the performance of the timezone_offset function.
 
-    This class tests_old_ the performance of the timezone_offset function, which gets the offset of a given timezone.
+    This class tests the performance of the timezone_offset function, which gets the offset of a given timezone.
     """
 
     # Attributes #
@@ -85,7 +85,7 @@ class TestTimezoneOffset(BasePerformanceTestSuite):
     # Fixtures
     @pytest.fixture
     def utc_timezone(self) -> timezone:
-        """Create a UTC timezone for use in tests_old_.
+        """Create a UTC timezone for use in tests.
 
         Returns:
             timezone: The UTC timezone.
@@ -94,7 +94,7 @@ class TestTimezoneOffset(BasePerformanceTestSuite):
 
     @pytest.fixture
     def positive_timezone(self) -> timezone:
-        """Create a positive timezone for use in tests_old_.
+        """Create a positive timezone for use in tests.
 
         Returns:
             timezone: A timezone with a positive offset.
@@ -103,7 +103,7 @@ class TestTimezoneOffset(BasePerformanceTestSuite):
 
     @pytest.fixture
     def negative_timezone(self) -> timezone:
-        """Create a negative timezone for use in tests_old_.
+        """Create a negative timezone for use in tests.
 
         Returns:
             timezone: A timezone with a negative offset.
@@ -112,7 +112,7 @@ class TestTimezoneOffset(BasePerformanceTestSuite):
 
     @pytest.fixture
     def custom_timezone(self) -> CustomTimezone:
-        """Create a custom timezone for use in tests_old_.
+        """Create a custom timezone for use in tests.
 
         Returns:
             CustomTimezone: A custom timezone.
@@ -121,7 +121,7 @@ class TestTimezoneOffset(BasePerformanceTestSuite):
 
     @pytest.fixture
     def complex_custom_timezone(self) -> CustomTimezone:
-        """Create a complex custom timezone for use in tests_old_.
+        """Create a complex custom timezone for use in tests.
 
         Returns:
             CustomTimezone: A custom timezone with complex calculations.
@@ -130,7 +130,7 @@ class TestTimezoneOffset(BasePerformanceTestSuite):
 
     @pytest.fixture
     def zoneinfo_timezone(self) -> tzinfo:
-        """Create a zoneinfo timezone for use in tests_old_.
+        """Create a zoneinfo timezone for use in tests.
 
         Returns:
             tzinfo: A zoneinfo timezone.

@@ -42,7 +42,7 @@ class TestNamespaceClassRegistry(BaseClassRegistryTestSuite):
     # Fixtures
     @pytest.fixture
     def populated_registry(self, *args: Any, **kwargs: Any) -> NamespaceClassRegistry:
-        """Create a populated test registry for use in tests_old_.
+        """Create a populated test registry for use in tests.
 
         Returns:
             NamespaceClassRegistry: A populated instance of the test class.

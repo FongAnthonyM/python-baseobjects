@@ -32,7 +32,7 @@ from ..bases import BaseObjectTestSuite
 class BaseClassRegistryTestSuite(BaseObjectTestSuite):
     """Base test suite for children of BaseClassRegistry.
 
-    This class provides common test functionality for child classes of BaseClassRegistry, including tests_old_ for
+    This class provides common test functionality for child classes of BaseClassRegistry, including tests for
     class registration and retrieval. Subclasses should set the TestClass attribute and may override or extend the test
     methods.
 
@@ -63,7 +63,7 @@ class BaseClassRegistryTestSuite(BaseObjectTestSuite):
     # Fixtures
     @pytest.fixture
     def populated_registry(self, *args: Any, **kwargs: Any) -> BaseClassRegistry:
-        """Create a populated test registry for use in tests_old_.
+        """Create a populated test registry for use in tests.
 
         Returns:
             BaseClassRegistry: A populated instance of the test class.

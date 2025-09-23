@@ -30,7 +30,7 @@ from src.baseobjects.operations import union_recursive
 class TestUnionRecursive:
     """Test the union_recursive function.
 
-    This class tests_old_ the functionality of the union_recursive function, which unions a mapping object and its contained
+    This class tests the functionality of the union_recursive function, which unions a mapping object and its contained
     mappings within another mapping.
     """
 

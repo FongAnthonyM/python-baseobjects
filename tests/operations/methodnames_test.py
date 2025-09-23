@@ -35,7 +35,7 @@ from src.baseobjects.operations import (
 class TestMethodNames:
     """Test the method name functions.
 
-    This class tests_old_ the functionality of the functions that retrieve method names from objects.
+    This class tests the functionality of the functions that retrieve method names from objects.
     """
 
     # Class Definitions #

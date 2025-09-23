@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """parseparentheses_performance.py
-Performance tests_old_ for the parse_parentheses function in the baseobjects.operations package.
+Performance tests for the parse_parentheses function in the baseobjects.operations package.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -153,7 +153,7 @@ def standard_parse_parentheses_bytes(
 class TestParseParentheses(BasePerformanceTestSuite):
     """Test the performance of the parse_parentheses function.
 
-    This class tests_old_ the performance of the parse_parentheses function, which parses expressions with parentheses and
+    This class tests the performance of the parse_parentheses function, which parses expressions with parentheses and
     returns a nested list of extracted elements.
     """
 
@@ -165,7 +165,7 @@ class TestParseParentheses(BasePerformanceTestSuite):
     # Fixtures
     @pytest.fixture
     def simple_expression(self) -> str:
-        """Create a simple expression for use in tests_old_.
+        """Create a simple expression for use in tests.
 
         Returns:
             str: A simple expression with parentheses.
@@ -174,7 +174,7 @@ class TestParseParentheses(BasePerformanceTestSuite):
 
     @pytest.fixture
     def complex_expression(self) -> str:
-        """Create a complex expression for use in tests_old_.
+        """Create a complex expression for use in tests.
 
         Returns:
             str: A complex expression with many nested parentheses.
@@ -183,7 +183,7 @@ class TestParseParentheses(BasePerformanceTestSuite):
 
     @pytest.fixture
     def bytes_expression(self) -> bytes:
-        """Create a bytes expression for use in tests_old_.
+        """Create a bytes expression for use in tests.
 
         Returns:
             bytes: A bytes expression with parentheses.
@@ -192,7 +192,7 @@ class TestParseParentheses(BasePerformanceTestSuite):
 
     @pytest.fixture
     def include_set(self) -> set:
-        """Create an include set for use in tests_old_.
+        """Create an include set for use in tests.
 
         Returns:
             set: A set of elements to include.
@@ -201,7 +201,7 @@ class TestParseParentheses(BasePerformanceTestSuite):
 
     @pytest.fixture
     def exclude_set(self) -> set:
-        """Create an exclude set for use in tests_old_.
+        """Create an exclude set for use in tests.
 
         Returns:
             set: A set of elements to exclude.
@@ -210,7 +210,7 @@ class TestParseParentheses(BasePerformanceTestSuite):
 
     @pytest.fixture
     def cast_function(self) -> Callable:
-        """Create a cast function for use in tests_old_.
+        """Create a cast function for use in tests.
 
         Returns:
             Callable: A function to cast elements.

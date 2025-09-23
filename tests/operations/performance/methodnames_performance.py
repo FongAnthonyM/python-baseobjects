@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """methodnames_performance.py
-Performance tests_old_ for the method name functions in the baseobjects.operations package.
+Performance tests for the method name functions in the baseobjects.operations package.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -92,7 +92,7 @@ def standard_get_public_method_names(obj: Any) -> Tuple[str, ...]:
 class TestMethodNames(BasePerformanceTestSuite):
     """Test the performance of the method name functions.
 
-    This class tests_old_ the performance of the functions that retrieve method names from objects.
+    This class tests the performance of the functions that retrieve method names from objects.
     """
 
     # Class Definitions #
@@ -150,7 +150,7 @@ class TestMethodNames(BasePerformanceTestSuite):
     # Fixtures
     @pytest.fixture
     def test_object(self) -> "TestMethodNames.TestClass":
-        """Create a test object for use in tests_old_.
+        """Create a test object for use in tests.
 
         Returns:
             TestClass: An instance of the test class.
@@ -159,7 +159,7 @@ class TestMethodNames(BasePerformanceTestSuite):
 
     @pytest.fixture
     def builtin_object(self) -> List[int]:
-        """Create a built-in object for use in tests_old_.
+        """Create a built-in object for use in tests.
 
         Returns:
             List[int]: A list object.

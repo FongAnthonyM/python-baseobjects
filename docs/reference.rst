@@ -1,13 +1,16 @@
-Reference
+API Reference
 =========
 
 .. contents::
     :local:
+    :depth: 2
     :backlinks: none
 
 
 bases
 ----------------
+
+Core base classes and common primitives that other modules build upon.
 
 .. automodule:: baseobjects.bases
    :members:
@@ -63,6 +66,8 @@ bases.collections.baselist
 cachingtools
 ----------------------
 
+Caching utilities and cache abstractions for performance-sensitive workloads.
+
 .. automodule:: baseobjects.cachingtools
    :members:
 
@@ -111,6 +116,8 @@ cachingtools.caches.timedsinglecache
 classregistration
 ---------------------------
 
+Mechanisms for registering and dispatching classes and instances by keys or namespaces.
+
 .. automodule:: baseobjects.classregistration
    :members:
 
@@ -146,6 +153,8 @@ classregistration.namespaceregisteredclass
 
 collections
 ---------------------
+
+Specialized collection types extending or complementing Python's built-in containers.
 
 .. automodule:: baseobjects.collections
    :members:
@@ -183,6 +192,8 @@ collections.timeddict
 composition
 ---------------------
 
+Composable object patterns and helper classes for building component-based systems.
+
 .. automodule:: baseobjects.composition
    :members:
 
@@ -213,6 +224,8 @@ composition.dispatchablecomposite
 dataclasses
 ---------------------
 
+Lightweight data containers and parameter helpers to structure configuration and state.
+
 .. automodule:: baseobjects.dataclasses
    :members:
 
@@ -224,6 +237,8 @@ dataclasses.parameters
 
 functions
 -------------------
+
+Dynamic function utilities, decorators, and dispatching helpers.
 
 .. automodule:: baseobjects.functions
    :members:
@@ -273,6 +288,8 @@ functions.singlekwargdispatch
 metaclasses
 ---------------------
 
+Metaclass utilities to control class creation and initialization behavior.
+
 .. automodule:: baseobjects.metaclasses
    :members:
 
@@ -284,6 +301,8 @@ metaclasses.initmeta
 
 objects
 -----------------
+
+Object helpers for property management, callbacks, and utility behaviors.
 
 .. automodule:: baseobjects.objects
    :members:
@@ -302,6 +321,8 @@ objects.callbackmanager
 
 operations
 --------------------
+
+General-purpose operations and algorithms for data transformation and inspection.
 
 .. automodule:: baseobjects.operations
    :members:
@@ -356,6 +377,8 @@ operations.updaterecursive
 
 testsuite
 -------------------
+
+Test suites for validating behaviors of the corresponding modules.
 
 .. automodule:: baseobjects.testsuite
    :members:
@@ -491,6 +514,8 @@ testsuite.wrappers
 typing
 ----------------
 
+Additional typing helpers and generic protocols used across the project.
+
 .. automodule:: baseobjects.typing
    :members:
 
@@ -508,6 +533,8 @@ typing.generic
 
 versioning
 --------------------
+
+Version representation and utilities for handling semantic-like versions.
 
 .. automodule:: baseobjects.versioning
    :members:
@@ -527,6 +554,8 @@ versioning.version
 warnings
 ------------------
 
+Warning categories and helpers for runtime diagnostics.
+
 .. automodule:: baseobjects.warnings
    :members:
 
@@ -538,6 +567,8 @@ warnings.runtime
 
 wrappers
 ------------------
+
+Wrapper utilities to add behavior dynamically at runtime or statically at definition time.
 
 .. automodule:: baseobjects.wrappers
    :members:

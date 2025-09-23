@@ -29,7 +29,7 @@ from src.baseobjects.operations import parse_parentheses
 class TestParseParentheses:
     """Test the parse_parentheses function.
 
-    This class tests_old_ the functionality of the parse_parentheses function, which parses expressions with parentheses and
+    This class tests the functionality of the parse_parentheses function, which parses expressions with parentheses and
     returns a nested list of extracted elements.
     """
 

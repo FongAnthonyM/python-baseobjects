@@ -32,7 +32,7 @@ from .baseregisteredclasstestsuite import BaseRegisteredClassTestSuite
 class DispatchableClassTestSuite(BaseRegisteredClassTestSuite):
     """Base test suite for children of DispatchableClass.
 
-    This class provides common test functionality for child classes of DispatchableClass, including tests_old_ for
+    This class provides common test functionality for child classes of DispatchableClass, including tests for
     class dispatching. Subclasses should set the TestClass attribute and may override or extend the test methods.
 
     Attributes:

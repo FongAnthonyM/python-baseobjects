@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """updaterecursive_performance.py
-Performance tests_old_ for the update_recursive function in the baseobjects.operations package.
+Performance tests for the update_recursive function in the baseobjects.operations package.
 """
 # Header #
 __package_name__ = "baseobjects"
@@ -68,7 +68,7 @@ def standard_update_non_recursive(d: Dict[str, Any], updates: Mapping) -> Dict[s
 class TestUpdateRecursive(BasePerformanceTestSuite):
     """Test the performance of the update_recursive function.
 
-    This class tests_old_ the performance of the update_recursive function, which updates a mapping object and its contained
+    This class tests the performance of the update_recursive function, which updates a mapping object and its contained
     mappings based on another mapping.
     """
 
@@ -80,7 +80,7 @@ class TestUpdateRecursive(BasePerformanceTestSuite):
     # Fixtures
     @pytest.fixture
     def simple_dicts(self) -> tuple[Dict[str, Any], Dict[str, Any]]:
-        """Create simple dictionaries for use in tests_old_.
+        """Create simple dictionaries for use in tests.
 
         Returns:
             tuple: A tuple containing two simple dictionaries.
@@ -91,7 +91,7 @@ class TestUpdateRecursive(BasePerformanceTestSuite):
 
     @pytest.fixture
     def overlapping_dicts(self) -> tuple[Dict[str, Any], Dict[str, Any]]:
-        """Create dictionaries with overlapping keys for use in tests_old_.
+        """Create dictionaries with overlapping keys for use in tests.
 
         Returns:
             tuple: A tuple containing two dictionaries with overlapping keys.
@@ -102,7 +102,7 @@ class TestUpdateRecursive(BasePerformanceTestSuite):
 
     @pytest.fixture
     def nested_dicts(self) -> tuple[Dict[str, Any], Dict[str, Any]]:
-        """Create dictionaries with nested dictionaries for use in tests_old_.
+        """Create dictionaries with nested dictionaries for use in tests.
 
         Returns:
             tuple: A tuple containing two dictionaries with nested dictionaries.
@@ -113,7 +113,7 @@ class TestUpdateRecursive(BasePerformanceTestSuite):
 
     @pytest.fixture
     def deeply_nested_dicts(self) -> tuple[Dict[str, Any], Dict[str, Any]]:
-        """Create dictionaries with deeply nested dictionaries for use in tests_old_.
+        """Create dictionaries with deeply nested dictionaries for use in tests.
 
         Returns:
             tuple: A tuple containing two dictionaries with deeply nested dictionaries.
@@ -124,7 +124,7 @@ class TestUpdateRecursive(BasePerformanceTestSuite):
 
     @pytest.fixture
     def mixed_type_dicts(self) -> tuple[Dict[str, Any], Dict[str, Any]]:
-        """Create dictionaries with mixed value types for use in tests_old_.
+        """Create dictionaries with mixed value types for use in tests.
 
         Returns:
             tuple: A tuple containing two dictionaries with mixed value types.
@@ -135,7 +135,7 @@ class TestUpdateRecursive(BasePerformanceTestSuite):
 
     @pytest.fixture
     def large_dicts(self) -> tuple[Dict[str, Any], Dict[str, Any]]:
-        """Create large dictionaries for use in tests_old_.
+        """Create large dictionaries for use in tests.
 
         Returns:
             tuple: A tuple containing two large dictionaries.

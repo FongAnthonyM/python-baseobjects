@@ -1,5 +1,5 @@
 """baseobjecttestsuite.py
-Specialized test suite classes for different types of tests_old_ in the baseobjects package.
+Specialized test suite classes for different types of tests in the baseobjects package.
 
 This module provides the BaseObjectTestSuite class which serves as a foundation for testing classes that inherit from
 BaseObject. It includes common test functionality such as tests for copying and pickling. Subclasses should set the
@@ -46,7 +46,7 @@ from ..bases import BaseClassTestSuite
 class BaseObjectTestSuite(BaseClassTestSuite):
     """Base test suite for children of BaseObject.
 
-    This class provides common test functionality for child class of BaseObject, including tests_old_ for copying and
+    This class provides common test functionality for child class of BaseObject, including tests for copying and
     pickling. Subclasses should set the TestClass attribute and may override or extend the test methods.
 
     Attributes:
@@ -75,7 +75,7 @@ class BaseObjectTestSuite(BaseClassTestSuite):
     def test_instance_creation(self, *args: Any, **kwargs: Any) -> None:
         """Test that instances of the class can be created.
 
-        This method can be overridden by subclasses to perform additional tests_old_ on the instance.
+        This method can be overridden by subclasses to perform additional tests on the instance.
 
         Args:
             *args: Positional arguments list to pass to the class constructor.

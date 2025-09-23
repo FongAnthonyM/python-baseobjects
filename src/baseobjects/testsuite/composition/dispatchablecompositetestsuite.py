@@ -33,7 +33,7 @@ from .basedispatchingcompositetestsuite import BaseDispatchingCompositeTestSuite
 class DispatchableCompositeTestSuite(BaseDispatchingCompositeTestSuite, DispatchableClassTestSuite):
     """Base test suite for children of DispatchableComposite.
 
-    This class provides common test functionality for child classes of DispatchableComposite, including tests_old_ for
+    This class provides common test functionality for child classes of DispatchableComposite, including tests for
     dispatchable class functionality. Subclasses should set the TestClass attribute and may override or extend the test methods.
 
     Attributes:

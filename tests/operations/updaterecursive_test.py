@@ -29,7 +29,7 @@ from src.baseobjects.operations import update_recursive
 class TestUpdateRecursive:
     """Test the update_recursive function.
 
-    This class tests_old_ the functionality of the update_recursive function, which updates a mapping object and its
+    This class tests the functionality of the update_recursive function, which updates a mapping object and its
     contained mappings based on another mapping.
     """
 

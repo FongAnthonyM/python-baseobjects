@@ -42,7 +42,7 @@ from src.baseobjects.operations.filetimetodatetime import filetime_to_datetime, 
 class TestFiletimeToDatetime:
     """Test the filetime_to_datetime function.
 
-    This class tests_old_ the functionality of the filetime_to_datetime function, which converts a Windows filetime to a
+    This class tests the functionality of the filetime_to_datetime function, which converts a Windows filetime to a
     datetime object.
     """
 

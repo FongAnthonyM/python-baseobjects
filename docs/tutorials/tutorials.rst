@@ -1,6 +1,10 @@
 Tutorials
 =========
 
+.. contents:: On this page
+   :local:
+   :backlinks: none
+
 This project includes additional tutorials and examples in the repository to help you learn by doing.
 
 Repository tutorials

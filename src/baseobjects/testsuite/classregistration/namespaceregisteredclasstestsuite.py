@@ -33,7 +33,7 @@ from .baseregisteredclasstestsuite import BaseRegisteredClassTestSuite
 class NamespaceRegisteredClassTestSuite(BaseRegisteredClassTestSuite):
     """Base test suite for children of NamespaceRegisteredClass.
 
-    This class provides common test functionality for child classes of NamespaceRegisteredClass, including tests_old_ for
+    This class provides common test functionality for child classes of NamespaceRegisteredClass, including tests for
     namespace-based class registration and retrieval. Subclasses should set the TestClass attribute and may override or extend the test methods.
 
     Attributes:
