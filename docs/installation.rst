@@ -24,25 +24,24 @@ Install the latest code from the main branch without cloning:
    pip install "git+https://github.com/AnthonyTechnologies/python-baseobjects.git@main"
 
 
-GitHub with Examples & Tutorials
---------------------------------
+GitHub Clone
+------------
 
-Clone the repo and install in editable mode (recommended for exploring notebooks or contributing):
+Installing a github clone can be useful for either exploring the examples and tutorials and/or contributing
+baseobjects.
+
+For only exlporing examples and tutorials:
 
 .. code-block:: bash
 
    git clone https://github.com/AnthonyTechnologies/python-baseobjects.git
    cd python-baseobjects
-   python -m venv .venv
-   .venv\Scripts\activate
-   pip install -U pip
-   pip install -e .
+   pip install .[jupyter]
 
-To run the tutorials (Jupyter notebooks), install Jupyter and open the tutorials folder:
+For contributing/developing baseobjects:
 
 .. code-block:: bash
 
-   pip install jupyter
-   jupyter notebook tutorials
-
-Alternatively, open the .ipynb files in your preferred IDE.
+   git clone https://github.com/AnthonyTechnologies/python-baseobjects.git
+   cd python-baseobjects
+   pip install -e .[dev]

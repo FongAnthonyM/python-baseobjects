@@ -11,14 +11,29 @@
    installation
 
 .. toctree::
+   :caption: Concepts
+   :maxdepth: 1
+
+   concepts/baseobject
+   concepts/bases
+   concepts/composition
+   concepts/registered-classes
+   concepts/caching-tools
+   concepts/collections
+   concepts/dataclasses
+   concepts/functions
+   concepts/metaclasses
+   concepts/objects
+   concepts/operations
+   concepts/typing
+   concepts/versioning
+   concepts/wrappers
+
+.. toctree::
    :caption: Tutorials and Examples
    :maxdepth: 1
 
    tutorials/tutorials
-   tutorials/baseobject
-   tutorials/composition
-   tutorials/caching-tools
-   tutorials/registered-classes
 
 .. toctree::
    :caption: API Reference

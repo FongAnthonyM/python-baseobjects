@@ -1,5 +1,5 @@
-Tutorials
-=========
+Tutorials and Exmaples
+======================
 
 .. contents:: On this page
    :local:
@@ -17,8 +17,7 @@ To run the notebooks locally, install the optional dependencies and launch Jupyt
 
 .. code-block:: bash
 
-   pip install -e .[dev]
-   pip install jupyter
+   pip install -e .[jupyter]
    jupyter notebook tutorials/
 
 Note: The documentation site does not render the notebooks directly. Use the links above to explore them locally.

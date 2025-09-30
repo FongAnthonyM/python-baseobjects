@@ -58,7 +58,7 @@ class ExampleDispatchingCompositeClass(BaseDispatchingComposite):
         component_types: dict[str, tuple[type, dict[str, Any]]] | None = None,
         components: dict[str, Any] | None = None,
         init: bool = True,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         # Attributes #
         self.components: dict[str, Any] = self.components.copy()
@@ -84,7 +84,7 @@ class ExampleDispatchingCompositeClass(BaseDispatchingComposite):
         component_kwargs: dict[str, dict[str, Any]] | None = None,
         component_types: dict[str, tuple[type, dict[str, Any]]] | None = None,
         components: dict[str, Any] | None = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Constructs this object.
 

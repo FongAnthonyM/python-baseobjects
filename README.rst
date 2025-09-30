@@ -42,7 +42,6 @@ Features
 This package contains useful base objects meant for inheritance and helper functions.
 
 * bases: Low level base classes.
-
 * cachingtools: Objects and decorators for local caching.
 * collections: Objects for storing other objects.
 * composition: Objects for creating compositions style objects.
@@ -60,8 +59,6 @@ Requirements
 
 * Python 3.10 or later
 * bidict
-* click
-
 
 Installation
 ------------
@@ -71,12 +68,6 @@ You can install *baseobjects* via pip_ from PyPI_:
 .. code:: console
 
    $ pip install baseobjects
-
-
-Usage
------
-
-Please see the `Command-line Reference <Usage_>`_ for details.
 
 
 Contributing
