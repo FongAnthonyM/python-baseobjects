@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """basemeta_example.py
 An example of how to use BaseMeta metaclass.
 
@@ -15,10 +14,8 @@ This example demonstrates:
 import copy
 from typing import Any, ClassVar, Dict, List
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.bases import BaseMeta
-
-# Local Packages #
 
 
 # Classes #

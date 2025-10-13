@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """timezoneoffset_example.py
 An example of how to use the timezone_offset function.
 
@@ -16,10 +15,8 @@ This example demonstrates:
 import datetime
 import zoneinfo
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.operations import timezone_offset
-
-# Local Packages #
 
 
 # Example Sections #

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """automaticproperties_test.py
 Test for the AutomaticProperties class.
 
@@ -24,7 +23,7 @@ from typing import Any, Type
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
 from src.baseobjects.objects import AutomaticProperties
 from src.baseobjects.testsuite.objects import AutomaticPropertiesTestSuite
 

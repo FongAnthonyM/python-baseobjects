@@ -21,9 +21,9 @@ __version__ = "1.12.0"
 # Imports #
 # Local Packages #
 from .basedecorator import BaseDecorator
-from .singlekwargdispatch import singlekwargdispatch
+from .callablemultiplexer import CallableMultiplexer, FunctionMultiplexer, MethodMultiplexer
+from .dynamiccallable import DynamicCallable, DynamicFunction, DynamicMethod
+from .dynamicdecoractor import DynamicDecorator
 from .functionregistry import FunctionRegistry
 from .methodregistry import MethodRegistry
-from .callablemultiplexer import CallableMultiplexer, MethodMultiplexer, FunctionMultiplexer
-from .dynamiccallable import DynamicCallable, DynamicMethod, DynamicFunction
-from .dynamicdecoractor import DynamicDecorator
+from .singlekwargdispatch import singlekwargdispatch

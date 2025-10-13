@@ -20,12 +20,10 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from collections.abc import Iterable
 import copy
-from typing import Any, Optional
 import weakref
-
-# Third-Party Packages #
+from collections.abc import Iterable
+from typing import Any, Optional
 
 # Local Packages #
 from ..bases import BaseObject, BaseReducible
@@ -355,7 +353,7 @@ class CircularDoublyLinkedContainer(BaseObject):
             data: The data to add to the new node.
             index: The place to insert the new node at.
 
-        Returns
+        Returns:
             The LinkedNode added to the container.
         """
         new_node = LinkedNode(data)
@@ -386,7 +384,7 @@ class CircularDoublyLinkedContainer(BaseObject):
             data: The data to add to the new node.
             index: The place to insert the new node at.
 
-        Returns
+        Returns:
             The LinkedNode added to the container.
         """
         self.nodes.add(data)
@@ -426,7 +424,7 @@ class CircularDoublyLinkedContainer(BaseObject):
         Args:
             index: The index of the node to pop.
 
-        Returns
+        Returns:
             The LinkedNode removed from the container.
         """
         node = self.get_item(index=index)

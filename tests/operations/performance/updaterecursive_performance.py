@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """updaterecursive_performance.py
 Performance tests for the update_recursive function in the baseobjects.operations package.
 """
@@ -23,9 +22,9 @@ from typing import Any, Dict
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+# Source Packages #
 from src.baseobjects.operations import update_recursive
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #

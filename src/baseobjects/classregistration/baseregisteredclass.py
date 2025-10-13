@@ -20,10 +20,8 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from abc import abstractmethod, abstractproperty
-from typing import ClassVar, Any, Optional
-
-# Third-Party Packages #
+from abc import abstractmethod
+from typing import Any, ClassVar, Optional
 
 # Local Packages #
 from ..bases import BaseObject

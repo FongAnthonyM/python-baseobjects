@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """callbackmanager_test.py
 Test for the CallbackManager class.
 
@@ -17,18 +16,19 @@ __license__ = "MIT"
 __version__ = "1.12.0"
 
 
-# Imports #
 # Standard Libraries #
+import asyncio
+
+# Imports #
 import copy
 import pickle
-import asyncio
-from typing import Any, Dict, Callable
 from collections import deque
+from typing import Any, Callable, Dict
 
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
 from src.baseobjects.objects import CallbackManager, CallbackScheduler
 from src.baseobjects.testsuite.bases import BaseObjectTestSuite
 

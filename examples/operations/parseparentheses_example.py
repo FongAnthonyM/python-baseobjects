@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """parseparentheses_example.py
 An example of how to use the parse_parentheses function.
 
@@ -16,10 +15,8 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.operations import parse_parentheses
-
-# Local Packages #
 
 
 # Example Sections #

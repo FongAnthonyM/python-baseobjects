@@ -20,14 +20,10 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from collections.abc import Callable
-from types import MethodType
 from typing import Any
 
-# Third-Party Packages #
-
 # Local Packages #
-from .timedsinglecache import TimedSingleCacheCallable, TimedSingleCacheMethod, TimedSingleCache
+from .timedsinglecache import TimedSingleCache, TimedSingleCacheCallable, TimedSingleCacheMethod
 
 
 # Definitions #

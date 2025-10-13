@@ -20,11 +20,9 @@ from types import MethodType
 from typing import Any
 from weakref import ReferenceType
 
-# Third-Party Packages #
-
 # Local Packages #
-from ..typing import AnyCallable
 from ..bases import BaseReducible
+from ..typing import AnyCallable
 from .functionregistry import FunctionRegistry
 
 

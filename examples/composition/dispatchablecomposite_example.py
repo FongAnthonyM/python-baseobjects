@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """dispatchablecomposite_example.py
 An example of how to create and use DispatchableComposite.
 
@@ -17,11 +16,9 @@ This example demonstrates:
 # Standard Libraries #
 from typing import Any, ClassVar, Dict, List, Optional, Tuple, Type
 
-# Third-Party Packages #
-from baseobjects.composition import DispatchableComposite, BaseComponent
+# Source Packages #
 from baseobjects.classregistration import NamespaceClassRegistry
-
-# Local Packages #
+from baseobjects.composition import BaseComponent, DispatchableComposite
 
 
 # Definitions #

@@ -22,10 +22,8 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any
 from functools import partial
-
-# Third-Party Packages #
+from typing import Any
 
 # Local Packages #
 from ..bases import BaseFunction

@@ -18,9 +18,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import ClassVar, Any, Optional
-
-# Third-Party Packages #
+from typing import Any, ClassVar, Optional
 
 # Local Packages #
 from .baseclassregistry import BaseClassRegistry
@@ -100,8 +98,8 @@ class NamespaceRegisteredClass(BaseRegisteredClass):
 
     @classmethod
     def get_registered_class(
-        cls, namespace: str, name: str, module: str | None = None
-    ) -> Optional[BaseRegisteredClass]:
+        cls, namespace: str, name: str, module: str | None = None,
+    ) -> BaseRegisteredClass | None:
         """Gets a subclass from the registry.
 
         Args:

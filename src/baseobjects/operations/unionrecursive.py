@@ -15,10 +15,8 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from copy import deepcopy
 from collections.abc import Mapping
-
-# Third-Party Packages #
+from copy import deepcopy
 
 # Local Packages #
 from .updaterecursive import update_recursive

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """functionregistry_example.py
 An example of how to create and use FunctionRegistry.
 
@@ -15,10 +14,8 @@ This example demonstrates:
 # Standard Libraries #
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.functions import FunctionRegistry
-
-# Local Packages #
 
 
 # Definitions #

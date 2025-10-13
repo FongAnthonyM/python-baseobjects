@@ -25,5 +25,5 @@ __version__ = "1.12.0"
 
 # Imports
 # Local Packages #
-from .version import Version
 from .trinumberversion import TriNumberVersion
+from .version import Version

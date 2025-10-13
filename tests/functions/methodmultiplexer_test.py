@@ -24,8 +24,8 @@ from typing import Any, Type
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.functions import MethodMultiplexer, FunctionRegistry
+# Source Packages #
+from src.baseobjects.functions import FunctionRegistry, MethodMultiplexer
 from src.baseobjects.testsuite.bases import BaseCallableTestSuite
 
 

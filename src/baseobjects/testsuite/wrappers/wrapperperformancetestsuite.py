@@ -110,7 +110,7 @@ class WrapperPerformanceTestSuite(BasePerformanceTestSuite):
     timeit_runs: int = 100000
     speed_tolerance: int = 150
 
-    TestClass: Type[Any]
+    TestClass: type[Any]
 
     # Instance Methods #
     # Fixtures

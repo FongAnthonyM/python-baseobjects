@@ -18,7 +18,7 @@ Example
        name: str
        tags: list[str]
 
-   u1 = User(1, "Ada", ["admin"]) 
+   u1 = User(1, "Ada", ["admin"])
    u2 = u1.deepcopy()
    assert u1 is not u2 and u1.tags is not u2.tags
 

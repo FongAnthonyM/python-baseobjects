@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """bytestobin_performance.py
 Performance tests for the bytes_to_bin function in the baseobjects.operations package.
 """
@@ -22,9 +21,9 @@ from typing import Any
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+# Source Packages #
 from src.baseobjects.operations import bytes_to_bin
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #

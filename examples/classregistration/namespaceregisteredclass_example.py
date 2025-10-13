@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """namespaceregisteredclass_example.py
 An example of how to create and use NamespaceRegisteredClass.
 
@@ -16,10 +15,8 @@ This example demonstrates:
 # Standard Libraries #
 from typing import Any, ClassVar
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.classregistration import NamespaceRegisteredClass
-
-# Local Packages #
 
 
 # Definitions #

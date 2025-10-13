@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """basereducible_performance.py
 Performance tests for the BaseReducible class in the baseobjects.bases package.
 """
@@ -18,14 +17,14 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import pickle
 import timeit
-from typing import Any, Dict, List, ClassVar
+from typing import Any, ClassVar, Dict, List
 
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+# Source Packages #
 from src.baseobjects.bases import BaseReducible
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """basecomponent_example.py
 An example of how to create and use BaseComponent.
 
@@ -16,11 +15,9 @@ This example demonstrates:
 # Standard Libraries #
 import pickle
 
-# Third-Party Packages #
-from baseobjects.composition import BaseComponent
+# Source Packages #
 from baseobjects.bases import BaseObject
-
-# Local Packages #
+from baseobjects.composition import BaseComponent
 
 
 # Definitions #

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """exceldatetodatetime_example.py
 An example of how to use the excel_date_to_datetime function.
 
@@ -16,10 +15,8 @@ This example demonstrates:
 # Standard Libraries #
 import datetime
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.operations import excel_date_to_datetime
-
-# Local Packages #
 
 
 # Example Sections #

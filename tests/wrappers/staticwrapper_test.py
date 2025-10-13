@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """staticwrapper_test.py
 Tests for the StaticWrapper class in the baseobjects package.
 """
@@ -21,9 +20,9 @@ from typing import Any
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.wrappers import StaticWrapper
+# Source Packages #
 from src.baseobjects.testsuite.wrappers.wrappertestsuite import WrapperTestSuite
+from src.baseobjects.wrappers import StaticWrapper
 
 
 # Definitions #

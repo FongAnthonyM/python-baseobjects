@@ -19,7 +19,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Local Packages #
-from .basecomposite import BaseComposite
 from .basecomponent import BaseComponent
+from .basecomposite import BaseComposite
 from .basedispatchingcomposite import BaseDispatchingComposite
 from .dispatchablecomposite import DispatchableComposite

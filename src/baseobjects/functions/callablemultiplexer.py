@@ -15,14 +15,12 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any
 from types import MethodType
-
-# Third-Party Packages #
+from typing import Any
 
 # Local Packages #
-from ..typing import AnyCallable, GetObjectMethod
 from ..bases import BaseCallable, BaseMethod
+from ..typing import AnyCallable, GetObjectMethod
 from .functionregistry import FunctionRegistry
 
 
@@ -220,7 +218,7 @@ class CallableMultiplexer(BaseMethod):
             name: The name of the method being added.
             method: The method to add to the registry.
         """
-        self.registry[name] = getattr(method, "__func__")
+        self.registry[name] = method.__func__
 
     def bind_selected(self, instance: Any = None, owner: type[Any] | None = None) -> BaseCallable | MethodType:
         """Creates a method of the selected function using python's method binding.
@@ -270,7 +268,7 @@ class CallableMultiplexer(BaseMethod):
             name: The name of the method being added.
             method: The method to add to the registry.
         """
-        self.registry[name] = self.__func__ = getattr(method, "__func__")
+        self.registry[name] = self.__func__ = method.__func__
         self._selected_bind_method = self.__wrapped__.__get__
         self._selected = name
 

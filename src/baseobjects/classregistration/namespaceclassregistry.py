@@ -21,10 +21,8 @@ __version__ = "1.12.0"
 from collections.abc import Iterable, Mapping
 from copy import deepcopy
 from importlib import import_module
-from typing import ClassVar, Any
+from typing import Any, ClassVar
 from warnings import warn
-
-# Third-Party Packages #
 
 # Local Packages #
 from ..bases import SEARCHSENTINEL
@@ -181,8 +179,7 @@ class NamespaceClassRegistry(BaseClassRegistry):
         if namespace_types is None:
             if default is SEARCHSENTINEL:
                 raise KeyError(f"Namespace '{namespace}' not found.")
-            else:
-                return default
+            return default
         elif (class_ := namespace_types.get(name, None)) is None and module is not None:
             try:
                 import_module(module)
@@ -194,8 +191,7 @@ class NamespaceClassRegistry(BaseClassRegistry):
         if class_ is None:
             if default is SEARCHSENTINEL:
                 raise KeyError(f"Class '{name}' not found in namespace '{namespace}'.")
-            else:
-                return default
+            return default
         else:
             return class_ if with_kwargs else class_[0]
 

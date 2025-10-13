@@ -15,15 +15,13 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from abc import abstractmethod
 import copy
 import pickle
+from abc import abstractmethod
 from typing import Any, Type
 
-# Third-Party Packages #
-
 # Local Packages #
-from ...classregistration import DispatchableClass, BaseRegisteredClass
+from ...classregistration import DispatchableClass
 from .baseregisteredclasstestsuite import BaseRegisteredClassTestSuite
 
 
@@ -40,7 +38,7 @@ class DispatchableClassTestSuite(BaseRegisteredClassTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[DispatchableClass]
+    TestClass: type[DispatchableClass]
 
     # Instance Methods #
     # Tests

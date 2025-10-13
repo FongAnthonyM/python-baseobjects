@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """basefunction_performance.py
 Performance tests for the BaseFunction class in the baseobjects.bases package.
 """
@@ -23,9 +22,9 @@ from typing import Any, Callable
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+# Source Packages #
 from src.baseobjects.bases import BaseFunction, BaseMethod
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #

@@ -20,12 +20,12 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import pickle
-from typing import Any, Callable, Type, Dict
+from typing import Any, Callable, Dict, Type
 
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
 from src.baseobjects.functions import CallableMultiplexer, FunctionRegistry
 from src.baseobjects.testsuite.bases import BaseCallableTestSuite
 

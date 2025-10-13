@@ -20,8 +20,7 @@ __license__ = "MIT"
 
 __version__ = "1.12.0"
 
-
 # Imports #
 # Local Packages #
-from .baselist import BaseList
 from .basedict import BaseDict
+from .baselist import BaseList

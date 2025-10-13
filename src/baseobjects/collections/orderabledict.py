@@ -21,15 +21,12 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from collections.abc import Mapping, Iterable, Iterator
+from collections.abc import Iterable, Iterator, Mapping
 from typing import Any
-
-# Third-Party Packages #
 
 # Local Packages #
 from ..bases import BaseDict
 from ..typing import KeyType, ValueType
-
 
 # Definitions #
 # Static #

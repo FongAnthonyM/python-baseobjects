@@ -45,7 +45,7 @@ class DynamicFunctionTestSuite(DynamicCallableTestSuite, BaseFunctionTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[DynamicFunction]
+    TestClass: type[DynamicFunction]
 
     # Instance Methods #
     # Tests

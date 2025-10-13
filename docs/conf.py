@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """Sphinx configuration for baseobjects.
 
 This configuration enables extensive API documentation using autodoc and
@@ -7,22 +6,24 @@ autosummary, better type and Google/NumPy style docstring parsing via
 Napoleon, and several convenience extensions like viewcode, intersphinx,
 and todo.
 """
+
 # Imports #
 # Standard Libraries #
-from datetime import datetime
-import os
 import sys
+from datetime import datetime, timezone
+from pathlib import Path
+
 
 # Ensure src is on sys.path for autodoc
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-SRC = os.path.join(ROOT, "src")
-if os.path.isdir(SRC) and SRC not in sys.path:
-    sys.path.insert(0, SRC)
+ROOT = Path(__file__).parent.parent.resolve()
+SRC = ROOT / "src"
+if SRC.is_dir() and str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
 
 # Project Information #
 project = "baseobjects"
 author = "Anthony Fong"
-copyright = f"{datetime.now().year}, {author}"
+copyright = f"{datetime.now(tz=timezone.utc).year}, {author}"
 
 # General configuration #
 extensions = [

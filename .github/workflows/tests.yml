@@ -22,13 +22,15 @@ jobs:
 
     env:
       NOXSESSION: ${{ matrix.session }}
+      FORCE_COLOR: "1"
+      PRE_COMMIT_COLOR: "always"
 
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v3.0.2
+        uses: actions/checkout@v3
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4.7.1
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -36,6 +38,15 @@ jobs:
         run: |
           pip install --constraint=.github/workflows/constraints.txt pip
           pip --version
+
+      - name: Upgrade pip in virtual environments
+        shell: python
+        run: |
+          import os
+          import pip
+
+          with open(os.environ["GITHUB_ENV"], mode="a") as io:
+              print(f"VIRTUALENV_PIP={pip.__version__}", file=io)
 
       - name: Install Poetry
         run: |
@@ -64,7 +75,7 @@ jobs:
           print("::set-output name=result::{}".format(result))
 
       - name: Restore pre-commit cache
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         if: matrix.session == 'pre-commit'
         with:
           path: ~/.cache/pre-commit
@@ -95,12 +106,12 @@ jobs:
     needs: tests
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v3.0.2
+        uses: actions/checkout@v3
 
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4.6.1
         with:
-          python-version: 3.9
+          python-version: "3.10"
 
       - name: Upgrade pip
         run: |
@@ -119,17 +130,17 @@ jobs:
           nox --version
 
       - name: Download coverage data
-        uses: actions/download-artifact@v3.0.0
+        uses: actions/download-artifact@v3
         with:
           name: coverage-data
 
       - name: Combine coverage data and display human readable report
         run: |
-          nox --force-color --session=coverage
+          nox --session=coverage
 
       - name: Create coverage report
         run: |
-          nox --force-color --session=coverage -- xml
+          nox --session=coverage -- xml
 
       - name: Upload coverage report
-        uses: codecov/codecov-action@v2.1.0
+        uses: codecov/codecov-action@v3.1.4

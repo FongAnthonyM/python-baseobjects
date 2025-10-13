@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """exceldatetodatetime_test.py
 Tests for the excel_date_to_datetime function in the baseobjects package.
 """
@@ -16,13 +15,13 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from datetime import timezone, timedelta
+from datetime import timedelta, timezone
 
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.operations.exceldatetodatetime import excel_date_to_datetime, EXCEL_INIT_DATE
+# Source Packages #
+from src.baseobjects.operations.exceldatetodatetime import EXCEL_INIT_DATE, excel_date_to_datetime
 
 
 # Definitions #

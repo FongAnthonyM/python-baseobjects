@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """version_example.py
 An example of how to use the Version abstract class.
 
@@ -15,10 +14,8 @@ This example demonstrates:
 # Standard Libraries #
 from typing import Any, List, Tuple
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.versioning import Version
-
-# Local Packages #
 
 
 # Classes #

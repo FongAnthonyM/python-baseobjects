@@ -45,7 +45,7 @@ class DynamicDecoratorTestSuite(BaseDecoratorTestSuite, DynamicFunctionTestSuite
     """
 
     # Attributes #
-    TestClass: Type[DynamicDecorator]
+    TestClass: type[DynamicDecorator]
 
     # Instance Methods #
     # Tests

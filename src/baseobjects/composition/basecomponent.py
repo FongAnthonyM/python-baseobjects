@@ -22,8 +22,6 @@ __version__ = "1.12.0"
 from typing import Any
 from weakref import ReferenceType
 
-# Third-Party Packages #
-
 # Local Packages #
 from ..bases import BaseReducible
 from .basecomposite import BaseComposite

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """groupedlist_example.py
 An example of how to use GroupedList class.
 
@@ -14,10 +13,8 @@ This example demonstrates:
 # Standard Libraries #
 from typing import Any, List
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.collections import GroupedList
-
-# Local Packages #
 
 
 # Example Sections #

@@ -26,10 +26,9 @@ from typing import Any, Callable, Dict, Type
 # Third-Party Packages #
 import pytest
 
-
-# Local Packages #
-from src.baseobjects.functions.methodregistry import BaseMethodRegistry, BoundMethodRegistry, MethodRegistry
+# Source Packages #
 from src.baseobjects.functions.functionregistry import FunctionRegistry
+from src.baseobjects.functions.methodregistry import BaseMethodRegistry, BoundMethodRegistry, MethodRegistry
 from src.baseobjects.testsuite.bases import BaseObjectTestSuite
 
 

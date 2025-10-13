@@ -19,12 +19,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-
-# Third-Party Packages #
-
-# Local Packages #
 from typing import TypeVar
-
 
 # Definitions #
 # Types #
@@ -35,8 +30,8 @@ VT_co = TypeVar("_VT_co", covariant=True)
 
 # Available Types
 __all__ = [
-    "KeyType",
-    "ValueType",
     "KT_co",
+    "KeyType",
     "VT_co",
+    "ValueType",
 ]

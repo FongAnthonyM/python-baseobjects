@@ -12,15 +12,12 @@ __license__ = "MIT"
 
 __version__ = "1.12.0"
 
-
 # Imports #
 # Standard Libraries #
-from abc import abstractmethod
 import copy
 import pickle
+from abc import abstractmethod
 from typing import Any, Type
-
-# Third-Party Packages #
 
 # Local Packages #
 from ...composition import BaseComposite
@@ -40,12 +37,12 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestComponent: Type[Any]
-    TestClass: Type[BaseComposite]
+    TestComponent: type[Any]
+    TestClass: type[BaseComposite]
 
     # Instance Methods #
     def create_components(
-        self, component_types: dict[str, tuple[type, dict[str, Any]]] | None = None
+        self, component_types: dict[str, tuple[type, dict[str, Any]]] | None = None,
     ) -> dict[str, Any]:
         """Create components for the test composite.
 
@@ -217,7 +214,7 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
         assert isinstance(composite.components["test_component"], self.TestComponent)
         assert composite.components["test_component_added"] is components["test_component_added"]
 
-    def test_create_component(self, component_type: Type[Any] | None = None, *args: Any, **kwargs: Any) -> None:
+    def test_create_component(self, component_type: type[Any] | None = None, *args: Any, **kwargs: Any) -> None:
         """Test the create_component method.
 
         This test verifies that the create_component method correctly creates and adds a component.
@@ -237,7 +234,7 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
         assert component is not None
         assert component.composite is composite
 
-    def test_add_component(self, component_type: Type[Any] | None = None, *args: Any, **kwargs: Any) -> None:
+    def test_add_component(self, component_type: type[Any] | None = None, *args: Any, **kwargs: Any) -> None:
         """Test the add_component method.
 
         This test verifies that the add_component method correctly adds a component and sets its composite.
@@ -257,7 +254,7 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
         # Validate
         assert component.composite is composite
 
-    def test_remove_component(self, component_type: Type[Any] | None = None, *args: Any, **kwargs: Any) -> None:
+    def test_remove_component(self, component_type: type[Any] | None = None, *args: Any, **kwargs: Any) -> None:
         """Test the remove_component method.
 
         This test verifies that the remove_component method correctly removes a component and clears its composite.

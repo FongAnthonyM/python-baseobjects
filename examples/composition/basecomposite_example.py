@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """basecomposite_example.py
 An example of how to create and use BaseComposite.
 
@@ -15,12 +14,10 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 import pickle
-from typing import Any, Dict, Tuple, Type, ClassVar
+from typing import Any, ClassVar, Dict, Tuple, Type
 
-# Third-Party Packages #
-from baseobjects.composition import BaseComposite, BaseComponent
-
-# Local Packages #
+# Source Packages #
+from baseobjects.composition import BaseComponent, BaseComposite
 
 
 # Definitions #

@@ -22,8 +22,6 @@ __version__ = "1.12.0"
 # Standard Libraries #
 from typing import Any
 
-# Third-Party Packages #
-
 # Local Packages #
 from .baseregisteredclass import BaseRegisteredClass
 

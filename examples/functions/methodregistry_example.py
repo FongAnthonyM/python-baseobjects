@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """methodregistry_example.py
 An example of how to create and use MethodRegistry.
 
@@ -15,10 +14,8 @@ This example demonstrates:
 # Standard Libraries #
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-# Third-Party Packages #
-from baseobjects.functions import MethodRegistry, FunctionRegistry
-
-# Local Packages #
+# Source Packages #
+from baseobjects.functions import FunctionRegistry, MethodRegistry
 
 
 # Definitions #

@@ -26,13 +26,11 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from asyncio import create_task, Task, gather, wait_for, shield
-from collections.abc import Callable, Iterable
+from asyncio import Task, create_task, gather, shield, wait_for
 from collections import deque
+from collections.abc import Callable, Iterable
 from functools import partial
-from typing import ClassVar, Any, NamedTuple
-
-# Third-Party Packages #
+from typing import Any, ClassVar, NamedTuple
 
 # Local Packages #
 from ..bases import BaseObject, BaseReducible
@@ -999,7 +997,7 @@ class CallbackManager(BaseReducible):
             tasks.append(scheduler_task)  # Add task to tasks deque.
 
     async def start_scheduler_async(
-        self, scheduler: CallbackScheduler, tasks: deque, *args: Any, **kwargs: Any
+        self, scheduler: CallbackScheduler, tasks: deque, *args: Any, **kwargs: Any,
     ) -> None:
         """Asynchronously starts the scheduler for callback execution and management.
 

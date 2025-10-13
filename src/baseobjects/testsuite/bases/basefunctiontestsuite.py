@@ -24,9 +24,6 @@ from abc import abstractmethod
 from types import MethodType
 from typing import Any, Type
 
-# Third-Party Packages #
-import pytest
-
 # Local Packages #
 from ...bases import BaseFunction
 from .basecallabletestsuite import BaseCallableTestSuite
@@ -46,7 +43,7 @@ class BaseFunctionTestSuite(BaseCallableTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BaseFunction]
+    TestClass: type[BaseFunction]
 
     # Instance Methods #
     # Tests

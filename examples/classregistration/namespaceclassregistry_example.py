@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """namespaceclassregistry_example.py
 An example of how to create and use NamespaceClassRegistry.
 
@@ -16,11 +15,9 @@ This example demonstrates:
 # Standard Libraries #
 from typing import Any
 
-# Third-Party Packages #
-from baseobjects.classregistration import NamespaceClassRegistry
+# Source Packages #
 from baseobjects.bases import SEARCHSENTINEL
-
-# Local Packages #
+from baseobjects.classregistration import NamespaceClassRegistry
 
 
 # Definitions #

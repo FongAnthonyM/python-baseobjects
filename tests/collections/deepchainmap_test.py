@@ -26,7 +26,7 @@ from typing import Type
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
 from src.baseobjects.collections import DeepChainMap
 from src.baseobjects.testsuite.bases import BaseObjectTestSuite
 

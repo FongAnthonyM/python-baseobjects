@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """basereducible_example.py
 An example of how to use BaseReducible class.
 
@@ -15,10 +14,8 @@ This example demonstrates:
 import pickle
 from typing import Any
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.bases import BaseReducible
-
-# Local Packages #
 
 
 # Classes #

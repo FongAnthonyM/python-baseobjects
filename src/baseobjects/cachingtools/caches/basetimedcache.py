@@ -26,12 +26,10 @@ from contextlib import contextmanager
 from time import perf_counter
 from typing import Any, ContextManager
 
-# Third-Party Packages #
-
 # Local Packages #
-from ...typing import AnyCallable
 from ...bases import BaseObject
-from ...functions import DynamicDecorator, MethodMultiplexer, DynamicCallable, DynamicMethod
+from ...functions import DynamicCallable, DynamicDecorator, DynamicMethod, MethodMultiplexer
+from ...typing import AnyCallable
 
 
 # Definitions #

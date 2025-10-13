@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """dynamicwrapper_example.py
 An example of how to use DynamicWrapper class.
 
@@ -18,10 +17,8 @@ This example demonstrates:
 import time
 from typing import List
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.wrappers import DynamicWrapper
-
-# Local Packages #
 
 
 # Classes #

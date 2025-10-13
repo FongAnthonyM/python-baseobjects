@@ -30,10 +30,8 @@ from functools import partial, partialmethod
 from types import MethodDescriptorType
 from typing import Any, ClassVar, get_type_hints
 
-# Third-Party Packages #
-
 # Local Packages #
-from ..bases import BaseObject, SEARCHSENTINEL
+from ..bases import SEARCHSENTINEL, BaseObject
 from ..metaclasses import InitMeta
 from ..typing import AnyCallable, PropertyCallbacks
 

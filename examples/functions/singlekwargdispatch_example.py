@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """singlekwargdispatch_example.py
 An example of how to create and use singlekwargdispatch.
 
@@ -16,10 +15,8 @@ This example demonstrates:
 # Standard Libraries #
 from typing import Any, Dict, List, Union
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.functions import singlekwargdispatch
-
-# Local Packages #
 
 
 # Definitions #
@@ -122,6 +119,7 @@ def _(data: Any, format_as: str, precision: int = 2) -> str:
         The formatted data as a string.
     """
     if format_as.lower() == "json":
+        # Standard Libraries #
         import json
 
         try:
@@ -254,6 +252,7 @@ class ShapeProcessor:
         Returns:
             The area of the circle.
         """
+        # Standard Libraries #
         import math
 
         return math.pi * shape.radius**2

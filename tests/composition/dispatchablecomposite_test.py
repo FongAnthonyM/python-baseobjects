@@ -17,12 +17,12 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import copy
 import pickle
-from typing import Any, ClassVar, Optional, Type, Tuple
+from typing import Any, ClassVar, Optional, Tuple, Type
 
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
 from src.baseobjects.classregistration import BaseClassRegistry
 from src.baseobjects.composition import BaseComponent, DispatchableComposite
 from src.baseobjects.testsuite.composition import DispatchableCompositeTestSuite

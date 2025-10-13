@@ -20,12 +20,12 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import asyncio
-from typing import Any, Type, Callable
+from typing import Any, Callable, Type
 
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
 from src.baseobjects.functions import DynamicFunction
 from src.baseobjects.testsuite.functions import DynamicFunctionTestSuite
 

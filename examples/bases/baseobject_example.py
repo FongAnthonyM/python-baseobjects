@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """baseobject_example.py
 An example of how to use BaseObject class.
 
@@ -14,10 +13,8 @@ This example demonstrates:
 # Standard Libraries #
 from typing import Any, Dict, List
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.bases import BaseObject
-
-# Local Packages #
 
 
 # Classes #

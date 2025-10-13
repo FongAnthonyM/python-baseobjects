@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """filetimetodatetime_test.py
 Tests for the filetime_to_datetime function in the baseobjects package.
 
@@ -28,13 +27,13 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from datetime import timezone, timedelta
+from datetime import timedelta, timezone
 
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.operations.filetimetodatetime import filetime_to_datetime, FILETIME_INIT_DATE
+# Source Packages #
+from src.baseobjects.operations.filetimetodatetime import FILETIME_INIT_DATE, filetime_to_datetime
 
 
 # Definitions #

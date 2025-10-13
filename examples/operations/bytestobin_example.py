@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """bytestobin_example.py
 An example of how to use the bytes_to_bin function.
 
@@ -14,10 +13,8 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.operations import bytes_to_bin
-
-# Local Packages #
 
 
 # Example Sections #

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """circulardoublylinkedcontainer_performance.py
 Performance tests for the CircularDoublyLinkedContainer and LinkedNode classes in the baseobjects.collections package.
 """
@@ -19,14 +18,14 @@ __version__ = "1.12.0"
 import copy
 import pickle
 import timeit
-from typing import Any, Dict, List, ClassVar
+from typing import Any, ClassVar, Dict, List
 
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+# Source Packages #
 from src.baseobjects.collections import CircularDoublyLinkedContainer, LinkedNode
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #

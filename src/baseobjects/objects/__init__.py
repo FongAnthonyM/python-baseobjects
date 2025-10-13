@@ -20,4 +20,4 @@ __version__ = "1.12.0"
 # Imports
 # Local Packages #
 from .automaticproperties import AutomaticProperties
-from .callbackmanager import ConditionalCallbackEntry, CallbackScheduler, CallbackManager
+from .callbackmanager import CallbackManager, CallbackScheduler, ConditionalCallbackEntry

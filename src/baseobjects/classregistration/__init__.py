@@ -21,6 +21,6 @@ __version__ = "1.12.0"
 # Local Packages #
 from .baseclassregistry import BaseClassRegistry
 from .baseregisteredclass import BaseRegisteredClass
+from .dispatchableclass import DispatchableClass
 from .namespaceclassregistry import NamespaceClassRegistry
 from .namespaceregisteredclass import NamespaceRegisteredClass
-from .dispatchableclass import DispatchableClass

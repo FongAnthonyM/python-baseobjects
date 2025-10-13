@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """circulardoublylinkedcontainer_example.py
 An example of how to use CircularDoublyLinkedContainer class.
 
@@ -15,11 +14,9 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.collections import CircularDoublyLinkedContainer
 from baseobjects.collections.circulardoublylinkedcontainer import LinkedNode
-
-# Local Packages #
 
 
 # Example Sections #
@@ -286,6 +283,7 @@ def deep_copy_example():
     """Demonstrate deep copying of CircularDoublyLinkedContainer."""
     print("\nDeep Copy Example:")
 
+    # Standard Libraries #
     import copy
 
     # Create a container with some nodes

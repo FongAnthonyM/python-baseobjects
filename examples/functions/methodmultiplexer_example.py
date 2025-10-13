@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """methodmultiplexer_example.py
 An example of how to create and use MethodMultiplexer.
 
@@ -14,10 +13,8 @@ This example demonstrates:
 # Standard Libraries #
 from typing import Any
 
-# Third-Party Packages #
-from baseobjects.functions import MethodMultiplexer, FunctionRegistry
-
-# Local Packages #
+# Source Packages #
+from baseobjects.functions import FunctionRegistry, MethodMultiplexer
 
 
 # Definitions #
@@ -352,6 +349,7 @@ def dynamic_method_multiplexer_example():
         return {"numbers": len(self.data["numbers"]), "text": len(self.data["text"]), "mixed": len(self.data["mixed"])}
 
     # Add the method to the instance
+    # Standard Libraries #
     import types
 
     processor.count_items = types.MethodType(count_items, processor)

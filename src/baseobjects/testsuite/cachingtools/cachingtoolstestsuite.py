@@ -12,21 +12,21 @@ __license__ = "MIT"
 
 __version__ = "1.12.0"
 
-
 # Imports #
 # Standard Libraries #
-from abc import abstractmethod
 import copy
 import pickle
 import time
-from typing import Any, Type, Callable
+from abc import abstractmethod
+from typing import Any, Type
+from collections.abc import Callable
 
 # Third-Party Packages #
 import pytest
 
 # Local Packages #
-from ..cachingtools import BaseTimedCache
-from .bases import BaseObjectTestSuite
+from ...cachingtools import BaseTimedCache
+from ..bases import BaseObjectTestSuite
 
 
 # Definitions #
@@ -42,7 +42,7 @@ class BaseCacheTestSuite(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[Any]
+    TestClass: type[Any]
 
     # Instance Methods #
     def create_example_functions(self) -> tuple[Callable, Callable]:
@@ -351,7 +351,7 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BaseTimedCache]
+    TestClass: type[BaseTimedCache]
 
     # Instance Methods #
     # Tests

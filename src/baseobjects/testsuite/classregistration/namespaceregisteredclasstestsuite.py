@@ -15,9 +15,9 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from abc import abstractmethod
 import copy
 import pickle
+from abc import abstractmethod
 from typing import Any, Type
 
 # Third-Party Packages #
@@ -41,7 +41,7 @@ class NamespaceRegisteredClassTestSuite(BaseRegisteredClassTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[NamespaceRegisteredClass]
+    TestClass: type[NamespaceRegisteredClass]
 
     # Instance Methods #
     # Tests

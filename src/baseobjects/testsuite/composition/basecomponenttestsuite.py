@@ -15,11 +15,11 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from abc import abstractmethod
 import copy
 import pickle
-from typing import Any, Type
 import weakref
+from abc import abstractmethod
+from typing import Any, Type
 
 # Third-Party Packages #
 import pytest
@@ -42,8 +42,8 @@ class BaseComponentTestSuite(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestComposite: Type[Any]
-    TestClass: Type[BaseComponent]
+    TestComposite: type[Any]
+    TestClass: type[BaseComponent]
 
     # Instance Methods #
     # Fixtures

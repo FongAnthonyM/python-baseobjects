@@ -20,18 +20,17 @@ __version__ = "1.12.0"
 
 # Imports #
 # Local Packages #
-from .basetestsuite import BaseTestSuite
-from .baseclasstestsuite import BaseClassTestSuite
-from .basefunctiontestsuite import BaseFunctionTestSuite
-from .baseperformancetestsuite import BasePerformanceTestSuite, StatsMicro
-from .baseobjecttestsuite import BaseObjectTestSuite
 from .basecallabletestsuite import (
     BaseCallableTestSuite,
-    example_function,
-    example_coroutine,
-    example_method,
-    example_coroutine_method,
     ExampleBindTarget,
+    example_coroutine,
+    example_coroutine_method,
+    example_function,
+    example_method,
 )
-from .basemethodtestsuite import BaseMethodTestSuite
+from .baseclasstestsuite import BaseClassTestSuite
 from .basefunctiontestsuite import BaseFunctionTestSuite
+from .basemethodtestsuite import BaseMethodTestSuite
+from .baseobjecttestsuite import BaseObjectTestSuite
+from .baseperformancetestsuite import BasePerformanceTestSuite, StatsMicro
+from .basetestsuite import BaseTestSuite

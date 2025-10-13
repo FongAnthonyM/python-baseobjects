@@ -22,8 +22,6 @@ __version__ = "1.12.0"
 from abc import abstractmethod
 from typing import Any, Type
 
-# Third-Party Packages #
-
 # Local Packages #
 from ...functions.dynamiccallable import DynamicMethod
 from ..bases.basemethodtestsuite import BaseMethodTestSuite
@@ -44,7 +42,7 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[DynamicMethod]
+    TestClass: type[DynamicMethod]
 
     # Instance Methods #
     # Tests

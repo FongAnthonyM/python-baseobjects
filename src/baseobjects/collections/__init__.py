@@ -15,8 +15,8 @@ __version__ = "1.12.0"
 
 # Imports #
 # Local Packages #
-from .timeddict import TimedDict
-from .orderabledict import OrderableDict
+from .circulardoublylinkedcontainer import CircularDoublyLinkedContainer, LinkedNode
 from .deepchainmap import DeepChainMap
-from .circulardoublylinkedcontainer import LinkedNode, CircularDoublyLinkedContainer
 from .groupedlist import GroupedList
+from .orderabledict import OrderableDict
+from .timeddict import TimedDict

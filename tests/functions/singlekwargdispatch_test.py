@@ -20,16 +20,16 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import asyncio
 import copy
-from functools import partial
 import pickle
+from functools import partial
 from typing import Any, Callable, Type, Union
 
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.functions import singlekwargdispatch, BaseDecorator
-from src.baseobjects.testsuite import BaseDecoratorTestSuite, example_function, example_coroutine
+# Source Packages #
+from src.baseobjects.functions import BaseDecorator, singlekwargdispatch
+from src.baseobjects.testsuite import BaseDecoratorTestSuite, example_coroutine, example_function
 
 
 # Definitions #
@@ -763,6 +763,7 @@ class TestSingleKwargDispatch(BaseDecoratorTestSuite):
 
         This test verifies that the cache token is updated when registering classes with __abstractmethods__.
         """
+        # Standard Libraries #
         from abc import ABC, abstractmethod
 
         class AbstractTest(ABC):

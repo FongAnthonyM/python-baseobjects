@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """baseobjecttestsuite_example.py
 An example of how to use BaseObjectTestSuite to test custom objects.
 
@@ -20,10 +19,10 @@ from typing import Any, Dict, List, Optional
 
 # Third-Party Packages #
 import pytest
+
+# Source Packages #
 from baseobjects.bases import BaseObject
 from baseobjects.testsuite.bases import BaseObjectTestSuite
-
-# Local Packages #
 
 
 # Definitions #

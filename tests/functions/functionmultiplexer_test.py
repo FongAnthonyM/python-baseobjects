@@ -23,7 +23,7 @@ from typing import Any, Type
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
 from src.baseobjects.functions import FunctionMultiplexer, FunctionRegistry
 from src.baseobjects.testsuite.bases import BaseCallableTestSuite
 

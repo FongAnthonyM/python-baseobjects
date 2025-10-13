@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """dynamicwrapper_performance.py
 Performance tests for the DynamicWrapper class in the baseobjects.wrappers package.
 """
@@ -22,7 +21,7 @@ from typing import Any
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
 from src.baseobjects.testsuite import WrapperPerformanceTestSuite
 from src.baseobjects.wrappers import DynamicWrapper
 

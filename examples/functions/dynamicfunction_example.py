@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """dynamicfunction_example.py
 An example of how to create and use DynamicFunction.
 
@@ -17,10 +16,8 @@ This example demonstrates:
 # Standard Libraries #
 from typing import Any
 
-# Third-Party Packages #
-from baseobjects.functions import DynamicFunction, DynamicMethod, DynamicCallable
-
-# Local Packages #
+# Source Packages #
+from baseobjects.functions import DynamicCallable, DynamicFunction, DynamicMethod
 
 
 # Definitions #

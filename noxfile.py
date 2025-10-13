@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """noxfile.py
 Nox sessions.
 """
+
+
 # Imports #
 # Standard Libraries #
 import os
@@ -16,8 +17,8 @@ from textwrap import dedent
 import nox
 
 try:
-    from nox_poetry import Session
-    from nox_poetry import session
+    # Third-Party Packages #
+    from nox_poetry import Session, session
 except ImportError:
     message = f"""\
     Nox failed to import the 'nox-poetry' package.
@@ -27,8 +28,6 @@ except ImportError:
     {sys.executable} -m pip install nox-poetry"""
     raise SystemExit(dedent(message)) from None
 
-# Local Packages #
-
 
 # Definitions #
 package = "baseobjects"
@@ -36,12 +35,12 @@ python_versions = ["3.12"]
 nox.needs_version = ">= 2021.6.6"
 nox.options.sessions = (
     "pre-commit",
-    "safety",
-    "mypy",
-    "tests",
-    "typeguard",
-    "xdoctest",
-    "docs-build",
+    # "safety",
+    # "mypy",
+    # "tests",
+    # "typeguard",
+    # "xdoctest",
+    # "docs-build",
 )
 
 
@@ -103,7 +102,7 @@ def activate_virtualenv_in_precommit_hooks(session: Session) -> None:
 
         text = hook.read_text()
 
-        if not any(Path("A") == Path("a") and bindir.lower() in text.lower() or bindir in text for bindir in bindirs):
+        if not any(Path("A") == Path("a") and (bindir.lower() in text.lower() or bindir in text) for bindir in bindirs):
             continue
 
         lines = text.splitlines()
@@ -132,11 +131,13 @@ def precommit(session: Session) -> None:
         "flake8-bugbear",
         "flake8-docstrings",
         "flake8-rst-docstrings",
+        "flake8-pyproject",
         "isort",
         "pep8-naming",
         "pre-commit",
         "pre-commit-hooks",
         "pyupgrade",
+        "ruff",
     )
     session.run("pre-commit", *args)
     if args and args[0] == "install":

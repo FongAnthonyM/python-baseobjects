@@ -25,7 +25,7 @@ from typing import Type
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
 from src.baseobjects.bases import BaseReducible
 from src.baseobjects.testsuite.bases import BaseObjectTestSuite
 

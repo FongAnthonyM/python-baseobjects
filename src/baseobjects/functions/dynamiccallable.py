@@ -15,14 +15,12 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any
 from types import FunctionType, MethodType
-
-# Third-Party Packages #
+from typing import Any
 
 # Local Packages #
-from ..typing import AnyCallable
 from ..bases import BaseCallable, BaseFunction, BaseMethod
+from ..typing import AnyCallable
 from .callablemultiplexer import CallableMultiplexer, MethodMultiplexer
 
 

@@ -22,7 +22,7 @@ from typing import Any, ClassVar, Type
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
 from src.baseobjects.composition import BaseComponent, BaseDispatchingComposite
 from src.baseobjects.testsuite.composition import BaseDispatchingCompositeTestSuite
 

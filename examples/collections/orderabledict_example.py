@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """orderabledict_example.py
 An example of how to use OrderableDict class.
 
@@ -13,10 +12,8 @@ This example demonstrates:
 # Standard Libraries #
 from typing import Any, Dict
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.collections import OrderableDict
-
-# Local Packages #
 
 
 # Example Sections #

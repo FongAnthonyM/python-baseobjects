@@ -20,8 +20,6 @@ import pickle
 from abc import abstractmethod
 from typing import Any, Type
 
-# Third-Party Packages #
-
 # Local Packages #
 from ..versioning.version import Version
 from .bases import BaseObjectTestSuite
@@ -41,7 +39,7 @@ class VersionTestSuite(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[Version]
+    TestClass: type[Version]
 
     # Instance Methods #
     # Tests

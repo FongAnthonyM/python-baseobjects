@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """trinumberversion_example.py
 An example of how to use the TriNumberVersion class.
 
@@ -16,10 +15,8 @@ This example demonstrates:
 # Standard Libraries #
 from typing import Any, Dict, List, Tuple
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.versioning import TriNumberVersion
-
-# Local Packages #
 
 
 # Example Sections #

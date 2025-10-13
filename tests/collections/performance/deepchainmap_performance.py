@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """deepchainmap_performance.py
 Performance tests for the DeepChainMap class in the baseobjects.collections package.
 """
@@ -20,14 +19,14 @@ import copy
 import pickle
 import timeit
 from collections import ChainMap
-from typing import Any, Dict, List, ClassVar
+from typing import Any, ClassVar, Dict, List
 
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+# Source Packages #
 from src.baseobjects.collections import DeepChainMap
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #

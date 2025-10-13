@@ -15,12 +15,10 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from collections.abc import Callable, Iterable
 from builtins import property
+from collections.abc import Callable, Iterable
 from functools import partial
 from typing import Any, ClassVar
-
-# Third-Party Packages #
 
 # Local Packages #
 from ..bases import BaseObject

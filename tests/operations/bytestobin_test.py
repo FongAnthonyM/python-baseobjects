@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """bytestobin_test.py
 Tests for the bytes_to_bin function in the baseobjects package.
 """
@@ -20,7 +19,7 @@ __version__ = "1.12.0"
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
 from src.baseobjects.operations import bytes_to_bin
 
 

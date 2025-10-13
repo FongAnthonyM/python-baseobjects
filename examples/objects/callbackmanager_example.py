@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """callbackmanager_example.py
 An example of how to use CallbackManager class.
 
@@ -22,13 +21,11 @@ import asyncio
 import time
 from asyncio import create_task
 from collections import deque
-from typing import Any, Dict, List, Callable
+from typing import Any, Callable, Dict, List
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.objects import CallbackManager
 from baseobjects.objects.callbackmanager import CallbackScheduler, ConditionalCallbackEntry
-
-# Local Packages #
 
 
 # Classes #

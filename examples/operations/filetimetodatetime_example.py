@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """filetimetodatetime_example.py
 An example of how to use the filetime_to_datetime function.
 
@@ -16,10 +15,8 @@ This example demonstrates:
 import datetime
 import struct
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.operations import filetime_to_datetime
-
-# Local Packages #
 
 
 # Example Sections #

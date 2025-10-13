@@ -14,7 +14,8 @@ __license__ = "MIT"
 __version__ = "1.12.0"
 
 
-# Imports #
 # Local Packages #
-from .staticwrapper_performance import TestStaticWrapperPerformance
 from .dynamicwrapper_performance import TestDynamicWrapperPerformance
+
+# Imports #
+from .staticwrapper_performance import TestStaticWrapperPerformance

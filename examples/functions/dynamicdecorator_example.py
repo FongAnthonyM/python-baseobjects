@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """dynamicdecorator_example.py
 An example of how to create and use DynamicDecorator.
 
@@ -18,12 +17,10 @@ This example demonstrates:
 import time
 from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
 
-# Third-Party Packages #
-from baseobjects.functions import DynamicDecorator, BaseDecorator, DynamicFunction
+# Source Packages #
 from baseobjects.bases import BaseCallable, BaseMethod
+from baseobjects.functions import BaseDecorator, DynamicDecorator, DynamicFunction
 from baseobjects.typing import AnyCallable, GetObjectMethod
-
-# Local Packages #
 
 
 # Definitions #

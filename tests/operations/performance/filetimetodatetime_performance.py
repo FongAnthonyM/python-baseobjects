@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """filetimetodatetime_performance.py
 Performance tests for the filetime_to_datetime function in the baseobjects.operations package.
 """
@@ -23,9 +22,9 @@ from typing import Any, Union
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
+from src.baseobjects.operations.filetimetodatetime import FILETIME_INIT_DATE, filetime_to_datetime
 from src.baseobjects.testsuite import BasePerformanceTestSuite
-from src.baseobjects.operations.filetimetodatetime import filetime_to_datetime, FILETIME_INIT_DATE
 
 
 # Definitions #

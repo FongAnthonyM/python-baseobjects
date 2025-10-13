@@ -45,7 +45,7 @@ class BaseDecoratorTestSuite(BaseFunctionTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BaseDecorator]
+    TestClass: type[BaseDecorator]
 
     # Instance Methods #
     # Fixtures

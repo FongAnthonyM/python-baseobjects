@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """dynamicmethod_example.py
 An example of how to create and use DynamicMethod.
 
@@ -17,10 +16,8 @@ This example demonstrates:
 # Standard Libraries #
 from typing import Any
 
-# Third-Party Packages #
-from baseobjects.functions import DynamicMethod, DynamicFunction, DynamicCallable
-
-# Local Packages #
+# Source Packages #
+from baseobjects.functions import DynamicCallable, DynamicFunction, DynamicMethod
 
 
 # Definitions #
@@ -497,6 +494,7 @@ def pickling_dynamicmethod():
     """Demonstrates pickling and unpickling a DynamicMethod."""
     print("Pickling DynamicMethod:\n")
 
+    # Standard Libraries #
     import pickle
 
     # Create a DynamicMethod

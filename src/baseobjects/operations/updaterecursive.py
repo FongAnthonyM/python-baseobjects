@@ -15,11 +15,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from collections.abc import Mapping, Iterable
-
-# Third-Party Packages #
-
-# Local Packages #
+from collections.abc import Iterable, Mapping
 
 
 # Definitions #

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """callablemultiplexer_example.py
 An example of how to create and use CallableMultiplexer, FunctionMultiplexer, and MethodMultiplexer.
 
@@ -16,10 +15,8 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 
-# Third-Party Packages #
-from baseobjects.functions import CallableMultiplexer, FunctionMultiplexer, MethodMultiplexer, FunctionRegistry
-
-# Local Packages #
+# Source Packages #
+from baseobjects.functions import CallableMultiplexer, FunctionMultiplexer, FunctionRegistry, MethodMultiplexer
 
 
 # Definitions #

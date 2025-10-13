@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """methodnames_performance.py
 Performance tests for the method name functions in the baseobjects.operations package.
 """
@@ -22,14 +21,14 @@ from typing import Any, Generator, List, Tuple
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+# Source Packages #
 from src.baseobjects.operations import (
-    iter_method_names,
-    iter_public_method_names,
     get_method_names,
     get_public_method_names,
+    iter_method_names,
+    iter_public_method_names,
 )
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #

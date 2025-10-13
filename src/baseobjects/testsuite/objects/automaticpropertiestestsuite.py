@@ -44,12 +44,12 @@ class AutomaticPropertiesTestSuite(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[AutomaticProperties]
+    TestClass: type[AutomaticProperties]
 
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_class_with_properties(self) -> Type[AutomaticProperties]:
+    def test_class_with_properties(self) -> type[AutomaticProperties]:
         """Create a test class with properties.
 
         Returns:
@@ -64,7 +64,7 @@ class AutomaticPropertiesTestSuite(BaseObjectTestSuite):
         return TestAutomaticProperties
 
     @pytest.fixture
-    def test_object_with_properties(self, test_class_with_properties: Type[AutomaticProperties]) -> AutomaticProperties:
+    def test_object_with_properties(self, test_class_with_properties: type[AutomaticProperties]) -> AutomaticProperties:
         """Create a test object with properties.
 
         Args:
@@ -166,7 +166,7 @@ class AutomaticPropertiesTestSuite(BaseObjectTestSuite):
         assert unpickled is not test_object
         assert isinstance(unpickled, self.TestClass)
 
-    def test_property_creation(self, test_class_with_properties: Type[AutomaticProperties]) -> None:
+    def test_property_creation(self, test_class_with_properties: type[AutomaticProperties]) -> None:
         """Test that properties are created correctly.
 
         This test verifies that properties are created correctly based on the properties dictionary.
@@ -180,8 +180,8 @@ class AutomaticPropertiesTestSuite(BaseObjectTestSuite):
         # Validate
         assert hasattr(test_class_with_properties, "test_prop")
         assert hasattr(test_class_with_properties, "another_prop")
-        assert isinstance(getattr(test_class_with_properties, "test_prop"), property)
-        assert isinstance(getattr(test_class_with_properties, "another_prop"), property)
+        assert isinstance(test_class_with_properties.test_prop, property)
+        assert isinstance(test_class_with_properties.another_prop, property)
 
     def test_property_access(self, test_object_with_properties: AutomaticProperties) -> None:
         """Test that properties can be accessed correctly.
@@ -274,7 +274,6 @@ class AutomaticPropertiesTestSuite(BaseObjectTestSuite):
         class TestClass(self.TestClass):
             """Test class for _construct_properties_."""
 
-            pass
 
         # Construct Properties
         property_map = {"dynamic_prop": "_dynamic_prop", "another_dynamic_prop": "_another_dynamic_prop"}
@@ -288,8 +287,8 @@ class AutomaticPropertiesTestSuite(BaseObjectTestSuite):
         # Validate
         assert hasattr(TestClass, "dynamic_prop")
         assert hasattr(TestClass, "another_dynamic_prop")
-        assert isinstance(getattr(TestClass, "dynamic_prop"), property)
-        assert isinstance(getattr(TestClass, "another_dynamic_prop"), property)
+        assert isinstance(TestClass.dynamic_prop, property)
+        assert isinstance(TestClass.another_dynamic_prop, property)
         assert obj.dynamic_prop == "dynamic value"
         assert obj.another_dynamic_prop == "another dynamic value"
 

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """dynamiccallable_example.py
 An example of how to create and use DynamicCallable.
 
@@ -16,10 +15,8 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.functions import DynamicCallable
-
-# Local Packages #
 
 
 # Definitions #
@@ -366,6 +363,7 @@ def pickling_dynamiccallable():
     """Demonstrates pickling and unpickling a DynamicCallable."""
     print("Pickling DynamicCallable:\n")
 
+    # Standard Libraries #
     import pickle
 
     # Create a DynamicCallable

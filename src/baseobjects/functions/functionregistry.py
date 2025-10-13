@@ -18,11 +18,9 @@ __version__ = "1.12.0"
 from collections.abc import Iterable
 from typing import Any
 
-# Third-Party Packages #
-
 # Local Packages #
-from ..typing import AnyCallable
 from ..bases import BaseDict
+from ..typing import AnyCallable
 
 
 # Definitions #

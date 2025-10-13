@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """timezoneoffset_performance.py
 Performance tests for the timezone_offset function in the baseobjects.operations package.
 """
@@ -17,15 +16,15 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import timeit
-from datetime import datetime, timedelta, timezone, tzinfo
 import zoneinfo
+from datetime import datetime, timedelta, timezone, tzinfo
 
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
+from src.baseobjects.operations.timezoneoffset import INIT_DATE, timezone_offset
 from src.baseobjects.testsuite import BasePerformanceTestSuite
-from src.baseobjects.operations.timezoneoffset import timezone_offset, INIT_DATE
 
 
 # Definitions #

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """unionrecursive_test.py
 Tests for the union_recursive function in the baseobjects package.
 """
@@ -21,7 +20,7 @@ from collections.abc import Mapping
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
 from src.baseobjects.operations import union_recursive
 
 

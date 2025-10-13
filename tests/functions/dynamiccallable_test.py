@@ -19,13 +19,13 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any, Type, Callable
+from typing import Any, Callable, Type
 
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.functions import DynamicCallable, DynamicMethod, DynamicFunction
+# Source Packages #
+from src.baseobjects.functions import DynamicCallable, DynamicFunction, DynamicMethod
 from src.baseobjects.testsuite.functions import DynamicCallableTestSuite
 
 

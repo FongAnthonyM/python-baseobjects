@@ -48,7 +48,7 @@ class BaseClassRegistryTestSuite(BaseObjectTestSuite):
         """Another test class for testing the registry."""
 
     # Attributes #
-    TestClass: Type[BaseClassRegistry]
+    TestClass: type[BaseClassRegistry]
 
     # Instance Methods #
     def create_test_registry(self, *args: Any, **kwargs) -> BaseClassRegistry:

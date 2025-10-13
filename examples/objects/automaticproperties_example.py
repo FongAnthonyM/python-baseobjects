@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """automaticproperties_example.py
 An example of how to use AutomaticProperties class.
 
@@ -14,13 +13,11 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any, Dict, List, ClassVar
+from typing import Any, ClassVar, Dict, List
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.objects import AutomaticProperties
 from baseobjects.typing import PropertyCallbacks
-
-# Local Packages #
 
 
 # Classes #

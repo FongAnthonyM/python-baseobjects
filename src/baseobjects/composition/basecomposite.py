@@ -19,9 +19,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import ClassVar, Any
-
-# Third-Party Packages #
+from typing import Any, ClassVar
 
 # Local Packages #
 from ..bases import BaseObject

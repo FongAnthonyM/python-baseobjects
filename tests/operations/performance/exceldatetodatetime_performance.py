@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """exceldatetodatetime_performance.py
 Performance tests for the excel_date_to_datetime function in the baseobjects.operations package.
 """
@@ -23,9 +22,9 @@ from typing import Union
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
+from src.baseobjects.operations.exceldatetodatetime import EXCEL_INIT_DATE, excel_date_to_datetime
 from src.baseobjects.testsuite import BasePerformanceTestSuite
-from src.baseobjects.operations.exceldatetodatetime import excel_date_to_datetime, EXCEL_INIT_DATE
 
 
 # Definitions #

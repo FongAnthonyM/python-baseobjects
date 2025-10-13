@@ -35,8 +35,6 @@ __version__ = "1.12.0"
 from collections.abc import Iterable
 from typing import Any
 
-# Third-Party Packages #
-
 # Local Packages #
 from ..functions import singlekwargdispatch
 from .version import Version
@@ -155,7 +153,7 @@ class TriNumberVersion(Version):
             try:
                 return self.tuple() < self.cast(other).tuple()
             except TypeError:
-                raise TypeError(f"'<' not supported between instances of '{str(self)}' and '{str(other)}'")
+                raise TypeError(f"'<' not supported between instances of '{self!s}' and '{other!s}'")
 
     def __gt__(self, other: Any) -> bool:
         """Creates the greater than comparison for these objects which includes str, list, and tuple.
@@ -177,7 +175,7 @@ class TriNumberVersion(Version):
             try:
                 return self.tuple() > self.cast(other).tuple()
             except TypeError:
-                raise TypeError(f"'>' not supported between instances of '{str(self)}' and '{str(other)}'")
+                raise TypeError(f"'>' not supported between instances of '{self!s}' and '{other!s}'")
 
     def __le__(self, other: Any) -> bool:
         """Creates the less than or equal to comparison for these objects which includes str, list, and tuple.
@@ -199,7 +197,7 @@ class TriNumberVersion(Version):
             try:
                 return self.tuple() <= self.cast(other).tuple()
             except TypeError:
-                raise TypeError(f"'<=' not supported between instances of '{str(self)}' and '{str(other)}'")
+                raise TypeError(f"'<=' not supported between instances of '{self!s}' and '{other!s}'")
 
     def __ge__(self, other: Any) -> bool:
         """Creates the greater than or equal to comparison for these objects which includes str, list, and tuple.
@@ -221,7 +219,7 @@ class TriNumberVersion(Version):
             try:
                 return self.tuple() >= self.cast(other).tuple()
             except TypeError:
-                raise TypeError(f"'>=' not supported between instances of '{str(self)}' and '{str(other)}'")
+                raise TypeError(f"'>=' not supported between instances of '{self!s}' and '{other!s}'")
 
     # Instance Methods
     # Constructors/Destructors

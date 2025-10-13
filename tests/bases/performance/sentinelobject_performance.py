@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """sentinelobject_performance.py
 Performance tests for the SentinelObject class in the baseobjects.bases package.
 """
@@ -19,14 +18,14 @@ __version__ = "1.12.0"
 import copy
 import pickle
 import timeit
-from typing import Any, Dict, ClassVar
+from typing import Any, ClassVar, Dict
 
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
+from src.baseobjects.bases import BaseReducible, SentinelObject
 from src.baseobjects.testsuite import BasePerformanceTestSuite
-from src.baseobjects.bases import SentinelObject, BaseReducible
 
 
 # Definitions #

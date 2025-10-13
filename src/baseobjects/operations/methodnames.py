@@ -18,10 +18,6 @@ __version__ = "1.12.0"
 from collections.abc import Generator
 from typing import Any
 
-# Third-Party Packages #
-
-# Local Packages #
-
 
 # Definitions #
 # Functions #

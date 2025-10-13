@@ -20,17 +20,14 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-import functools
 from time import perf_counter
 from typing import Any
 
-# Third-Party Packages #
-
 # Local Packages #
-from ...typing import AnyCallable
 from ...bases import SEARCHSENTINEL
 from ...collections import CircularDoublyLinkedContainer
-from .basetimedcache import BaseTimedCacheCallable, BaseTimedCacheMethod, BaseTimedCache
+from ...typing import AnyCallable
+from .basetimedcache import BaseTimedCache, BaseTimedCacheCallable, BaseTimedCacheMethod
 
 
 # Definitions #

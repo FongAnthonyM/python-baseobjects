@@ -15,11 +15,9 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from pstats import Stats, f8, func_std_string
 import timeit
+from pstats import Stats, f8, func_std_string
 from typing import Any
-
-# Third-Party Packages #
 
 # Local Packages #
 from .basetestsuite import BaseTestSuite

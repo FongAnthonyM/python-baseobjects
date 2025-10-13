@@ -25,9 +25,9 @@ from typing import Any, Type
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
 from src.baseobjects.bases import BaseFunction, BaseMethod
-from src.baseobjects.testsuite.bases import BaseFunctionTestSuite, example_function, ExampleBindTarget
+from src.baseobjects.testsuite.bases import BaseFunctionTestSuite, ExampleBindTarget, example_function
 
 
 # Classes #

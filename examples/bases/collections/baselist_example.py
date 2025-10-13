@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """baselist_example.py
 An example of how to use BaseList class.
 
@@ -14,10 +13,8 @@ This example demonstrates:
 import copy
 from typing import Any, List, Optional
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.bases.collections import BaseList
-
-# Local Packages #
 
 
 # Classes #

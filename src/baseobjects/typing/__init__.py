@@ -19,5 +19,5 @@ __version__ = "1.12.0"
 
 # Imports #
 # Local Packages #
-from .generic import *
 from .callables import *
+from .generic import *

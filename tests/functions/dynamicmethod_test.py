@@ -25,7 +25,7 @@ from typing import Any, Type
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
 from src.baseobjects.functions import DynamicMethod
 from src.baseobjects.testsuite.functions import DynamicMethodTestSuite
 

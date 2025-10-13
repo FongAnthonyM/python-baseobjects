@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """basedecorator_performance.py
 Performance tests for the BaseDecorator class in the baseobjects.functions package.
 """
@@ -17,14 +16,14 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import timeit
-from typing import Type, Any
+from typing import Any, Type
 
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+# Source Packages #
 from src.baseobjects.functions.basedecorator import BaseDecorator
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #

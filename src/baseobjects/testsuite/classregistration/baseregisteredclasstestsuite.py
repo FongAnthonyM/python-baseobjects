@@ -15,16 +15,16 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from abc import abstractmethod
 import copy
 import pickle
+from abc import abstractmethod
 from typing import Any, Type
 
 # Third-Party Packages #
 import pytest
 
 # Local Packages #
-from ...classregistration import BaseRegisteredClass, BaseClassRegistry
+from ...classregistration import BaseRegisteredClass
 from ..bases import BaseObjectTestSuite
 
 
@@ -41,12 +41,12 @@ class BaseRegisteredClassTestSuite(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BaseRegisteredClass]
+    TestClass: type[BaseRegisteredClass]
 
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def example_subclass(self) -> Type[BaseRegisteredClass]:
+    def example_subclass(self) -> type[BaseRegisteredClass]:
         """Create a test subclass of the TestClass.
 
         Returns:
@@ -163,7 +163,7 @@ class BaseRegisteredClassTestSuite(BaseObjectTestSuite):
         assert NewTestSubclass.__name__ in self.TestClass.class_registry
         assert self.TestClass.class_registry[NewTestSubclass.__name__] is NewTestSubclass
 
-    def test_get_registered_class(self, example_subclass: Type[BaseRegisteredClass], *args: Any, **kwargs: Any) -> None:
+    def test_get_registered_class(self, example_subclass: type[BaseRegisteredClass], *args: Any, **kwargs: Any) -> None:
         """Test the get_registered_class method.
 
         This test verifies that the get_registered_class method correctly retrieves a registered class.

@@ -15,5 +15,5 @@ __version__ = "1.12.0"
 
 # Imports #
 # Local Packages #
-from .wrappertestsuite import WrapperTestSuite
 from .wrapperperformancetestsuite import WrapperPerformanceTestSuite
+from .wrappertestsuite import WrapperTestSuite

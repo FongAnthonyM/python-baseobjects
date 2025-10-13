@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """basedict_performance.py
 Performance tests for the BaseDict class in the baseobjects.bases.collections package.
 """
@@ -24,9 +23,9 @@ from typing import Any, Dict, List
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+# Source Packages #
 from src.baseobjects.bases.collections import BaseDict
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #

@@ -20,7 +20,7 @@ from typing import Any, Type
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
 from src.baseobjects.classregistration import BaseClassRegistry
 from src.baseobjects.testsuite.classregistration import BaseClassRegistryTestSuite
 

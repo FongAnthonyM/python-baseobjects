@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """basecallable_performance.py
 Performance tests for the BaseCallable class in the baseobjects.bases package.
 """
@@ -23,9 +22,9 @@ from typing import Any, Callable
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+# Source Packages #
 from src.baseobjects.bases import BaseCallable
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #

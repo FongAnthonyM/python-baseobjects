@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """singlekwargdispatch_performance.py
 Performance tests for the singlekwargdispatchmethod and singlekwargdispatch classes in the baseobjects.functions package.
 """
@@ -17,18 +16,19 @@ __license__ = "MIT"
 __version__ = "1.12.0"
 
 
-# Imports #
 # Standard Libraries #
-from functools import singledispatchmethod
 import timeit
-from typing import Type, Any, Union
+
+# Imports #
+from functools import singledispatchmethod
+from typing import Any, Type, Union
 
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+# Source Packages #
 from src.baseobjects.functions.singlekwargdispatch import singlekwargdispatch
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
@@ -57,7 +57,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
             else:
                 return f"Default: {arg}"
 
-        def normal_kwarg_method(self, arg: Any = None, kwarg: Union[int, str, None] = None, **kwargs):
+        def normal_kwarg_method(self, arg: Any = None, kwarg: int | str | None = None, **kwargs):
             """A normal method with a kwarg."""
             if isinstance(kwarg, int):
                 return f"Integer: {kwarg}"
@@ -82,7 +82,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
             return f"String: {arg}"
 
         @singlekwargdispatch
-        def dispatch_arg(self, arg: Union[int, str], **kwargs):
+        def dispatch_arg(self, arg: int | str, **kwargs):
             """Default implementation."""
             return f"Default: {arg}"
 
@@ -97,7 +97,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
             return f"String: {arg}"
 
         @singlekwargdispatch(kwarg="kwarg")
-        def dispatch_kwarg(self, arg: Any = None, kwarg: Union[int, str, None] = None, **kwargs):
+        def dispatch_kwarg(self, arg: Any = None, kwarg: int | str | None = None, **kwargs):
             """Default implementation with specific kwarg."""
             return f"Default: {kwarg}"
 
@@ -107,7 +107,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
             return f"Integer: {kwarg}"
 
         @dispatch_kwarg.register(str)
-        def _(self, arg: Any = None, kwarg: Union[int, str, None] = None, **kwargs):
+        def _(self, arg: Any = None, kwarg: int | str | None = None, **kwargs):
             """Process a string value."""
             return f"String: {kwarg}"
 
@@ -118,7 +118,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_class_instance(self) -> "TestSingleKwargDispatchPerformance.DispatchTestClass":
+    def test_class_instance(self) -> TestSingleKwargDispatchPerformance.DispatchTestClass:
         """Create a test class instance for use in tests.
 
         Returns:
@@ -128,7 +128,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
 
     # Tests
     def test_dispatch_call_speed_with_arg(
-        self, test_class_instance: "TestSingleKwargDispatchPerformance.DispatchTestClass"
+        self, test_class_instance: TestSingleKwargDispatchPerformance.DispatchTestClass
     ) -> None:
         """Test the performance of the dispatch_call method with a positional argument.
 
@@ -175,7 +175,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
         assert percent_to_old < self.speed_tolerance
 
     def test_dispatch_call_speed_with_kwarg(
-        self, test_class_instance: "TestSingleKwargDispatchPerformance.DispatchTestClass"
+        self, test_class_instance: TestSingleKwargDispatchPerformance.DispatchTestClass
     ) -> None:
         """Test the performance of the dispatch_call method with a keyword argument.
 
@@ -225,7 +225,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
         assert percent_to_baseline < self.speed_tolerance * 2  # Allow more overhead for kwarg dispatch
 
     def test_edge_case_multiple_types(
-        self, test_class_instance: "TestSingleKwargDispatchPerformance.DispatchTestClass"
+        self, test_class_instance: TestSingleKwargDispatchPerformance.DispatchTestClass
     ) -> None:
         """Test the performance with an edge case of multiple registered types.
 
@@ -351,7 +351,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
         assert percent < self.speed_tolerance * 1.5  # Allow more overhead for many types
 
     def test_edge_case_nested_dispatch(
-        self, test_class_instance: "TestSingleKwargDispatchPerformance.DispatchTestClass"
+        self, test_class_instance: TestSingleKwargDispatchPerformance.DispatchTestClass
     ) -> None:
         """Test the performance with an edge case of nested dispatch.
 

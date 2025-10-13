@@ -24,7 +24,8 @@ __license__ = "MIT"
 __version__ = "1.12.0"
 
 
-# Imports
 # Local Packages #
-from .staticwrapper import StaticWrapper
 from .dynamicwrapper import DynamicWrapper
+
+# Imports
+from .staticwrapper import StaticWrapper

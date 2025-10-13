@@ -17,13 +17,15 @@ __license__ = "MIT"
 __version__ = "1.12.0"
 
 
+# Source Packages #
 # Imports #
+from baseobjects.testsuite.cachingtools.cachingtoolstestsuite import TimedCacheTestSuite
+
 # Local Packages #
 from .bases import *
+from .cachingtools import *
 from .classregistration import *
 from .functions import *
 from .objects import *
-from .wrappers import *
-from .cachingtools import *
 from .versiontestsuite import VersionTestSuite
-from .cachingtoolstestsuite import TimedCacheTestSuite
+from .wrappers import *

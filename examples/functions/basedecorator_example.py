@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """basedecorator_example.py
 An example of how to create and use BaseDecorator.
 
@@ -21,11 +20,9 @@ import time
 from functools import wraps
 from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.functions import BaseDecorator
 from baseobjects.typing import AnyCallable
-
-# Local Packages #
 
 
 # Definitions #

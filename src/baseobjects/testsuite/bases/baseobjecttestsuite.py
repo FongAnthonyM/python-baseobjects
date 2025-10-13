@@ -25,12 +25,11 @@ __license__ = "MIT"
 
 __version__ = "1.12.0"
 
-
 # Imports #
 # Standard Libraries #
-from abc import abstractmethod
 import copy
 import pickle
+from abc import abstractmethod
 from typing import Any, Type
 
 # Third-Party Packages #
@@ -54,7 +53,7 @@ class BaseObjectTestSuite(BaseClassTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BaseObject]
+    TestClass: type[BaseObject]
 
     # Instance Methods #
     # Fixtures

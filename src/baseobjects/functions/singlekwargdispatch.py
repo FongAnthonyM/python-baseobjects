@@ -20,17 +20,14 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 from abc import get_cache_token
-from functools import partial, singledispatch, singledispatchmethod, update_wrapper, _find_impl
+from functools import _find_impl, partial, singledispatchmethod, update_wrapper
 from inspect import signature
 from types import NoneType, UnionType
 from typing import Any, Union, get_args, get_origin, get_type_hints
 from weakref import WeakKeyDictionary
 
-# Third-Party Packages #
-
 # Local Packages #
 from ..typing import AnyCallable, GetObjectMethod
-from ..bases import BaseMethod
 from .basedecorator import BaseDecorator
 from .callablemultiplexer import MethodMultiplexer
 
@@ -270,7 +267,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
                 raise TypeError(
                     f"Invalid first argument to `registry()`: {cls!r}. "
                     f"Use either `@registry(some_class)` or plain `@registry` "
-                    f"on an annotated function."
+                    f"on an annotated function.",
                 )
             func = cls
 
@@ -283,8 +280,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
             if not _is_valid_dispatch_type(cls):
                 if _is_union_type(cls):
                     raise TypeError(f"Invalid annotation for {argname!r}. " f"{cls!r} not all arguments are classes.")
-                else:
-                    raise TypeError(f"Invalid annotation for {argname!r}. " f"{cls!r} is not a class.")
+                raise TypeError(f"Invalid annotation for {argname!r}. " f"{cls!r} is not a class.")
 
         if _is_union_type(cls):
             for arg in get_args(cls):

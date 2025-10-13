@@ -67,8 +67,10 @@ docs/_build
 .build
 .ve
 .env
+.venv
 .cache
 .pytest
+.poetry
 .benchmarks
 .bootstrap
 .appveyor.token

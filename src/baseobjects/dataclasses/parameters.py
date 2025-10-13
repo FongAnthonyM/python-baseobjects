@@ -18,10 +18,6 @@ __version__ = "1.12.0"
 from collections.abc import Iterable, Mapping
 from typing import Any, NamedTuple
 
-# Third-Party Packages #
-
-# Local Packages #
-
 
 # Definitions #
 # Classes #

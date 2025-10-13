@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """basedict_example.py
 An example of how to use BaseDict class.
 
@@ -14,10 +13,8 @@ This example demonstrates:
 import copy
 from typing import Any, Dict, List
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.bases.collections import BaseDict
-
-# Local Packages #
 
 
 # Classes #

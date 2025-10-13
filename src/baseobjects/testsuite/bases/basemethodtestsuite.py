@@ -20,12 +20,12 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from abc import abstractmethod
 import copy
 import gc
 import pickle
-from typing import Any, Type
 import weakref
+from abc import abstractmethod
+from typing import Any, Type
 
 # Third-Party Packages #
 import pytest
@@ -49,8 +49,8 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BaseMethod]
-    BindTargetClass: Type[Any]
+    TestClass: type[BaseMethod]
+    BindTargetClass: type[Any]
 
     # Instance Methods #
     # Fixtures

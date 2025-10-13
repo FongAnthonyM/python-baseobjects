@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """version_test.py
 Tests for the Version class in the baseobjects package.
 
@@ -27,9 +26,9 @@ from typing import Any, Type
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.versioning.version import Version
+# Source Packages #
 from src.baseobjects.testsuite.versiontestsuite import VersionTestSuite
+from src.baseobjects.versioning.version import Version
 
 
 # Definitions #

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """sentinelobject_example.py
 An example of how to use SentinelObject class.
 
@@ -16,10 +15,8 @@ This example demonstrates:
 import pickle
 from typing import Any, Dict
 
-# Third-Party Packages #
-from baseobjects.bases import SentinelObject, DEFAULTSENTINEL, SEARCHSENTINEL
-
-# Local Packages #
+# Source Packages #
+from baseobjects.bases import DEFAULTSENTINEL, SEARCHSENTINEL, SentinelObject
 
 
 # Classes #

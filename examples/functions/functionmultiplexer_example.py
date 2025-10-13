@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """functionmultiplexer_example.py
 An example of how to create and use FunctionMultiplexer.
 
@@ -14,10 +13,8 @@ This example demonstrates:
 # Standard Libraries #
 from typing import Any
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.functions import FunctionMultiplexer, FunctionRegistry
-
-# Local Packages #
 
 
 # Definitions #

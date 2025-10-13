@@ -21,13 +21,13 @@ __version__ = "1.12.0"
 __status__ = "Beta"
 
 __all__ = [
-    "__package_name__",
     "__author__",
-    "__credits__",
-    "__maintainer__",
-    "__email__",
     "__copyright__",
+    "__credits__",
+    "__email__",
     "__license__",
-    "__version__",
+    "__maintainer__",
+    "__package_name__",
     "__status__",
+    "__version__",
 ]

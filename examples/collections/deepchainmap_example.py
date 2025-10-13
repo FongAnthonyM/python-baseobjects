@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """deepchainmap_example.py
 An example of how to use DeepChainMap class.
 
@@ -14,10 +13,8 @@ This example demonstrates:
 from collections import ChainMap
 from typing import Any, Dict
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.collections import DeepChainMap
-
-# Local Packages #
 
 
 # Example Sections #

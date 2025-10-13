@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """unionrecursive_performance.py
 Performance tests for the union_recursive function in the baseobjects.operations package.
 """
@@ -17,16 +16,16 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import timeit
-from copy import deepcopy
 from collections.abc import Mapping
+from copy import deepcopy
 from typing import Any, Dict
 
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+# Source Packages #
 from src.baseobjects.operations import union_recursive
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #

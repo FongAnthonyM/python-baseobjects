@@ -20,5 +20,5 @@ __version__ = "1.12.0"
 # Imports #
 # Local Packages #
 from .bases import *
-from .functions import *
 from .composition import *
+from .functions import *

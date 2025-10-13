@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """unionrecursive_example.py
 An example of how to use the union_recursive function.
 
@@ -16,10 +15,8 @@ This example demonstrates:
 # Standard Libraries #
 from copy import deepcopy
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.operations import union_recursive, update_recursive
-
-# Local Packages #
 
 
 # Example Sections #
@@ -181,7 +178,7 @@ def practical_example():
     base_template = {
         "header": {"title": "Default Title", "logo": "default_logo.png", "menu": ["Home", "About", "Contact"]},
         "content": {"main": "Default content", "sidebar": "Default sidebar"},
-        "footer": {"copyright": "© 2023 Company", "links": ["Privacy", "Terms"]},
+        "footer": {"copyright_": "© 2023 Company", "links": ["Privacy", "Terms"]},
     }
 
     # Page-specific customizations
@@ -209,7 +206,7 @@ def practical_example():
     print(f"  Menu: {about_page_final['header']['menu']} == ['Home', 'About', 'Contact']")
     print(f"  Main content: {about_page_final['content']['main']} == 'About page content'")
     print(f"  Extra section: {about_page_final['content']['extra_section']} == 'Our history'")
-    print(f"  Footer copyright: {about_page_final['footer']['copyright']} == '© 2023 Company'")
+    print(f"  Footer copyright_: {about_page_final['footer']['copyright_']} == '© 2023 Company'")
 
     # Create another page
     contact_page = {

@@ -15,15 +15,13 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from collections import deque
 import re
-from typing import Any, Callable
-
-# Third-Party Packages #
+from collections import deque
+from typing import Any
+from collections.abc import Callable
 
 # Local Packages #
 from ..functions import singlekwargdispatch
-
 
 # Definitions #
 # Regular Expressions #

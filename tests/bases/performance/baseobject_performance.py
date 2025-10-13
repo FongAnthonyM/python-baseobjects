@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """baseobject_performance.py
 Performance tests for the BaseObject class in the baseobjects.bases package.
 """
@@ -23,9 +22,9 @@ from typing import Any, Dict, List
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+# Source Packages #
 from src.baseobjects.bases import BaseObject
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #

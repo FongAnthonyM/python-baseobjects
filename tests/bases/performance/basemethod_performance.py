@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """basemethod_performance.py
 Performance tests for the BaseMethod class in the baseobjects.bases package.
 """
@@ -24,9 +23,9 @@ from weakref import ReferenceType
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+# Source Packages #
 from src.baseobjects.bases import BaseMethod
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #

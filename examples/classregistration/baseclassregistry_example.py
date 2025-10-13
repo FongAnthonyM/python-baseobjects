@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """baseclassregistry_example.py
 An example of how to create and use BaseClassRegistry.
 
@@ -15,10 +14,8 @@ This example demonstrates:
 # Standard Libraries #
 from typing import Any, Type
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.classregistration import BaseClassRegistry
-
-# Local Packages #
 
 
 # Definitions #

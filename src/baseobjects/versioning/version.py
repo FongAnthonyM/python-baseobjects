@@ -30,8 +30,6 @@ __version__ = "1.12.0"
 from abc import abstractmethod
 from typing import Any
 
-# Third-Party Packages #
-
 # Local Packages #
 from ..bases import BaseObject
 
@@ -150,7 +148,7 @@ class Version(BaseObject):
         if isinstance(other, Version):
             return self.tuple() < other.tuple()
         else:
-            raise TypeError(f"'>' not supported between instances of '{str(self)}' and '{str(other)}'")
+            raise TypeError(f"'>' not supported between instances of '{self!s}' and '{other!s}'")
 
     @abstractmethod
     def __gt__(self, other: Any) -> bool:
@@ -170,7 +168,7 @@ class Version(BaseObject):
         if isinstance(other, Version):
             return self.tuple() > other.tuple()
         else:
-            raise TypeError(f"'>' not supported between instances of '{str(self)}' and '{str(other)}'")
+            raise TypeError(f"'>' not supported between instances of '{self!s}' and '{other!s}'")
 
     @abstractmethod
     def __le__(self, other: Any) -> bool:
@@ -190,7 +188,7 @@ class Version(BaseObject):
         if isinstance(other, Version):
             return self.tuple() <= other.tuple()
         else:
-            raise TypeError(f"'<=' not supported between instances of '{str(self)}' and '{str(other)}'")
+            raise TypeError(f"'<=' not supported between instances of '{self!s}' and '{other!s}'")
 
     @abstractmethod
     def __ge__(self, other: Any) -> bool:
@@ -210,7 +208,7 @@ class Version(BaseObject):
         if isinstance(other, Version):
             return self.tuple() >= other.tuple()
         else:
-            raise TypeError(f"'>=' not supported between instances of '{str(self)}' and '{str(other)}'")
+            raise TypeError(f"'>=' not supported between instances of '{self!s}' and '{other!s}'")
 
     # Instance Methods #
     # Constructors/Destructors #

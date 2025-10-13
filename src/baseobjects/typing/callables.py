@@ -22,11 +22,6 @@ __version__ = "1.12.0"
 from collections.abc import Callable
 from typing import Any
 
-# Third-Party Packages #
-
-# Local Packages #
-
-
 # Definitions #
 # Types #
 # Callables
@@ -46,9 +41,9 @@ PropertyCallbacks = tuple[GetterMethod, SetterMethod, DeleteMethod]
 __all__ = [
     "AnyCallable",
     "AnyCallableType",
+    "DeleteMethod",
     "GetObjectMethod",
     "GetterMethod",
-    "SetterMethod",
-    "DeleteMethod",
     "PropertyCallbacks",
+    "SetterMethod",
 ]

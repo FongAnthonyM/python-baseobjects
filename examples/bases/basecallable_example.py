@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """basecallable_example.py
 An example of how to use BaseCallable, BaseMethod, and BaseFunction classes.
 
@@ -13,12 +12,10 @@ This example demonstrates:
 """
 # Imports #
 # Standard Libraries #
-from typing import Any, Dict, List
+from typing import Any
 
-# Third-Party Packages #
-from baseobjects.bases import BaseCallable, BaseMethod, BaseFunction
-
-# Local Packages #
+# Source Packages #
+from baseobjects.bases import BaseCallable, BaseFunction, BaseMethod
 
 
 # Classes #

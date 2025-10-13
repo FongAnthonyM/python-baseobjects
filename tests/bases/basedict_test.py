@@ -26,7 +26,7 @@ from typing import Any, Type
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
 from src.baseobjects.bases.collections import BaseDict
 from src.baseobjects.testsuite.bases import BaseObjectTestSuite
 

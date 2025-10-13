@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """baseregisteredclass_example.py
 An example of how to create and use BaseRegisteredClass.
 
@@ -16,10 +15,8 @@ This example demonstrates:
 # Standard Libraries #
 from typing import Any, ClassVar, Optional, Type
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.classregistration import BaseClassRegistry, BaseRegisteredClass
-
-# Local Packages #
 
 
 # Definitions #
@@ -155,6 +152,7 @@ class Circle(Shape):
         Returns:
             The area of the circle.
         """
+        # Standard Libraries #
         import math
 
         return math.pi * self.radius**2
@@ -165,6 +163,7 @@ class Circle(Shape):
         Returns:
             The perimeter of the circle.
         """
+        # Standard Libraries #
         import math
 
         return 2 * math.pi * self.radius
@@ -263,6 +262,7 @@ class Triangle(Shape):
         Returns:
             The area of the triangle.
         """
+        # Standard Libraries #
         import math
 
         s = (self.a + self.b + self.c) / 2
@@ -378,6 +378,7 @@ def manual_class_registration():
             Returns:
                 The area of the hexagon.
             """
+            # Standard Libraries #
             import math
 
             return 3 * math.sqrt(3) * self.side**2 / 2

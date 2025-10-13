@@ -19,16 +19,16 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from abc import abstractmethod
-import pickle
 import time
-from typing import Any, Type, Callable
+from abc import abstractmethod
+from typing import Any, Type
+from collections.abc import Callable
 
 # Third-Party Packages #
 import pytest
 
 # Local Packages #
-from ...cachingtools.caches.basetimedcache import _HashedSeq, BaseTimedCacheCallable
+from ...cachingtools.caches.basetimedcache import BaseTimedCacheCallable
 from ..functions.dynamiccallabletestsuite import DynamicCallableTestSuite
 
 
@@ -61,7 +61,7 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BaseTimedCacheCallable]
+    TestClass: type[BaseTimedCacheCallable]
 
     # Instance Methods #
     def create_test_function(self) -> tuple[Callable, Callable]:

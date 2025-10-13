@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """methodnames_example.py
 An example of how to use the method name functions from the methodnames module.
 
@@ -16,15 +15,13 @@ This example demonstrates:
 import datetime
 import json
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.operations import (
     get_method_names,
     get_public_method_names,
     iter_method_names,
     iter_public_method_names,
 )
-
-# Local Packages #
 
 
 # Example Classes #

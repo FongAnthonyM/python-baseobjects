@@ -20,11 +20,12 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import asyncio
-from abc import abstractmethod
 import copy
 import pickle
+from abc import abstractmethod
 from types import MethodType
-from typing import Any, Type, Callable
+from typing import Any, Type
+from collections.abc import Callable
 
 # Third-Party Packages #
 import pytest
@@ -126,8 +127,8 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BaseCallable]
-    BindTargetClass: Type[Any] = ExampleBindTarget
+    TestClass: type[BaseCallable]
+    BindTargetClass: type[Any] = ExampleBindTarget
 
     # Instance Methods #
     def create_bind_target(self, *args: Any, **kwargs) -> Any:

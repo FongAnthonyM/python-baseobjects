@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """updaterecursive_example.py
 An example of how to use the update_recursive function.
 
@@ -16,10 +15,8 @@ This example demonstrates:
 # Standard Libraries #
 from collections import defaultdict
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.operations import update_recursive
-
-# Local Packages #
 
 
 # Example Sections #

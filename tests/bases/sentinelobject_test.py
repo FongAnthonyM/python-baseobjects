@@ -25,7 +25,7 @@ from typing import Type
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
 from src.baseobjects.bases import SentinelObject
 from src.baseobjects.testsuite.bases import BaseObjectTestSuite
 
@@ -265,6 +265,7 @@ class TestSentinelObject(BaseObjectTestSuite):
         This test verifies that the predefined sentinel constants DEFAULTSENTINEL and SEARCHSENTINEL
         are instances of SentinelObject with the correct identities.
         """
+        # Source Packages #
         from src.baseobjects.bases.sentinelobject import DEFAULTSENTINEL, SEARCHSENTINEL
 
         # Validate DEFAULTSENTINEL

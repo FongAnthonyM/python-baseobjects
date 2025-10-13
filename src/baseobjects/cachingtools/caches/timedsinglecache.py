@@ -24,11 +24,8 @@ from collections.abc import Hashable
 from time import perf_counter
 from typing import Any
 
-# Third-Party Packages #
-
 # Local Packages #
-from ...typing import AnyCallable
-from .basetimedcache import BaseTimedCacheCallable, BaseTimedCacheMethod, BaseTimedCache
+from .basetimedcache import BaseTimedCache, BaseTimedCacheCallable, BaseTimedCacheMethod
 
 
 # Definitions #

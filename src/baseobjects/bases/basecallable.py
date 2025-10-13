@@ -37,13 +37,11 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from asyncio.coroutines import iscoroutinefunction, _is_coroutine
+from asyncio.coroutines import _is_coroutine, iscoroutinefunction
 from functools import WRAPPER_ASSIGNMENTS
 from types import FunctionType, MethodType
 from typing import Any
 from weakref import ReferenceType
-
-# Third-Party Packages #
 
 # Local Packages #
 from ..typing import AnyCallable, GetObjectMethod
@@ -201,7 +199,7 @@ class BaseCallable(BaseReducible):
 
         # Object Construction #
         if init:
-            self.construct(func=func, *args, **kwargs)
+            self.construct(func, *args, **kwargs)
 
     # Instance Methods #
     # Constructors/Destructors
@@ -399,7 +397,7 @@ class BaseMethod(BaseCallable):
 
         # Object Construction #
         if init:
-            self.construct(func=func, instance=instance, owner=owner, is_binding=is_binding, *args, **kwargs)
+            self.construct(func, instance, owner, *args, is_binding=is_binding, **kwargs)
 
     # Pickling
     def __getstate__(self) -> None | dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]]:
@@ -449,8 +447,8 @@ class BaseMethod(BaseCallable):
         func: AnyCallable | None = None,
         instance: Any = None,
         owner: type[Any] | None = None,
-        is_binding: bool = True,
         *args: Any,
+        is_binding: bool = True,
         **kwargs: Any,
     ) -> None:
         """The constructor for this object.
@@ -464,9 +462,9 @@ class BaseMethod(BaseCallable):
             instance: The object to bind this method to. This becomes the 'self' parameter when the method is called.
             owner: The class of the object to bind this method to. This is used for proper method binding and to support
                 inheritance.
+            *args: Additional positional arguments passed to the parent class's construct method.
             is_binding: Determines if this callable will bind to another object when accessed as an attribute. If False,
                 the method behaves more like a static method.
-            *args: Additional positional arguments passed to the parent class's construct method.
             **kwargs: Additional keyword arguments passed to the parent class's construct method.
         """
         self.is_binding = is_binding

@@ -28,10 +28,10 @@ from typing import Any, Callable, Type
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
 from src.baseobjects.functions import BaseDecorator
+from src.baseobjects.testsuite.bases import example_coroutine, example_function
 from src.baseobjects.testsuite.functions import BaseDecoratorTestSuite
-from src.baseobjects.testsuite.bases import example_function, example_coroutine
 
 
 # Definitions #

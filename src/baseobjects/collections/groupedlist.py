@@ -32,7 +32,7 @@ from typing import Any
 import bidict
 
 # Local Packages #
-from ..bases import BaseList, SEARCHSENTINEL
+from ..bases import SEARCHSENTINEL, BaseList
 
 
 # Definitions #
@@ -177,8 +177,7 @@ class GroupedList(BaseList):
         """
         for item in self.data:
             if isinstance(item, GroupedList) and self.check_if_child(item):
-                for sub_item in item:
-                    yield sub_item
+                yield from item
             else:
                 yield item
 
@@ -564,9 +563,9 @@ class GroupedList(BaseList):
         """
         if group is self:
             raise ValueError("Cannot add this GroupedList to itself.")
-        elif self.check_if_parent(group):
+        if self.check_if_parent(group):
             raise ValueError("Cannot add a GroupedList that is already a parent of this GroupedList.")
-        elif name in self.groups:
+        if name in self.groups:
             raise KeyError(f"{name} group already exists.")
 
         self.data.append(group)
@@ -665,7 +664,7 @@ class GroupedList(BaseList):
                 if reverse:
                     self.data.reverse()
 
-                return
+                return None
             elif isinstance(item, GroupedList) and self.check_if_child(item):
                 n_items = len(item)
                 if i < n_items:
@@ -673,7 +672,7 @@ class GroupedList(BaseList):
                     item.set_item(i, value)
                     if reverse:
                         self.data.reverse()
-                    return
+                    return None
                 else:
                     i -= n_items
             else:
@@ -701,11 +700,9 @@ class GroupedList(BaseList):
         values = list(value)
 
         if len(indices) != len(values):
-            raise ValueError(
-                "attempt to assign sequence of size {} to slice of size {}".format(len(values), len(indices))
-            )
+            raise ValueError(f"attempt to assign sequence of size {len(values)} to slice of size {len(indices)}")
 
-        for i, val in zip(indices, values):
+        for i, val in zip(indices, values, strict=False):
             self.set_item(i, val)
 
     def delete_item(self, i, group: str | None = None) -> None:
@@ -739,7 +736,7 @@ class GroupedList(BaseList):
                 if reverse:
                     self.data.reverse()
 
-                return
+                return None
             elif isinstance(item, GroupedList) and self.check_if_child(item):
                 n_items = len(item)
                 if i < n_items:
@@ -747,7 +744,7 @@ class GroupedList(BaseList):
                     item.delete_item(i)
                     if reverse:
                         self.data.reverse()
-                    return
+                    return None
                 else:
                     i -= n_items
             else:
@@ -821,7 +818,7 @@ class GroupedList(BaseList):
                 if reverse:
                     self.data.reverse()
 
-                return
+                return None
             elif isinstance(contained_item, GroupedList) and self.check_if_child(contained_item):
                 n_items = len(contained_item)
                 if i < n_items:
@@ -829,7 +826,7 @@ class GroupedList(BaseList):
                     contained_item.insert(i, item)
                     if reverse:
                         self.data.reverse()
-                    return
+                    return None
                 else:
                     i -= n_items
             else:
@@ -906,11 +903,11 @@ class GroupedList(BaseList):
             for contained_item in self.data:
                 if contained_item is item:
                     self.data.remove(item)
-                    return
+                    return None
                 elif isinstance(contained_item, GroupedList) and self.check_if_child(contained_item):
                     if item in contained_item:
                         contained_item.remove(item)
-                        return
+                        return None
         raise ValueError("item is not present in this object")
 
     def clear(self, group: str | None = None) -> None:

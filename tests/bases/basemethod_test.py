@@ -17,19 +17,20 @@ __license__ = "MIT"
 __version__ = "1.12.0"
 
 
-# Imports #
 # Standard Libraries #
-import pickle
 import gc
+
+# Imports #
+import pickle
 import weakref
 from typing import Any, Type
 
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
 from src.baseobjects.bases import BaseMethod
-from src.baseobjects.testsuite.bases import BaseMethodTestSuite, example_method, ExampleBindTarget
+from src.baseobjects.testsuite.bases import BaseMethodTestSuite, ExampleBindTarget, example_method
 
 
 # Classes #

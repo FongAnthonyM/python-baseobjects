@@ -18,8 +18,6 @@ __version__ = "1.12.0"
 from abc import abstractmethod
 from typing import Any, Type
 
-# Third-Party Packages #
-
 # Local Packages #
 from .basetestsuite import BaseTestSuite
 
@@ -37,7 +35,7 @@ class BaseClassTestSuite(BaseTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[Any]
+    TestClass: type[Any]
 
     # Instance Methods #
     # Tests

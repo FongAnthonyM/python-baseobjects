@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """staticwrapper_example.py
 An example of how to use StaticWrapper class.
 
@@ -18,10 +17,8 @@ This example demonstrates:
 import timeit
 from typing import List
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.wrappers import StaticWrapper
-
-# Local Packages #
 
 
 # Classes #

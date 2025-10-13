@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """methodnames_test.py
 Tests for the method name functions in the baseobjects package.
 """
@@ -21,12 +20,12 @@ from typing import Generator
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
+# Source Packages #
 from src.baseobjects.operations import (
-    iter_method_names,
-    iter_public_method_names,
     get_method_names,
     get_public_method_names,
+    iter_method_names,
+    iter_public_method_names,
 )
 
 

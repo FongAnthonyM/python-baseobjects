@@ -15,12 +15,10 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from abc import abstractmethod
 import copy
 import pickle
+from abc import abstractmethod
 from typing import Any, Type
-
-# Third-Party Packages #
 
 # Local Packages #
 from ...composition import DispatchableComposite
@@ -41,7 +39,7 @@ class DispatchableCompositeTestSuite(BaseDispatchingCompositeTestSuite, Dispatch
     """
 
     # Attributes #
-    TestClass: Type[DispatchableComposite]
+    TestClass: type[DispatchableComposite]
 
     # Instance Methods #
     # Tests

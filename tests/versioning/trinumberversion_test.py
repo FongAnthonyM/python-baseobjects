@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """trinumberversion_test.py
 Tests for the TriNumberVersion class in the baseobjects package.
 
@@ -26,9 +25,9 @@ from typing import Any, Type
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.versioning.trinumberversion import TriNumberVersion
+# Source Packages #
 from src.baseobjects.testsuite.versiontestsuite import VersionTestSuite
+from src.baseobjects.versioning.trinumberversion import TriNumberVersion
 
 
 # Definitions #

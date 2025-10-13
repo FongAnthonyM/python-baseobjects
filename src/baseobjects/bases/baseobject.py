@@ -27,20 +27,16 @@ __version__ = "1.12.0"
 # Standard Libraries #
 from abc import ABC
 from copy import (
+    Error,
     _copy_dispatch,
     _copy_immutable,
-    _deepcopy_dispatch,
     _deepcopy_atomic,
+    _deepcopy_dispatch,
     _keep_alive,
     _reconstruct,
-    Error,
 )
 from copyreg import dispatch_table
 from typing import Any
-
-# Third-Party Packages #
-
-# Local Packages #
 
 
 # Definitions #

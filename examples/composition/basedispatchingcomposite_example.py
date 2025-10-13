@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """basedispatchingcomposite_example.py
 An example of how to create and use BaseDispatchingComposite.
 
@@ -14,13 +13,11 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any, Dict, Tuple, Type, ClassVar
+from typing import Any, ClassVar, Dict, Tuple, Type
 
-# Third-Party Packages #
-from baseobjects.composition import BaseDispatchingComposite, BaseComponent
+# Source Packages #
 from baseobjects.classregistration import NamespaceClassRegistry
-
-# Local Packages #
+from baseobjects.composition import BaseComponent, BaseDispatchingComposite
 
 
 # Definitions #

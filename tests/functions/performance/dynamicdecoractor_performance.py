@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """dynamicdecoractor_performance.py
 Performance tests for the DynamicDecorator class in the baseobjects.functions package.
 """
@@ -17,15 +16,15 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import timeit
-from typing import Type, Any, Callable
+from typing import Any, Callable, Type
 
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.testsuite import BasePerformanceTestSuite
-from src.baseobjects.functions.dynamicdecoractor import DynamicDecorator
+# Source Packages #
 from src.baseobjects.functions.basedecorator import BaseDecorator
+from src.baseobjects.functions.dynamicdecoractor import DynamicDecorator
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #

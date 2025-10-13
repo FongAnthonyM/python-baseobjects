@@ -39,9 +39,9 @@ __version__ = "1.12.0"
 
 # Imports #
 # Local Packages #
-from .sentinelobject import SentinelObject, DEFAULTSENTINEL, SEARCHSENTINEL
+from .basecallable import BaseCallable, BaseFunction, BaseMethod
+from .basemeta import BaseMeta
 from .baseobject import BaseObject
 from .basereducible import BaseReducible
-from .basemeta import BaseMeta
-from .basecallable import BaseCallable, BaseMethod, BaseFunction
 from .collections import *
+from .sentinelobject import DEFAULTSENTINEL, SEARCHSENTINEL, SentinelObject

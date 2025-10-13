@@ -22,8 +22,6 @@ __version__ = "1.12.0"
 from collections import UserDict
 from typing import Any
 
-# Third-Party Packages #
-
 # Local Packages #
 from ..baseobject import BaseObject
 

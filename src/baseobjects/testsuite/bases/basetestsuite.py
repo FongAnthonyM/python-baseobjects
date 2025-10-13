@@ -18,10 +18,8 @@ __version__ = "1.12.0"
 from abc import ABC
 
 # Third-Party Packages #
-from click.testing import CliRunner
 import pytest
-
-# Local Packages #
+from click.testing import CliRunner
 
 
 # Definitions #

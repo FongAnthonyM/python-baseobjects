@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """dispatchableclass_example.py
 An example of how to create and use DispatchableClass.
 
@@ -15,10 +14,8 @@ This example demonstrates:
 # Standard Libraries #
 from typing import Any, ClassVar, Dict, Optional, Tuple, Type
 
-# Third-Party Packages #
-from baseobjects.classregistration import DispatchableClass, BaseClassRegistry
-
-# Local Packages #
+# Source Packages #
+from baseobjects.classregistration import BaseClassRegistry, DispatchableClass
 
 
 # Definitions #

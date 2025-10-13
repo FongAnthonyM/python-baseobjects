@@ -18,11 +18,8 @@ __version__ = "1.12.0"
 from datetime import datetime, timedelta, timezone
 from datetime import tzinfo as TZInfo
 
-# Third-Party Packages #
-
 # Local Packages #
 from ..functions import singlekwargdispatch
-
 
 # Definitions #
 # Constants #

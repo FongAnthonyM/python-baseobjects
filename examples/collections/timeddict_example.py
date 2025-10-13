@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """timeddict_example.py
 An example of how to use TimedDict class.
 
@@ -14,10 +13,8 @@ This example demonstrates:
 import time
 from typing import Any, Dict
 
-# Third-Party Packages #
+# Source Packages #
 from baseobjects.collections import TimedDict
-
-# Local Packages #
 
 
 # Example Sections #

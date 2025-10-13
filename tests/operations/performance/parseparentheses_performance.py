@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """parseparentheses_performance.py
 Performance tests for the parse_parentheses function in the baseobjects.operations package.
 """
@@ -24,9 +23,9 @@ from typing import Any, Callable, List, Set, Union
 # Third-Party Packages #
 import pytest
 
-# Local Packages #
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+# Source Packages #
 from src.baseobjects.operations import parse_parentheses
+from src.baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
