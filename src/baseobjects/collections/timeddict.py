@@ -66,6 +66,12 @@ class TimedDict(BaseDict):
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, dict_: dict[Hashable, Any] | None = None, /, **kwargs: Any) -> None:
+        """Initialize a timed dictionary.
+
+        Args:
+            dict_: Optional initial mapping to populate the dictionary.
+            **kwargs: Additional key-value pairs to initialize.
+        """
         # Attributes #
         self._data: dict[Hashable, Any] = {}
 
@@ -90,7 +96,11 @@ class TimedDict(BaseDict):
 
     @contextmanager
     def pause_timer(self) -> None:
-        """A context manager that will stop clearing the dictionary until it is returned."""
+        """A context manager that will stop clearing the dictionary until it is returned.
+
+        Yields:
+            None: Yields None while the automatic clearing is paused.
+        """
         left_over = 0.0
         if self.expiration is not None:
             left_over = self.expiration - perf_counter()
@@ -102,7 +112,11 @@ class TimedDict(BaseDict):
 
     @contextmanager
     def pause_reset_timer(self) -> None:
-        """A context manager that will stop clearing the dictionary until it is returned, resting the expiration."""
+        """A context manager that will stop clearing the dictionary until it is returned, resting the expiration.
+
+        Yields:
+            None: Yields None while the automatic clearing is paused; resets expiration on exit.
+        """
         self.is_timed = False
         yield None
         self.is_timed = True

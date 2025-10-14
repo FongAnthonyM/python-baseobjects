@@ -96,6 +96,19 @@ class CallableMultiplexer(BaseMethod):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
+        """Initialize a callable multiplexer.
+
+        Args:
+            registry: Optional registry of functions/methods to multiplex.
+            instance: Optional instance for method binding.
+            owner: Optional owner class for method resolution.
+            select: Name of the function/method to initially select.
+            binding: When True, wrap the selected callable as a binding descriptor.
+            *args: Positional arguments forwarded to BaseMethod.
+            is_binding: Determines if this callable will bind to another object.
+            init: When True, construct the instance immediately.
+            **kwargs: Additional keyword arguments forwarded to BaseMethod.
+        """
         # Parent Initialization #
         super().__init__(*args, init=False, **kwargs)
 
@@ -104,7 +117,7 @@ class CallableMultiplexer(BaseMethod):
             self.construct(registry, instance, owner, select, binding, *args, is_binding=is_binding, **kwargs)
 
     # Pickling
-    def __getstate__(self) -> None | dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]]:
+    def __getstate__(self) -> dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]] | None:
         """Gets the object's state for pickling.
 
         This method prepares the object for pickling by converting the weak reference to the bound instance into a

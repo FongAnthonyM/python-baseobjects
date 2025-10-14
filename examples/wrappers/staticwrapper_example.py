@@ -289,7 +289,7 @@ def performance_comparison_example():
 
     print(f"Direct access time: {direct_time:.6f} mircoseconds per-call")
     print(f"Wrapper access time: {wrapper_time:.6f} microseconds per-call")
-    print(f"Ratio (wrapper/direct): {wrapper_time/direct_time:.2f}x slower")
+    print(f"Ratio (wrapper/direct): {wrapper_time / direct_time:.2f}x slower")
     print("Note: StaticWrapper is typically only slightly slower than direct access")
     print("      because it uses property descriptors instead of dynamic lookup")
 
@@ -314,8 +314,8 @@ def error_handling_example():
     try:
         value = wrapper.non_existent_attr
         print(f"  Value: {value}")
-    except AttributeError as e:
-        print(f"  AttributeError: attribute doesn't exist")
+    except AttributeError:
+        print("  AttributeError: attribute doesn't exist")
 
     # Add the attribute to the wrapped object
     print("\nAdding the attribute to the wrapped object:")

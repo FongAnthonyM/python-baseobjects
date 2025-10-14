@@ -22,9 +22,9 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import abc
 from collections.abc import Hashable, Iterable
-from contextlib import contextmanager
+from contextlib import AbstractContextManager, contextmanager
 from time import perf_counter
-from typing import Any, ContextManager
+from typing import Any, ClassVar
 
 # Local Packages #
 from ...bases import BaseObject
@@ -33,16 +33,16 @@ from ...typing import AnyCallable
 
 
 # Definitions #
+# Constants #
+_KWD_MARK = object()  # Sentinel for create_key kwd_mark to avoid B008 (no calls in defaults)
+
+
 # Classes #
 class _HashedSeq(list):
     """A hash value based on an iterable.
 
     Attributes:
         hashvalue: The hash value to store.
-
-    Args:
-        tuple_: The iterable to create a hash value from.
-        hash_: The function that will create hash value.
     """
 
     __slots__: str | Iterable[str] = "hashvalue"
@@ -50,13 +50,23 @@ class _HashedSeq(list):
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, tuple_: Iterable, hash_: AnyCallable = hash) -> None:
+        """Initialize a new _HashedSeq instance.
+
+        Args:
+            tuple_: The iterable to create a hash value from.
+            hash_: The function that will create hash value.
+        """
         # Attributes #
         self[:] = tuple_
         self.hashvalue = hash_(tuple_)
 
     # Representation
     def __hash__(self) -> int:
-        """Get the hash value of this object."""
+        """Get the hash value of this object.
+
+        Returns:
+            int: The cached hash value for this sequence.
+        """
         return self.hashvalue
 
 
@@ -67,11 +77,6 @@ class CacheItem(BaseObject):
         priority_link: The object that represents this item's priority.
         key: The key to this item in the cache.
         result: The cached value.
-
-    Args:
-        key: The key to this item in the cache.
-        result: The value to store in the cache.
-        priority_link: The object that represents this item's priority.
     """
 
     # Attributes #
@@ -89,6 +94,13 @@ class CacheItem(BaseObject):
         *args: Any,
         **kwargs: Any,
     ) -> None:
+        """Initialize a new CacheItem instance.
+
+        Args:
+            key: The key to this item in the cache.
+            result: The value to store in the cache.
+            priority_link: The object that represents this item's priority.
+        """
         # Parent Initialization #
         super().__init__(*args, **kwargs)
 
@@ -108,27 +120,17 @@ class BaseTimedCacheCallable(DynamicCallable):
         typed: Determines if the function's arguments are type sensitive for caching.
         is_timed: Determines if the cache will be reset periodically.
         lifetime: The period between cache resets in seconds.
-        expiration: The next time the cache will be rest.
+        expiration: The next time the cache will be reset.
 
-        cache_item_type = The class that will create the cache items.
+        cache_item_type: The class that will create the cache items.
         cache_container: Contains the results of the wrapped function.
         _cache_method: The name of the caching method.
         _previous_cache_method: The previous caching method used.
-        cache: The multiplexer which controls the caching method being use.
-
-    Args:
-        func: The function to wrap.
-        typed: Determines if the function's arguments are type sensitive for caching.
-        lifetime: The period between cache resets in seconds.
-        call_method: The default call method to use.
-        instanced: Determines if the cache exists in the main function or in the method instances.
-        *args: Arguments for inheritance.
-        init: Determines if this object will construct.
-        **kwargs: Keyword arguments for inheritance.
+        cache: The multiplexer which controls the caching method being used.
     """
 
     # Attributes #
-    _cast_excluded: set = DynamicCallable._cast_excluded | {"cache"}
+    _cast_excluded: ClassVar[set[str]] = DynamicCallable._cast_excluded | {"cache"}
     default_call_method: str = "call_caching"
 
     _instanced_cache: bool = False
@@ -178,6 +180,18 @@ class BaseTimedCacheCallable(DynamicCallable):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
+        """Initialize a new BaseTimedCacheCallable instance.
+
+        Args:
+            func: The function to wrap.
+            typed: Determines if the function's arguments are type sensitive for caching.
+            lifetime: The period between cache resets in seconds.
+            call_method: The default call method to use.
+            instanced: Determines if the cache exists in the main function or in the method instances.
+            *args: Arguments for inheritance.
+            init: Determines if this object will construct.
+            **kwargs: Keyword arguments for inheritance.
+        """
         # Attributes #
         self._previous_cache_method: str = self._cache_method
         self.cache: MethodMultiplexer = MethodMultiplexer(instance=self, select=self._cache_method)
@@ -188,7 +202,8 @@ class BaseTimedCacheCallable(DynamicCallable):
         # Object Construction #
         if init:
             self.construct(
-                func=func,
+                func,
+                *args,
                 lifetime=lifetime,
                 typed=typed,
                 call_method=call_method,
@@ -231,7 +246,7 @@ class BaseTimedCacheCallable(DynamicCallable):
         if instanced is not None:
             self.instanced_cache = instanced
 
-        super().construct(func=func, *args, **kwargs)
+        super().construct(func, *args, **kwargs)
 
     # Caching Methods
     def no_cache(self, *args: Any, **kwargs: Any) -> Any:
@@ -252,8 +267,8 @@ class BaseTimedCacheCallable(DynamicCallable):
         args: tuple,
         kwds: dict,
         typed: bool,
-        kwd_mark: tuple = (object(),),
-        fasttypes: set = {int, str},
+        kwd_mark: tuple | None = None,
+        fasttypes: set[type] | None = None,
         tuple_: AnyCallable = tuple,
         type_: AnyCallable = type,
         len_: AnyCallable = len,
@@ -263,7 +278,15 @@ class BaseTimedCacheCallable(DynamicCallable):
         The key is constructed in a way that is flat as possible rather than as a nested structure that would take
         more memory. If there is only a single argument and its data type is known to cache its hash value, then that
         argument is returned without a wrapper. This saves space and improves lookup speed.
+
+        Returns:
+            _HashedSeq | Hashable: A hashed sequence representing the key for lookups. When a single fast-typed
+            argument is provided, the raw argument (e.g., an int or str) is returned directly for efficiency.
         """
+        if kwd_mark is None:
+            kwd_mark = (_KWD_MARK,)
+        if fasttypes is None:
+            fasttypes = {int, str}
         key = args
         if kwds:
             key += kwd_mark
@@ -302,11 +325,16 @@ class BaseTimedCacheCallable(DynamicCallable):
         self.clear_cache()
 
     def resume_caching(self) -> None:
-        """Resumes caching by setting the call method to the previous call method"""
+        """Resumes caching by setting the call method to the previous call method."""
         self.cache_method = self._previous_cache_method
 
     @contextmanager
-    def pause_caching(self) -> ContextManager[None]:
+    def pause_caching(self) -> AbstractContextManager[None]:
+        """Temporarily pause caching within the context manager.
+
+        Yields:
+            None: Yields None while caching is paused within the context.
+        """
         self.stop_caching()
         yield None
         self.resume_caching()
@@ -435,7 +463,7 @@ class BaseTimedCache(BaseTimedCacheCallable, DynamicDecorator):
         owner: type[Any] | None = None,
         name: str | None = None,
     ) -> BaseTimedCacheCallable:
-        """Creates a method of this function which is bound to another object and sets the method an attribute.
+        """Creates a method of this function which is bound to another object and sets the method as an attribute.
 
         Args:
             instance: The object to bind the method to.

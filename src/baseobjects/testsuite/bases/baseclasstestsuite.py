@@ -16,7 +16,7 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 from abc import abstractmethod
-from typing import Any, Type
+from typing import Any
 
 # Local Packages #
 from .basetestsuite import BaseTestSuite

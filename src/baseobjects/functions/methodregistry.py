@@ -46,11 +46,21 @@ class BaseMethodRegistry(FunctionRegistry, BaseReducible):
         self,
         methods: dict[str, AnyCallable] | None = None,
         object_: Any = None,
-        objects: Iterable[Any, ...] = None,
+        objects: Iterable[Any, ...] | None = None,
         *args: Any,
         init: bool = True,
         **kwargs: Any,
     ) -> None:
+        """Initialize a base method registry.
+
+        Args:
+            methods: Optional mapping of names to callables to add.
+            object_: Optional object whose functions will be registered.
+            objects: Optional iterable of objects whose functions will be registered.
+            *args: Additional positional arguments forwarded to parents.
+            init: When True, construct the instance immediately.
+            **kwargs: Additional keyword arguments forwarded to parents.
+        """
         # Parent Initialization #
         super().__init__(*args, init=False, **kwargs)
 
@@ -76,7 +86,7 @@ class BaseMethodRegistry(FunctionRegistry, BaseReducible):
         self,
         methods: dict[str, AnyCallable] | None = None,
         object_: Any = None,
-        objects: Iterable[Any, ...] = None,
+        objects: Iterable[Any, ...] | None = None,
         *args: Any,
         **kwargs: Any,
     ) -> None:
@@ -132,6 +142,16 @@ class BoundMethodRegistry(BaseMethodRegistry):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
+        """Initialize a bound method registry.
+
+        Args:
+            registry: Optional underlying method registry to wrap.
+            instance: Optional instance to bind methods to.
+            owner: Optional owner class of the instance.
+            *args: Additional positional arguments forwarded to parents.
+            init: When True, construct the instance immediately.
+            **kwargs: Additional keyword arguments forwarded to parents.
+        """
         # Parent Initialization #
         super().__init__(*args, init=False, **kwargs)
 
@@ -140,7 +160,7 @@ class BoundMethodRegistry(BaseMethodRegistry):
             self.construct(registry, instance, owner, *args, **kwargs)
 
     # Pickling
-    def __getstate__(self) -> None | dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]]:
+    def __getstate__(self) -> dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]] | None:
         """Gets the object's state for pickling.
 
         This method prepares the object for pickling by converting the weak reference to the bound instance into a

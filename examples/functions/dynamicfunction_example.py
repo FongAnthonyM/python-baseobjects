@@ -178,7 +178,7 @@ def basic_dynamicfunction_usage():
 
     # Call the function using the default call method
     result = dynamic_func(5, 3)
-    print(f"Default call method (call_wrapped):")
+    print("Default call method (call_wrapped):")
     print(f"dynamic_func(5, 3) = {result}")
 
     # Check the current call method
@@ -195,7 +195,7 @@ def basic_dynamicfunction_usage():
 
     # Call the function
     result = empty_dynamic(10, 20)
-    print(f"\nSetting function after creation:")
+    print("\nSetting function after creation:")
     print(f"empty_dynamic(10, 20) = {result}")
 
     print()
@@ -212,17 +212,17 @@ def dynamicfunction_vs_dynamiccallable():
     # Show that both can be called directly
     func_result = dynamic_func(7, 3)
     callable_result = dynamic_callable(7, 3)
-    print(f"Direct call:")
+    print("Direct call:")
     print(f"dynamic_func(7, 3) = {func_result}")
     print(f"dynamic_callable(7, 3) = {callable_result}")
 
     # Show the class hierarchy
-    print(f"\nClass hierarchy:")
+    print("\nClass hierarchy:")
     print(f"DynamicFunction inherits from: {DynamicFunction.__mro__[1:3]}")
     print(f"DynamicCallable inherits from: {DynamicCallable.__mro__[1:2]}")
 
     # Show the method_type attribute
-    print(f"\nMethod type:")
+    print("\nMethod type:")
     print(f"DynamicFunction.method_type = {DynamicFunction.method_type}")
 
     # Create an instance of ExampleClass
@@ -230,7 +230,7 @@ def dynamicfunction_vs_dynamiccallable():
 
     # Use both as descriptors
     func_result = example.dynamic_greeter("Alice")
-    print(f"\nUsing as descriptors:")
+    print("\nUsing as descriptors:")
     print(f"example.dynamic_greeter('Alice') = {func_result}")
 
     print()
@@ -245,7 +245,7 @@ def custom_dynamicfunction_usage():
 
     # Use the default call method
     result = custom_func(7, 3)
-    print(f"Default call method (call_wrapped):")
+    print("Default call method (call_wrapped):")
     print(f"custom_func(7, 3) = {result}")
 
     # Switch to the custom call method with logging
@@ -254,7 +254,7 @@ def custom_dynamicfunction_usage():
 
     # Switch to the custom call method with validation
     custom_func.call_method = "call_with_validation"
-    print(f"\nUsing call_with_validation method:")
+    print("\nUsing call_with_validation method:")
     try:
         result = custom_func(None, 3)
     except ValueError as e:
@@ -276,7 +276,7 @@ def dynamicfunction_as_descriptor():
 
     # Use the DynamicFunction descriptor
     result = example.dynamic_greeter("Alice")
-    print(f"Using dynamic_greeter descriptor:")
+    print("Using dynamic_greeter descriptor:")
     print(f"example.dynamic_greeter('Alice') = {result}")
 
     # Examine the type of the bound method
@@ -303,32 +303,32 @@ def nonwrapping_dynamicfunction_usage():
 
     # Use the default call method (add)
     result = calculator(5, 3)
-    print(f"Default call method (add):")
+    print("Default call method (add):")
     print(f"calculator(5, 3) = {result}")
 
     # Switch to the subtract method
     calculator.call_method = "subtract"
     result = calculator(10, 4)
-    print(f"\nUsing subtract method:")
+    print("\nUsing subtract method:")
     print(f"calculator(10, 4) = {result}")
 
     # Switch to the multiply method
     calculator.call_method = "multiply"
     result = calculator(6, 7)
-    print(f"\nUsing multiply method:")
+    print("\nUsing multiply method:")
     print(f"calculator(6, 7) = {result}")
 
     # Switch to the divide method
     calculator.call_method = "divide"
     result = calculator(20, 5)
-    print(f"\nUsing divide method:")
+    print("\nUsing divide method:")
     print(f"calculator(20, 5) = {result}")
 
     # Test error handling
     try:
         result = calculator(10, 0)
     except ZeroDivisionError as e:
-        print(f"\nError handling:")
+        print("\nError handling:")
         print(f"calculator(10, 0) raised: {e}")
 
     print()
@@ -355,7 +355,7 @@ def function_method_conversion():
     # This won't work correctly because the method needs 'self'
     try:
         result = method_func(5, 3)
-        print(f"Trying to call method as function:")
+        print("Trying to call method as function:")
         print(f"method_func(5, 3) = {result}")
     except TypeError as e:
         print(f"Error when calling method as function: {e}")
@@ -380,7 +380,7 @@ def function_method_conversion():
 
     # Call as a function
     result = dynamic_func(5, 3)
-    print(f"\nCalling as a function:")
+    print("\nCalling as a function:")
     print(f"dynamic_func(5, 3) = {result}")
 
     # Create a DynamicMethod from the DynamicFunction
@@ -388,7 +388,7 @@ def function_method_conversion():
 
     # Call as a method
     result = dynamic_method(7, 3)
-    print(f"\nCalling as a method:")
+    print("\nCalling as a method:")
     print(f"dynamic_method(7, 3) = {result}")
 
     print()

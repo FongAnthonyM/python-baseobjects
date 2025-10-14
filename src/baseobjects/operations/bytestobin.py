@@ -40,4 +40,5 @@ def bytes_to_bin(bytes_: bytes, byteorder: str = "big", out_type: type = int) ->
     if byteorder == "little":
         return tuple(out_type(bool(byte & place)) for byte in bytes_ for place in little_array)
     else:
-        raise ValueError("byteorder must be either 'little' or 'big'")
+        msg = "byteorder must be either 'little' or 'big'"
+        raise ValueError(msg)

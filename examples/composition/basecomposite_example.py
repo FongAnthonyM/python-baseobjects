@@ -277,15 +277,15 @@ def component_interaction():
     print("Performing calculations and logging them...")
 
     # Addition
-    result = math_component.add(5, 3)
+    math_component.add(5, 3)
     logging_component.log_operation("add", 5, 3)
 
     # Subtraction
-    result = math_component.subtract(10, 4)
+    math_component.subtract(10, 4)
     logging_component.log_operation("subtract", 10, 4)
 
     # Multiplication
-    result = math_component.multiply(3, 7)
+    math_component.multiply(3, 7)
     logging_component.log_operation("multiply", 3, 7)
 
     # Get the log

@@ -1,5 +1,5 @@
 """__init__.py
-Specialized containers
+Specialized containers.
 """
 
 # Header #

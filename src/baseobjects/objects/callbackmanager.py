@@ -270,6 +270,20 @@ class CallbackManager(BaseReducible):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
+        """Initialize the callback manager.
+
+        Initializes internal registries and optionally constructs the instance using
+        provided callback entries and defaults.
+
+        Args:
+            callbacks: Mapping of names to synchronous ConditionalCallbackEntry objects to register.
+            callbacks_async: Mapping of names to asynchronous ConditionalCallbackEntry objects to register.
+            *args: Additional positional arguments forwarded to construct for subclass initialization.
+            default_condition: Default condition name used when registering callbacks. If provided, overrides the class default.
+            default_caller: Default caller method name used when registering callbacks. If provided, overrides the class default.
+            init: If True, call construct to finalize initialization with the provided arguments.
+            **kwargs: Additional keyword arguments forwarded to construct for subclass initialization.
+        """
         # Attributes #
         self.callbacks = {}
         self.callbacks_async = {}
@@ -676,7 +690,8 @@ class CallbackManager(BaseReducible):
         """
         if scheduler is None:
             if condition_names is None:
-                raise ValueError("condition_names must be provided if scheduler is None.")
+                msg = "condition_names must be provided if scheduler is None."
+                raise ValueError(msg)
 
             self.schedulers[name] = self.create_conditional_scheduler(condition_names, type_, *args, **kwargs)
         else:

@@ -32,7 +32,7 @@ def basic_usage_example():
 
     print(f"UTC timezone: {utc}")
     print(f"UTC offset: {utc_offset}")
-    print(f"Expected: 0:00:00 (zero offset)")
+    print("Expected: 0:00:00 (zero offset)")
 
     # Get a fixed timezone with a positive offset
     eastern = datetime.timezone(datetime.timedelta(hours=-5))  # UTC-5 (Eastern Standard Time)
@@ -42,7 +42,7 @@ def basic_usage_example():
 
     print(f"\nEastern timezone: {eastern}")
     print(f"Eastern offset: {eastern_offset}")
-    print(f"Expected: -5:00:00 (5 hours behind UTC)")
+    print("Expected: -5:00:00 (5 hours behind UTC)")
 
     # Get a fixed timezone with a negative offset
     central_europe = datetime.timezone(datetime.timedelta(hours=1))  # UTC+1 (Central European Time)
@@ -52,7 +52,7 @@ def basic_usage_example():
 
     print(f"\nCentral European timezone: {central_europe}")
     print(f"Central European offset: {cet_offset}")
-    print(f"Expected: 1:00:00 (1 hour ahead of UTC)")
+    print("Expected: 1:00:00 (1 hour ahead of UTC)")
 
 
 def different_timezone_types_example():
@@ -65,7 +65,7 @@ def different_timezone_types_example():
 
     print(f"Fixed timezone (UTC+5:30): {fixed_tz}")
     print(f"Offset: {fixed_offset}")
-    print(f"Expected: 5:30:00")
+    print("Expected: 5:30:00")
 
     # Using zoneinfo.ZoneInfo (IANA timezone database)
     try:
@@ -76,7 +76,7 @@ def different_timezone_types_example():
         # Note: The offset may vary depending on Daylight Saving Time
         print(f"\nNew York timezone: {new_york_tz}")
         print(f"Offset: {ny_offset}")
-        print(f"Note: This offset may be -5:00:00 (EST) or -4:00:00 (EDT) depending on the date")
+        print("Note: This offset may be -5:00:00 (EST) or -4:00:00 (EDT) depending on the date")
 
         # Get the current time in New York to check if it's DST
         now = datetime.datetime.now(new_york_tz)

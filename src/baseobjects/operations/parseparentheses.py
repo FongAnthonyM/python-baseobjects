@@ -78,7 +78,8 @@ def parse_parentheses(
         ValueError: If the type of the input expression is unsupported.
     """
     # Catch the general case for any unregistered types
-    raise ValueError(f"parse_parentheses does not parse {expression} type.")
+    msg = f"parse_parentheses does not parse {expression} type."
+    raise ValueError(msg)
 
 
 @parse_parentheses.register(str)
@@ -121,11 +122,13 @@ def _parse_parentheses(
                 try:
                     list_bank.pop()
                 except IndexError:
-                    raise ValueError("Unbalanced parentheses")
+                    msg = "Unbalanced parentheses"
+                    raise ValueError(msg) from None
             case _ if (not include or token in include) and token not in exclude:
                 list_bank[-1].append(cast(token.strip()))
     if len(list_bank) != 1:
-        raise ValueError("Unbalanced parentheses")
+        msg = "Unbalanced parentheses"
+        raise ValueError(msg)
     return list_bank.pop()
 
 
@@ -170,9 +173,11 @@ def _parse_parentheses(
                 try:
                     list_bank.pop()
                 except IndexError:
-                    raise ValueError("Unbalanced parentheses")
+                    msg = "Unbalanced parentheses"
+                    raise ValueError(msg) from None
             case _ if (not include or token in include) and token not in exclude:
                 list_bank[-1].append(cast(token.strip()))
     if len(list_bank) != 1:
-        raise ValueError("Unbalanced parentheses")
+        msg = "Unbalanced parentheses"
+        raise ValueError(msg)
     return list_bank.pop()

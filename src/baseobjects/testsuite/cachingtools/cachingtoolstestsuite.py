@@ -18,7 +18,7 @@ import copy
 import pickle
 import time
 from abc import abstractmethod
-from typing import Any, Type
+from typing import Any
 from collections.abc import Callable
 
 # Third-Party Packages #
@@ -545,7 +545,7 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
             *args: Positional arguments to pass to the class constructor.
             **kwargs: Keyword arguments to pass to the class constructor.
         """
-        caching_func, _, get_call_count = self.create_test_caching_function(*args, **kwargs)
+        caching_func, _, _get_call_count = self.create_test_caching_function(*args, **kwargs)
 
         # Verify that clear_condition returns False when the cache is not expired
         caching_func.is_timed = True
@@ -580,4 +580,4 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
             *args: Positional arguments to pass to the class constructor.
             **kwargs: Keyword arguments to pass to the class constructor.
         """
-        caching_func, _, get_call_count = self.create_test_caching_function(*args, **kwargs)
+        _caching_func, _, _get_call_count = self.create_test_caching_function(*args, **kwargs)

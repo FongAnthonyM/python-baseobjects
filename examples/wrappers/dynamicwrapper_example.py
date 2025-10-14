@@ -218,8 +218,8 @@ def dynamic_attribute_example():
     try:
         value = wrapper.value
         print(f"  Value: {value}")
-    except AttributeError as e:
-        print(f"  AttributeError: attribute no longer exists")
+    except AttributeError:
+        print("  AttributeError: attribute no longer exists")
 
     # Add a new attribute to the wrapped object at runtime
     print("\nAdding a new attribute to the wrapped object at runtime:")
@@ -264,7 +264,7 @@ def performance_comparison_example():
 
     print(f"Direct access time: {direct_time:.6f} seconds")
     print(f"Wrapper access time: {wrapper_time:.6f} seconds")
-    print(f"Ratio (wrapper/direct): {wrapper_time/direct_time:.2f}x slower")
+    print(f"Ratio (wrapper/direct): {wrapper_time / direct_time:.2f}x slower")
     print("Note: DynamicWrapper is typically around 4.4x slower than direct access")
 
 
@@ -287,8 +287,8 @@ def error_handling_example():
     try:
         value = wrapper.non_existent_attr
         print(f"  Value: {value}")
-    except AttributeError as e:
-        print(f"  AttributeError: attribute doesn't exist")
+    except AttributeError:
+        print("  AttributeError: attribute doesn't exist")
 
     # Add the attribute to the wrapped object
     print("\nAdding the attribute to the wrapped object:")

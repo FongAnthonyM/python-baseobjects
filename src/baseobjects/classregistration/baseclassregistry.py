@@ -46,6 +46,14 @@ class BaseClassRegistry(BaseDict):
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, head_class: type | None = None, *args: Any, init: bool = True, **kwargs: Any) -> None:
+        """Initialize the class registry.
+
+        Args:
+            head_class: Optional head class that registered classes must derive from.
+            *args: Positional arguments passed to parent initializers.
+            init: When True, construct the instance immediately.
+            **kwargs: Additional keyword arguments for construction.
+        """
         # Parent Initialization #
         super().__init__()
 

@@ -18,7 +18,7 @@ __version__ = "1.12.0"
 import copy
 import pickle
 from abc import abstractmethod
-from typing import Any, Type
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -241,7 +241,7 @@ class NamespaceRegisteredClassTestSuite(BaseRegisteredClassTestSuite):
 
         # Get non-existent registered class
         with pytest.raises(KeyError):
-            retrieved_class = self.TestClass.get_registered_class("non_existent_namespace", "NonExistentClass")
+            self.TestClass.get_registered_class("non_existent_namespace", "NonExistentClass")
 
     def test_module_attribute(self) -> None:
         """Test the _module_ attribute."""

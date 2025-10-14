@@ -179,14 +179,14 @@ def conditional_callback_example():
     def check_for_code() -> bool:
         return "code" in mutable_state
 
-    def process_message(message: str) -> None:
+    def process_message_with_code(message: str) -> None:
         print(f"Code {mutable_state['code']}: {message}")
 
     # Demonstrate registering
     print("Using call_conditional to check state:")
     callback_manager.register_conditional_callback(
         name="code_printer",
-        callback=process_message,
+        callback=process_message_with_code,
         condition=check_for_code,
         callback_kwargs={"message": "extra message"},
     )
@@ -320,7 +320,7 @@ async def conditional_callback_example_async():
         await asyncio.sleep(0.1)  # Simulate async condition check
         return "code" in mutable_state
 
-    async def process_message_async(message: str) -> None:
+    async def process_message_with_code_async(message: str) -> None:
         await asyncio.sleep(0.1)  # Simulate async processing
         print(f"Async code {mutable_state['code']}: {message}")
 
@@ -328,7 +328,7 @@ async def conditional_callback_example_async():
     print("Using async conditional callbacks with state:")
     callback_manager.register_conditional_callback(
         name="code_printer_async",
-        callback=process_message_async,
+        callback=process_message_with_code_async,
         condition=check_for_code_async,
         caller="call_conditional_async",
         callback_kwargs={"message": "extra async message"},

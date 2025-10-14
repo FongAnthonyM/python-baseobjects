@@ -24,6 +24,11 @@ class NotImplementedWarning(RuntimeWarning):
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, name: str = "A method or function") -> None:
+        """Initialize the warning for unimplemented callables.
+
+        Args:
+            name: Descriptive name of the method or function that is not implemented.
+        """
         message = f"{name} has not been implemented yet."
         super().__init__(message)
 
@@ -34,5 +39,10 @@ class TimeoutWarning(Warning):
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, name: str = "A function") -> None:
+        """Initialize the timeout warning.
+
+        Args:
+            name: Descriptive name of the function that timed out.
+        """
         message = f"{name} timed out"
         super().__init__(message)

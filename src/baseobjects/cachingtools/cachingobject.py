@@ -72,6 +72,16 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Initialize the caching object.
+
+        This constructor prepares the instance-level cache registry from the class-level
+        definition and then delegates to the parent initializer. It accepts arbitrary
+        positional and keyword arguments to support flexible subclass initializers.
+
+        Args:
+            *args: Positional arguments forwarded to the parent initializer.
+            **kwargs: Keyword arguments forwarded to the parent initializer.
+        """
         # Attributes #
         self._caches = self._caches_.copy()
 

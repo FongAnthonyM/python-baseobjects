@@ -229,7 +229,7 @@ def basic_dynamicmethod_usage():
 
     # Call the bound method
     result = bound_method("Hello, world!")
-    print(f"Bound method call:")
+    print("Bound method call:")
     print(f"bound_method('Hello, world!') = {result}")
 
     # Check the current bind method
@@ -247,7 +247,7 @@ def basic_dynamicmethod_usage():
     # Bind and call the method
     bound_empty = empty_dynamic.__get__(instance, SimpleClass)
     result = bound_empty("Hello from empty method!")
-    print(f"\nSetting function after creation:")
+    print("\nSetting function after creation:")
     print(f"bound_empty('Hello from empty method!') = {result}")
 
     print()
@@ -262,18 +262,18 @@ def dynamicmethod_vs_others():
 
     # Use the regular method
     regular_result = comparison.regular_method("Regular message")
-    print(f"Regular method:")
+    print("Regular method:")
     print(f"comparison.regular_method('Regular message') = {regular_result}")
 
     # Use the DynamicMethod
     dynamic_method_result = comparison.dynamic_method("Dynamic method message")
-    print(f"\nDynamicMethod:")
+    print("\nDynamicMethod:")
     print(f"comparison.dynamic_method('Dynamic method message') = {dynamic_method_result}")
 
     # Use the DynamicFunction
     try:
         dynamic_function_result = comparison.dynamic_function("Dynamic function message")
-        print(f"\nDynamicFunction:")
+        print("\nDynamicFunction:")
         print(f"comparison.dynamic_function('Dynamic function message') = {dynamic_function_result}")
     except Exception as e:
         print(f"\nDynamicFunction error: {e}")
@@ -289,7 +289,7 @@ def dynamicmethod_vs_others():
     # Use the DynamicCallable
     try:
         dynamic_callable_result = comparison.dynamic_callable("Dynamic callable message")
-        print(f"\nDynamicCallable:")
+        print("\nDynamicCallable:")
         print(f"comparison.dynamic_callable('Dynamic callable message') = {dynamic_callable_result}")
     except Exception as e:
         print(f"\nDynamicCallable error: {e}")
@@ -303,7 +303,7 @@ def dynamicmethod_vs_others():
         )
 
     # Show the class hierarchy
-    print(f"\nClass hierarchy:")
+    print("\nClass hierarchy:")
     print(f"DynamicMethod inherits from: {DynamicMethod.__mro__[1:3]}")
     print(f"DynamicFunction inherits from: {DynamicFunction.__mro__[1:3]}")
     print(f"DynamicCallable inherits from: {DynamicCallable.__mro__[1:2]}")
@@ -320,7 +320,7 @@ def custom_dynamicmethod_usage():
 
     # Use the custom DynamicMethod with default call method
     result = example.custom_greeter("Bob")
-    print(f"Default call method (call_wrapped):")
+    print("Default call method (call_wrapped):")
     print(f"example.custom_greeter('Bob') = {result}")
 
     # Get the DynamicMethod instance
@@ -332,7 +332,7 @@ def custom_dynamicmethod_usage():
 
     # Switch to the custom call method with validation
     dynamic_method.call_method = "call_with_validation"
-    print(f"\nUsing call_with_validation method:")
+    print("\nUsing call_with_validation method:")
     try:
         result = example.custom_greeter(None)
     except ValueError as e:
@@ -345,7 +345,7 @@ def custom_dynamicmethod_usage():
     # Switch to the custom bind method
     dynamic_method.bind_method = "bind_with_prefix"
     result = example.custom_greeter("Eve")
-    print(f"\nUsing bind_with_prefix method:")
+    print("\nUsing bind_with_prefix method:")
     print(f"example.custom_greeter('Eve') = {result}")
 
     print()
@@ -360,20 +360,20 @@ def dynamicmethod_as_descriptor():
 
     # Use the DynamicMethod descriptor
     result = example.dynamic_greeter("Alice")
-    print(f"Using dynamic_greeter descriptor:")
+    print("Using dynamic_greeter descriptor:")
     print(f"example.dynamic_greeter('Alice') = {result}")
 
     # Examine what happens during descriptor binding
-    print(f"\nDescriptor binding process:")
-    print(f"1. DynamicMethod.__get__ is called with instance and owner")
-    print(f"2. bind_multiplexer is called with instance and owner")
-    print(f"3. The selected bind method (bind_self) creates a bound method")
-    print(f"4. When the bound method is called, it passes self automatically")
+    print("\nDescriptor binding process:")
+    print("1. DynamicMethod.__get__ is called with instance and owner")
+    print("2. bind_multiplexer is called with instance and owner")
+    print("3. The selected bind method (bind_self) creates a bound method")
+    print("4. When the bound method is called, it passes self automatically")
 
     # Show that the bound method has access to instance attributes
     example.name = "Changed Name"
     result = example.dynamic_greeter("Bob")
-    print(f"\nAfter changing instance attribute:")
+    print("\nAfter changing instance attribute:")
     print(f"example.dynamic_greeter('Bob') = {result}")
 
     print()
@@ -398,19 +398,19 @@ def nonwrapping_dynamicmethod_usage():
 
     # Use the default call method (greet)
     result = bound_greeter("Alice")
-    print(f"Default call method (greet):")
+    print("Default call method (greet):")
     print(f"bound_greeter('Alice') = {result}")
 
     # Switch to the farewell method
     greeter.call_method = "farewell"
     result = bound_greeter("Bob")
-    print(f"\nUsing farewell method:")
+    print("\nUsing farewell method:")
     print(f"bound_greeter('Bob') = {result}")
 
     # Switch to the introduce method
     greeter.call_method = "introduce"
     result = bound_greeter()
-    print(f"\nUsing introduce method:")
+    print("\nUsing introduce method:")
     print(f"bound_greeter() = {result}")
 
     # Use the introduce method with a title
@@ -441,7 +441,7 @@ def method_binding_behavior():
     # Show that the method is bound to the correct instance
     result1 = instance1.dynamic_method("Hello")
     result2 = instance2.dynamic_method("Hello")
-    print(f"Binding to different instances:")
+    print("Binding to different instances:")
     print(f"instance1.dynamic_method('Hello') = {result1}")
     print(f"instance2.dynamic_method('Hello') = {result2}")
 
@@ -449,7 +449,7 @@ def method_binding_behavior():
     bound_method = instance1.dynamic_method
     instance1.name = "Changed Instance 1"
     result = bound_method("After change")
-    print(f"\nAfter changing instance attribute:")
+    print("\nAfter changing instance attribute:")
     print(f"bound_method('After change') = {result}")
 
     # Create a DynamicMethod with different bind methods
@@ -475,13 +475,13 @@ def method_binding_behavior():
 
     # Use the default bind method
     result = bind_example.default_bind("Default bind")
-    print(f"\nDefault bind method (bind_self):")
+    print("\nDefault bind method (bind_self):")
     print(f"bind_example.default_bind('Default bind') = {result}")
 
     # Use the custom bind method
     try:
         result = bind_example.custom_bind("Custom bind")
-        print(f"\nCustom bind method (bind_class):")
+        print("\nCustom bind method (bind_class):")
         print(f"bind_example.custom_bind('Custom bind') = {result}")
     except Exception as e:
         print(f"\nCustom bind method error: {e}")
@@ -506,7 +506,7 @@ def pickling_dynamicmethod():
     # Bind the method and test before pickling
     bound_method = dynamic_method.__get__(instance, PickleClass)
     result = bound_method("Before pickling")
-    print(f"Before pickling:")
+    print("Before pickling:")
     print(f"bound_method('Before pickling') = {result}")
 
     # Pickle the DynamicMethod
@@ -518,7 +518,7 @@ def pickling_dynamicmethod():
     # Bind the unpickled method and test
     bound_unpickled = unpickled.__get__(instance, PickleClass)
     result = bound_unpickled("After unpickling")
-    print(f"\nAfter unpickling:")
+    print("\nAfter unpickling:")
     print(f"bound_unpickled('After unpickling') = {result}")
 
     print()

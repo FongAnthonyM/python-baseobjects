@@ -40,7 +40,7 @@ __version__ = "1.12.0"
 from asyncio.coroutines import _is_coroutine, iscoroutinefunction
 from functools import WRAPPER_ASSIGNMENTS
 from types import FunctionType, MethodType
-from typing import Any
+from typing import Any, ClassVar
 from weakref import ReferenceType
 
 # Local Packages #
@@ -75,7 +75,7 @@ class BaseCallable(BaseReducible):
     # Attributes #
     __wrapped__: AnyCallable | None = None
     _is_coroutine: object | None = None
-    _cast_excluded: set = {"__call__"}
+    _cast_excluded: ClassVar[set[str]] = {"__call__"}
 
     # Properties #
     @property
@@ -98,7 +98,8 @@ class BaseCallable(BaseReducible):
             TypeError: If the provided value is not None, not callable, and not a descriptor.
         """
         if value is not None and not callable(value) and not hasattr(value, "__get__"):
-            raise TypeError(f"{value!r} is not callable or a descriptor")
+            msg = f"{value!r} is not callable or a descriptor"
+            raise TypeError(msg)
 
         self.__wrapped__ = value
 
@@ -287,13 +288,21 @@ class BaseCallable(BaseReducible):
         if self._is_coroutine:
 
             async def wrapper_function(*args: Any, **kwargs: Any) -> Any:
-                """A function which wraps a callable."""
+                """A function which wraps a callable.
+
+                Returns:
+                    The result returned by invoking this callable with the provided arguments.
+                """
                 return await self(*args, **kwargs)
 
         else:
 
             def wrapper_function(*args: Any, **kwargs: Any) -> Any:
-                """A function which wraps a callable."""
+                """A function which wraps a callable.
+
+                Returns:
+                    The result returned by invoking this callable with the provided arguments.
+                """
                 return self(*args, **kwargs)
 
         # Copy standard function attributes
@@ -400,7 +409,7 @@ class BaseMethod(BaseCallable):
             self.construct(func, instance, owner, *args, is_binding=is_binding, **kwargs)
 
     # Pickling
-    def __getstate__(self) -> None | dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]]:
+    def __getstate__(self) -> dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]] | None:
         """Gets the object's state for pickling.
 
         This method prepares the object for pickling by converting the weak reference to the bound instance into a
@@ -415,9 +424,20 @@ class BaseMethod(BaseCallable):
                 tuple[dict, dict]: __dict__ is present and __slots__ is present.
         """
         state = super().__getstate__()
-        # Convert weak reference to strong reference for pickling
-        state["_self_"] = self.__self__
-        return state
+        bound = self.__self__
+        match state:
+            case None:
+                return {"_self_": bound}
+            case dict():
+                d = state.copy()
+                d["_self_"] = bound
+                return d
+            case tuple():
+                d0 = state[0].copy() if state[0] is not None else {}
+                d0["_self_"] = bound
+                return (d0, state[1])
+            case _:
+                return state
 
     def __setstate__(self, state: Any) -> None:
         """Sets the object's state from a pickled state.
@@ -475,7 +495,7 @@ class BaseMethod(BaseCallable):
         if owner is not None:
             self.__owner__ = owner
 
-        super().construct(func=func, *args, **kwargs)
+        super().construct(func, *args, **kwargs)
 
     # Binding
     def bind_self(self, instance: Any = None, owner: type[Any] | None = None) -> "BaseMethod":

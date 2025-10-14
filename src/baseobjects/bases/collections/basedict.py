@@ -38,7 +38,7 @@ class BaseDict(BaseObject, UserDict):
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, dict: Any = None, /, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, dict_: Any = None, /, *args: Any, **kwargs: Any) -> None:
         """Initialize a new BaseDict instance.
 
         This constructor initializes both the BaseObject and UserDict parent classes. It accepts an optional
@@ -46,7 +46,7 @@ class BaseDict(BaseObject, UserDict):
         are passed to the BaseObject constructor.
 
         Args:
-            dict: An optional dictionary-like object to initialize the contents of this dictionary.
+            dict_: An optional dictionary-like object to initialize the contents of this dictionary.
                 If provided, all key-value pairs from this object will be added to the new BaseDict.
             *args: Positional arguments passed to the BaseObject constructor.
             **kwargs: Keyword arguments that can be used both by the UserDict constructor and the BaseObject
@@ -54,4 +54,4 @@ class BaseDict(BaseObject, UserDict):
         """
         # Parent Initialization #
         super().__init__(*args, **kwargs)
-        UserDict.__init__(self, dict, **kwargs)
+        UserDict.__init__(self, dict_, **kwargs)

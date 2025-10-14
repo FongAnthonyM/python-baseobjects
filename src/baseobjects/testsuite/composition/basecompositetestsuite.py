@@ -17,7 +17,7 @@ __version__ = "1.12.0"
 import copy
 import pickle
 from abc import abstractmethod
-from typing import Any, Type
+from typing import Any
 
 # Local Packages #
 from ...composition import BaseComposite
@@ -155,7 +155,8 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
             component_kwargs: A dictionary mapping component names to a dictionary of keyword arguments to pass to
                 component constructor.
         """
-        composite = self.TestClass(component_kwargs=component_kwargs)
+        # Create Composite
+        # composite = self.TestClass(component_kwargs=component_kwargs)
 
         # Validate
         # assert isinstance(test_object.components["component_name"], ComponentType)

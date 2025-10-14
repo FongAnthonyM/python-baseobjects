@@ -29,7 +29,7 @@ from .timedcache import TimedCache, TimedCacheCallable, TimedCacheMethod
 
 # Definitions #
 # Classes #
-class TimedLRUCache(TimedCacheCallable):
+class TimedLRUCacheCallable(TimedCacheCallable):
     """A periodically clearing Least Recently Used (LRU) cache wrapper object for a function."""
 
     # Instance Methods #
@@ -90,11 +90,11 @@ class TimedLRUCache(TimedCacheCallable):
             return result
 
 
-class TimedLRUCacheMethod(TimedLRUCache, TimedCacheMethod):
-    """A method class for TimeLRUCache."""
+class TimedLRUCacheMethod(TimedLRUCacheCallable, TimedCacheMethod):
+    """A method class for TimedLRUCache."""
 
 
-class TimedLRUCache(TimedLRUCache, TimedCache):
+class TimedLRUCache(TimedLRUCacheCallable, TimedCache):
     """A function class for TimedLRUCache."""
 
     # Attributes #

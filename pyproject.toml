@@ -114,6 +114,7 @@ show_error_context = true
 
 # Ruff
 [tool.ruff]
+preview = true
 exclude = [
     ".bzr",
     ".direnv",
@@ -179,11 +180,16 @@ select = [
 ignore = [
     "ANN401",
     "S101",
+    "S301",
+    "S403",
+    "B024",
+    "B027",
     "A003",
     "A005",
     "RET505",
     "E501",
     "D205",
+    "D415",
     "F401",
     "F403",
 ]

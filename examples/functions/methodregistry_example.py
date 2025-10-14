@@ -587,7 +587,7 @@ def method_binding_example():
     print(f"{instance2.name}.methods['set']({new_value2}) = {result2}")
 
     # Verify the values were updated
-    print(f"\nUpdated values:")
+    print("\nUpdated values:")
     print(f"{instance1.name}.value = {instance1.value}")
     print(f"{instance2.name}.value = {instance2.value}")
 

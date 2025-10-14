@@ -48,7 +48,7 @@ class Version(BaseObject):
     # Class Methods #
     @classmethod
     def cast(cls, other: Any, pass_: bool = False) -> Any:
-        """A cast method that optionally returns the original object rather than raise an error
+        """A cast method that optionally returns the original object rather than raise an error.
 
         Args:
             other: An object to convert to this type.
@@ -77,6 +77,18 @@ class Version(BaseObject):
         *args: Any,
         **kwargs: Any,
     ) -> None:
+        """Initialize a Version base instance.
+
+        Subclasses should call super().__init__ and provide inputs necessary for
+        construction. If init is True, construct will be called with the provided
+        arguments.
+
+        Args:
+            version: An object to derive a version from; interpretation is subclass-defined.
+            init: If True, call construct to set fields from the provided arguments.
+            *args: Additional positional arguments forwarded to BaseObject and construct.
+            **kwargs: Additional keyword arguments forwarded to BaseObject and construct.
+        """
         # Parent Initialization #
         super().__init__(*args, init=False, **kwargs)
 
@@ -148,7 +160,8 @@ class Version(BaseObject):
         if isinstance(other, Version):
             return self.tuple() < other.tuple()
         else:
-            raise TypeError(f"'>' not supported between instances of '{self!s}' and '{other!s}'")
+            msg = f"'>' not supported between instances of '{self!s}' and '{other!s}'"
+            raise TypeError(msg)
 
     @abstractmethod
     def __gt__(self, other: Any) -> bool:
@@ -168,7 +181,8 @@ class Version(BaseObject):
         if isinstance(other, Version):
             return self.tuple() > other.tuple()
         else:
-            raise TypeError(f"'>' not supported between instances of '{self!s}' and '{other!s}'")
+            msg = f"'>' not supported between instances of '{self!s}' and '{other!s}'"
+            raise TypeError(msg)
 
     @abstractmethod
     def __le__(self, other: Any) -> bool:
@@ -188,7 +202,8 @@ class Version(BaseObject):
         if isinstance(other, Version):
             return self.tuple() <= other.tuple()
         else:
-            raise TypeError(f"'<=' not supported between instances of '{self!s}' and '{other!s}'")
+            msg = f"'<=' not supported between instances of '{self!s}' and '{other!s}'"
+            raise TypeError(msg)
 
     @abstractmethod
     def __ge__(self, other: Any) -> bool:
@@ -208,13 +223,14 @@ class Version(BaseObject):
         if isinstance(other, Version):
             return self.tuple() >= other.tuple()
         else:
-            raise TypeError(f"'>=' not supported between instances of '{self!s}' and '{other!s}'")
+            msg = f"'>=' not supported between instances of '{self!s}' and '{other!s}'"
+            raise TypeError(msg)
 
     # Instance Methods #
     # Constructors/Destructors #
     @abstractmethod
     def construct(self, version: Any = None, **kwargs: Any) -> None:
-        """Constructs the version object based on inputs
+        """Constructs the version object based on inputs.
 
         Args:
             version: An object to derive a version from.

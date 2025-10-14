@@ -83,6 +83,16 @@ class DynamicCallable(BaseCallable):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
+        """Initialize a dynamic callable with bind and call multiplexers.
+
+        Args:
+            func: Optional callable to wrap.
+            *args: Additional positional arguments forwarded to BaseCallable.
+            bind_method: Name of the bind method to select initially.
+            call_method: Name of the call method to select initially.
+            init: When True, construct the instance immediately.
+            **kwargs: Additional keyword arguments forwarded to BaseCallable.
+        """
         # Attributes #
         self.bind_multiplexer = MethodMultiplexer(instance=self, select=self.default_bind_method, is_binding=False)
         self.call_multiplexer = MethodMultiplexer(instance=self, select=self.default_call_method, is_binding=False)

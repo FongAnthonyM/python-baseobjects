@@ -24,7 +24,7 @@ import copy
 import pickle
 from abc import abstractmethod
 from types import MethodType
-from typing import Any, Type
+from typing import Any
 from collections.abc import Callable
 
 # Third-Party Packages #
@@ -99,7 +99,7 @@ class ExampleBindTarget:
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, value: int = 42):
+    def __init__(self, value: int = 42) -> None:
         """Initialize the instance.
 
         Args:

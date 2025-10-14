@@ -31,7 +31,7 @@ def basic_usage_example():
     print(f"Sample bytes: {sample_bytes.hex()} (hex)")
     print("Binary representation (big endian, int output):")
     print(f"  {binary_values}")
-    print(f"  Expected: (0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0)")
+    print("  Expected: (0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0)")
 
     # Print in a more readable format
     first_byte = binary_values[:8]
@@ -56,9 +56,9 @@ def byte_order_example():
 
     print(f"Sample byte: {sample_byte.hex()} (hex)")
     print(f"Big endian: {big_endian}")
-    print(f"  Expected: (0, 0, 0, 0, 1, 1, 1, 1)")
+    print("  Expected: (0, 0, 0, 0, 1, 1, 1, 1)")
     print(f"Little endian: {little_endian}")
-    print(f"  Expected: (0, 0, 0, 0, 1, 1, 1, 1)")  # For this specific byte, the result is the same
+    print("  Expected: (0, 0, 0, 0, 1, 1, 1, 1)")  # For this specific byte, the result is the same
 
     # Example where the results differ
     sample_byte = b"\x81"  # 10000001 in binary
@@ -71,9 +71,9 @@ def byte_order_example():
 
     print(f"\nSample byte: {sample_byte.hex()} (hex)")
     print(f"Big endian: {big_endian}")
-    print(f"  Expected: (1, 0, 0, 0, 0, 0, 0, 1)")
+    print("  Expected: (1, 0, 0, 0, 0, 0, 0, 1)")
     print(f"Little endian: {little_endian}")
-    print(f"  Expected: (1, 0, 0, 0, 0, 0, 0, 1)")  # For this specific byte, the result is the same
+    print("  Expected: (1, 0, 0, 0, 0, 0, 0, 1)")  # For this specific byte, the result is the same
 
     # Example with multiple bytes where the results differ
     sample_bytes = b"\x0f\xa0"  # 00001111 10100000 in binary
@@ -86,9 +86,9 @@ def byte_order_example():
 
     print(f"\nSample bytes: {sample_bytes.hex()} (hex)")
     print(f"Big endian: {big_endian}")
-    print(f"  Expected: (0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0)")
+    print("  Expected: (0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0)")
     print(f"Little endian: {little_endian}")
-    print(f"  Expected: (0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0)")
+    print("  Expected: (0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0)")
 
 
 def output_type_example():
@@ -109,14 +109,14 @@ def output_type_example():
 
     print(f"Sample byte: {sample_byte.hex()} (hex)")
     print(f"Int output: {int_output}")
-    print(f"  Expected: (1, 0, 1, 0, 0, 1, 0, 1)")
+    print("  Expected: (1, 0, 1, 0, 0, 1, 0, 1)")
     print(f"Bool output: {bool_output}")
-    print(f"  Expected: (True, False, True, False, False, True, False, True)")
+    print("  Expected: (True, False, True, False, False, True, False, True)")
     print(f"Str output: {str_output}")
-    print(f"  Expected: ('True', 'False', 'True', 'False', 'False', 'True', 'False', 'True')")
+    print("  Expected: ('True', 'False', 'True', 'False', 'False', 'True', 'False', 'True')")
 
 
-def s_example():
+def edge_cases_example():
     """Demonstrate edge cases with bytes_to_bin."""
     print("\nEdge Cases Example:")
 
@@ -126,7 +126,7 @@ def s_example():
 
     print(f"Empty bytes: {empty_bytes}")
     print(f"Result: {empty_result}")
-    print(f"  Expected: ()")
+    print("  Expected: ()")
 
     # Single zero byte
     zero_byte = b"\x00"
@@ -134,7 +134,7 @@ def s_example():
 
     print(f"\nZero byte: {zero_byte.hex()} (hex)")
     print(f"Result: {zero_result}")
-    print(f"  Expected: (0, 0, 0, 0, 0, 0, 0, 0)")
+    print("  Expected: (0, 0, 0, 0, 0, 0, 0, 0)")
 
     # Single 0xFF byte (all bits set)
     ff_byte = b"\xff"
@@ -142,7 +142,7 @@ def s_example():
 
     print(f"\nFF byte: {ff_byte.hex()} (hex)")
     print(f"Result: {ff_result}")
-    print(f"  Expected: (1, 1, 1, 1, 1, 1, 1, 1)")
+    print("  Expected: (1, 1, 1, 1, 1, 1, 1, 1)")
 
     # Invalid byte order
     print("\nInvalid byte order:")

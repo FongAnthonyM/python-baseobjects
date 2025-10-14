@@ -197,7 +197,7 @@ def basic_dynamiccallable_usage():
 
     # Call the function using the default call method
     result = dynamic_callable(5, 3)
-    print(f"Default call method (call_wrapped):")
+    print("Default call method (call_wrapped):")
     print(f"dynamic_callable(5, 3) = {result}")
 
     # Check the current call method
@@ -214,7 +214,7 @@ def basic_dynamiccallable_usage():
 
     # Call the function
     result = empty_dynamic(10, 20)
-    print(f"\nSetting function after creation:")
+    print("\nSetting function after creation:")
     print(f"empty_dynamic(10, 20) = {result}")
 
     print()
@@ -229,7 +229,7 @@ def wrapping_dynamiccallable_usage():
 
     # Use the default call method
     result = wrapping_dynamic(7, 3)
-    print(f"Default call method (call_wrapped):")
+    print("Default call method (call_wrapped):")
     print(f"wrapping_dynamic(7, 3) = {result}")
 
     # Switch to the wrapping call method with logging
@@ -238,7 +238,7 @@ def wrapping_dynamiccallable_usage():
 
     # Switch to the wrapping call method with validation
     wrapping_dynamic.call_method = "call_with_validation"
-    print(f"\nUsing call_with_validation method:")
+    print("\nUsing call_with_validation method:")
     try:
         result = wrapping_dynamic(None, 3)
     except ValueError as e:
@@ -260,7 +260,7 @@ def dynamiccallable_as_descriptor():
 
     # Use the DynamicCallable descriptor
     result = example.dynamic_greeter("Alice")
-    print(f"Using dynamic_greeter descriptor:")
+    print("Using dynamic_greeter descriptor:")
     print(f"example.dynamic_greeter('Alice') = {result}")
 
     # Use the wrapping DynamicCallable descriptor
@@ -271,7 +271,7 @@ def dynamiccallable_as_descriptor():
     # Change the bind method of the wrapping greeter
     dynamic_callable.bind_method = "bind_with_prefix"
     result = example.custom_greeter("Charlie")
-    print(f"\nUsing wrapping bind method:")
+    print("\nUsing wrapping bind method:")
     print(f"example.wrapping_greeter('Charlie') = {result}")
 
     print()
@@ -285,13 +285,13 @@ def multiplexer_exploration():
     dynamic_callable = DynamicCallable(example_function)
 
     # Examine the bind multiplexer
-    print(f"Bind Multiplexer:")
+    print("Bind Multiplexer:")
     print(f"Type: {type(dynamic_callable.bind_multiplexer).__name__}")
     print(f"Selected method: {dynamic_callable.bind_multiplexer.selected}")
     print(f"Available methods: {list(dynamic_callable.bind_multiplexer.registry.keys())}")
 
     # Examine the call multiplexer
-    print(f"\nCall Multiplexer:")
+    print("\nCall Multiplexer:")
     print(f"Type: {type(dynamic_callable.call_multiplexer).__name__}")
     print(f"Selected method: {dynamic_callable.call_multiplexer.selected}")
     print(f"Available methods: {list(dynamic_callable.call_multiplexer.registry.keys())}")
@@ -307,13 +307,13 @@ def multiplexer_exploration():
     # Use the new method
     dynamic_callable.call_method = "call_with_double"
     result = dynamic_callable(5, 3)
-    print(f"\nUsing custom call method 'call_with_double':")
+    print("\nUsing custom call method 'call_with_double':")
     print(f"dynamic_callable(5, 3) = {result}")
 
     # Reset to default call method
     dynamic_callable.call_method = "call_wrapped"
     result = dynamic_callable(5, 3)
-    print(f"\nReset to default call method:")
+    print("\nReset to default call method:")
     print(f"dynamic_callable(5, 3) = {result}")
 
     print()
@@ -328,32 +328,32 @@ def nonwrapping_dynamiccallable_usage():
 
     # Use the default call method (add)
     result = calculator(5, 3)
-    print(f"Default call method (add):")
+    print("Default call method (add):")
     print(f"calculator(5, 3) = {result}")
 
     # Switch to the subtract method
     calculator.call_method = "subtract"
     result = calculator(10, 4)
-    print(f"\nUsing subtract method:")
+    print("\nUsing subtract method:")
     print(f"calculator(10, 4) = {result}")
 
     # Switch to the multiply method
     calculator.call_method = "multiply"
     result = calculator(6, 7)
-    print(f"\nUsing multiply method:")
+    print("\nUsing multiply method:")
     print(f"calculator(6, 7) = {result}")
 
     # Switch to the divide method
     calculator.call_method = "divide"
     result = calculator(20, 5)
-    print(f"\nUsing divide method:")
+    print("\nUsing divide method:")
     print(f"calculator(20, 5) = {result}")
 
     # Test error handling
     try:
         result = calculator(10, 0)
     except ZeroDivisionError as e:
-        print(f"\nError handling:")
+        print("\nError handling:")
         print(f"calculator(10, 0) raised: {e}")
 
     print()
@@ -371,7 +371,7 @@ def pickling_dynamiccallable():
 
     # Test before pickling
     result = dynamic_callable(2, 3)
-    print(f"Before pickling:")
+    print("Before pickling:")
     print(f"dynamic_callable(2, 3) = {result}")
 
     # Pickle the DynamicCallable
@@ -383,7 +383,7 @@ def pickling_dynamiccallable():
     # Test after unpickling
     try:
         result = unpickled(2, 3)
-        print(f"\nAfter unpickling:")
+        print("\nAfter unpickling:")
         print(f"unpickled(2, 3) = {result}")
     except Exception as e:
         print(f"\nError after unpickling: {e}")
@@ -392,7 +392,7 @@ def pickling_dynamiccallable():
         # Reset to default call method
         unpickled.call_method = "call_wrapped"
         result = unpickled(2, 3)
-        print(f"\nAfter resetting to default call method:")
+        print("\nAfter resetting to default call method:")
         print(f"unpickled(2, 3) = {result}")
 
     print()

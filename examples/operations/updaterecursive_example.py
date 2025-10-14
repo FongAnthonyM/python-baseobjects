@@ -36,7 +36,7 @@ def basic_usage_example():
     print(f"Original dictionary: {original}")
     print(f"Updates: {updates}")
     print(f"Result: {result}")
-    print(f"Expected: {{'a': 1, 'b': 22, 'c': 3, 'd': 4}}")
+    print("Expected: {'a': 1, 'b': 22, 'c': 3, 'd': 4}")
 
     # Verify that result is the same object as original (modified in-place)
     print(f"Result is original: {result is original} == True")
@@ -108,14 +108,14 @@ def compare_with_dict_update_example():
     dict1.update(updates)
     print("Using dict.update():")
     print(f"  Result: {dict1}")
-    print(f"  Expected: {{'a': 1, 'b': {{'z': 30}}}}")
+    print("  Expected: {'a': 1, 'b': {'z': 30}}")
     print("  Note: The nested dictionary was completely replaced")
 
     # Update using update_recursive
     update_recursive(dict2, updates)
     print("\nUsing update_recursive():")
     print(f"  Result: {dict2}")
-    print(f"  Expected: {{'a': 1, 'b': {{'x': 10, 'y': 20, 'z': 30}}}}")
+    print("  Expected: {'a': 1, 'b': {'x': 10, 'y': 20, 'z': 30}}")
     print("  Note: The nested dictionary was preserved and updated")
 
 
@@ -220,7 +220,7 @@ def iterable_input_example():
     print(f"  Original: {original}")
     print(f"  Updates: {updates_list}")
     print(f"  Result: {result1}")
-    print(f"  Expected: {{'a': 1, 'b': {{'x': 10, 'y': 20, 'z': 30}}, 'c': 3}}")
+    print("  Expected: {'a': 1, 'b': {'x': 10, 'y': 20, 'z': 30}, 'c': 3}")
 
     # Example 2: Using a generator expression
     original_copy2 = original.copy()
@@ -229,9 +229,9 @@ def iterable_input_example():
 
     print("\nUsing a generator expression:")
     print(f"  Original: {original}")
-    print(f"  Updates: generator of [('c', 3), ('b', {{'z': 30}})]")
+    print("  Updates: generator of [('c', 3), ('b', {'z': 30})]")
     print(f"  Result: {result2}")
-    print(f"  Expected: {{'a': 1, 'b': {{'x': 10, 'y': 20, 'z': 30}}, 'c': 3}}")
+    print("  Expected: {'a': 1, 'b': {'x': 10, 'y': 20, 'z': 30}, 'c': 3}")
 
     # Example 3: Using zip to create an iterable of pairs
     original_copy3 = original.copy()
@@ -245,7 +245,7 @@ def iterable_input_example():
     print(f"  Keys: {keys}")
     print(f"  Values: {values}")
     print(f"  Result: {result3}")
-    print(f"  Expected: {{'a': 1, 'b': {{'x': 10, 'y': 20, 'z': 30}}, 'c': 3}}")
+    print("  Expected: {'a': 1, 'b': {'x': 10, 'y': 20, 'z': 30}, 'c': 3}")
 
     # Example 4: Converting a dictionary to an iterable with items()
     original_copy4 = original.copy()
@@ -257,7 +257,7 @@ def iterable_input_example():
     print(f"  Original: {original}")
     print(f"  Updates dict: {updates_dict}")
     print(f"  Result: {result4}")
-    print(f"  Expected: {{'a': 1, 'b': {{'x': 10, 'y': 20, 'z': 30}}, 'c': 3}}")
+    print("  Expected: {'a': 1, 'b': {'x': 10, 'y': 20, 'z': 30}, 'c': 3}")
 
     # Verify all results are equivalent
     print("\nVerifying all results are equivalent:")

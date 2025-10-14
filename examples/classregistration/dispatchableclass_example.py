@@ -391,15 +391,15 @@ def custom_dispatching_logic():
     json_handler = AdvancedFileHandler("settings.cfg", content_type="json")
 
     # Print the type of handler that was selected
-    print(f"\nFile: data.bin, Content Type: txt")
+    print("\nFile: data.bin, Content Type: txt")
     print(f"Handler type: {type(txt_handler).__name__}")
     print(f"Reading result: {txt_handler.read()}")
 
-    print(f"\nFile: config.dat, Content Type: csv")
+    print("\nFile: config.dat, Content Type: csv")
     print(f"Handler type: {type(csv_handler).__name__}")
     print(f"Reading result: {csv_handler.read()}")
 
-    print(f"\nFile: settings.cfg, Content Type: json")
+    print("\nFile: settings.cfg, Content Type: json")
     print(f"Handler type: {type(json_handler).__name__}")
     print(f"Reading result: {json_handler.read()}")
 
@@ -408,7 +408,7 @@ def custom_dispatching_logic():
 
     xml_handler = AdvancedFileHandler("data.xml")
 
-    print(f"\nFile: data.xml")
+    print("\nFile: data.xml")
     print(f"Handler type: {type(xml_handler).__name__}")
     print(f"Reading result: {xml_handler.read()}")
 

@@ -106,11 +106,11 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             _set_wrapped: The set function for a property object.
             _del_wrapped: The del function for a property object.
         """
-        _get_wrapped = partial(cls._get_wrapped, name=store_name)
-        _set_wrapped = partial(cls._set_wrapped, name=store_name)
-        _del_wrapped = partial(cls._del_wrapped, name=store_name)
+        get_wrapped = partial(cls._get_wrapped, name=store_name)
+        set_wrapped = partial(cls._set_wrapped, name=store_name)
+        del_wrapped = partial(cls._del_wrapped, name=store_name)
 
-        return _get_wrapped, _set_wrapped, _del_wrapped
+        return get_wrapped, set_wrapped, del_wrapped
 
     @classmethod
     def _wrapped_attribute_factory(cls, store_name: str, attribute_name: str) -> PropertyCallbacks:
@@ -125,25 +125,25 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             _set_wrapped_attribute: The set function for a property object.
             _del_wrapped_attribute: The del function for a property object.
         """
-        _get_wrapped_attribute = partial(
+        get_wrapped_attribute = partial(
             cls._get_wrapped_attribute,
             wrapped_name=store_name,
             attribute_name=attribute_name,
         )
 
-        _set_wrapped_attribute = partial(
+        set_wrapped_attribute = partial(
             cls._set_wrapped_attribute,
             wrapped_name=store_name,
             attribute_name=attribute_name,
         )
 
-        _del_wrapped_attribute = partial(
+        del_wrapped_attribute = partial(
             cls._del_wrapped_attribute,
             wrapped_name=store_name,
             attribute_name=attribute_name,
         )
 
-        return _get_wrapped_attribute, _set_wrapped_attribute, _del_wrapped_attribute
+        return get_wrapped_attribute, set_wrapped_attribute, del_wrapped_attribute
 
     @classmethod
     def _wrapped_method_factory(cls, store_name: str, method_name: str) -> AnyCallable:
@@ -285,7 +285,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             if value is None:
                 for attribute_name in wrapped_names:
                     if (attribute := getattr(previous_wrapped, attribute_name, SEARCHSENTINEL)) is not SEARCHSENTINEL:
-                        setattr(obj, f"__{name}_{attribute_name}_", attribute)
+                        setattr(self, f"__{name}_{attribute_name}_", attribute)
             elif self._set_next_wrapped:
                 old_attributes.update((a, getattr(previous_wrapped, a, SEARCHSENTINEL)) for a in wrapped_names)
 
@@ -336,7 +336,8 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             try:
                 return getattr(self, f"__{wrapped_name}_{attribute_name}_")
             except AttributeError:
-                raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{attribute_name}'")
+                msg = f"'{self.__class__.__name__}' object has no attribute '{attribute_name}'"
+                raise AttributeError(msg) from None
 
     def _set_wrapped_attribute(self, value: Any, wrapped_name: str, attribute_name: str) -> None:
         """Sets an attribute in a wrapped object.

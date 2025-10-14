@@ -43,11 +43,21 @@ class FunctionRegistry(BaseDict):
         self,
         functions: dict[str, AnyCallable] | None = None,
         object_: Any = None,
-        objects: Iterable[Any, ...] = None,
+        objects: Iterable[Any, ...] | None = None,
         *args: Any,
         init: bool = True,
         **kwargs: Any,
     ) -> None:
+        """Initialize a function registry.
+
+        Args:
+            functions: Optional mapping of names to callables to add.
+            object_: Optional object whose functions will be registered.
+            objects: Optional iterable of objects whose functions will be registered.
+            *args: Additional positional arguments forwarded to BaseDict.
+            init: When True, construct the instance immediately.
+            **kwargs: Additional keyword arguments forwarded to BaseDict.
+        """
         # Parent Initialization #
         super().__init__(*args, **kwargs)
 
@@ -61,7 +71,7 @@ class FunctionRegistry(BaseDict):
         self,
         functions: dict[str, AnyCallable] | None = None,
         object_: Any = None,
-        objects: Iterable[Any, ...] = None,
+        objects: Iterable[Any, ...] | None = None,
         *args: Any,
         **kwargs: Any,
     ) -> None:

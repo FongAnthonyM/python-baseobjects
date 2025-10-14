@@ -72,13 +72,13 @@ class StatsMicro(Stats):
 
         print(indent, self.total_calls, "function calls", end=" ", file=self.stream)
         if self.total_calls != self.prim_calls:
-            print("(%d primitive calls)" % self.prim_calls, end=" ", file=self.stream)
-        print("in %.3f microseconds" % (self.total_tt * 1000000), file=self.stream)
+            print(f"({self.prim_calls} primitive calls)", end=" ", file=self.stream)
+        print(f"in {self.total_tt * 1000000:.3f} microseconds", file=self.stream)
         print(file=self.stream)
-        width, list = self.get_print_list(amount)
-        if list:
+        _width, items = self.get_print_list(amount)
+        if items:
             self.print_title()
-            for func in list:
+            for func in items:
                 self.print_line(func)
             print(file=self.stream)
             print(file=self.stream)
@@ -90,7 +90,7 @@ class StatsMicro(Stats):
         Args:
             func: The function for which to print statistics.
         """
-        cc, nc, tt, ct, callers = self.stats[func]
+        cc, nc, tt, ct, _callers = self.stats[func]
         c = str(nc)
         if nc != cc:
             c = c + "/" + str(cc)

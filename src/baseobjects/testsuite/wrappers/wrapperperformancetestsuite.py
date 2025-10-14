@@ -17,7 +17,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import timeit
 from abc import abstractmethod
-from typing import Any, Type
+from typing import Any
 
 # Third-Party Packages #
 import pytest

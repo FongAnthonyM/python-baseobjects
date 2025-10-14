@@ -86,6 +86,9 @@ class BaseObject(ABC):
 
         Returns:
             A shallow copy of this object, with the same type but independent state.
+
+        Raises:
+            Error: If the object cannot be shallow-copied because no suitable reduction or copy strategy is available.
         """
         cls = type(self)
 
@@ -109,13 +112,14 @@ class BaseObject(ABC):
                 if reductor:
                     rv = reductor()
                 else:
-                    raise Error("un(shallow)copyable object of type %s" % cls)
+                    msg = f"un(shallow)copyable object of type {cls}"
+                    raise Error(msg)
 
         if isinstance(rv, str):
             return self
         return _reconstruct(self, None, *rv)
 
-    def __deepcopy__(self, memo: dict | None = None, _nil=[]) -> Any:
+    def __deepcopy__(self, memo: dict | None = None, _nil: list | None = None) -> Any:
         """Create a deep copy of this object.
 
         This method implements Python's copy protocol for deep copying. It is called by the copy.deepcopy() function and
@@ -142,9 +146,14 @@ class BaseObject(ABC):
         Returns:
             A deep copy of this object, with the same type but completely independent state,
             including independent copies of all mutable objects contained within.
+
+        Raises:
+            Error: If the object cannot be deep-copied because no suitable reduction or deepcopy strategy is available.
         """
         if memo is None:
             memo = {}
+        if _nil is None:
+            _nil = []
 
         d = id(self)
         y = memo.get(d, _nil)
@@ -174,7 +183,8 @@ class BaseObject(ABC):
                         if reductor:
                             rv = reductor()
                         else:
-                            raise Error("un(deep)copyable object of type %s" % cls)
+                            msg = f"un(deep)copyable object of type {cls}"
+                            raise Error(msg)
                 if isinstance(rv, str):
                     y = self
                 else:

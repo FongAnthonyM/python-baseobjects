@@ -18,7 +18,7 @@ __version__ = "1.12.0"
 import copy
 import pickle
 from abc import abstractmethod
-from typing import Any, Type
+from typing import Any
 
 # Local Packages #
 from ...composition import DispatchableComposite
@@ -137,7 +137,8 @@ class DispatchableCompositeTestSuite(BaseDispatchingCompositeTestSuite, Dispatch
             component_kwargs: A dictionary mapping component names to a dictionary of keyword arguments to pass to
                 component constructor.
         """
-        composite = self.TestClass(component_kwargs=component_kwargs)
+        # Create Composite
+        # composite = self.TestClass(component_kwargs=component_kwargs)
 
         # Validate
         # assert isinstance(test_object.components["component_name"], ComponentType)
@@ -154,9 +155,11 @@ class DispatchableCompositeTestSuite(BaseDispatchingCompositeTestSuite, Dispatch
             *args: Positional arguments to pass to the dispatch_component_types method.
             **kwargs: Keyword arguments to pass to the dispatch_component_types method.
         """
-        composite = self.TestClass()
+        # Create Composite
+        # composite = self.TestClass()
 
-        dispatched_component_types = composite.dispatch_component_types(*args, **kwargs)
+        # Dispatch Components
+        # dispatched_component_types = composite.dispatch_component_types(*args, **kwargs)
 
         # Validate
         # assert dispatched_component_types["name"][0] is ComponentType

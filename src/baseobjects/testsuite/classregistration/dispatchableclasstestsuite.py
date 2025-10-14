@@ -18,7 +18,7 @@ __version__ = "1.12.0"
 import copy
 import pickle
 from abc import abstractmethod
-from typing import Any, Type
+from typing import Any
 
 # Local Packages #
 from ...classregistration import DispatchableClass

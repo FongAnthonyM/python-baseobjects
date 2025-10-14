@@ -36,7 +36,7 @@ def basic_usage_example():
     print(f"Dictionary 1: {dict1}")
     print(f"Dictionary 2: {dict2}")
     print(f"Union result: {result}")
-    print(f"Expected: {{'a': 1, 'b': 22, 'c': 3, 'd': 4}}")
+    print("Expected: {'a': 1, 'b': 22, 'c': 3, 'd': 4}")
 
     # Verify that the original dictionaries are unchanged
     print(f"Dictionary 1 unchanged: {dict1 == {'a': 1, 'b': 2, 'c': 3}} == True")

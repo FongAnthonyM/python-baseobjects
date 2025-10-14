@@ -87,19 +87,19 @@ def function_processor_example():
     # Process some data with the default operation (add)
     a, b = 10, 5
     result = processor.process(a, b)
-    print(f"Processing with default operation 'add':")
+    print("Processing with default operation 'add':")
     print(f"processor.process({a}, {b}) = {result}")
 
     # Change the operation and process again
     processor.set_operation("multiply")
     result = processor.process(a, b)
-    print(f"\nChanged operation to 'multiply':")
+    print("\nChanged operation to 'multiply':")
     print(f"processor.process({a}, {b}) = {result}")
 
     # Try division with zero
     processor.set_operation("divide")
     result = processor.process(a, 0)
-    print(f"\nTrying division by zero:")
+    print("\nTrying division by zero:")
     print(f"processor.process({a}, 0) = {result}")
 
     print()

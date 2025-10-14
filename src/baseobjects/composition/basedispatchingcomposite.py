@@ -83,4 +83,5 @@ class BaseDispatchingComposite(BaseComposite):
         Raises:
             NotImplementedError: This is an abstract method that must be implemented by subclasses.
         """
-        raise NotImplementedError("This method needs to be set to dispatch component types.")
+        msg = "This method needs to be set to dispatch component types."
+        raise NotImplementedError(msg)

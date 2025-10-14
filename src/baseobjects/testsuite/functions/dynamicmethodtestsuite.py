@@ -20,7 +20,7 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 from abc import abstractmethod
-from typing import Any, Type
+from typing import Any
 
 # Local Packages #
 from ...functions.dynamiccallable import DynamicMethod

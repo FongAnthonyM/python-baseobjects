@@ -103,6 +103,15 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
+        """Initialize a single-kwarg dispatch decorator.
+
+        Args:
+            func: Optional function to wrap.
+            kwarg: Name of the keyword argument used for dispatch.
+            *args: Additional positional arguments forwarded to BaseDecorator.
+            init: When True, construct the instance immediately.
+            **kwargs: Additional keyword arguments forwarded to BaseDecorator.
+        """
         # Attributes #
         self.parse: MethodMultiplexer = MethodMultiplexer(instance=self, select=self._parse_method, is_binding=False)
         self.registry = {}
@@ -228,7 +237,8 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
             try:
                 return next(iter(kwargs.values())).__class__
             except StopIteration:
-                raise TypeError("No args or kwargs given to dispatch.")
+                msg = "No args or kwargs given to dispatch."
+                raise TypeError(msg) from None
 
     def parse_kwarg(self, args: tuple[Any, ...], kwargs: dict[str, Any], is_method: bool = False) -> type[Any]:
         """Parses input for the first arg or a specific kwarg's class to be used for dispatching.
@@ -261,13 +271,17 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
                 return partial(self._register, cls=cls)
         else:
             if func is not None:
-                raise TypeError(f"Invalid first argument to `registry()`. " f"{cls!r} is not a class or union type.")
+                msg = f"Invalid first argument to `registry()`. " f"{cls!r} is not a class or union type."
+                raise TypeError(msg)
             ann = getattr(cls, "__annotations__", {})
             if not ann:
-                raise TypeError(
+                msg = (
                     f"Invalid first argument to `registry()`: {cls!r}. "
                     f"Use either `@registry(some_class)` or plain `@registry` "
-                    f"on an annotated function.",
+                    f"on an annotated function."
+                )
+                raise TypeError(
+                    msg,
                 )
             func = cls
 
@@ -279,8 +293,10 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
                 argname = self._kwarg
             if not _is_valid_dispatch_type(cls):
                 if _is_union_type(cls):
-                    raise TypeError(f"Invalid annotation for {argname!r}. " f"{cls!r} not all arguments are classes.")
-                raise TypeError(f"Invalid annotation for {argname!r}. " f"{cls!r} is not a class.")
+                    msg = f"Invalid annotation for {argname!r}. " f"{cls!r} not all arguments are classes."
+                    raise TypeError(msg)
+                msg = f"Invalid annotation for {argname!r}. " f"{cls!r} is not a class."
+                raise TypeError(msg)
 
         if _is_union_type(cls):
             for arg in get_args(cls):

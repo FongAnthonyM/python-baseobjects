@@ -71,26 +71,26 @@ def basic_usage_example():
     # Get all method names
     all_methods = get_method_names(obj)
 
-    print(f"All methods of ExampleClass:")
+    print("All methods of ExampleClass:")
     for method in all_methods:
         print(f"  {method}")
 
     # Get public method names
     public_methods = get_public_method_names(obj)
 
-    print(f"\nPublic methods of ExampleClass:")
+    print("\nPublic methods of ExampleClass:")
     for method in public_methods:
         print(f"  {method}")
 
     # Verify that private methods are excluded from public methods
     private_methods = [m for m in all_methods if m.startswith("_")]
 
-    print(f"\nPrivate methods of ExampleClass:")
+    print("\nPrivate methods of ExampleClass:")
     for method in private_methods:
         print(f"  {method}")
 
     # Verify that all methods = public methods + private methods
-    print(f"\nVerification:")
+    print("\nVerification:")
     print(f"  All methods count: {len(all_methods)}")
     print(f"  Public methods count: {len(public_methods)}")
     print(f"  Private methods count: {len(private_methods)}")
@@ -146,25 +146,25 @@ def comparing_objects_example():
     base_methods = get_method_names(base_obj)
     derived_methods = get_method_names(derived_obj)
 
-    print(f"Base class methods:")
+    print("Base class methods:")
     for method in base_methods:
         print(f"  {method}")
 
-    print(f"\nDerived class methods:")
+    print("\nDerived class methods:")
     for method in derived_methods:
         print(f"  {method}")
 
     # Find methods that are in the derived class but not in the base class
     new_methods = [m for m in derived_methods if m not in base_methods]
 
-    print(f"\nMethods added in the derived class:")
+    print("\nMethods added in the derived class:")
     for method in new_methods:
         print(f"  {method}")
 
     # Find common methods
     common_methods = [m for m in derived_methods if m in base_methods]
 
-    print(f"\nMethods common to both classes:")
+    print("\nMethods common to both classes:")
     for method in common_methods:
         print(f"  {method}")
 
@@ -172,7 +172,7 @@ def comparing_objects_example():
     base_public = get_public_method_names(base_obj)
     derived_public = get_public_method_names(derived_obj)
 
-    print(f"\nPublic methods added in the derived class:")
+    print("\nPublic methods added in the derived class:")
     for method in [m for m in derived_public if m not in base_public]:
         print(f"  {method}")
 
@@ -193,7 +193,7 @@ def built_in_objects_example():
     # Find methods that are common to all three types
     common_methods = set(string_methods) & set(list_methods) & set(dict_methods)
 
-    print(f"\nMethods common to strings, lists, and dictionaries:")
+    print("\nMethods common to strings, lists, and dictionaries:")
     for method in sorted(common_methods):
         print(f"  {method}")
 
@@ -202,15 +202,15 @@ def built_in_objects_example():
     list_unique = set(list_methods) - set(string_methods) - set(dict_methods)
     dict_unique = set(dict_methods) - set(string_methods) - set(list_methods)
 
-    print(f"\nSome methods unique to strings:")
+    print("\nSome methods unique to strings:")
     for method in sorted(list(string_unique)[:5]):  # Show just the first 5
         print(f"  {method}")
 
-    print(f"\nSome methods unique to lists:")
+    print("\nSome methods unique to lists:")
     for method in sorted(list(list_unique)[:5]):  # Show just the first 5
         print(f"  {method}")
 
-    print(f"\nSome methods unique to dictionaries:")
+    print("\nSome methods unique to dictionaries:")
     for method in sorted(list(dict_unique)[:5]):  # Show just the first 5
         print(f"  {method}")
 
@@ -227,11 +227,11 @@ def standard_library_example():
     dt_methods = get_public_method_names(dt)
     js_methods = get_public_method_names(js)
 
-    print(f"Public methods of datetime.datetime:")
+    print("Public methods of datetime.datetime:")
     for method in sorted(dt_methods)[:10]:  # Show just the first 10
         print(f"  {method}")
 
-    print(f"\nPublic methods of json.JSONEncoder:")
+    print("\nPublic methods of json.JSONEncoder:")
     for method in sorted(js_methods):
         print(f"  {method}")
 
@@ -261,7 +261,7 @@ def practical_example():
         print(f"Object Inspection for: {obj}")
         print(f"  Type: {obj_type}")
         print(f"  Module: {obj_module}")
-        print(f"  Method counts:")
+        print("  Method counts:")
         print(f"    Total methods: {len(all_methods)}")
         print(f"    Public methods: {len(public_methods)}")
         print(f"    Private methods: {len(private_methods)}")

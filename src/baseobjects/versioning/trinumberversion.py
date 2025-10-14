@@ -78,6 +78,18 @@ class TriNumberVersion(Version):
         ver_name: str | None = None,
         init: bool = True,
     ) -> None:
+        """Initialize a TriNumberVersion instance.
+
+        Optionally constructs the version values from the provided inputs.
+
+        Args:
+            version: A 3-part iterable, dotted string (e.g., "1.2.3"), integer for major, or None.
+            minor: Optional minor component when constructing from an int or explicit parts.
+            patch: Optional patch component when constructing from an int or explicit parts.
+            major: Optional major component when constructing from explicit parts.
+            ver_name: Optional name for the version type.
+            init: If True, call construct to set fields from the provided arguments.
+        """
         # Parent Initialization #
         super().__init__(init=False)
 
@@ -153,7 +165,8 @@ class TriNumberVersion(Version):
             try:
                 return self.tuple() < self.cast(other).tuple()
             except TypeError:
-                raise TypeError(f"'<' not supported between instances of '{self!s}' and '{other!s}'")
+                msg = f"'<' not supported between instances of '{self!s}' and '{other!s}'"
+                raise TypeError(msg) from None
 
     def __gt__(self, other: Any) -> bool:
         """Creates the greater than comparison for these objects which includes str, list, and tuple.
@@ -175,7 +188,8 @@ class TriNumberVersion(Version):
             try:
                 return self.tuple() > self.cast(other).tuple()
             except TypeError:
-                raise TypeError(f"'>' not supported between instances of '{self!s}' and '{other!s}'")
+                msg = f"'>' not supported between instances of '{self!s}' and '{other!s}'"
+                raise TypeError(msg) from None
 
     def __le__(self, other: Any) -> bool:
         """Creates the less than or equal to comparison for these objects which includes str, list, and tuple.
@@ -197,7 +211,8 @@ class TriNumberVersion(Version):
             try:
                 return self.tuple() <= self.cast(other).tuple()
             except TypeError:
-                raise TypeError(f"'<=' not supported between instances of '{self!s}' and '{other!s}'")
+                msg = f"'<=' not supported between instances of '{self!s}' and '{other!s}'"
+                raise TypeError(msg) from None
 
     def __ge__(self, other: Any) -> bool:
         """Creates the greater than or equal to comparison for these objects which includes str, list, and tuple.
@@ -219,7 +234,8 @@ class TriNumberVersion(Version):
             try:
                 return self.tuple() >= self.cast(other).tuple()
             except TypeError:
-                raise TypeError(f"'>=' not supported between instances of '{self!s}' and '{other!s}'")
+                msg = f"'>=' not supported between instances of '{self!s}' and '{other!s}'"
+                raise TypeError(msg) from None
 
     # Instance Methods
     # Constructors/Destructors
@@ -263,7 +279,8 @@ class TriNumberVersion(Version):
         Raises:
             TypeError: If the supplied input cannot be used to construct this object.
         """
-        raise TypeError(f"{type(self)} cannot set the version with {type(version)}")
+        msg = f"{type(self)} cannot set the version with {type(version)}"
+        raise TypeError(msg)
 
     @set_version.register(Iterable)
     def _set_version_iterable(self, version: Iterable[int], **kwargs: Any) -> None:

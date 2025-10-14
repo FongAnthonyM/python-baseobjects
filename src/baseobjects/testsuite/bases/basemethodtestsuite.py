@@ -25,7 +25,7 @@ import gc
 import pickle
 import weakref
 from abc import abstractmethod
-from typing import Any, Type
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -205,7 +205,7 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
             test_method_object: A fixture providing a BaseMethod instance that wraps a method.
         """
 
-    def test_bind_self(self, test_bind_target: "BindTargetClass") -> None:
+    def test_bind_self(self, test_bind_target: Any) -> None:
         """Test that the function can be bound to an instance to create a method.
 
         This test only varifies that a bound method is returned. This method may be overwritten to include validation

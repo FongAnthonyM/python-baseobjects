@@ -21,7 +21,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import time
 from abc import abstractmethod
-from typing import Any, Type
+from typing import Any
 from collections.abc import Callable
 
 # Third-Party Packages #
@@ -42,10 +42,23 @@ class MethodCallCounter:
         self.count = 0
 
     def example_method(self, x: int) -> int:
+        """Example method that multiplies the input by 2 and increments the call count.
+
+        Args:
+            x: The integer input value.
+
+        Returns:
+            The result of x * 2.
+        """
         self.count += 1
         return x * 2
 
     def get_count(self) -> int:
+        """Get the current call count.
+
+        Returns:
+            The number of times example_method has been invoked.
+        """
         return self.count
 
 
@@ -150,7 +163,7 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
     def test_lifetime_setting(self) -> None:
         """Test that the lifetime can be set during construction and affects expiration."""
         # Create a cache with a specific lifetime
-        func, get_call_count = self.create_test_function()
+        func, _get_call_count = self.create_test_function()
         cache_func = self.TestClass(func=func, lifetime=5)
 
         # Verify the lifetime was set correctly
@@ -205,7 +218,7 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         Args:
             test_function: A fixture providing a test function and call counter.
         """
-        func, get_call_count = test_function
+        func, _get_call_count = test_function
         cache_func = self.TestClass(func=func)
         cache_func.cache_method = "no_cache"
 
@@ -292,7 +305,7 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         Args:
             test_function: A fixture providing a test function and call counter.
         """
-        func, get_call_count = test_function
+        func, _get_call_count = test_function
         cache_func = self.TestClass(func=func)
 
         # Set up caching
@@ -313,7 +326,7 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         Args:
             test_function: A fixture providing a test function and call counter.
         """
-        func, get_call_count = test_function
+        func, _get_call_count = test_function
         cache_func = self.TestClass(func=func)
 
         # Set up caching

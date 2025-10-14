@@ -65,6 +65,13 @@ class BaseComponent(BaseReducible):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
+        """Initialize a component.
+
+        Args:
+            composite: Optional composite that owns this component.
+            init: When True, construct the instance immediately.
+            **kwargs: Additional keyword arguments for construction.
+        """
         # Parent Initialization #
         super().__init__(init=False)
 
@@ -73,7 +80,7 @@ class BaseComponent(BaseReducible):
             self.construct(composite=composite, **kwargs)
 
     # Pickling
-    def __getstate__(self) -> None | dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]]:
+    def __getstate__(self) -> dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]] | None:
         """Gets the object's state for pickling.
 
         Returns:
@@ -101,13 +108,13 @@ class BaseComponent(BaseReducible):
             state: An object which can be used to set the state of this object.
         """
         # Remove strong reference
-        _composite = state.pop("_composite", None)
+        composite = state.pop("_composite", None)
 
         # Set State
         super().__setstate__(state)
 
         # Set weak reference
-        self.composite = _composite
+        self.composite = composite
 
     # Instance Methods #
     # Constructors/Destructors

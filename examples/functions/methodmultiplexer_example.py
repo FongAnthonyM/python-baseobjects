@@ -203,20 +203,20 @@ def method_processor_example():
     # Process some data with the default operation (add)
     a, b = 10, 5
     result = processor.process(a, b)
-    print(f"Processing with default operation 'add':")
+    print("Processing with default operation 'add':")
     print(f"processor.process({a}, {b}) = {result}")
 
     # Change the operation and process again
     processor.set_operation("subtract")
     result = processor.process(a, b)
-    print(f"\nChanged operation to 'subtract':")
+    print("\nChanged operation to 'subtract':")
     print(f"processor.process({a}, {b}) = {result}")
 
     # Try a string operation
     text = "HELLO WORLD"
     processor.set_operation("lowercase")
     result = processor.process(text)
-    print(f"\nChanged operation to 'lowercase':")
+    print("\nChanged operation to 'lowercase':")
     print(f"processor.process('{text}') = '{result}'")
 
     print()
@@ -294,50 +294,50 @@ def dynamic_method_multiplexer_example():
     processor = DataProcessor("Dynamic Method Processor")
 
     # Show initial data
-    print(f"Initial data:")
+    print("Initial data:")
     print(f"Numbers: {processor.data['numbers']}")
     print(f"Text: '{processor.data['text']}'")
     print(f"Mixed: {processor.data['mixed']}")
 
     # Process with the default method (sum_numbers)
     result = processor.process()
-    print(f"\nUsing default method 'sum_numbers':")
+    print("\nUsing default method 'sum_numbers':")
     print(f"processor.process() = {result}")
 
     # Change to a different method and process again
     processor.set_processor("average_numbers")
     result = processor.process()
-    print(f"\nChanged to method 'average_numbers':")
+    print("\nChanged to method 'average_numbers':")
     print(f"processor.process() = {result}")
 
     # Try a text processing method
     processor.set_processor("uppercase_text")
     result = processor.process()
-    print(f"\nChanged to method 'uppercase_text':")
+    print("\nChanged to method 'uppercase_text':")
     print(f"processor.process() = '{result}'")
 
     # Try a method that processes the mixed data
     processor.set_processor("extract_numbers")
     result = processor.process()
-    print(f"\nChanged to method 'extract_numbers':")
+    print("\nChanged to method 'extract_numbers':")
     print(f"processor.process() = {result}")
 
     # Add a new number using the method_selector directly
     processor.method_selector.select("add_number")
     result = processor.method_selector(10)  # Call with an argument
-    print(f"\nCalling 'add_number' with argument 10:")
+    print("\nCalling 'add_number' with argument 10:")
     print(f"processor.method_selector(10) = {result}")
 
     # Now the sum should be different
     processor.set_processor("sum_numbers")
     result = processor.process()
-    print(f"\nBack to 'sum_numbers' after adding a number:")
+    print("\nBack to 'sum_numbers' after adding a number:")
     print(f"processor.process() = {result}")
 
     # Try a method that doesn't exist in the registry but exists in the instance
     processor.set_processor("extract_strings")
     result = processor.process()
-    print(f"\nUsing 'extract_strings' method (not in registry, but in instance):")
+    print("\nUsing 'extract_strings' method (not in registry, but in instance):")
     print(f"processor.process() = {result}")
 
     # Demonstrate that we can dynamically add methods to the instance and select them
@@ -357,7 +357,7 @@ def dynamic_method_multiplexer_example():
     # Select and use the new method
     processor.set_processor("count_items")
     result = processor.process()
-    print(f"Added and selected 'count_items' method:")
+    print("Added and selected 'count_items' method:")
     print(f"processor.process() = {result}")
 
     print()

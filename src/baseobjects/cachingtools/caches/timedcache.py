@@ -85,6 +85,19 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
+        """Initialize a TimedCacheCallable instance.
+
+        Args:
+            func: The function to wrap. If None, a function should be provided later via construct.
+            maxsize: The maximum number of cached results to retain. If None, the cache is unlimited.
+            typed: If True, cache keys are sensitive to the types of arguments.
+            lifetime: The number of seconds before the cache automatically clears. If None, no timed clearing occurs.
+            call_method: The default call method name to use for invoking the wrapped function.
+            instanced: If True, the cache is stored per-instance when bound as a method.
+            *args: Additional positional arguments forwarded to the parent initializer/constructor.
+            init: If True, call construct to finish initialization.
+            **kwargs: Additional keyword arguments forwarded to the parent initializer/constructor.
+        """
         # Attributes #
         self.priority: Any = self.priority_queue_type()
 
@@ -97,19 +110,23 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         # Object Construction #
         if init:
             self.construct(
-                func=func,
-                lifetime=lifetime,
-                maxsize=maxsize,
-                typed=typed,
-                call_method=call_method,
-                instanced=instanced,
+                func,
+                maxsize,
+                typed,
+                lifetime,
+                call_method,
+                instanced,
                 *args,
                 **kwargs,
             )
 
     # Container Methods
     def __len__(self) -> int:
-        """The method that gets this object's length."""
+        """The method that gets this object's length.
+
+        Returns:
+            int: The number of items currently in the cache.
+        """
         return self.get_length()
 
     # Instance Methods #
@@ -141,11 +158,12 @@ class TimedCacheCallable(BaseTimedCacheCallable):
             self.maxsize = maxsize
 
         super().construct(
-            func=func,
-            typed=typed,
-            lifetime=lifetime,
-            call_method=call_method,
-            instanced=instanced,
+            func,
+            maxsize,
+            typed,
+            lifetime,
+            call_method,
+            instanced,
             *args,
             **kwargs,
         )
@@ -216,11 +234,19 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         self._maxsize = value
 
     def poll(self) -> bool:
-        """Check if there is room in the cache."""
+        """Check if there is room in the cache.
+
+        Returns:
+            bool: True if the cache has space for more items; otherwise, False.
+        """
         return len(self.cache_container) <= self._maxsize
 
     def get_length(self) -> int:
-        """Gets the length of the cache."""
+        """Gets the length of the cache.
+
+        Returns:
+            int: The number of items currently in the cache.
+        """
         return len(self.cache_container)
 
 
@@ -263,7 +289,7 @@ class TimedCache(TimedCacheCallable, BaseTimedCache):
         owner: type[Any] | None = None,
         name: str | None = None,
     ) -> TimedCacheMethod:
-        """Creates a method of this function which is bound to another object and sets the method an attribute.
+        """Creates a method of this function which is bound to another object and sets the method as an attribute.
 
         Args:
             instance: The object to bind the method to.

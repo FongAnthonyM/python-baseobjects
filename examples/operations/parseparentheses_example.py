@@ -32,7 +32,7 @@ def basic_usage_example():
 
     print(f"Expression: '{expression}'")
     print(f"Parsed result: {result}")
-    print(f"Expected: ['a', ['b', 'c'], 'd']")
+    print("Expected: ['a', ['b', 'c'], 'd']")
 
     # Another simple example
     expression = "function(arg1, arg2)"
@@ -40,7 +40,7 @@ def basic_usage_example():
 
     print(f"\nExpression: '{expression}'")
     print(f"Parsed result: {result}")
-    print(f"Expected: ['function', ['arg1', 'arg2']]")
+    print("Expected: ['function', ['arg1', 'arg2']]")
 
 
 def nested_parentheses_example():
@@ -55,7 +55,7 @@ def nested_parentheses_example():
 
     print(f"Expression: '{expression}'")
     print(f"Parsed result: {result}")
-    print(f"Expected: ['a', ['b', ['c', 'd'], 'e'], 'f']")
+    print("Expected: ['a', ['b', ['c', 'd'], 'e'], 'f']")
 
     # More complex nested expression
     expression = "function(arg1, nested_func(arg2, arg3), arg4)"
@@ -63,7 +63,7 @@ def nested_parentheses_example():
 
     print(f"\nExpression: '{expression}'")
     print(f"Parsed result: {result}")
-    print(f"Expected: ['function', ['arg1', 'nested_func', ['arg2', 'arg3'], 'arg4']]")
+    print("Expected: ['function', ['arg1', 'nested_func', ['arg2', 'arg3'], 'arg4']]")
 
     # Deeply nested expression
     expression = "a (b (c (d (e))))"
@@ -71,7 +71,7 @@ def nested_parentheses_example():
 
     print(f"\nExpression: '{expression}'")
     print(f"Parsed result: {result}")
-    print(f"Expected: ['a', ['b', ['c', ['d', ['e']]]]]")
+    print("Expected: ['a', ['b', ['c', ['d', ['e']]]]]")
 
 
 def filtering_example():
@@ -88,7 +88,7 @@ def filtering_example():
     print(f"Expression: '{expression}'")
     print(f"Include set: {include_set}")
     print(f"Parsed result with include filter: {result_include}")
-    print(f"Expected: ['function', ['arg1', 'True']]")
+    print("Expected: ['function', ['arg1', 'True']]")
 
     # Parse with exclude filter (exclude certain elements)
     exclude_set = {"123", "string"}
@@ -97,7 +97,7 @@ def filtering_example():
     print(f"\nExpression: '{expression}'")
     print(f"Exclude set: {exclude_set}")
     print(f"Parsed result with exclude filter: {result_exclude}")
-    print(f"Expected: ['function', ['arg1', 'True']]")
+    print("Expected: ['function', ['arg1', 'True']]")
 
     # Combine include and exclude filters
     include_set = {"function", "arg1", "123", "True"}
@@ -108,7 +108,7 @@ def filtering_example():
     print(f"Include set: {include_set}")
     print(f"Exclude set: {exclude_set}")
     print(f"Parsed result with combined filters: {result_combined}")
-    print(f"Expected: ['function', ['arg1', 'True']]")
+    print("Expected: ['function', ['arg1', 'True']]")
 
 
 def casting_example():
@@ -130,7 +130,7 @@ def casting_example():
 
     print(f"Expression: '{expression}'")
     print(f"Parsed result with int casting: {result}")
-    print(f"Expected: ['calculate', [1, 2, 3, 4]]")
+    print("Expected: ['calculate', [1, 2, 3, 4]]")
 
     # Expression with mixed types
     expression = "mixed(1, 2.5, 'text', True)"
@@ -156,7 +156,7 @@ def casting_example():
 
     print(f"\nExpression: '{expression}'")
     print(f"Parsed result with smart casting: {result}")
-    print(f"Expected: ['mixed', [1, 2.5, 'text', True]]")
+    print("Expected: ['mixed', [1, 2.5, 'text', True]]")
 
 
 def different_input_types_example():
@@ -169,7 +169,7 @@ def different_input_types_example():
 
     print(f"String expression: '{str_expression}'")
     print(f"Parsed result: {str_result}")
-    print(f"Expected: ['function', ['arg1', 'arg2']]")
+    print("Expected: ['function', ['arg1', 'arg2']]")
 
     # Bytes input
     bytes_expression = b"function(arg1, arg2)"
@@ -177,7 +177,7 @@ def different_input_types_example():
 
     print(f"\nBytes expression: {bytes_expression}")
     print(f"Parsed result: {bytes_result}")
-    print(f"Expected: [b'function', [b'arg1', b'arg2']]")
+    print("Expected: [b'function', [b'arg1', b'arg2']]")
 
     # Bytearray input
     bytearray_expression = bytearray(b"function(arg1, arg2)")
@@ -185,7 +185,7 @@ def different_input_types_example():
 
     print(f"\nBytearray expression: {bytearray_expression}")
     print(f"Parsed result: {bytearray_result}")
-    print(f"Expected: [b'function', [b'arg1', b'arg2']]")
+    print("Expected: [b'function', [b'arg1', b'arg2']]")
 
 
 def error_handling_example():
@@ -238,7 +238,7 @@ def quoted_strings_example():
 
     print(f"Expression: '{expression}'")
     print(f"Parsed result: {result}")
-    print(f"Expected: ['function', ['\"quoted string\"', \"'another quoted string'\"]]")
+    print("Expected: ['function', ['\"quoted string\"', \"'another quoted string'\"]]")
 
     # Expression with escaped quotes
     expression = 'function("string with \\"escaped\\" quotes")'
@@ -248,7 +248,7 @@ def quoted_strings_example():
 
     print(f"\nExpression with escaped quotes: '{expression}'")
     print(f"Parsed result: {result}")
-    print(f"Expected: ['function', ['\"string with \\\"escaped\\\" quotes\"']]")
+    print("Expected: ['function', ['\"string with \\\"escaped\\\" quotes\"']]")
 
 
 def practical_example():

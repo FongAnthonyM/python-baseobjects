@@ -95,7 +95,7 @@ class RepeatDecorator(BaseDecorator):
         results = []
         for i in range(self.times):
             if self.show_iteration:
-                print(f"Iteration {i+1}/{self.times}:")
+                print(f"Iteration {i + 1}/{self.times}:")
             result = self.__wrapped__(*args, **kwargs)
             results.append(result)
         return results
@@ -142,7 +142,7 @@ class AsyncRetryDecorator(BaseDecorator):
             except Exception as e:
                 last_exception = e
                 if attempt < self.max_retries:
-                    print(f"Attempt {attempt+1} failed: {str(e)}")
+                    print(f"Attempt {attempt + 1} failed: {str(e)}")
                     print(f"Waiting {self.delay} seconds before next attempt...")
                     await asyncio.sleep(self.delay)
                 else:

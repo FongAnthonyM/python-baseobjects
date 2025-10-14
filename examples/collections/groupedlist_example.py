@@ -265,7 +265,7 @@ def practical_example():
     # Display all tasks
     print("All tasks:")
     for i, task in enumerate(tasks):
-        print(f"  {i+1}. {task}")
+        print(f"  {i + 1}. {task}")
 
     # Display tasks by category
     print("\nWork tasks:")

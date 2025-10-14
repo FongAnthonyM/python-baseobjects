@@ -47,10 +47,11 @@ class DispatchableClass(BaseRegisteredClass):
             *args: Positional arguments to get the namespace and name from.
             **kwargs: Keyword arguments to get the namespace and name from.
 
-        Returns:
-            The class lookup information.
+        Raises:
+            NotImplementedError: This method must be implemented by subclasses to enable dispatch.
         """
-        raise NotImplementedError("This method needs to be implemented to dispatch classes.")
+        msg = "This method needs to be implemented to dispatch classes."
+        raise NotImplementedError(msg)
 
     # Magic Methods #
     # Construction/Destruction

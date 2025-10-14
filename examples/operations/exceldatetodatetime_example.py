@@ -36,11 +36,11 @@ def basic_usage_example():
 
     print(f"Excel date (int): {excel_date_int}")
     print(f"Converted datetime: {dt}")
-    print(f"Expected: 2023-01-01 00:00:00+00:00")
+    print("Expected: 2023-01-01 00:00:00+00:00")
 
     # Verify the timezone
     print(f"Timezone: {dt.tzinfo}")
-    print(f"Expected: UTC")
+    print("Expected: UTC")
 
 
 def different_types_example():
@@ -53,7 +53,7 @@ def different_types_example():
 
     print(f"From integer ({excel_date_int}):")
     print(f"  {dt_from_int}")
-    print(f"  Expected: 2023-01-01 00:00:00+00:00")
+    print("  Expected: 2023-01-01 00:00:00+00:00")
 
     # Float Excel date (with time component)
     # 44927.5 represents January 1, 2023 at 12:00 PM (noon)
@@ -62,7 +62,7 @@ def different_types_example():
 
     print(f"\nFrom float ({excel_date_float}):")
     print(f"  {dt_from_float}")
-    print(f"  Expected: 2023-01-01 12:00:00+00:00")
+    print("  Expected: 2023-01-01 12:00:00+00:00")
 
     # String Excel date (same value)
     excel_date_str = "44927.75"  # January 1, 2023 at 6:00 PM
@@ -70,7 +70,7 @@ def different_types_example():
 
     print(f"\nFrom string ('{excel_date_str}'):")
     print(f"  {dt_from_str}")
-    print(f"  Expected: 2023-01-01 18:00:00+00:00")
+    print("  Expected: 2023-01-01 18:00:00+00:00")
 
     # Bytes Excel date (same value)
     excel_date_bytes = b"44927.25"  # January 1, 2023 at 6:00 AM
@@ -78,7 +78,7 @@ def different_types_example():
 
     print(f"\nFrom bytes ({excel_date_bytes}):")
     print(f"  {dt_from_bytes}")
-    print(f"  Expected: 2023-01-01 06:00:00+00:00")
+    print("  Expected: 2023-01-01 06:00:00+00:00")
 
 
 def timezone_example():
@@ -91,7 +91,7 @@ def timezone_example():
     # Convert to datetime with UTC timezone (default)
     dt_utc = excel_date_to_datetime(excel_date)
 
-    print(f"With UTC timezone:")
+    print("With UTC timezone:")
     print(f"  {dt_utc}")
     print(f"  Timezone: {dt_utc.tzinfo}")
 
@@ -99,14 +99,14 @@ def timezone_example():
     local_tz = datetime.datetime.now().astimezone().tzinfo
     dt_local = excel_date_to_datetime(excel_date, tzinfo=local_tz)
 
-    print(f"\nWith local timezone:")
+    print("\nWith local timezone:")
     print(f"  {dt_local}")
     print(f"  Timezone: {dt_local.tzinfo}")
 
     # Convert to datetime with no timezone
     dt_none = excel_date_to_datetime(excel_date, tzinfo=None)
 
-    print(f"\nWith no timezone:")
+    print("\nWith no timezone:")
     print(f"  {dt_none}")
     print(f"  Timezone: {dt_none.tzinfo}")
 
@@ -114,7 +114,7 @@ def timezone_example():
     eastern = datetime.timezone(datetime.timedelta(hours=-5))  # UTC-5
     dt_eastern = excel_date_to_datetime(excel_date, tzinfo=eastern)
 
-    print(f"\nWith Eastern timezone (UTC-5):")
+    print("\nWith Eastern timezone (UTC-5):")
     print(f"  {dt_eastern}")
     print(f"  Timezone: {dt_eastern.tzinfo}")
 
@@ -146,15 +146,15 @@ def excel_date_peculiarities_example():
     # Excel's day 1 is January 1, 1900, but the epoch is December 30, 1899
     day_0 = excel_date_to_datetime(0)
     print(f"\nExcel day 0: {day_0}")
-    print(f"Expected: 1899-12-30 00:00:00+00:00")
+    print("Expected: 1899-12-30 00:00:00+00:00")
 
     day_1 = excel_date_to_datetime(1)
     print(f"Excel day 1: {day_1}")
-    print(f"Expected: 1899-12-31 00:00:00+00:00")
+    print("Expected: 1899-12-31 00:00:00+00:00")
 
     day_2 = excel_date_to_datetime(2)
     print(f"Excel day 2: {day_2}")
-    print(f"Expected: 1900-01-01 00:00:00+00:00")
+    print("Expected: 1900-01-01 00:00:00+00:00")
 
 
 def date_calculation_example():
@@ -185,7 +185,7 @@ def date_calculation_example():
     diff = (today - dt).total_seconds()
 
     print(f"Difference: {abs(diff)} seconds")
-    print(f"Expected: 0 seconds")
+    print("Expected: 0 seconds")
 
     # Add time component (12:30 PM)
     excel_date_with_time = excel_date + 0.5208333333  # 0.5 days + 0.0208333333 (30 minutes)
@@ -193,7 +193,7 @@ def date_calculation_example():
 
     print(f"\nExcel date with time (12:30 PM): {excel_date_with_time}")
     print(f"Converted to datetime: {dt_with_time}")
-    print(f"Expected: Today at 12:30 PM UTC")
+    print("Expected: Today at 12:30 PM UTC")
 
 
 def practical_example():
@@ -269,7 +269,7 @@ def error_handling_example():
     try:
         dt = excel_date_to_datetime(-10)
         print(f"Result: {dt}")
-        print(f"Expected: A date 10 days before December 30, 1899")
+        print("Expected: A date 10 days before December 30, 1899")
     except Exception as e:
         print(f"Exception: {e}")
         print("Note: Negative values may or may not be handled depending on implementation")

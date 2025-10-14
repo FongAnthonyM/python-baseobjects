@@ -38,7 +38,8 @@ def excel_date_to_datetime(timestamp: int | float | str | bytes, tzinfo: TZInfo 
     Returns:
         The datetime of the filetime.
     """
-    raise TypeError(f"{timestamp.__class__} cannot be converted to a datetime")
+    msg = f"{timestamp.__class__} cannot be converted to a datetime"
+    raise TypeError(msg)
 
 
 @excel_date_to_datetime.register(float)

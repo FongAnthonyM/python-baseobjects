@@ -153,26 +153,26 @@ def basic_callable_multiplexer():
     # Use the selected function
     a, b = 10, 5
     result = multiplexer(a, b)
-    print(f"Selected function: 'add'")
+    print("Selected function: 'add'")
     print(f"multiplexer({a}, {b}) = {result}")
 
     # Change the selected function
     multiplexer.select("multiply")
     result = multiplexer(a, b)
-    print(f"\nSelected function: 'multiply'")
+    print("\nSelected function: 'multiply'")
     print(f"multiplexer({a}, {b}) = {result}")
 
     # Add a new function and select it
     registry["power"] = lambda a, b: a**b
     multiplexer.select("power")
     result = multiplexer(a, b)
-    print(f"\nAdded and selected function: 'power'")
+    print("\nAdded and selected function: 'power'")
     print(f"multiplexer({a}, {b}) = {result}")
 
     # Add and select a function in one step
     multiplexer.add_select_function("divide", lambda a, b: a / b if b != 0 else float("inf"))
     result = multiplexer(a, b)
-    print(f"\nAdded and selected function: 'divide'")
+    print("\nAdded and selected function: 'divide'")
     print(f"multiplexer({a}, {b}) = {result}")
 
     print()
@@ -319,28 +319,28 @@ def dynamic_method_selection():
 
     # Use the default selected method (increment)
     result = processor.process()
-    print(f"Using default method 'increment':")
+    print("Using default method 'increment':")
     print(f"processor.process() = {result}")
     print(f"Current value: {processor.value}")
 
     # Change the selected method to decrement
     processor.multiplexer.select("decrement")
     result = processor.process()
-    print(f"\nChanged to method 'decrement':")
+    print("\nChanged to method 'decrement':")
     print(f"processor.process() = {result}")
     print(f"Current value: {processor.value}")
 
     # Increment by a specific amount
     processor.multiplexer.select("increment")
     result = processor.multiplexer(5)  # Call with an argument
-    print(f"\nCalling 'increment' with argument 5:")
+    print("\nCalling 'increment' with argument 5:")
     print(f"processor.multiplexer(5) = {result}")
     print(f"Current value: {processor.value}")
 
     # Reset the value
     processor.multiplexer.select("reset")
     result = processor.process()
-    print(f"\nChanged to method 'reset':")
+    print("\nChanged to method 'reset':")
     print(f"processor.process() = {result}")
     print(f"Current value: {processor.value}")
 

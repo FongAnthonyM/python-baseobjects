@@ -22,7 +22,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 from abc import abstractmethod
 from types import MethodType
-from typing import Any, Type
+from typing import Any
 
 # Local Packages #
 from ...bases import BaseFunction
@@ -82,7 +82,7 @@ class BaseFunctionTestSuite(BaseCallableTestSuite):
             test_function_object: A fixture providing a BaseFunction instance that wraps a function.
         """
 
-    def test_bind(self, test_method_object: BaseFunction, test_bind_target: "BindTargetClass") -> None:
+    def test_bind(self, test_method_object: BaseFunction, test_bind_target: Any) -> None:
         """Test that the function can be bound to an instance to create a method.
 
         This test only varifies that a bound method is returned. This method may be overwritten to include validation

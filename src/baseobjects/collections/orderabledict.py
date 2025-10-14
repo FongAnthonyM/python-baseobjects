@@ -52,6 +52,13 @@ class OrderableDict(BaseDict):
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, dict_: Any = None, /, *args: Any, **kwargs: Any) -> None:
+        """Initialize an orderable dictionary.
+
+        Args:
+            dict_: Optional mapping or iterable to initialize from.
+            *args: Additional positional arguments passed to BaseDict.
+            **kwargs: Additional keyword arguments passed to BaseDict.
+        """
         # Attributes #
         self.order = []
 
@@ -108,6 +115,9 @@ class OrderableDict(BaseDict):
         Args:
             key: The key to get or add if it was not in the dictionary.
             default: The value to add to the dictionary if not present.
+
+        Returns:
+            ValueType: The value associated with the key (existing or the provided default).
         """
         if key not in self.data:
             self.order.append(key)
@@ -120,9 +130,13 @@ class OrderableDict(BaseDict):
             index: The index to insert into the order.
             key: The key of value to insert.
             value: The value to set at the key.
+
+        Raises:
+            KeyError: If the key already exists in the dictionary.
         """
         if key in self.data:
-            raise KeyError("Key already exists.")
+            msg = "Key already exists."
+            raise KeyError(msg)
 
         self.order.insert(index, key)
         self.data[key] = value

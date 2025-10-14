@@ -18,7 +18,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any
+from typing import Any, ClassVar
 
 # Local Packages #
 from ..bases import BaseObject
@@ -47,7 +47,7 @@ class DynamicWrapper(BaseObject):
     """
 
     # Attribute #
-    _wrapped_map_: list[str] = []
+    _wrapped_map_: ClassVar[list[str]] = []
 
     # Magic Methods #
     # Attribute Access
@@ -72,7 +72,7 @@ class DynamicWrapper(BaseObject):
                     return getattr(object.__getattribute__(self, attribute), name)
                 except AttributeError:
                     pass
-            raise AttributeError
+            raise AttributeError from None
 
     def __setattr__(self, name: str, value: Any) -> None:
         """Sets the attribute of another object if that attribute name is not present in this object.
@@ -92,6 +92,7 @@ class DynamicWrapper(BaseObject):
 
         # If the item is an attribute in self or not in any indirect parent set as attribute
         object.__setattr__(self, name, value)
+        return None
 
     def __delattr__(self, name: str) -> None:
         """Deletes the attribute of another object if that attribute name is not present in this object.
@@ -110,10 +111,11 @@ class DynamicWrapper(BaseObject):
 
         # If the item is an attribute in self or not in any indirect parent set as attribute
         object.__delattr__(self, name)
+        return None
 
     # Instance Methods #
     # Attribute Access
-    def _setattr(self, name: str, value: Any):
+    def _setattr(self, name: str, value: Any) -> None:
         """An override method that will set an attribute of this object without checking its presence in other objects.
 
         This is useful for setting new attributes after class the definition.

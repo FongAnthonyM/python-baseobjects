@@ -79,7 +79,7 @@ def order_manipulation_example():
 
     print("Initial menu order:")
     for i, (section, items) in enumerate(menu.items()):
-        print(f"  {i+1}. {section}: {items}")
+        print(f"  {i + 1}. {section}: {items}")
 
     # Reverse the order
     print("\nReversing the order:")
@@ -87,7 +87,7 @@ def order_manipulation_example():
 
     print("Menu after reversing:")
     for i, (section, items) in enumerate(menu.items()):
-        print(f"  {i+1}. {section}: {items}")
+        print(f"  {i + 1}. {section}: {items}")
 
     # Insert a new item at a specific position
     print("\nInserting 'specials' at position 1:")
@@ -95,7 +95,7 @@ def order_manipulation_example():
 
     print("Menu after insertion:")
     for i, (section, items) in enumerate(menu.items()):
-        print(f"  {i+1}. {section}: {items}")
+        print(f"  {i + 1}. {section}: {items}")
 
     # Move an existing item to a new position
     print("\nMoving 'desserts' to position 1:")
@@ -103,7 +103,7 @@ def order_manipulation_example():
 
     print("Menu after moving 'desserts':")
     for i, (section, items) in enumerate(menu.items()):
-        print(f"  {i+1}. {section}: {items}")
+        print(f"  {i + 1}. {section}: {items}")
 
     # Pop the last item
     print("\nPopping the last item:")
@@ -112,7 +112,7 @@ def order_manipulation_example():
 
     print("Menu after popping:")
     for i, (section, items) in enumerate(menu.items()):
-        print(f"  {i+1}. {section}: {items}")
+        print(f"  {i + 1}. {section}: {items}")
 
     # Pop an item by index
     print("\nPopping item at index 1:")
@@ -121,7 +121,7 @@ def order_manipulation_example():
 
     print("Menu after popping index 1:")
     for i, (section, items) in enumerate(menu.items()):
-        print(f"  {i+1}. {section}: {items}")
+        print(f"  {i + 1}. {section}: {items}")
 
 
 def index_access_example():

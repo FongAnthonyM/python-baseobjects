@@ -34,12 +34,19 @@ class InitMeta(BaseMeta):
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(cls, name: str, bases: tuple[type, ...], namespace: dict[str, Any]) -> None:
+    def __init__(self, name: str, bases: tuple[type, ...], namespace: dict[str, Any]) -> None:
+        """Initialize the metaclass and invoke class initialization hook.
+
+        Args:
+            name: The name of the class being created.
+            bases: The base classes of the class being created.
+            namespace: The attribute dictionary of the class being created.
+        """
         super().__init__(name, bases, namespace)
-        cls._init_class_(name=name, bases=bases, namespace=namespace)
+        self._init_class_(name=name, bases=bases, namespace=namespace)
 
     def _init_class_(
-        cls,
+        self,
         name: str | None = None,
         bases: tuple[type, ...] | None = None,
         namespace: dict[str, Any] | None = None,

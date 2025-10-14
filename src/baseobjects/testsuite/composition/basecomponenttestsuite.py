@@ -19,7 +19,7 @@ import copy
 import pickle
 import weakref
 from abc import abstractmethod
-from typing import Any, Type
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -197,7 +197,7 @@ class BaseComponentTestSuite(BaseObjectTestSuite):
         assert test_object.composite is test_composite
 
         # Create a new scope to test garbage collection
-        def temp_scope():
+        def temp_scope() -> None:
             temp_composite = self.TestComposite()
             test_object.composite = temp_composite
 

@@ -29,7 +29,7 @@ AnyCallable = Callable[..., Any]
 AnyCallableType = Callable[..., type[Any]]
 
 # Objects
-GetObjectMethod = Callable[[Any, Any, type[Any] | None, ...], "BaseMethod"]
+GetObjectMethod = Callable[[Any, Any, type[Any] | None, ...], Any]
 
 # Getters, Setters, and Deletes
 GetterMethod = Callable[[Any], Any]

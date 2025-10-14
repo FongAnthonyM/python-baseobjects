@@ -172,25 +172,29 @@ class NamespaceClassRegistry(BaseClassRegistry):
             try:
                 import_module(module)
             except Exception as e:
-                warn(f"Failed to import module '{module}' with error: {e}, skipping.")
+                msg = f"Failed to import module '{module}' with error: {e}, skipping."
+                warn(msg, stacklevel=2)
             else:
                 namespace_types = self.data.get(namespace, None)
 
         if namespace_types is None:
             if default is SEARCHSENTINEL:
-                raise KeyError(f"Namespace '{namespace}' not found.")
+                msg = f"Namespace '{namespace}' not found."
+                raise KeyError(msg)
             return default
         elif (class_ := namespace_types.get(name, None)) is None and module is not None:
             try:
                 import_module(module)
             except Exception as e:
-                warn(f"Failed to import module '{module}' with error: {e}, skipping.")
+                msg = f"Failed to import module '{module}' with error: {e}, skipping."
+                warn(msg, stacklevel=2)
             else:
                 class_ = namespace_types.get(name, None)
 
         if class_ is None:
             if default is SEARCHSENTINEL:
-                raise KeyError(f"Class '{name}' not found in namespace '{namespace}'.")
+                msg = f"Class '{name}' not found in namespace '{namespace}'."
+                raise KeyError(msg)
             return default
         else:
             return class_ if with_kwargs else class_[0]
@@ -218,9 +222,6 @@ class NamespaceClassRegistry(BaseClassRegistry):
         Returns:
             A new instance of the requested class, or default if the class is not found
             and default is not SEARCHSENTINEL.
-
-        Raises:
-            KeyError: If the namespace or class is not found and default is SEARCHSENTINEL.
         """
         if class_kwargs is None:
             class_kwargs = {}

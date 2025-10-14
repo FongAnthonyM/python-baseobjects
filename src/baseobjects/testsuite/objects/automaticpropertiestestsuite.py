@@ -20,7 +20,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import copy
 import pickle
-from typing import Type
+from typing import ClassVar
 
 # Third-Party Packages #
 import pytest
@@ -59,7 +59,7 @@ class AutomaticPropertiesTestSuite(BaseObjectTestSuite):
         class TestAutomaticProperties(self.TestClass):
             """Test class for AutomaticProperties."""
 
-            properties = {"test_prop": "_test_prop", "another_prop": "_another_prop"}
+            properties: ClassVar[dict[str, str]] = {"test_prop": "_test_prop", "another_prop": "_another_prop"}
 
         return TestAutomaticProperties
 
@@ -175,7 +175,7 @@ class AutomaticPropertiesTestSuite(BaseObjectTestSuite):
             test_class_with_properties: A fixture providing a test class with properties.
         """
         # Create Object
-        obj = test_class_with_properties()
+        _ = test_class_with_properties()
 
         # Validate
         assert hasattr(test_class_with_properties, "test_prop")
@@ -273,7 +273,6 @@ class AutomaticPropertiesTestSuite(BaseObjectTestSuite):
         # Create Test Class
         class TestClass(self.TestClass):
             """Test class for _construct_properties_."""
-
 
         # Construct Properties
         property_map = {"dynamic_prop": "_dynamic_prop", "another_dynamic_prop": "_another_dynamic_prop"}

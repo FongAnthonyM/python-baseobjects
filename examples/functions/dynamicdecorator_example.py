@@ -276,17 +276,17 @@ def dynamicdecorator_vs_basedecorator():
     # Show that both can be called directly
     dynamic_result = dynamic_dec(5)
     base_result = base_dec(5)
-    print(f"Direct call:")
+    print("Direct call:")
     print(f"dynamic_dec(5) = {dynamic_result} == 5")
     print(f"base_dec(5) = {base_result} == 5")
 
     # Show the class hierarchy
-    print(f"\nClass hierarchy:")
+    print("\nClass hierarchy:")
     print(f"DynamicDecorator inherits from: {DynamicDecorator.__mro__[1:3]}")
     print(f"BaseDecorator inherits from: {BaseDecorator.__mro__[1:2]}")
 
     # Show the key difference: DynamicDecorator has call_method and bind_method attributes
-    print(f"\nKey differences:")
+    print("\nKey differences:")
     print(f"DynamicDecorator has call_method: {hasattr(dynamic_dec, 'call_method')}")
     print(f"DynamicDecorator has bind_method: {hasattr(dynamic_dec, 'bind_method')}")
     print(f"BaseDecorator has call_method: {hasattr(base_dec, 'call_method')}")

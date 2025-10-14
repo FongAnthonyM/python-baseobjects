@@ -48,7 +48,8 @@ def filetime_to_datetime(
     Returns:
         The datetime of the filetime.
     """
-    raise TypeError(f"{timestamp.__class__} cannot be converted to a datetime")
+    msg = f"{timestamp.__class__} cannot be converted to a datetime"
+    raise TypeError(msg)
 
 
 @filetime_to_datetime.register

@@ -36,11 +36,11 @@ def basic_usage_example():
 
     print(f"Filetime (int): {filetime_int}")
     print(f"Converted datetime: {dt}")
-    print(f"Expected: A datetime around 2023-06-15 12:00:00+00:00")
+    print("Expected: A datetime around 2023-06-15 12:00:00+00:00")
 
     # Verify the timezone
     print(f"Timezone: {dt.tzinfo}")
-    print(f"Expected: UTC")
+    print("Expected: UTC")
 
 
 def different_types_example():
@@ -91,7 +91,7 @@ def timezone_example():
     # Convert to datetime with UTC timezone (default)
     dt_utc = filetime_to_datetime(filetime)
 
-    print(f"With UTC timezone:")
+    print("With UTC timezone:")
     print(f"  {dt_utc}")
     print(f"  Timezone: {dt_utc.tzinfo}")
 
@@ -99,14 +99,14 @@ def timezone_example():
     local_tz = datetime.datetime.now().astimezone().tzinfo
     dt_local = filetime_to_datetime(filetime, tzinfo=local_tz)
 
-    print(f"\nWith local timezone:")
+    print("\nWith local timezone:")
     print(f"  {dt_local}")
     print(f"  Timezone: {dt_local.tzinfo}")
 
     # Convert to datetime with no timezone
     dt_none = filetime_to_datetime(filetime, tzinfo=None)
 
-    print(f"\nWith no timezone:")
+    print("\nWith no timezone:")
     print(f"  {dt_none}")
     print(f"  Timezone: {dt_none.tzinfo}")
 
@@ -114,7 +114,7 @@ def timezone_example():
     eastern = datetime.timezone(datetime.timedelta(hours=-5))  # UTC-5
     dt_eastern = filetime_to_datetime(filetime, tzinfo=eastern)
 
-    print(f"\nWith Eastern timezone (UTC-5):")
+    print("\nWith Eastern timezone (UTC-5):")
     print(f"  {dt_eastern}")
     print(f"  Timezone: {dt_eastern.tzinfo}")
 
@@ -123,7 +123,7 @@ def timezone_example():
     print(f"  UTC hour: {dt_utc.hour}")
     print(f"  Eastern hour: {dt_eastern.hour}")
     print(f"  Difference: {(dt_utc.hour - dt_eastern.hour) % 24} hours")
-    print(f"  Expected difference: 5 hours")
+    print("  Expected difference: 5 hours")
 
 
 def current_filetime_example():
@@ -152,7 +152,7 @@ def current_filetime_example():
     diff = (now_utc - dt).total_seconds()
 
     print(f"Difference: {abs(diff)} seconds")
-    print(f"Expected: Close to 0 seconds (allowing for processing time)")
+    print("Expected: Close to 0 seconds (allowing for processing time)")
 
 
 def practical_example():

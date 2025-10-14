@@ -260,7 +260,7 @@ class WrapperTestSuite(BaseObjectTestSuite):
 
     @pytest.mark.xfail
     def test_magic_inheritance(self, test_object: Any) -> None:
-        """Test that magic methods are inherited from wrapped objects. (They are not currently)
+        """Test that magic methods are inherited from wrapped objects. (They are not currently).
 
         This test verifies that magic methods from wrapped objects are accessible through the wrapper. The equality
         magic method is being tested here. This test is expected to fail.
@@ -295,7 +295,7 @@ class WrapperTestSuite(BaseObjectTestSuite):
 
         # Verify that accessing non-existent attributes raises AttributeError
         with pytest.raises(AttributeError):
-            wrapper.non_existent_attribute
+            _ = wrapper.non_existent_attribute
 
     def test_nested_wrappers(self) -> None:
         """Test how the wrapper handles nested wrappers.

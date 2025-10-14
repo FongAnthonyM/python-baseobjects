@@ -57,7 +57,7 @@ class BaseMeta(ABCMeta):
 
     # Magic Methods #
     # Construction/Destruction
-    def __copy__(self) -> Any:
+    def __copy__(cls) -> Any:
         """Create a shallow copy of this metaclass instance (class).
 
         This method implements Python's copy protocol for shallow copying of metaclass instances (classes). It is called
@@ -75,36 +75,40 @@ class BaseMeta(ABCMeta):
 
         Returns:
             A shallow copy of this class, with the same metaclass but independent class attributes.
+
+        Raises:
+            Error: If the class cannot be shallow-copied because no suitable reduction or copy strategy is available.
         """
-        cls = type(self)
+        meta_type = type(cls)
 
-        copier = _copy_dispatch.get_item(cls)
+        copier = _copy_dispatch.get(meta_type)
         if copier:
-            return copier(self)
+            return copier(cls)
 
-        if issubclass(cls, type):
+        if issubclass(meta_type, type):
             # treat it as a regular class:
-            return _copy_immutable(self)
+            return _copy_immutable(cls)
 
-        reductor = dispatch_table.get_item(cls)
+        reductor = dispatch_table.get(meta_type)
         if reductor is not None:
-            rv = reductor(self)
+            rv = reductor(cls)
         else:
-            reductor = getattr(self, "__reduce_ex__", None)
+            reductor = getattr(cls, "__reduce_ex__", None)
             if reductor is not None:
                 rv = reductor(4)
             else:
-                reductor = getattr(self, "__reduce__", None)
+                reductor = getattr(cls, "__reduce__", None)
                 if reductor:
                     rv = reductor()
                 else:
-                    raise Error("un(shallow)copyable object of type %s" % cls)
+                    msg = f"un(shallow)copyable object of type {meta_type}"
+                    raise Error(msg)
 
         if isinstance(rv, str):
-            return self
-        return _reconstruct(self, None, *rv)
+            return cls
+        return _reconstruct(cls, None, *rv)
 
-    def __deepcopy__(self, memo: dict | None = None, _nil=[]) -> Any:
+    def __deepcopy__(cls, memo: dict | None = None, _nil: list | None = None) -> Any:
         """Create a deep copy of this metaclass instance (class).
 
         This method implements Python's copy protocol for deep copying of metaclass instances (classes). It is called by
@@ -132,47 +136,53 @@ class BaseMeta(ABCMeta):
         Returns:
             A deep copy of this class, with the same metaclass but completely independent class attributes, including
             independent copies of all mutable objects contained within the class definition.
+
+        Raises:
+            Error: If the class cannot be deep-copied because no suitable reduction or deepcopy strategy is available.
         """
         if memo is None:
             memo = {}
+        if _nil is None:
+            _nil = []
 
-        d = id(self)
+        d = id(cls)
         y = memo.get(d, _nil)
         if y is not _nil:
             return y
 
-        cls = type(self)
+        meta_type = type(cls)
 
         # If copy method is in the deepcopy dispatch then use it
-        copier = _deepcopy_dispatch.get_item(cls)
+        copier = _deepcopy_dispatch.get(meta_type)
         if copier is not None:
-            y = copier(self, memo)
+            y = copier(cls, memo)
         else:
             # Handle if this object is a type subclass
-            if issubclass(cls, type):
-                y = _deepcopy_atomic(self, memo)
+            if issubclass(meta_type, type):
+                y = _deepcopy_atomic(cls, memo)
             else:
-                reductor = dispatch_table.get_item(cls)
+                reductor = dispatch_table.get(meta_type)
                 if reductor:
-                    rv = reductor(self)
+                    rv = reductor(cls)
                 else:
-                    reductor = getattr(self, "__reduce_ex__", None)
+                    reductor = getattr(cls, "__reduce_ex__", None)
                     if reductor is not None:
                         rv = reductor(4)
                     else:
-                        reductor = getattr(self, "__reduce__", None)
+                        reductor = getattr(cls, "__reduce__", None)
                         if reductor:
                             rv = reductor()
                         else:
-                            raise Error("un(deep)copyable object of type %s" % cls)
+                            msg = f"un(deep)copyable object of type {meta_type}"
+                            raise Error(msg)
                 if isinstance(rv, str):
-                    y = self
+                    y = cls
                 else:
-                    y = _reconstruct(self, memo, *rv)
+                    y = _reconstruct(cls, memo, *rv)
 
         # If is its own copy, don't memoize.
-        if y is not self:
+        if y is not cls:
             memo[d] = y
-            _keep_alive(self, memo)  # Make sure x lives at least as long as d
+            _keep_alive(cls, memo)  # Make sure x lives at least as long as d
 
         return y

@@ -45,7 +45,7 @@ class BaseReducible(BaseObject):
 
     # Magic Methods #
     # Reduction/Pickling
-    def __getstate__(self) -> None | dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]]:
+    def __getstate__(self) -> dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]] | None:
         """Gets the object's state for pickling.
 
         This method is called by the pickle module when serializing the object. It extracts the object's state from both
@@ -124,4 +124,5 @@ class BaseReducible(BaseObject):
             case None:
                 return
             case _:
-                raise TypeError(f"State must be None, dict, or tuple, not {type(state)}")
+                msg = f"State must be None, dict, or tuple, not {type(state)}"
+                raise TypeError(msg)

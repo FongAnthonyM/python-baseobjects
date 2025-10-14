@@ -108,11 +108,11 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         """
         name = info
 
-        _property_class_get = partial(cls.property_class_get, name=name)
-        _property_class_set = partial(cls.property_class_set, name=name)
-        _property_class_del = partial(cls.property_class_del, name=name)
+        property_class_get = partial(cls.property_class_get, name=name)
+        property_class_set = partial(cls.property_class_set, name=name)
+        property_class_del = partial(cls.property_class_del, name=name)
 
-        return _property_class_get, _property_class_set, _property_class_del
+        return property_class_get, property_class_set, property_class_del
 
     @classmethod
     def property_method_factory(cls, info: str) -> PropertyCallbacks:
@@ -128,11 +128,11 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         """
         name = info
 
-        _property_get = partial(cls.property_get, name=name)
-        _property_set = partial(cls.property_set, name=name)
-        _property_del = partial(cls.property_del, name=name)
+        property_get = partial(cls.property_get, name=name)
+        property_set = partial(cls.property_set, name=name)
+        property_del = partial(cls.property_del, name=name)
 
-        return _property_get, _property_set, _property_del
+        return property_get, property_set, property_del
 
     # Properties Constructor
     @classmethod

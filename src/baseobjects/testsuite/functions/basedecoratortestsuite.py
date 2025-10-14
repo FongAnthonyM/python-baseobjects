@@ -21,7 +21,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 from abc import abstractmethod
 from functools import partial
-from typing import Any, Type
+from typing import Any
 
 # Third-Party Packages #
 import pytest
