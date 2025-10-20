@@ -23,7 +23,8 @@ import asyncio
 import copy
 import pickle
 from functools import partial
-from typing import Any, Callable, Type
+from typing import Any, Type
+from collections.abc import Callable
 
 # Third-Party Packages #
 import pytest
@@ -49,7 +50,7 @@ class ConcreteDecorator(BaseDecorator):
             **kwargs: Additional keyword arguments.
         """
         self.prefix = prefix
-        super().__init__(func=func, *args, **kwargs)
+        super().__init__(func, *args, **kwargs)
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
         """Add a prefix to the result of the wrapped function.
@@ -76,7 +77,7 @@ class TestBaseDecorator(BaseDecoratorTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BaseDecorator] = BaseDecorator
+    TestClass: type[BaseDecorator] = BaseDecorator
 
     # Instance Methods #
     # Tests

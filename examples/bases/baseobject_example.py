@@ -21,7 +21,7 @@ from baseobjects.bases import BaseObject
 class Person(BaseObject):
     """A simple class that inherits from BaseObject."""
 
-    def __init__(self, name: str | None = None, age: int | None = None, *args: Any, **kwargs: Any):
+    def __init__(self, name: str | None = None, age: int | None = None, *args: Any, **kwargs: Any) -> None:
         """Initialize a Person object.
 
         Args:
@@ -53,7 +53,7 @@ class Employee(Person):
 
     employee_id: str
     department: str
-    projects: List[str]
+    projects: list[str]
 
     def __init__(
         self,
@@ -63,7 +63,7 @@ class Employee(Person):
         department: str | None = None,
         *args: Any,
         **kwargs: Any,
-    ):
+    ) -> None:
         """Initialize an Employee object.
 
         Args:
@@ -105,7 +105,7 @@ class Employee(Person):
 
 
 # Example Sections #
-def basic_baseobject_example():
+def basic_baseobject_example() -> None:
     """Demonstrate basic usage of BaseObject."""
     print("\nBasic BaseObject Example:")
 
@@ -137,7 +137,7 @@ def basic_baseobject_example():
     print(f"Employee's friends: {employee.friends}")
 
 
-def shallow_copy_example():
+def shallow_copy_example() -> None:
     """Demonstrate shallow copying of BaseObject instances."""
     print("\nShallow Copy Example:")
 
@@ -176,7 +176,7 @@ def shallow_copy_example():
     print(f"Original preferences: {original.preferences} == {{'color': 'blue', 'food': 'pizza'}}")
 
 
-def deep_copy_example():
+def deep_copy_example() -> None:
     """Demonstrate deep copying of BaseObject instances."""
     print("\nDeep Copy Example:")
 

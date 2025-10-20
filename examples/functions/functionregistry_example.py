@@ -12,7 +12,8 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
+from collections.abc import Callable
 
 # Source Packages #
 from baseobjects.functions import FunctionRegistry
@@ -80,7 +81,8 @@ class MathOperations:
             ValueError: If attempting to divide by zero.
         """
         if b == 0:
-            raise ValueError("Cannot divide by zero")
+            msg = "Cannot divide by zero"
+            raise ValueError(msg)
         return a / b
 
     @staticmethod
@@ -169,7 +171,7 @@ class Calculator:
                 "subtract": MathOperations.subtract,
                 "multiply": MathOperations.multiply,
                 "divide": MathOperations.divide,
-            }
+            },
         )
 
     def register_operation(self, name: str, operation: Callable) -> None:
@@ -196,12 +198,13 @@ class Calculator:
             KeyError: If the operation is not registered.
         """
         if operation_name not in self.registry:
-            raise KeyError(f"Operation '{operation_name}' not found in registry")
+            msg = f"Operation '{operation_name}' not found in registry"
+            raise KeyError(msg)
 
         operation = self.registry[operation_name]
         return operation(*args, **kwargs)
 
-    def list_operations(self) -> List[str]:
+    def list_operations(self) -> list[str]:
         """List all registered operations.
 
         Returns:
@@ -248,7 +251,8 @@ def factorial(n: int) -> int:
         ValueError: If n is negative.
     """
     if n < 0:
-        raise ValueError("Factorial is not defined for negative numbers")
+        msg = "Factorial is not defined for negative numbers"
+        raise ValueError(msg)
     if n == 0 or n == 1:
         return 1
     return n * factorial(n - 1)
@@ -256,7 +260,7 @@ def factorial(n: int) -> int:
 
 # Functions #
 # Example Sections #
-def basic_function_registry():
+def basic_function_registry() -> None:
     """Demonstrates basic usage of FunctionRegistry."""
     print("Basic FunctionRegistry Usage:\n")
 
@@ -291,7 +295,7 @@ def basic_function_registry():
     print()
 
 
-def registry_initialization():
+def registry_initialization() -> None:
     """Demonstrates different ways to initialize a FunctionRegistry."""
     print("FunctionRegistry Initialization:\n")
 
@@ -317,7 +321,7 @@ def registry_initialization():
     print()
 
 
-def updating_registry():
+def updating_registry() -> None:
     """Demonstrates updating a FunctionRegistry from different sources."""
     print("Updating FunctionRegistry:\n")
 
@@ -346,7 +350,7 @@ def updating_registry():
     print()
 
 
-def calculator_example():
+def calculator_example() -> None:
     """Demonstrates using FunctionRegistry in a practical application."""
     print("Calculator Example:\n")
 
@@ -402,17 +406,17 @@ def calculator_example():
     print()
 
 
-def function_composition():
+def function_composition() -> None:
     """Demonstrates using FunctionRegistry for function composition."""
     print("Function Composition Example:\n")
 
     # Create a registry with some functions
     registry = FunctionRegistry(
-        {"square": square, "cube": cube, "add": MathOperations.add, "multiply": MathOperations.multiply}
+        {"square": square, "cube": cube, "add": MathOperations.add, "multiply": MathOperations.multiply},
     )
 
     # Define a function that composes functions from the registry
-    def compose_functions(function_names: List[str], initial_value: float) -> float:
+    def compose_functions(function_names: list[str], initial_value: float) -> float:
         """Compose functions from the registry.
 
         Args:
@@ -428,7 +432,8 @@ def function_composition():
         result = initial_value
         for name in function_names:
             if name not in registry:
-                raise KeyError(f"Function '{name}' not found in registry")
+                msg = f"Function '{name}' not found in registry"
+                raise KeyError(msg)
 
             func = registry[name]
             if name in ["add", "multiply"]:

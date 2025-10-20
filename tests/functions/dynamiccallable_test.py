@@ -19,7 +19,8 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any, Callable, Type
+from typing import Any, Type
+from collections.abc import Callable
 
 # Third-Party Packages #
 import pytest
@@ -45,7 +46,7 @@ def multiply_function(x: int, y: int = 3) -> int:
 class DynamicCallableTestObject:
     """A test class for testing method binding and selection."""
 
-    def __init__(self, value: int = 10):
+    def __init__(self, value: int = 10) -> None:
         """Initialize with a value."""
         self.value = value
 
@@ -67,7 +68,7 @@ class TestDynamicCallable(DynamicCallableTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[DynamicCallable] = DynamicCallable
+    TestClass: type[DynamicCallable] = DynamicCallable
 
     # Instance Methods #
     def create_test_method_object(self) -> DynamicCallable:
@@ -272,7 +273,7 @@ class TestDynamicCallable(DynamicCallableTestSuite):
         # Add a custom bind method to the bind_multiplexer
         def bind_custom(self, instance, owner=None):
             # Create a function that returns a fixed value
-            def fixed_value(*args, **kwargs):
+            def fixed_value(*args, **kwargs) -> int:
                 return 42
 
             return fixed_value

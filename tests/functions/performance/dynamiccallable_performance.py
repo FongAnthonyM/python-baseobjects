@@ -57,7 +57,7 @@ class TestDynamicCallablePerformance(BasePerformanceTestSuite):
     timeit_runs: int = 1000000
     speed_tolerance: int = 400
 
-    TestClass: Type[TestDynamicCallable] = TestDynamicCallable
+    TestClass: type[TestDynamicCallable] = TestDynamicCallable
 
     # Instance Methods #
     # Fixtures
@@ -96,7 +96,7 @@ class TestDynamicCallablePerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal function creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nNormal function creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"DynamicCallable creation: {mean_new:.3f} μs ({percent:.3f}% of normal function creation time)")
         assert percent < self.speed_tolerance
@@ -134,7 +134,7 @@ class TestDynamicCallablePerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal function call: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nNormal function call: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"DynamicCallable call: {mean_new:.3f} μs ({percent:.3f}% of normal function call time)")
         assert percent < self.speed_tolerance
@@ -150,7 +150,7 @@ class TestDynamicCallablePerformance(BasePerformanceTestSuite):
             result = x * y + z
             for arg in args:
                 result += arg
-            for key, value in kwargs.items():
+            for _key, value in kwargs.items():
                 result += value
             return result
 
@@ -177,7 +177,7 @@ class TestDynamicCallablePerformance(BasePerformanceTestSuite):
         # Print the performance comparison
         print(f"\nComplex function call: {mean_old:.3f} μs")
         print(
-            f"DynamicCallable with complex function: {mean_new:.3f} μs ({percent:.3f}% of complex function call time)"
+            f"DynamicCallable with complex function: {mean_new:.3f} μs ({percent:.3f}% of complex function call time)",
         )
         assert percent < self.speed_tolerance * 1.5  # Allow more overhead for complex functions
 
@@ -218,7 +218,7 @@ class TestDynamicMethodPerformance(BasePerformanceTestSuite):
     timeit_runs: int = 1000000
     speed_tolerance: int = 400
 
-    TestClass: Type[TestDynamicMethod] = TestDynamicMethod
+    TestClass: type[TestDynamicMethod] = TestDynamicMethod
 
     # Instance Methods #
     # Fixtures
@@ -233,7 +233,7 @@ class TestDynamicMethodPerformance(BasePerformanceTestSuite):
 
     @pytest.fixture
     def test_method(
-        self, test_class_instance: "TestDynamicMethodPerformance.ExampleInstanceClass"
+        self, test_class_instance: "TestDynamicMethodPerformance.ExampleInstanceClass",
     ) -> "TestDynamicMethodPerformance.TestDynamicMethod":
         """Create a test method instance for use in tests.
 
@@ -274,7 +274,7 @@ class TestDynamicMethodPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal method access: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nNormal method access: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"DynamicMethod creation: {mean_new:.3f} μs ({percent:.3f}% of normal method access time)")
         assert percent < self.speed_tolerance
@@ -378,7 +378,7 @@ class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
     timeit_runs: int = 1000000
     speed_tolerance: int = 400
 
-    TestClass: Type[TestDynamicFunction] = TestDynamicFunction
+    TestClass: type[TestDynamicFunction] = TestDynamicFunction
 
     # Instance Methods #
     # Fixtures
@@ -426,7 +426,7 @@ class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal function creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nNormal function creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"DynamicFunction creation: {mean_new:.3f} μs ({percent:.3f}% of normal function creation time)")
         assert percent < self.speed_tolerance
@@ -464,7 +464,7 @@ class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal function call: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nNormal function call: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"DynamicFunction call: {mean_new:.3f} μs ({percent:.3f}% of normal function call time)")
         assert percent < self.speed_tolerance
@@ -510,7 +510,7 @@ class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal method descriptor: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nNormal method descriptor: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"DynamicFunction descriptor: {mean_new:.3f} μs ({percent:.3f}% of normal method descriptor time)")
         assert percent < self.speed_tolerance

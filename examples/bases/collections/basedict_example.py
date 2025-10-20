@@ -21,7 +21,7 @@ from baseobjects.bases.collections import BaseDict
 class ConfigDict(BaseDict):
     """A custom dictionary for configuration settings that inherits from BaseDict."""
 
-    def __init__(self, dict: Dict[str, Any] = None, /, *args: Any, **kwargs: Any):
+    def __init__(self, dict: dict[str, Any] | None = None, /, *args: Any, **kwargs: Any) -> None:
         """Initialize a ConfigDict object.
 
         Args:
@@ -72,7 +72,7 @@ class ConfigDict(BaseDict):
 
 
 # Example Sections #
-def basic_basedict_example():
+def basic_basedict_example() -> None:
     """Demonstrate basic usage of BaseDict."""
     print("\nBasic BaseDict Example:")
 
@@ -102,7 +102,7 @@ def basic_basedict_example():
     print(f"Items: {list(base_dict.items())} == [('name', 'John'), ('age', 31), ('email', 'john@example.com')]")
 
 
-def custom_basedict_example():
+def custom_basedict_example() -> None:
     """Demonstrate creating a custom dictionary class that inherits from BaseDict."""
     print("\nCustom BaseDict Example:")
 
@@ -134,7 +134,7 @@ def custom_basedict_example():
     print(f"Database key exists: {'database' in config} == False")
 
 
-def baseobject_features_example():
+def baseobject_features_example() -> None:
     """Demonstrate BaseObject features with BaseDict."""
     print("\nBaseObject Features Example:")
 
@@ -146,7 +146,7 @@ def baseobject_features_example():
             "max_connections": 20,
             "timeout": 60,
             "database": {"host": "localhost", "port": 5432, "name": "mydb"},
-        }
+        },
     )
 
     # Shallow copy

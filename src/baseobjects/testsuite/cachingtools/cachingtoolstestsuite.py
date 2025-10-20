@@ -34,8 +34,8 @@ from ..bases import BaseObjectTestSuite
 class BaseCacheTestSuite(BaseObjectTestSuite):
     """Base test suite for cache classes.
 
-    This class provides common test functionality for cache classes, including tests for caching, retrieval,
-    and clearing. Subclasses should set the TestClass attribute and may override or extend the test methods.
+    This class provides common test functionality for cache classes, including tests for caching, retrieval, and
+    clearing. Subclasses should set the TestClass attribute and may override or extend the test methods.
 
     Attributes:
         TestClass: The cache class that the test suite is testing.
@@ -55,12 +55,12 @@ class BaseCacheTestSuite(BaseObjectTestSuite):
         """
         call_count = 0
 
-        def example_func(x):
+        def example_func(x: int) -> int:
             nonlocal call_count
             call_count += 1
             return x * 2
 
-        def get_call_count():
+        def get_call_count() -> int:
             nonlocal call_count
             return call_count
 
@@ -80,7 +80,7 @@ class BaseCacheTestSuite(BaseObjectTestSuite):
             - A function that returns the number of times the cached function has been called
         """
         test_function, get_call_count = self.create_example_functions()
-        return self.TestClass(func=test_function, *args, **kwargs), test_function, get_call_count
+        return self.TestClass(*args, func=test_function, **kwargs), test_function, get_call_count
 
     # Fixtures
     @pytest.fixture

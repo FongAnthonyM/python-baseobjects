@@ -22,7 +22,7 @@ from baseobjects.bases import BaseMeta
 class ExampleMeta(BaseMeta):
     """An example metaclass that extends BaseMeta."""
 
-    registry: ClassVar[Dict[str, type]] = {}
+    registry: ClassVar[dict[str, type]] = {}
 
     def __new__(mcs, name: str, bases: tuple, namespace: dict) -> type:
         """Create a new class and register it in the registry."""
@@ -30,15 +30,15 @@ class ExampleMeta(BaseMeta):
         mcs.registry[name] = cls
         return cls
 
-    def get_registered_classes(cls) -> List[str]:
+    def get_registered_classes(self) -> list[str]:
         """Get a list of all registered class names."""
-        return list(cls.registry.keys())
+        return list(self.registry.keys())
 
 
 class BaseWithMeta(metaclass=ExampleMeta):
     """A base class that uses ExampleMeta as its metaclass."""
 
-    def __init__(self, name: str):
+    def __init__(self, name: str) -> None:
         self.name = name
         self.data = {"key": "value"}
         self.items = [1, 2, 3]
@@ -47,14 +47,14 @@ class BaseWithMeta(metaclass=ExampleMeta):
 class ChildClass(BaseWithMeta):
     """A child class that inherits from BaseWithMeta."""
 
-    def __init__(self, name: str, value: int):
+    def __init__(self, name: str, value: int) -> None:
         super().__init__(name)
         self.value = value
         self.nested = {"nested_key": [4, 5, 6]}
 
 
 # Example Sections #
-def metaclass_creation_example():
+def metaclass_creation_example() -> None:
     """Demonstrate creating and using a metaclass with BaseMeta."""
     print("\nMetaclass Creation Example:")
 

@@ -26,7 +26,7 @@ class SimpleClassRegistry(BaseClassRegistry):
     This registry uses class names as keys to store and retrieve classes.
     """
 
-    def register_class(self, cls: type, name: str = None, **kwargs: Any) -> None:
+    def register_class(self, cls: type, name: str | None = None, **kwargs: Any) -> None:
         """Registers a class with the given name.
 
         Args:
@@ -39,7 +39,7 @@ class SimpleClassRegistry(BaseClassRegistry):
 
         self[name] = cls
 
-    def get_class(self, name: str, default: Any = None) -> Type:
+    def get_class(self, name: str, default: Any = None) -> type:
         """Gets a class from the registry by name.
 
         Args:
@@ -90,7 +90,7 @@ class Bird(Animal):
 
 # Functions #
 # Example Sections #
-def basic_registry_usage():
+def basic_registry_usage() -> None:
     """Demonstrates basic usage of a class registry."""
     print("Basic Class Registry Usage:\n")
 
@@ -130,7 +130,7 @@ def basic_registry_usage():
     print()
 
 
-def custom_registry_keys():
+def custom_registry_keys() -> None:
     """Demonstrates using custom keys for class registration."""
     print("Custom Registry Keys:\n")
 
@@ -168,7 +168,7 @@ def custom_registry_keys():
     print()
 
 
-def factory_pattern():
+def factory_pattern() -> None:
     """Demonstrates using a class registry as a factory."""
     print("Factory Pattern with Class Registry:\n")
 
@@ -198,7 +198,8 @@ def factory_pattern():
         """
         animal_class = registry.get_class(animal_type)
         if animal_class is None:
-            raise ValueError(f"Unknown animal type: {animal_type}")
+            msg = f"Unknown animal type: {animal_type}"
+            raise ValueError(msg)
         return animal_class(name)
 
     # Use the factory to create animals
@@ -227,7 +228,7 @@ def factory_pattern():
     print()
 
 
-def registry_with_head_class():
+def registry_with_head_class() -> None:
     """Demonstrates using a registry with a head class."""
     print("Registry with Head Class:\n")
 

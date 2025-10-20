@@ -15,7 +15,8 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 import time
-from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
+from typing import Any, Dict, List, Optional, TypeVar, Union
+from collections.abc import Callable
 
 # Source Packages #
 from baseobjects.bases import BaseCallable, BaseMethod
@@ -32,7 +33,7 @@ class MultiModeDecorator(DynamicDecorator):
     binding and callback functions.
     """
 
-    def __init__(self, func: AnyCallable, mode: str = "normal"):
+    def __init__(self, func: AnyCallable, mode: str = "normal") -> None:
         """Initialize the multi-mode decorator.
 
         Args:
@@ -104,7 +105,8 @@ class MultiModeDecorator(DynamicDecorator):
         elif mode == "timing":
             self.call_method = "timing_callback"
         else:
-            raise ValueError(f"Unknown mode: {mode}")
+            msg = f"Unknown mode: {mode}"
+            raise ValueError(msg)
 
 
 class StaticBindingDecorator(DynamicDecorator):
@@ -118,7 +120,7 @@ class StaticBindingDecorator(DynamicDecorator):
     # Special method overriding which leads to less overhead.
     __get__: GetObjectMethod = BaseCallable.bind_builtin  # Assigns __get__ to a previously defined method.
 
-    def __init__(self, func: AnyCallable, callback_mode: str = "normal"):
+    def __init__(self, func: AnyCallable, callback_mode: str = "normal") -> None:
         """Initialize the static binding decorator.
 
         Args:
@@ -169,7 +171,8 @@ class StaticBindingDecorator(DynamicDecorator):
         elif mode == "verbose":
             self.call_method = "verbose_callback"
         else:
-            raise ValueError(f"Unknown callback mode: {mode}")
+            msg = f"Unknown callback mode: {mode}"
+            raise ValueError(msg)
 
 
 class StaticCallbackDecorator(DynamicDecorator):
@@ -182,7 +185,7 @@ class StaticCallbackDecorator(DynamicDecorator):
     # Special method overriding which leads to less overhead.
     __call__: AnyCallable = BaseCallable.call_wrapped  # Assigns __call__ to a previously defined method.
 
-    def __init__(self, func: AnyCallable):
+    def __init__(self, func: AnyCallable) -> None:
         """Initialize the static callback decorator.
 
         Args:
@@ -227,7 +230,8 @@ class Calculator:
     def divide(self, a: int, b: int) -> float:
         """Divide a by b."""
         if b == 0:
-            raise ValueError("Cannot divide by zero")
+            msg = "Cannot divide by zero"
+            raise ValueError(msg)
         return a / b
 
 
@@ -243,7 +247,7 @@ def fibonacci(n: int) -> int:
 
 
 # Example Sections #
-def basic_dynamicdecorator_usage():
+def basic_dynamicdecorator_usage() -> None:
     """Demonstrates basic usage of DynamicDecorator."""
     print("Basic DynamicDecorator Usage:\n")
 
@@ -265,7 +269,7 @@ def basic_dynamicdecorator_usage():
     print()
 
 
-def dynamicdecorator_vs_basedecorator():
+def dynamicdecorator_vs_basedecorator() -> None:
     """Demonstrates the differences between DynamicDecorator and BaseDecorator."""
     print("DynamicDecorator vs BaseDecorator:\n")
 
@@ -295,7 +299,7 @@ def dynamicdecorator_vs_basedecorator():
     print()
 
 
-def multimode_decorator_example():
+def multimode_decorator_example() -> None:
     """Demonstrates a DynamicDecorator that can switch between different modes."""
     print("MultiMode Decorator Example:\n")
 
@@ -335,7 +339,7 @@ def multimode_decorator_example():
     print()
 
 
-def static_binding_example():
+def static_binding_example() -> None:
     """Demonstrates a DynamicDecorator with static binding but dynamic callback."""
     print("Static Binding Decorator Example:\n")
 
@@ -355,7 +359,7 @@ def static_binding_example():
     print()
 
 
-def static_callback_example():
+def static_callback_example() -> None:
     """Demonstrates a DynamicDecorator with static callback."""
     print("Static Callback Decorator Example:\n")
 
@@ -375,7 +379,7 @@ def static_callback_example():
     print()
 
 
-def fully_static_example():
+def fully_static_example() -> None:
     """Demonstrates a DynamicDecorator with both static binding and callback."""
     print("Fully Static Decorator Example:\n")
 

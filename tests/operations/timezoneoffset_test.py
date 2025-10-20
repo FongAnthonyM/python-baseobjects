@@ -123,7 +123,7 @@ class TestTimezoneOffset:
             def dst(self, dt):
                 return timedelta(0)
 
-            def tzname(self, dt):
+            def tzname(self, dt) -> str:
                 return "CustomTZ"
 
         # Test with the custom timezone

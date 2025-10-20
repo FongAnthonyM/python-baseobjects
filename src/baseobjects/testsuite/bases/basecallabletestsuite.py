@@ -50,10 +50,11 @@ def example_function(x: int, y: int = 2) -> int:
     return x + y
 
 
-def example_method(self, x: int, y: int = 2) -> tuple[int, Any]:
+def example_method(self: Any, x: int, y: int = 2) -> tuple[int, Any]:
     """A simple test method that adds two numbers and returns the instance.
 
     Args:
+        self: The instance the method is bound to.
         x: First number to add
         y: Second number to add (default: 2)
 
@@ -77,10 +78,11 @@ async def example_coroutine(x: int, y: int = 2) -> int:
     return x + y
 
 
-async def example_coroutine_method(self, x: int, y: int = 2) -> tuple[int, Any]:
+async def example_coroutine_method(self: Any, x: int, y: int = 2) -> tuple[int, Any]:
     """A simple test coroutine that adds two numbers.
 
     Args:
+        self: The instance the coroutine method is bound to.
         x: First number to add
         y: Second number to add (default: 2)
 
@@ -131,7 +133,7 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
     BindTargetClass: type[Any] = ExampleBindTarget
 
     # Instance Methods #
-    def create_bind_target(self, *args: Any, **kwargs) -> Any:
+    def create_bind_target(self, *args: Any, **kwargs: Any) -> Any:
         """Create a test instance to bind methods to.
 
         Args:

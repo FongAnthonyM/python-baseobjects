@@ -39,7 +39,7 @@ class TestSentinelObject(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[SentinelObject] = SentinelObject
+    TestClass: type[SentinelObject] = SentinelObject
 
     # Instance Methods #
     # Fixtures
@@ -113,7 +113,7 @@ class TestSentinelObject(BaseObjectTestSuite):
         assert id(test_object) == id(test_object_same_id)
 
     def test_different_objects_different_ids(
-        self, test_object: SentinelObject, test_object_different_id: SentinelObject
+        self, test_object: SentinelObject, test_object_different_id: SentinelObject,
     ) -> None:
         """Test that SentinelObject creates different objects for different IDs.
 

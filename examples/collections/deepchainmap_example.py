@@ -18,7 +18,7 @@ from baseobjects.collections import DeepChainMap
 
 
 # Example Sections #
-def basic_usage_example():
+def basic_usage_example() -> None:
     """Demonstrate basic usage of DeepChainMap."""
     print("\nBasic DeepChainMap Usage:")
 
@@ -55,7 +55,7 @@ def basic_usage_example():
     print(f"  Settings['language']: {settings['language']} == 'es'")
     print(f"  User settings: {user_settings} == {{'language': 'es', 'timeout': 60}}")
     print(
-        f"  Defaults (unchanged): {defaults} == {{'theme': 'default', 'language': 'en', 'timeout': 30, 'debug': False}}"
+        f"  Defaults (unchanged): {defaults} == {{'theme': 'default', 'language': 'en', 'timeout': 30, 'debug': False}}",
     )
 
     # Delete a key
@@ -69,7 +69,7 @@ def basic_usage_example():
     print(f"  Settings['timeout']: {settings['timeout']} == 30")
 
 
-def compare_with_chainmap():
+def compare_with_chainmap() -> None:
     """Compare DeepChainMap with standard ChainMap."""
     print("\nComparing DeepChainMap with standard ChainMap:")
 
@@ -144,7 +144,7 @@ def compare_with_chainmap():
     print(f"  deep_chain['c']: {deep_chain['c']} == 300")
 
 
-def configuration_example():
+def configuration_example() -> None:
     """Demonstrate using DeepChainMap for configuration management."""
     print("\nConfiguration Management Example:")
 
@@ -196,7 +196,7 @@ def configuration_example():
     print(f"  env_overrides: {env_overrides} == {{'api': {{'url': 'https://staging-api.example.com', 'timeout': 60}}}}")
 
 
-def error_handling_example():
+def error_handling_example() -> None:
     """Demonstrate error handling with DeepChainMap."""
     print("\nError Handling Example:")
 

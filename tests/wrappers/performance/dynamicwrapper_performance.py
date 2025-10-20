@@ -82,7 +82,7 @@ class TestDynamicWrapperPerformance(WrapperPerformanceTestSuite):
     ) -> DynamicWrapperTestObject:
         """Create a test object.
 
-         Args:
+        Args:
             test_example_one: A fixture providing an ExampleOne object.
             test_example_two: A fixture providing an ExampleTwo object.
 
@@ -110,7 +110,7 @@ class TestDynamicWrapperPerformance(WrapperPerformanceTestSuite):
         # No assertion here, just measuring performance
 
     def test_getattr_performance(
-        self, test_object: DynamicWrapperTestObject, test_example_one: "WrapperPerformanceTestSuite.ExampleOne"
+        self, test_object: DynamicWrapperTestObject, test_example_one: "WrapperPerformanceTestSuite.ExampleOne",
     ) -> None:
         """Test the performance of the __getattr__ method.
 
@@ -141,7 +141,7 @@ class TestDynamicWrapperPerformance(WrapperPerformanceTestSuite):
         assert percent < self.speed_tolerance
 
     def test_setattr_performance(
-        self, test_object: DynamicWrapperTestObject, test_example_one: "WrapperPerformanceTestSuite.ExampleOne"
+        self, test_object: DynamicWrapperTestObject, test_example_one: "WrapperPerformanceTestSuite.ExampleOne",
     ) -> None:
         """Test the performance of the __setattr__ method.
 

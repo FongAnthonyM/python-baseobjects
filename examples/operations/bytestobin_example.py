@@ -18,7 +18,7 @@ from baseobjects.operations import bytes_to_bin
 
 
 # Example Sections #
-def basic_usage_example():
+def basic_usage_example() -> None:
     """Demonstrate basic usage of bytes_to_bin."""
     print("\nBasic bytes_to_bin Usage:")
 
@@ -41,7 +41,7 @@ def basic_usage_example():
     print(f"Second byte (0xA0): {second_byte}")
 
 
-def byte_order_example():
+def byte_order_example() -> None:
     """Demonstrate using different byte orders with bytes_to_bin."""
     print("\nByte Order Example:")
 
@@ -91,7 +91,7 @@ def byte_order_example():
     print("  Expected: (0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0)")
 
 
-def output_type_example():
+def output_type_example() -> None:
     """Demonstrate different output types with bytes_to_bin."""
     print("\nOutput Type Example:")
 
@@ -116,7 +116,7 @@ def output_type_example():
     print("  Expected: ('True', 'False', 'True', 'False', 'False', 'True', 'False', 'True')")
 
 
-def edge_cases_example():
+def edge_cases_example() -> None:
     """Demonstrate edge cases with bytes_to_bin."""
     print("\nEdge Cases Example:")
 
@@ -154,7 +154,7 @@ def edge_cases_example():
         print("  Expected: ValueError: byteorder must be either 'little' or 'big'")
 
 
-def practical_example():
+def practical_example() -> None:
     """Demonstrate a practical use case for bytes_to_bin."""
     print("\nPractical Example - Parsing a Flag Byte:")
 

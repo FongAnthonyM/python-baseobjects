@@ -59,11 +59,13 @@ class CustomDynamicFunction(DynamicFunction):
         # Simple validation: check if any argument is None
         for arg in args:
             if arg is None:
-                raise ValueError("None values are not allowed")
+                msg = "None values are not allowed"
+                raise ValueError(msg)
 
         for key, value in kwargs.items():
             if value is None:
-                raise ValueError(f"None value for {key} is not allowed")
+                msg = f"None value for {key} is not allowed"
+                raise ValueError(msg)
 
         return self.__wrapped__(*args, **kwargs)
 
@@ -75,7 +77,7 @@ class NonWrappingDynamicFunction(DynamicFunction):
     its own functionality directly through custom methods registered with the call_multiplexer.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         """Initialize the NonWrappingDynamicFunction.
 
         This constructor initializes the object without requiring a wrapped function. It registers custom methods with
@@ -141,17 +143,18 @@ class NonWrappingDynamicFunction(DynamicFunction):
             ZeroDivisionError: If b is zero.
         """
         if b == 0:
-            raise ZeroDivisionError("Cannot divide by zero")
+            msg = "Cannot divide by zero"
+            raise ZeroDivisionError(msg)
         return a / b
 
 
 class ExampleClass:
     """A class to demonstrate using DynamicFunction as a descriptor."""
 
-    def __init__(self, name):
+    def __init__(self, name) -> None:
         self.name = name
 
-    def greet(self, name):
+    def greet(self, name) -> str:
         """A method that greets a person."""
         return f"Hello, {name}! I'm {self.name}!"
 
@@ -169,7 +172,7 @@ def example_function(a, b):
 
 
 # Example Sections #
-def basic_dynamicfunction_usage():
+def basic_dynamicfunction_usage() -> None:
     """Demonstrates basic usage of DynamicFunction."""
     print("Basic DynamicFunction Usage:\n")
 
@@ -201,7 +204,7 @@ def basic_dynamicfunction_usage():
     print()
 
 
-def dynamicfunction_vs_dynamiccallable():
+def dynamicfunction_vs_dynamiccallable() -> None:
     """Demonstrates the differences between DynamicFunction and DynamicCallable."""
     print("DynamicFunction vs DynamicCallable:\n")
 
@@ -236,7 +239,7 @@ def dynamicfunction_vs_dynamiccallable():
     print()
 
 
-def custom_dynamicfunction_usage():
+def custom_dynamicfunction_usage() -> None:
     """Demonstrates usage of a custom DynamicFunction with additional methods."""
     print("Custom DynamicFunction Usage:\n")
 
@@ -267,7 +270,7 @@ def custom_dynamicfunction_usage():
     print()
 
 
-def dynamicfunction_as_descriptor():
+def dynamicfunction_as_descriptor() -> None:
     """Demonstrates using DynamicFunction as a descriptor."""
     print("DynamicFunction as Descriptor:\n")
 
@@ -294,7 +297,7 @@ def dynamicfunction_as_descriptor():
     print()
 
 
-def nonwrapping_dynamicfunction_usage():
+def nonwrapping_dynamicfunction_usage() -> None:
     """Demonstrates usage of a non-wrapping DynamicFunction with direct functionality."""
     print("Non-Wrapping DynamicFunction Usage:\n")
 
@@ -334,7 +337,7 @@ def nonwrapping_dynamicfunction_usage():
     print()
 
 
-def function_method_conversion():
+def function_method_conversion() -> None:
     """Demonstrates conversion between functions and methods using DynamicFunction."""
     print("Function-Method Conversion:\n")
 
@@ -343,7 +346,7 @@ def function_method_conversion():
         def instance_method(self, x, y):
             return x * y + self.value
 
-        def __init__(self, value):
+        def __init__(self, value) -> None:
             self.value = value
 
     # Create an instance of the class

@@ -28,7 +28,7 @@ from baseobjects.operations import (
 class ExampleClass:
     """A simple example class to demonstrate method name functions."""
 
-    def __init__(self, value=0):
+    def __init__(self, value=0) -> None:
         self.value = value
 
     def public_method(self):
@@ -61,7 +61,7 @@ class DerivedClass(ExampleClass):
 
 
 # Example Sections #
-def basic_usage_example():
+def basic_usage_example() -> None:
     """Demonstrate basic usage of get_method_names and get_public_method_names."""
     print("\nBasic Usage Example:")
 
@@ -97,7 +97,7 @@ def basic_usage_example():
     print(f"  Public + Private = All: {len(public_methods) + len(private_methods) == len(all_methods)}")
 
 
-def iterator_example():
+def iterator_example() -> None:
     """Demonstrate using iter_method_names and iter_public_method_names."""
     print("\nIterator Example:")
 
@@ -115,8 +115,8 @@ def iterator_example():
         print(f"  {method}")
 
     # Use the iterators with list comprehensions
-    all_methods = [method for method in iter_method_names(obj)]
-    public_methods = [method for method in iter_public_method_names(obj)]
+    all_methods = list(iter_method_names(obj))
+    public_methods = list(iter_public_method_names(obj))
 
     print("\nUsing list comprehensions:")
     print(f"  All methods: {all_methods}")
@@ -134,7 +134,7 @@ def iterator_example():
     print(f"  Public methods in uppercase: {uppercase_methods}")
 
 
-def comparing_objects_example():
+def comparing_objects_example() -> None:
     """Demonstrate comparing method names between different objects."""
     print("\nComparing Objects Example:")
 
@@ -177,7 +177,7 @@ def comparing_objects_example():
         print(f"  {method}")
 
 
-def built_in_objects_example():
+def built_in_objects_example() -> None:
     """Demonstrate using method name functions with built-in objects."""
     print("\nBuilt-in Objects Example:")
 
@@ -215,7 +215,7 @@ def built_in_objects_example():
         print(f"  {method}")
 
 
-def standard_library_example():
+def standard_library_example() -> None:
     """Demonstrate using method name functions with standard library objects."""
     print("\nStandard Library Example:")
 
@@ -241,11 +241,11 @@ def standard_library_example():
     print(f"  JSONEncoder has 'encode': {'encode' in js_methods}")
 
 
-def practical_example():
+def practical_example() -> None:
     """Demonstrate a practical use case for method name functions."""
     print("\nPractical Example - Simple Object Inspector:")
 
-    def inspect_object(obj):
+    def inspect_object(obj) -> None:
         """A simple object inspector function."""
         # Get basic object information
         obj_type = type(obj).__name__
@@ -295,7 +295,7 @@ def practical_example():
     inspect_object(DerivedClass(42))
 
 
-def method_calling_example():
+def method_calling_example() -> None:
     """Demonstrate calling methods discovered through method name functions."""
     print("\nMethod Calling Example:")
 

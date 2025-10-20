@@ -100,6 +100,8 @@ class CacheItem(BaseObject):
             key: The key to this item in the cache.
             result: The value to store in the cache.
             priority_link: The object that represents this item's priority.
+            *args: Additional positional arguments forwarded to BaseObject.
+            **kwargs: Additional keyword arguments forwarded to BaseObject.
         """
         # Parent Initialization #
         super().__init__(*args, **kwargs)

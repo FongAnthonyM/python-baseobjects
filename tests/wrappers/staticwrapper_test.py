@@ -308,7 +308,7 @@ class TestStaticWrapperTests(WrapperTestSuite):
         # Create instances of the test class
         first = self.ExampleOne()
         second = self.ExampleTwo()
-        obj = TestClassRewrap(first, second)
+        TestClassRewrap(first, second)
 
         # Wrap the class with both wrapped objects
         TestClassRewrap._class_wrap([("first", type(first)), ("second", type(second))])

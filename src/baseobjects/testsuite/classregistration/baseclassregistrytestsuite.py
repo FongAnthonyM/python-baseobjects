@@ -32,8 +32,8 @@ from ..bases import BaseObjectTestSuite
 class BaseClassRegistryTestSuite(BaseObjectTestSuite):
     """Base test suite for children of BaseClassRegistry.
 
-    This class provides common test functionality for child classes of BaseClassRegistry, including tests for
-    class registration and retrieval. Subclasses should set the TestClass attribute and may override or extend the test
+    This class provides common test functionality for child classes of BaseClassRegistry, including tests for class
+    registration and retrieval. Subclasses should set the TestClass attribute and may override or extend the test
     methods.
 
     Attributes:
@@ -51,7 +51,7 @@ class BaseClassRegistryTestSuite(BaseObjectTestSuite):
     TestClass: type[BaseClassRegistry]
 
     # Instance Methods #
-    def create_test_registry(self, *args: Any, **kwargs) -> BaseClassRegistry:
+    def create_test_registry(self, *args: Any, **kwargs: Any) -> BaseClassRegistry:
         """Create a test registry instance.
 
         Args:
@@ -185,6 +185,7 @@ class BaseClassRegistryTestSuite(BaseObjectTestSuite):
         This test verifies that the get_class method correctly retrieves a registered class.
 
         Args:
+            populated_registry: A fixture providing a registry already populated with example classes.
             *args: Positional arguments to pass to use in testing the get_class method.
             **kwargs: Keyword arguments to pass to use in testing the get_class method.
         """

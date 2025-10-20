@@ -23,6 +23,7 @@ from collections.abc import Callable
 # Local Packages #
 from ..functions import singlekwargdispatch
 
+
 # Definitions #
 # Regular Expressions #
 rb_parentheses = rb"\(|\)"

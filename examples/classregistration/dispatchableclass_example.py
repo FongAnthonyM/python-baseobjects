@@ -27,7 +27,7 @@ class SimpleClassRegistry(BaseClassRegistry):
     and retrieved.
     """
 
-    def register_class(self, cls: type, name: str = None, **kwargs: Any) -> None:
+    def register_class(self, cls: type, name: str | None = None, **kwargs: Any) -> None:
         """Registers a class with the given name.
 
         Args:
@@ -40,7 +40,7 @@ class SimpleClassRegistry(BaseClassRegistry):
 
         self[name] = cls
 
-    def get_class(self, name: str, default: Any = None) -> Type:
+    def get_class(self, name: str, default: Any = None) -> type:
         """Gets a class from the registry by name.
 
         Args:
@@ -61,12 +61,12 @@ class FileHandler(DispatchableClass):
     """
 
     # Class Attributes #
-    class_registry_type: ClassVar[Type[BaseClassRegistry]] = SimpleClassRegistry
+    class_registry_type: ClassVar[type[BaseClassRegistry]] = SimpleClassRegistry
     class_registration: ClassVar[bool] = True
 
     # Class Methods #
     @classmethod
-    def register_class(cls, name: str = None) -> None:
+    def register_class(cls, name: str | None = None) -> None:
         """Register this class in the class registry.
 
         Args:
@@ -81,7 +81,7 @@ class FileHandler(DispatchableClass):
         cls.class_registry.register_class(cls, name=name)
 
     @classmethod
-    def get_registered_class(cls, name: str) -> Optional[Type["FileHandler"]]:
+    def get_registered_class(cls, name: str) -> type["FileHandler"] | None:
         """Get a registered class by name.
 
         Args:
@@ -96,7 +96,7 @@ class FileHandler(DispatchableClass):
         return cls.class_registry.get_class(name)
 
     @classmethod
-    def get_class_information(cls, filename: str, *args: Any, **kwargs: Any) -> Tuple[str]:
+    def get_class_information(cls, filename: str, *args: Any, **kwargs: Any) -> tuple[str]:
         """Get the class information based on the filename.
 
         This method extracts the file extension from the filename and returns it as the key to look up the appropriate
@@ -234,7 +234,7 @@ class XMLFileHandler(FileHandler):
 class ImageFileHandler(FileHandler):
     """Handler for image files (.jpg, .png, .gif)."""
 
-    def __init__(self, filename: str, image_format: str = None) -> None:
+    def __init__(self, filename: str, image_format: str | None = None) -> None:
         """Initialize an image file handler with a filename and format.
 
         Args:
@@ -284,7 +284,7 @@ FileHandler.class_registry.register_class(ImageFileHandler, name="gif")
 
 # Functions #
 # Example Sections #
-def basic_dispatching():
+def basic_dispatching() -> None:
     """Demonstrates basic dispatching based on file extension."""
     print("Basic Dispatching:\n")
 
@@ -317,7 +317,7 @@ def basic_dispatching():
     print()
 
 
-def manual_handler_selection():
+def manual_handler_selection() -> None:
     """Demonstrates manually selecting a handler class."""
     print("Manual Handler Selection:\n")
 
@@ -350,7 +350,7 @@ def manual_handler_selection():
     print()
 
 
-def custom_dispatching_logic():
+def custom_dispatching_logic() -> None:
     """Demonstrates creating a subclass with custom dispatching logic."""
     print("Custom Dispatching Logic:\n")
 
@@ -360,8 +360,8 @@ def custom_dispatching_logic():
 
         @classmethod
         def get_class_information(
-            cls, filename: str, content_type: str = None, *args: Any, **kwargs: Any
-        ) -> Tuple[str]:
+            cls, filename: str, content_type: str | None = None, *args: Any, **kwargs: Any,
+        ) -> tuple[str]:
             """Get the class information based on the filename and content type.
 
             This method uses the content_type parameter if provided, otherwise falls back
@@ -415,7 +415,7 @@ def custom_dispatching_logic():
     print()
 
 
-def file_processor_application():
+def file_processor_application() -> None:
     """Demonstrates a complete file processing application using DispatchableClass."""
     print("File Processor Application:\n")
 
@@ -427,7 +427,7 @@ def file_processor_application():
             """Initialize a file processor."""
             self.results = {}
 
-        def process_file(self, filename: str, content: str = None) -> str:
+        def process_file(self, filename: str, content: str | None = None) -> str:
             """Process a file by reading or writing.
 
             Args:
@@ -451,7 +451,7 @@ def file_processor_application():
                 self.results[filename] = f"Wrote to {filename}"
                 return f"Wrote to {filename}"
 
-        def process_files(self, files: Dict[str, Optional[str]]) -> Dict[str, str]:
+        def process_files(self, files: dict[str, str | None]) -> dict[str, str]:
             """Process multiple files.
 
             Args:
@@ -464,7 +464,7 @@ def file_processor_application():
                 self.process_file(filename, content)
             return self.results
 
-        def get_results(self) -> Dict[str, str]:
+        def get_results(self) -> dict[str, str]:
             """Get the results of processing files.
 
             Returns:

@@ -40,7 +40,7 @@ class TestTriNumberVersion(VersionTestSuite):
     """
 
     # Class Attributes #
-    TestClass: Type[TriNumberVersion] = TriNumberVersion
+    TestClass: type[TriNumberVersion] = TriNumberVersion
 
     # Instance Methods #
     # Fixtures

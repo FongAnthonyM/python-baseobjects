@@ -111,7 +111,7 @@ def standard_filetime_to_datetime_bytearray(timestamp: bytearray, tzinfo=None) -
         return (FILETIME_INIT_DATE + delta).astimezone(tz=tzinfo)
 
 
-def standard_filetime_to_datetime(timestamp: Union[int, float, str, bytes, bytearray], tzinfo=None) -> datetime:
+def standard_filetime_to_datetime(timestamp: int | float | str | bytes | bytearray, tzinfo=None) -> datetime:
     """Standard implementation of filetime_to_datetime using type checking.
 
     Args:
@@ -132,7 +132,8 @@ def standard_filetime_to_datetime(timestamp: Union[int, float, str, bytes, bytea
     elif isinstance(timestamp, bytearray):
         return standard_filetime_to_datetime_bytearray(timestamp, tzinfo)
     else:
-        raise TypeError(f"{timestamp.__class__} cannot be converted to a datetime")
+        msg = f"{timestamp.__class__} cannot be converted to a datetime"
+        raise TypeError(msg)
 
 
 # Classes #
@@ -278,7 +279,7 @@ class TestFiletimeToDatetime(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNew (filetime_to_datetime bytearray): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+            f"\nNew (filetime_to_datetime bytearray): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)",
         )
         assert percent < self.speed_tolerance
 
@@ -387,7 +388,7 @@ class TestFiletimeToDatetime(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNew (filetime_to_datetime dispatch): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+            f"\nNew (filetime_to_datetime dispatch): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)",
         )
         assert percent < self.speed_tolerance
 

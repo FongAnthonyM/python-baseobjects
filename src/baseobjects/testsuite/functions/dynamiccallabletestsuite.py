@@ -155,7 +155,7 @@ class DynamicCallableTestSuite(BaseCallableTestSuite):
         assert result == 5  # 3 + 2 (default y)
 
         # Add a custom call method to the call_multiplexer
-        def custom_call(self, *args, **kwargs):
+        def custom_call(self: Any, *args: Any, **kwargs: Any) -> Any:
             # Multiply the result by 2
             return self.call_wrapped(*args, **kwargs) * 2
 

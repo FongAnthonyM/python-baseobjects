@@ -1,11 +1,10 @@
 """callbackmanager.py
 An object which manages and executes callback functions with conditions and callers.
 
-This module provides classes for managing callback functions with conditional execution. It includes
-functionality for registering, formatting, and executing both synchronous and asynchronous callbacks.
-The module supports conditional execution of callbacks, allowing callbacks to be executed only when
-specific conditions are met. It also provides task management for asynchronous callbacks, including
-scheduling, cancellation, and joining of tasks.
+This module provides classes for managing callback functions with conditional execution. It includes functionality for
+registering, formatting, and executing both synchronous and asynchronous callbacks. The module supports conditional
+execution of callbacks, allowing callbacks to be executed only when specific conditions are met. It also provides task
+management for asynchronous callbacks, including scheduling, cancellation, and joining of tasks.
 
 The main classes in this module are:
 - ConditionalCallbackEntry: A named tuple for storing callback entries with their conditions and callers
@@ -42,9 +41,8 @@ from ..functions import MethodMultiplexer
 class ConditionalCallbackEntry(NamedTuple):
     """An entry in a callback manager's registry.
 
-    This named tuple represents a callback entry with its associated condition and caller functions.
-    It is used by the CallbackManager to store and manage callback functions along with their
-    execution conditions and caller methods.
+    This named tuple represents a callback entry with its associated condition and caller functions. It is used by the
+    CallbackManager to store and manage callback functions along with their execution conditions and caller methods.
 
     Attributes:
         callback: The callback function to be executed.
@@ -60,9 +58,9 @@ class ConditionalCallbackEntry(NamedTuple):
 class CallbackScheduler(BaseObject):
     """A scheduler for managing and executing callback functions.
 
-    This class is responsible for scheduling and executing callback functions, particularly
-    asynchronous callbacks. It maintains a mapping of callbacks to their associated task queues
-    and provides methods for scheduling different types of callback executions.
+    This class is responsible for scheduling and executing callback functions, particularly asynchronous callbacks. It
+    maintains a mapping of callbacks to their associated task queues and provides methods for scheduling different types
+    of callback executions.
 
     Attributes:
         callback_map: A list of tuples containing callback functions and their associated task queues.
@@ -123,8 +121,8 @@ class CallbackScheduler(BaseObject):
     ) -> None:
         """Constructs and initializes this CallbackScheduler object.
 
-        This method sets up the callback map and configures the scheduling functions. It's called
-        during initialization if init=True, or can be called manually to reinitialize the object.
+        This method sets up the callback map and configures the scheduling functions. It's called during initialization
+        if init=True, or can be called manually to reinitialize the object.
 
         Args:
             callback_map: A list of tuples containing callback functions and their associated task queues.
@@ -178,9 +176,8 @@ class CallbackScheduler(BaseObject):
     def schedule_async_callbacks(self) -> None:
         """Schedules the evaluation of all asynchronous callback functions.
 
-        Creates tasks for all asynchronous callbacks in the callback_map and adds them
-        to their respective task queues. Each task is set up to remove itself from the
-        queue when completed.
+        Creates tasks for all asynchronous callbacks in the callback_map and adds them to their respective task queues.
+        Each task is set up to remove itself from the queue when completed.
         """
         for callback_async, tasks in self.callback_map:
             callback_task = create_task(callback_async())
@@ -190,17 +187,15 @@ class CallbackScheduler(BaseObject):
     async def schedule_async_callbacks_async(self) -> None:
         """Asynchronously schedules the evaluation of all callback functions.
 
-        This is an async wrapper around schedule_async_callbacks that allows it to be
-        called from async contexts.
+        This is an async wrapper around schedule_async_callbacks that allows it to be called from async contexts.
         """
         self.schedule_async_callbacks()
 
     def schedule_singleton_async_callbacks(self) -> None:
         """Schedules the evaluation of asynchronous callbacks if they're not already running.
 
-        Creates tasks for asynchronous callbacks only if there are no existing tasks for that
-        callback in the task queue. This ensures only one instance of each callback is running
-        at a time.
+        Creates tasks for asynchronous callbacks only if there are no existing tasks for that callback in the task
+        queue. This ensures only one instance of each callback is running at a time.
         """
         for callback_async, tasks in self.callback_map:
             if len(tasks) < 1:
@@ -211,8 +206,8 @@ class CallbackScheduler(BaseObject):
     async def schedule_singleton_async_callbacks_async(self) -> None:
         """Asynchronously schedules singleton evaluation of callback functions.
 
-        This is an async wrapper around schedule_singleton_async_callbacks that allows it
-        to be called from async contexts.
+        This is an async wrapper around schedule_singleton_async_callbacks that allows it to be called from async
+        contexts.
         """
         self.schedule_singleton_async_callbacks()
 
@@ -221,8 +216,8 @@ class CallbackManager(BaseReducible):
     """An object which manages and executes callback functions with conditions and callers.
 
     The CallbackManager class allows the registration, formatting, scheduling, and execution of synchronous and
-    asynchronous callback functions. It supports default conditions and callers to streamline callback
-    registration and ensures organized management of callback and task entries.
+    asynchronous callback functions. It supports default conditions and callers to streamline callback registration and
+    ensures organized management of callback and task entries.
 
     Attributes:
         default_condition: The default condition to evaluate callbacks, set to "true_condition" by default.
@@ -279,8 +274,10 @@ class CallbackManager(BaseReducible):
             callbacks: Mapping of names to synchronous ConditionalCallbackEntry objects to register.
             callbacks_async: Mapping of names to asynchronous ConditionalCallbackEntry objects to register.
             *args: Additional positional arguments forwarded to construct for subclass initialization.
-            default_condition: Default condition name used when registering callbacks. If provided, overrides the class default.
-            default_caller: Default caller method name used when registering callbacks. If provided, overrides the class default.
+            default_condition: Default condition name used when registering callbacks.
+                If provided, overrides the class default.
+            default_caller: Default caller method name used when registering callbacks.
+                If provided, overrides the class default.
             init: If True, call construct to finalize initialization with the provided arguments.
             **kwargs: Additional keyword arguments forwarded to construct for subclass initialization.
         """
@@ -466,8 +463,8 @@ class CallbackManager(BaseReducible):
     ) -> CallbackScheduler:
         """Creates a new callback scheduler instance.
 
-        This method creates a new scheduler of the specified type or the default scheduler type
-        if none is provided. The scheduler is responsible for managing and executing callbacks.
+        This method creates a new scheduler of the specified type or the default scheduler type if none is provided. The
+        scheduler is responsible for managing and executing callbacks.
 
         Args:
             type_: The type of scheduler to create. If None, uses the default scheduler_type.
@@ -491,9 +488,8 @@ class CallbackManager(BaseReducible):
     ) -> CallbackScheduler:
         """Creates a scheduler for conditional callbacks.
 
-        This method creates a scheduler specifically for managing conditional callbacks.
-        It maps the specified conditional callbacks to their task queues and creates a
-        scheduler to manage them.
+        This method creates a scheduler specifically for managing conditional callbacks. It maps the specified
+        conditional callbacks to their task queues and creates a scheduler to manage them.
 
         Args:
             condition_names: An iterable of names of conditional callbacks to include in the scheduler.
@@ -521,8 +517,8 @@ class CallbackManager(BaseReducible):
     def register_callback(self, name: str, callback: Callable, is_async: bool = False) -> None:
         """Registers a callback function with the manager.
 
-        This method adds a callback function to either the synchronous or asynchronous
-        callback registry, depending on the is_async parameter.
+        This method adds a callback function to either the synchronous or asynchronous callback registry, depending on
+        the is_async parameter.
 
         Args:
             name: The name to register the callback under.
@@ -568,8 +564,8 @@ class CallbackManager(BaseReducible):
     ) -> None:
         """Registers a conditional callback function with the manager.
 
-        This method formats and registers a callback function that will be executed only when
-        a specified condition is met. It supports both synchronous and asynchronous callbacks.
+        This method formats and registers a callback function that will be executed only when a specified condition is
+        met. It supports both synchronous and asynchronous callbacks.
 
         Args:
             name: The name to register the callback under.
@@ -647,9 +643,9 @@ class CallbackManager(BaseReducible):
     ) -> None:
         """Registers a scheduler with the callback manager.
 
-        This method either registers an existing scheduler or creates and registers a new one.
-        If a scheduler is provided, it is registered directly. Otherwise, a new scheduler is
-        created using the specified type and arguments.
+        This method either registers an existing scheduler or creates and registers a new one. If a scheduler is
+        provided, it is registered directly. Otherwise, a new scheduler is created using the specified type and
+        arguments.
 
         Args:
             name: The name to register the scheduler under.
@@ -671,10 +667,9 @@ class CallbackManager(BaseReducible):
     ) -> None:
         """Registers a conditional scheduler with the callback manager.
 
-        This method either registers an existing scheduler or creates and registers a new one
-        specifically for conditional callbacks. If a scheduler is provided, it is registered directly.
-        Otherwise, a new conditional scheduler is created using the specified condition names,
-        type, and arguments.
+        This method either registers an existing scheduler or creates and registers a new one specifically for
+        conditional callbacks. If a scheduler is provided, it is registered directly. Otherwise, a new conditional
+        scheduler is created using the specified condition names, type, and arguments.
 
         Args:
             name: The name to register the scheduler under.
@@ -700,9 +695,9 @@ class CallbackManager(BaseReducible):
     def register_scheduler_callback(self, name: str, scheduler: CallbackScheduler | str) -> None:
         """Registers a scheduler as both synchronous and asynchronous callbacks.
 
-        This method creates callback functions that start the specified scheduler and registers
-        them under the given name in both the synchronous and asynchronous callback registries.
-        It also creates a task queue for the scheduler.
+        This method creates callback functions that start the specified scheduler and registers them under the given
+        name in both the synchronous and asynchronous callback registries. It also creates a task queue for the
+        scheduler.
 
         Args:
             name: The name to register the callbacks under.
@@ -723,8 +718,8 @@ class CallbackManager(BaseReducible):
     def map_conditionals_to_scheduler(self, name: str, condition_names: Iterable[str]) -> None:
         """Maps conditional callbacks to an existing scheduler.
 
-        This method adds the specified conditional callbacks to an existing scheduler's callback map.
-        It creates task queues for each callback if they don't already exist.
+        This method adds the specified conditional callbacks to an existing scheduler's callback map. It creates task
+        queues for each callback if they don't already exist.
 
         Args:
             name: The name of the scheduler to map the callbacks to.
@@ -783,8 +778,7 @@ class CallbackManager(BaseReducible):
     def call(self, callback: Callable) -> Any:
         """Executes a callback function synchronously.
 
-        This is a simple wrapper method that calls the provided callback function
-        and returns its result.
+        This is a simple wrapper method that calls the provided callback function and returns its result.
 
         Args:
             callback: The callback function to execute.
@@ -797,8 +791,7 @@ class CallbackManager(BaseReducible):
     async def call_async(self, callback: Callable) -> Any:
         """Executes a callback function asynchronously.
 
-        This is an async wrapper method that awaits the provided callback function
-        and returns its result.
+        This is an async wrapper method that awaits the provided callback function and returns its result.
 
         Args:
             callback: The async callback function to execute.
@@ -821,9 +814,11 @@ class CallbackManager(BaseReducible):
         Args:
             condition: The condition to evaluate the callback function.
             callback: The callback function to evaluate.
+            *args: Positional arguments forwarded to the callback when executed.
+            **kwargs: Keyword arguments forwarded to the callback when executed.
         """
         if condition():
-            callback()
+            callback(*args, **kwargs)
 
     async def call_conditional_async(
         self,
@@ -837,9 +832,11 @@ class CallbackManager(BaseReducible):
         Args:
             condition_async: The condition to evaluate the callback function.
             callback_async: The callback function to evaluate.
+            *args: Positional arguments forwarded to the async callback when executed.
+            **kwargs: Keyword arguments forwarded to the async callback when executed.
         """
         if await condition_async():
-            await callback_async()
+            await callback_async(*args, **kwargs)
 
     def call_while_condition(self, condition: Callable, callback: Callable, *args: Any, **kwargs: Any) -> None:
         """Evaluates the callback function while the callback condition is met.
@@ -847,9 +844,11 @@ class CallbackManager(BaseReducible):
         Args:
             condition: The condition to evaluate the callback function.
             callback: The callback function to evaluate.
+            *args: Positional arguments forwarded to the callback each time it is executed.
+            **kwargs: Keyword arguments forwarded to the callback each time it is executed.
         """
         while condition():
-            callback()
+            callback(*args, **kwargs)
 
     async def call_while_condition_async(
         self,
@@ -861,9 +860,9 @@ class CallbackManager(BaseReducible):
     ) -> None:
         """Asynchronously evaluates the callback function while the callback condition is met.
 
-        This method repeatedly checks the condition and executes the callback as long as the condition
-        is true or there are pending tasks. It manages a queue of tasks to control concurrency and
-        prevent overwhelming the system with too many simultaneous callback executions.
+        This method repeatedly checks the condition and executes the callback as long as the condition is true or there
+        are pending tasks. It manages a queue of tasks to control concurrency and prevent overwhelming the system with
+        too many simultaneous callback executions.
 
         Args:
             condition_async: The asynchronous condition function to evaluate.
@@ -896,9 +895,9 @@ class CallbackManager(BaseReducible):
     ) -> None:
         """Asynchronously evaluates the callback function while the condition is met, with task awaiting.
 
-        Similar to call_while_condition_async, but this method expects the callback_async function to
-        return a task that will be added to the task queue. This allows for more complex task management
-        where the callback itself creates and returns a task rather than being directly awaited.
+        Similar to call_while_condition_async, but this method expects the callback_async function to return a task that
+        will be added to the task queue. This allows for more complex task management where the callback itself creates
+        and returns a task rather than being directly awaited.
 
         Args:
             condition_async: The asynchronous condition function to evaluate.
@@ -931,10 +930,10 @@ class CallbackManager(BaseReducible):
     ) -> None:
         """Asynchronously enqueues and executes callbacks while a condition is met.
 
-        This method prioritizes creating new tasks when the condition is met, up to the maximum
-        allowed number of concurrent tasks (max_callback_tasks). If the maximum is reached, it
-        waits for existing tasks to complete before creating new ones. This approach ensures
-        that new tasks are created as soon as possible when the condition is met.
+        This method prioritizes creating new tasks when the condition is met, up to the maximum allowed number of
+        concurrent tasks (max_callback_tasks). If the maximum is reached, it waits for existing tasks to complete before
+        creating new ones. This approach ensures that new tasks are created as soon as possible when the condition is
+        met.
 
         Args:
             condition_async: The asynchronous condition function to evaluate.
@@ -967,13 +966,13 @@ class CallbackManager(BaseReducible):
     ) -> None:
         """Asynchronously enqueues and executes task-returning callbacks while a condition is met.
 
-        Similar to enqueue_call_while_condition_async, but this method expects the callback_async function
-        to return a task that will be added to the task queue. This allows for more complex task management
-        where the callback itself creates and returns a task rather than being directly awaited.
+        Similar to enqueue_call_while_condition_async, but this method expects the callback_async function to return a
+        task that will be added to the task queue. This allows for more complex task management where the callback
+        itself creates and returns a task rather than being directly awaited.
 
-        This method prioritizes creating new tasks when the condition is met, up to the maximum allowed
-        number of concurrent tasks (max_callback_tasks). If the maximum is reached, it waits for existing
-        tasks to complete before creating new ones.
+        This method prioritizes creating new tasks when the condition is met, up to the maximum allowed number of
+        concurrent tasks (max_callback_tasks). If the maximum is reached, it waits for existing tasks to complete before
+        creating new ones.
 
         Args:
             condition_async: The asynchronous condition function to evaluate.
@@ -1026,9 +1025,8 @@ class CallbackManager(BaseReducible):
     def join_tasks(self) -> None:
         """Joins all currently scheduled tasks.
 
-        This method blocks until all tasks in the task registry are completed.
-        It uses a busy-waiting approach, which may not be efficient for long-running tasks.
-        For a more efficient approach, use join_tasks_async.
+        This method blocks until all tasks in the task registry are completed. It uses a busy-waiting approach, which
+        may not be efficient for long-running tasks. For a more efficient approach, use join_tasks_async.
         """
         for tasks in self.tasks.values():
             for task in tasks:
@@ -1044,10 +1042,6 @@ class CallbackManager(BaseReducible):
         Args:
             timeout: Optional timeout in seconds. If provided, the method will raise
                 asyncio.TimeoutError if the tasks don't complete within this time.
-
-        Raises:
-            asyncio.TimeoutError: If timeout is provided and the tasks don't complete within
-                the specified time.
         """
         all_tasks = deque()
         for tasks in self.tasks.values():

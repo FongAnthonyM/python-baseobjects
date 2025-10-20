@@ -17,7 +17,8 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import timeit
 from types import MethodType
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 # Third-Party Packages #
 import pytest
@@ -46,7 +47,7 @@ def simple_coroutine_function(x: int) -> int:
 class NormalCallable:
     """A normal Python callable object for comparison with BaseCallable."""
 
-    def __init__(self, func: Callable = None) -> None:
+    def __init__(self, func: Callable | None = None) -> None:
         """Initialize with a function."""
         self.func = func or simple_function
 
@@ -66,7 +67,7 @@ class TestBaseCallablePerformance(BasePerformanceTestSuite):
     class TestCallable(BaseCallable):
         """A subclass of BaseCallable for testing purposes."""
 
-        def __init__(self, func: Callable = None) -> None:
+        def __init__(self, func: Callable | None = None) -> None:
             """Initialize with a function."""
             super().__init__(func or simple_function)
 

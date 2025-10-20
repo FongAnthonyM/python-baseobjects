@@ -10,11 +10,11 @@ from typing import Dict, Tuple
 import pytest
 
 # Definitions #
-_test_failed_incremental: Dict[str, Dict[Tuple[int, ...], str]] = {}
+_test_failed_incremental: dict[str, dict[tuple[int, ...], str]] = {}
 
 
 # Functions #
-def pytest_runtest_makereport(item, call):
+def pytest_runtest_makereport(item, call) -> None:
     """Handles reports on incremental test calls which are dependent on the success of previous test calls."""
     if "incremental" in item.keywords:
         # incremental marker is used
@@ -29,7 +29,7 @@ def pytest_runtest_makereport(item, call):
             _test_failed_incremental.setdefault(cls_name, {}).setdefault(parametrize_index, test_name)
 
 
-def pytest_runtest_setup(item):
+def pytest_runtest_setup(item) -> None:
     """Implements incremental to make test calls in classes dependent on the success of previous test calls."""
     if "incremental" in item.keywords:
         # retrieve the class name of the test

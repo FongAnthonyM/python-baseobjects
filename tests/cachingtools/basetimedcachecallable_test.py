@@ -20,7 +20,8 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import time
-from typing import Any, Callable, Type
+from typing import Any, Type
+from collections.abc import Callable
 
 # Third-Party Packages #
 import pytest
@@ -120,7 +121,7 @@ class ConcreteTimedCacheCallable(BaseTimedCacheCallable):
 class TimedCacheTestObject:
     """A test class for testing method binding and caching."""
 
-    def __init__(self, value: int = 10):
+    def __init__(self, value: int = 10) -> None:
         """Initialize with a value."""
         self.value = value
 
@@ -142,7 +143,7 @@ class TestBaseTimedCacheCallable(BaseTimedCacheCallableTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BaseTimedCacheCallable] = ConcreteTimedCacheCallable
+    TestClass: type[BaseTimedCacheCallable] = ConcreteTimedCacheCallable
 
     # Instance Methods #
     # Fixtures
@@ -273,7 +274,7 @@ class TestBaseTimedCacheCallable(BaseTimedCacheCallableTestSuite):
         This test verifies that the create_key method creates appropriate keys for different arguments.
         """
 
-        def test_func(x: int, y: int = None) -> int:
+        def test_func(x: int, y: int | None = None) -> int:
             return x * 2
 
         cache_func = self.TestClass(func=test_func)

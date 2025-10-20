@@ -25,7 +25,7 @@ from baseobjects.functions import DynamicCallable, DynamicFunction, DynamicMetho
 class PickleClass:
     """A class used for pickling demonstration."""
 
-    def __init__(self, name):
+    def __init__(self, name) -> None:
         self.name = name
 
 
@@ -88,11 +88,13 @@ class CustomDynamicMethod(DynamicMethod):
         # Simple validation: check if any argument is None
         for arg in args:
             if arg is None:
-                raise ValueError("None values are not allowed")
+                msg = "None values are not allowed"
+                raise ValueError(msg)
 
         for key, value in kwargs.items():
             if value is None:
-                raise ValueError(f"None value for {key} is not allowed")
+                msg = f"None value for {key} is not allowed"
+                raise ValueError(msg)
 
         return self.__wrapped__(instance, *args, **kwargs)
 
@@ -104,7 +106,7 @@ class NonWrappingDynamicMethod(DynamicMethod):
     its own functionality directly through custom methods registered with the call_multiplexer.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         """Initialize the NonWrappingDynamicMethod.
 
         This constructor initializes the object without requiring a wrapped function. It registers custom methods with
@@ -120,7 +122,7 @@ class NonWrappingDynamicMethod(DynamicMethod):
         # Set the default call method
         self.call_method = "greet"
 
-    def greet(self, instance, name):
+    def greet(self, instance, name) -> str:
         """Greet a person using the instance's name.
 
         Args:
@@ -132,7 +134,7 @@ class NonWrappingDynamicMethod(DynamicMethod):
         """
         return f"Hello, {name}! I'm {instance.name}!"
 
-    def farewell(self, instance, name):
+    def farewell(self, instance, name) -> str:
         """Say goodbye to a person using the instance's name.
 
         Args:
@@ -144,7 +146,7 @@ class NonWrappingDynamicMethod(DynamicMethod):
         """
         return f"Goodbye, {name}! From {instance.name}."
 
-    def introduce(self, instance, title=""):
+    def introduce(self, instance, title="") -> str:
         """Introduce the instance.
 
         Args:
@@ -162,10 +164,10 @@ class NonWrappingDynamicMethod(DynamicMethod):
 class ExampleClass:
     """A class to demonstrate using DynamicMethod as a descriptor."""
 
-    def __init__(self, name):
+    def __init__(self, name) -> None:
         self.name = name
 
-    def greet(self, name):
+    def greet(self, name) -> str:
         """A method that greets a person."""
         return f"Hello, {name}! I'm {self.name}!"
 
@@ -182,10 +184,10 @@ class ExampleClass:
 class MethodComparisonClass:
     """A class to demonstrate the differences between various method types."""
 
-    def __init__(self, name):
+    def __init__(self, name) -> None:
         self.name = name
 
-    def regular_method(self, message):
+    def regular_method(self, message) -> str:
         """A regular instance method."""
         return f"{self.name} says: {message}"
 
@@ -196,7 +198,7 @@ class MethodComparisonClass:
 
 
 # Functions #
-def method_function(self, message):
+def method_function(self, message) -> str:
     """A function designed to be used as a method.
 
     Args:
@@ -210,7 +212,7 @@ def method_function(self, message):
 
 
 # Example Sections #
-def basic_dynamicmethod_usage():
+def basic_dynamicmethod_usage() -> None:
     """Demonstrates basic usage of DynamicMethod."""
     print("Basic DynamicMethod Usage:\n")
 
@@ -219,7 +221,7 @@ def basic_dynamicmethod_usage():
 
     # Create an instance to bind the method to
     class SimpleClass:
-        def __init__(self, name):
+        def __init__(self, name) -> None:
             self.name = name
 
     instance = SimpleClass("Alice")
@@ -253,7 +255,7 @@ def basic_dynamicmethod_usage():
     print()
 
 
-def dynamicmethod_vs_others():
+def dynamicmethod_vs_others() -> None:
     """Demonstrates the differences between DynamicMethod, DynamicFunction, and DynamicCallable."""
     print("DynamicMethod vs DynamicFunction vs DynamicCallable:\n")
 
@@ -283,7 +285,7 @@ def dynamicmethod_vs_others():
         bound_function = comparison.dynamic_function
         dynamic_function_result = bound_function(comparison, "Dynamic function message")
         print(
-            f"Manual call with self: bound_function(comparison, 'Dynamic function message') = {dynamic_function_result}"
+            f"Manual call with self: bound_function(comparison, 'Dynamic function message') = {dynamic_function_result}",
         )
 
     # Use the DynamicCallable
@@ -299,7 +301,7 @@ def dynamicmethod_vs_others():
         bound_callable = comparison.dynamic_callable
         dynamic_callable_result = bound_callable(comparison, "Dynamic callable message")
         print(
-            f"Manual call with self: bound_callable(comparison, 'Dynamic callable message') = {dynamic_callable_result}"
+            f"Manual call with self: bound_callable(comparison, 'Dynamic callable message') = {dynamic_callable_result}",
         )
 
     # Show the class hierarchy
@@ -311,7 +313,7 @@ def dynamicmethod_vs_others():
     print()
 
 
-def custom_dynamicmethod_usage():
+def custom_dynamicmethod_usage() -> None:
     """Demonstrates usage of a custom DynamicMethod with additional methods."""
     print("Custom DynamicMethod Usage:\n")
 
@@ -351,7 +353,7 @@ def custom_dynamicmethod_usage():
     print()
 
 
-def dynamicmethod_as_descriptor():
+def dynamicmethod_as_descriptor() -> None:
     """Demonstrates using DynamicMethod as a descriptor."""
     print("DynamicMethod as Descriptor:\n")
 
@@ -379,7 +381,7 @@ def dynamicmethod_as_descriptor():
     print()
 
 
-def nonwrapping_dynamicmethod_usage():
+def nonwrapping_dynamicmethod_usage() -> None:
     """Demonstrates usage of a non-wrapping DynamicMethod with direct functionality."""
     print("Non-Wrapping DynamicMethod Usage:\n")
 
@@ -388,7 +390,7 @@ def nonwrapping_dynamicmethod_usage():
 
     # Create an instance to bind to
     class Person:
-        def __init__(self, name):
+        def __init__(self, name) -> None:
             self.name = name
 
     person = Person("James")
@@ -420,16 +422,16 @@ def nonwrapping_dynamicmethod_usage():
     print()
 
 
-def method_binding_behavior():
+def method_binding_behavior() -> None:
     """Demonstrates the method binding behavior of DynamicMethod."""
     print("Method Binding Behavior:\n")
 
     # Create a class with a DynamicMethod
     class BindingExample:
-        def __init__(self, name):
+        def __init__(self, name) -> None:
             self.name = name
 
-        def method(self, message):
+        def method(self, message) -> str:
             return f"{self.name}: {message}"
 
         dynamic_method = DynamicMethod(method)
@@ -454,10 +456,10 @@ def method_binding_behavior():
 
     # Create a DynamicMethod with different bind methods
     class BindMethodsExample:
-        def __init__(self, name):
+        def __init__(self, name) -> None:
             self.name = name
 
-        def method(self, message):
+        def method(self, message) -> str:
             return f"{self.name}: {message}"
 
         # Create DynamicMethods with different bind methods
@@ -490,7 +492,7 @@ def method_binding_behavior():
     print()
 
 
-def pickling_dynamicmethod():
+def pickling_dynamicmethod() -> None:
     """Demonstrates pickling and unpickling a DynamicMethod."""
     print("Pickling DynamicMethod:\n")
 

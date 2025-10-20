@@ -20,7 +20,7 @@ from baseobjects.operations import union_recursive, update_recursive
 
 
 # Example Sections #
-def basic_usage_example():
+def basic_usage_example() -> None:
     """Demonstrate basic usage of union_recursive."""
     print("\nBasic union_recursive Usage:")
 
@@ -46,7 +46,7 @@ def basic_usage_example():
     print(f"Result is new object: {result is not dict1 and result is not dict2} == True")
 
 
-def nested_dictionary_example():
+def nested_dictionary_example() -> None:
     """Demonstrate unioning nested dictionaries with union_recursive."""
     print("\nNested Dictionary Example:")
 
@@ -102,7 +102,7 @@ def nested_dictionary_example():
     print(f"  'language' in Dict1 settings: {'language' in dict1['settings']} == False")
 
 
-def compare_with_update_recursive_example():
+def compare_with_update_recursive_example() -> None:
     """Compare union_recursive with update_recursive."""
     print("\nComparing union_recursive with update_recursive:")
 
@@ -141,7 +141,7 @@ def compare_with_update_recursive_example():
     print(f"  Results equal: {update_result == union_result} == True")
 
 
-def deep_copy_example():
+def deep_copy_example() -> None:
     """Demonstrate how union_recursive creates deep copies."""
     print("\nDeep Copy Example:")
 
@@ -170,7 +170,7 @@ def deep_copy_example():
     print(f"\nLists are different objects: {id(dict1['scores']) != id(result['scores'])} == True")
 
 
-def practical_example():
+def practical_example() -> None:
     """Demonstrate a practical use case for union_recursive."""
     print("\nPractical Example - Template System:")
 

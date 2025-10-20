@@ -72,14 +72,14 @@ class ExampleDispatchableComposite(DispatchableComposite):
     """A base test subclass of DispatchableComposite for testing purposes."""
 
     # Class Attributes #
-    class_registry_type: ClassVar[Type[BaseClassRegistry]] = ConcreteClassRegistry
+    class_registry_type: ClassVar[type[BaseClassRegistry]] = ConcreteClassRegistry
     class_registration: ClassVar[bool] = True
     default_component_types: ClassVar[dict[str, tuple[type, dict[str, Any]]]] = {
-        "default_component": (ExampleComponentClass, {})
+        "default_component": (ExampleComponentClass, {}),
     }
 
     @classmethod
-    def get_class_information(cls, *args: Any, **kwargs: Any) -> Tuple[str]:
+    def get_class_information(cls, *args: Any, **kwargs: Any) -> tuple[str]:
         """Gets a class's lookup information from a given set of arguments.
 
         Args:
@@ -228,8 +228,8 @@ class TestDispatchableComposite(DispatchableCompositeTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[DispatchableComposite] = ExampleDispatchableComposite
-    TestComponent: Type[BaseComponent] = ExampleComponentClass
+    TestClass: type[DispatchableComposite] = ExampleDispatchableComposite
+    TestComponent: type[BaseComponent] = ExampleComponentClass
 
     # Instance Methods #
     # Tests

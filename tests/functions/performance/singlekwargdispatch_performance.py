@@ -48,7 +48,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
     class DispatchTestClass:
         """A class with methods for testing."""
 
-        def normal_arg_method(self, arg: Any = None, **kwargs):
+        def normal_arg_method(self, arg: Any = None, **kwargs) -> str:
             """A normal method."""
             if isinstance(arg, int):
                 return f"Integer: {arg}"
@@ -57,7 +57,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
             else:
                 return f"Default: {arg}"
 
-        def normal_kwarg_method(self, arg: Any = None, kwarg: int | str | None = None, **kwargs):
+        def normal_kwarg_method(self, arg: Any = None, kwarg: int | str | None = None, **kwargs) -> str:
             """A normal method with a kwarg."""
             if isinstance(kwarg, int):
                 return f"Integer: {kwarg}"
@@ -67,47 +67,47 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
                 return f"Default: {kwarg}"
 
         @singledispatchmethod
-        def functools_dispatch(self, arg: Any = None, **kwargs):
-            """functools variation of dispatching method with a kwarg."""
+        def functools_dispatch(self, arg: Any = None, **kwargs) -> str:
+            """Functools variation of dispatching method with a kwarg."""
             return f"Default: {arg}"
 
         @functools_dispatch.register
-        def _(self, arg: int, **kwargs):
+        def _(self, arg: int, **kwargs) -> str:
             """Process an integer."""
             return f"Integer: {arg}"
 
         @functools_dispatch.register(str)
-        def _(self, arg: str, **kwargs):
+        def _(self, arg: str, **kwargs) -> str:
             """Process a string."""
             return f"String: {arg}"
 
         @singlekwargdispatch
-        def dispatch_arg(self, arg: int | str, **kwargs):
+        def dispatch_arg(self, arg: int | str, **kwargs) -> str:
             """Default implementation."""
             return f"Default: {arg}"
 
         @dispatch_arg.register
-        def _(self, arg: int, **kwargs):
+        def _(self, arg: int, **kwargs) -> str:
             """Process an integer."""
             return f"Integer: {arg}"
 
         @dispatch_arg.register(str)
-        def _(self, arg: str, **kwargs):
+        def _(self, arg: str, **kwargs) -> str:
             """Process a string."""
             return f"String: {arg}"
 
         @singlekwargdispatch(kwarg="kwarg")
-        def dispatch_kwarg(self, arg: Any = None, kwarg: int | str | None = None, **kwargs):
+        def dispatch_kwarg(self, arg: Any = None, kwarg: int | str | None = None, **kwargs) -> str:
             """Default implementation with specific kwarg."""
             return f"Default: {kwarg}"
 
         @dispatch_kwarg.register
-        def _(self, arg: Any = None, kwarg: int = 0, **kwargs):
+        def _(self, arg: Any = None, kwarg: int = 0, **kwargs) -> str:
             """Process an integer value."""
             return f"Integer: {kwarg}"
 
         @dispatch_kwarg.register(str)
-        def _(self, arg: Any = None, kwarg: int | str | None = None, **kwargs):
+        def _(self, arg: Any = None, kwarg: int | str | None = None, **kwargs) -> str:
             """Process a string value."""
             return f"String: {kwarg}"
 
@@ -128,7 +128,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
 
     # Tests
     def test_dispatch_call_speed_with_arg(
-        self, test_class_instance: TestSingleKwargDispatchPerformance.DispatchTestClass
+        self, test_class_instance: TestSingleKwargDispatchPerformance.DispatchTestClass,
     ) -> None:
         """Test the performance of the dispatch_call method with a positional argument.
 
@@ -166,16 +166,16 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nManual type check: {mean_baseline:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nManual type check: {mean_baseline:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"singledispatchmethod: {mean_old:.3f} μs ({(mean_old / mean_baseline):.3f}% of manual type check time)")
         print(
-            f"singlekwargdispatch with arg: {mean_new:.3f} μs ({percent_to_baseline:.3f}% of manual type check time, {percent_to_old:.3f}% of singledispatchmethod time)"
+            f"singlekwargdispatch with arg: {mean_new:.3f} μs ({percent_to_baseline:.3f}% of manual type check time, {percent_to_old:.3f}% of singledispatchmethod time)",
         )
         assert percent_to_old < self.speed_tolerance
 
     def test_dispatch_call_speed_with_kwarg(
-        self, test_class_instance: TestSingleKwargDispatchPerformance.DispatchTestClass
+        self, test_class_instance: TestSingleKwargDispatchPerformance.DispatchTestClass,
     ) -> None:
         """Test the performance of the dispatch_call method with a keyword argument.
 
@@ -214,18 +214,18 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nManual type check with kwarg: {mean_baseline:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nManual type check with kwarg: {mean_baseline:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(
-            f"singledispatchmethod with arg: {mean_old:.3f} μs ({(mean_old / mean_baseline):.3f}% of manual type check time)"
+            f"singledispatchmethod with arg: {mean_old:.3f} μs ({(mean_old / mean_baseline):.3f}% of manual type check time)",
         )
         print(
-            f"singlekwargdispatch with kwarg: {mean_new:.3f} μs ({percent_to_baseline:.3f}% of manual type check time, {percent_to_old:.3f}% of singledispatchmethod time)"
+            f"singlekwargdispatch with kwarg: {mean_new:.3f} μs ({percent_to_baseline:.3f}% of manual type check time, {percent_to_old:.3f}% of singledispatchmethod time)",
         )
         assert percent_to_baseline < self.speed_tolerance * 2  # Allow more overhead for kwarg dispatch
 
     def test_edge_case_multiple_types(
-        self, test_class_instance: TestSingleKwargDispatchPerformance.DispatchTestClass
+        self, test_class_instance: TestSingleKwargDispatchPerformance.DispatchTestClass,
     ) -> None:
         """Test the performance with an edge case of multiple registered types.
 
@@ -238,85 +238,85 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
         # Create a class with many registered types
         class ManyTypesDispatch:
             @singlekwargdispatch
-            def dispatch(self, arg: Any, **kwargs):
+            def dispatch(self, arg: Any, **kwargs) -> str:
                 """Default implementation."""
                 return f"Default: {arg}"
 
             @dispatch.register
-            def _(self, arg: int, **kwargs):
+            def _(self, arg: int, **kwargs) -> str:
                 return f"Integer: {arg}"
 
             @dispatch.register(str)
-            def _(self, arg: str, **kwargs):
+            def _(self, arg: str, **kwargs) -> str:
                 return f"String: {arg}"
 
             @dispatch.register(list)
-            def _(self, arg: list, **kwargs):
+            def _(self, arg: list, **kwargs) -> str:
                 return f"List: {arg}"
 
             @dispatch.register(dict)
-            def _(self, arg: dict, **kwargs):
+            def _(self, arg: dict, **kwargs) -> str:
                 return f"Dict: {arg}"
 
             @dispatch.register(tuple)
-            def _(self, arg: tuple, **kwargs):
+            def _(self, arg: tuple, **kwargs) -> str:
                 return f"Tuple: {arg}"
 
             @dispatch.register(set)
-            def _(self, arg: set, **kwargs):
+            def _(self, arg: set, **kwargs) -> str:
                 return f"Set: {arg}"
 
             @dispatch.register(bool)
-            def _(self, arg: bool, **kwargs):
+            def _(self, arg: bool, **kwargs) -> str:
                 return f"Bool: {arg}"
 
             @dispatch.register(float)
-            def _(self, arg: float, **kwargs):
+            def _(self, arg: float, **kwargs) -> str:
                 return f"Float: {arg}"
 
             @dispatch.register(complex)
-            def _(self, arg: complex, **kwargs):
+            def _(self, arg: complex, **kwargs) -> str:
                 return f"Complex: {arg}"
 
             @singledispatchmethod
-            def functools_dispatch(self, arg: Any, **kwargs):
+            def functools_dispatch(self, arg: Any, **kwargs) -> str:
                 """Default implementation."""
                 return f"Default: {arg}"
 
             @functools_dispatch.register
-            def _(self, arg: int, **kwargs):
+            def _(self, arg: int, **kwargs) -> str:
                 return f"Integer: {arg}"
 
             @functools_dispatch.register(str)
-            def _(self, arg: str, **kwargs):
+            def _(self, arg: str, **kwargs) -> str:
                 return f"String: {arg}"
 
             @functools_dispatch.register(list)
-            def _(self, arg: list, **kwargs):
+            def _(self, arg: list, **kwargs) -> str:
                 return f"List: {arg}"
 
             @functools_dispatch.register(dict)
-            def _(self, arg: dict, **kwargs):
+            def _(self, arg: dict, **kwargs) -> str:
                 return f"Dict: {arg}"
 
             @functools_dispatch.register(tuple)
-            def _(self, arg: tuple, **kwargs):
+            def _(self, arg: tuple, **kwargs) -> str:
                 return f"Tuple: {arg}"
 
             @functools_dispatch.register(set)
-            def _(self, arg: set, **kwargs):
+            def _(self, arg: set, **kwargs) -> str:
                 return f"Set: {arg}"
 
             @functools_dispatch.register(bool)
-            def _(self, arg: bool, **kwargs):
+            def _(self, arg: bool, **kwargs) -> str:
                 return f"Bool: {arg}"
 
             @functools_dispatch.register(float)
-            def _(self, arg: float, **kwargs):
+            def _(self, arg: float, **kwargs) -> str:
                 return f"Float: {arg}"
 
             @functools_dispatch.register(complex)
-            def _(self, arg: complex, **kwargs):
+            def _(self, arg: complex, **kwargs) -> str:
                 return f"Complex: {arg}"
 
         many_types = ManyTypesDispatch()
@@ -351,7 +351,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
         assert percent < self.speed_tolerance * 1.5  # Allow more overhead for many types
 
     def test_edge_case_nested_dispatch(
-        self, test_class_instance: TestSingleKwargDispatchPerformance.DispatchTestClass
+        self, test_class_instance: TestSingleKwargDispatchPerformance.DispatchTestClass,
     ) -> None:
         """Test the performance with an edge case of nested dispatch.
 
@@ -369,17 +369,17 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
                 return self.inner_dispatch(arg)
 
             @outer_dispatch.register
-            def _(self, arg: int, **kwargs):
+            def _(self, arg: int, **kwargs) -> str:
                 """Process an integer in outer."""
                 return f"Outer Integer: {self.inner_dispatch(arg)}"
 
             @singlekwargdispatch
-            def inner_dispatch(self, arg: Any, **kwargs):
+            def inner_dispatch(self, arg: Any, **kwargs) -> str:
                 """Default inner implementation."""
                 return f"Default: {arg}"
 
             @inner_dispatch.register
-            def _(self, arg: int, **kwargs):
+            def _(self, arg: int, **kwargs) -> str:
                 """Process an integer in inner."""
                 return f"Inner Integer: {arg}"
 
@@ -389,17 +389,17 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
                 return self.inner_functools(arg)
 
             @outer_functools.register
-            def _(self, arg: int, **kwargs):
+            def _(self, arg: int, **kwargs) -> str:
                 """Process an integer in outer."""
                 return f"Outer Integer: {self.inner_functools(arg)}"
 
             @singledispatchmethod
-            def inner_functools(self, arg: Any, **kwargs):
+            def inner_functools(self, arg: Any, **kwargs) -> str:
                 """Default inner implementation."""
                 return f"Default: {arg}"
 
             @inner_functools.register
-            def _(self, arg: int, **kwargs):
+            def _(self, arg: int, **kwargs) -> str:
                 """Process an integer in inner."""
                 return f"Inner Integer: {arg}"
 

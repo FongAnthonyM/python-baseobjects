@@ -39,7 +39,7 @@ class TestBaseFunction(BaseFunctionTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BaseFunction] = BaseFunction
+    TestClass: type[BaseFunction] = BaseFunction
 
     # Instance Methods #
     # Tests
@@ -176,7 +176,7 @@ class TestBaseFunction(BaseFunctionTestSuite):
 
         # Test with a custom name
         new_bind_target2 = self.create_bind_target()
-        bound_method_named = test_method_object.bind_to_attribute(
+        test_method_object.bind_to_attribute(
             new_bind_target2,
             self.BindTargetClass,
             name="custom_method",
@@ -223,8 +223,6 @@ class TestBaseFunction(BaseFunctionTestSuite):
         # Create a custom method type
         class CustomMethod(BaseMethod):
             """A custom method type for testing."""
-
-            pass
 
         # Create a function with the custom method type
         function = self.TestClass(example_function)

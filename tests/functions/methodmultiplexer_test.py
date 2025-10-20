@@ -45,7 +45,7 @@ def multiply_function(self, x: int, y: int = 3) -> int:
 class MethodMultiplexerTestObject:
     """A test class for testing method binding and selection."""
 
-    def __init__(self, value: int = 10):
+    def __init__(self, value: int = 10) -> None:
         """Initialize with a value."""
         self.value = value
         self.method_multiplexer = MethodMultiplexer(instance=self, select="method1")
@@ -69,7 +69,7 @@ class TestMethodMultiplexer(BaseCallableTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[MethodMultiplexer] = MethodMultiplexer
+    TestClass: type[MethodMultiplexer] = MethodMultiplexer
 
     # Instance Methods #
     # Fixtures
@@ -96,7 +96,7 @@ class TestMethodMultiplexer(BaseCallableTestSuite):
 
     @pytest.fixture
     def test_multiplexer(
-        self, test_registry: FunctionRegistry, test_object_instance: MethodMultiplexerTestObject
+        self, test_registry: FunctionRegistry, test_object_instance: MethodMultiplexerTestObject,
     ) -> MethodMultiplexer:
         """Create a test multiplexer with a registry and object instance.
 
@@ -123,7 +123,7 @@ class TestMethodMultiplexer(BaseCallableTestSuite):
 
     @pytest.fixture
     def test_function_object(
-        self, test_registry: FunctionRegistry, test_object_instance: MethodMultiplexerTestObject
+        self, test_registry: FunctionRegistry, test_object_instance: MethodMultiplexerTestObject,
     ) -> MethodMultiplexer:
         """Create a test callable object that wraps a function.
 
@@ -286,7 +286,7 @@ class TestMethodMultiplexer(BaseCallableTestSuite):
         """
 
         class BindTarget:
-            def __init__(self, value: int = 10):
+            def __init__(self, value: int = 10) -> None:
                 """Initialize with a value."""
                 self.value = value
                 self.method_multiplexer = MethodMultiplexer(instance=self, select="method1")

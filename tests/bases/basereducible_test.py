@@ -56,7 +56,7 @@ class TestBaseReducible(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BaseReducible] = ReducibleTestObject
+    TestClass: type[BaseReducible] = ReducibleTestObject
 
     # Instance Methods #
     # Fixtures

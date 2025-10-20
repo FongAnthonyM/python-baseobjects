@@ -33,8 +33,9 @@ from ..bases import BaseObjectTestSuite
 class BaseRegisteredClassTestSuite(BaseObjectTestSuite):
     """Base test suite for children of BaseRegisteredClass.
 
-    This class provides common test functionality for child classes of BaseRegisteredClass, including tests for
-    class registration and retrieval. Subclasses should set the TestClass attribute and may override or extend the test methods.
+    This class provides common test functionality for child classes of BaseRegisteredClass, including tests for class
+    registration and retrieval. Subclasses should set the TestClass attribute and may override or extend the test
+    methods.
 
     Attributes:
         TestClass: The class that the test suite is testing.

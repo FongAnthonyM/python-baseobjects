@@ -35,7 +35,7 @@ class TestNamespaceClassRegistry(BaseClassRegistryTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[NamespaceClassRegistry] = NamespaceClassRegistry
+    TestClass: type[NamespaceClassRegistry] = NamespaceClassRegistry
 
     # Instance Methods #
     # Fixtures
@@ -67,7 +67,7 @@ class TestNamespaceClassRegistry(BaseClassRegistryTestSuite):
             "test_namespace": {
                 "ExampleClass1": (self.ExampleClass1, {}),
                 "ExampleClass2": (self.ExampleClass2, {"arg1": "value1"}),
-            }
+            },
         }
         registry = self.TestClass(classes=classes)
 
@@ -212,7 +212,7 @@ class TestNamespaceClassRegistry(BaseClassRegistryTestSuite):
 
         # Create a class that accepts keyword arguments
         class TestClassWithKwargs:
-            def __init__(self, arg1=None, arg2=None):
+            def __init__(self, arg1=None, arg2=None) -> None:
                 self.arg1 = arg1
                 self.arg2 = arg2
 
@@ -226,7 +226,7 @@ class TestNamespaceClassRegistry(BaseClassRegistryTestSuite):
 
         # Get a new instance with additional keyword arguments
         instance = populated_registry.get_new(
-            "test_namespace", "TestClassWithKwargs", class_kwargs={"arg2": "custom_value"}
+            "test_namespace", "TestClassWithKwargs", class_kwargs={"arg2": "custom_value"},
         )
 
         # Verify instance was created with merged keyword arguments
@@ -243,7 +243,7 @@ class TestNamespaceClassRegistry(BaseClassRegistryTestSuite):
 
         # Create a class that accepts keyword arguments
         class TestClassWithKwargs:
-            def __init__(self, arg1=None, arg2=None):
+            def __init__(self, arg1=None, arg2=None) -> None:
                 self.arg1 = arg1
                 self.arg2 = arg2
 
@@ -257,7 +257,7 @@ class TestNamespaceClassRegistry(BaseClassRegistryTestSuite):
 
         # Get a new instance without using default keyword arguments
         instance = populated_registry.get_new(
-            "test_namespace", "TestClassWithKwargs", with_kwargs=False, class_kwargs={"arg2": "custom_value"}
+            "test_namespace", "TestClassWithKwargs", with_kwargs=False, class_kwargs={"arg2": "custom_value"},
         )
 
         # Verify instance was created with only the provided keyword arguments
@@ -278,7 +278,7 @@ class TestNamespaceClassRegistry(BaseClassRegistryTestSuite):
             "test_namespace": {
                 "ExampleClass1": (self.ExampleClass1, {}),
                 "ExampleClass2": (self.ExampleClass2, {"arg1": "value1"}),
-            }
+            },
         }
         test_registry.update_classes(classes)
 

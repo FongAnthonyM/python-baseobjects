@@ -41,7 +41,7 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[CircularDoublyLinkedContainer] = CircularDoublyLinkedContainer
+    TestClass: type[CircularDoublyLinkedContainer] = CircularDoublyLinkedContainer
 
     # Instance Methods #
     # Fixtures
@@ -112,7 +112,7 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         assert len(obj_copy.nodes) == len(test_object.nodes)
 
         # Verify we can iterate through both containers and get the same data
-        for node1, node2 in zip(obj_copy, test_object):
+        for node1, node2 in zip(obj_copy, test_object, strict=False):
             assert node1 is node2
             assert node1.data == node2.data
 
@@ -136,7 +136,7 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         assert len(obj_copy.nodes) == len(test_object.nodes)
 
         # Verify we can iterate through both containers and get the same data
-        for node1, node2 in zip(obj_copy, test_object):
+        for node1, node2 in zip(obj_copy, test_object, strict=False):
             assert node1 is node2
             assert node1.data == node2.data
 
@@ -164,7 +164,7 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
 
         # Verify we can iterate through both containers and get the same data
         # but the nodes should be different objects
-        for node1, node2 in zip(obj_deepcopy, test_object):
+        for node1, node2 in zip(obj_deepcopy, test_object, strict=False):
             assert node1 is not node2
             assert node1.data == node2.data
 
@@ -192,7 +192,7 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
 
         # Verify we can iterate through both containers and get the same data
         # but the nodes should be different objects
-        for node1, node2 in zip(obj_deepcopy, test_object):
+        for node1, node2 in zip(obj_deepcopy, test_object, strict=False):
             assert node1 is not node2
             assert node1.data == node2.data
 
@@ -223,7 +223,7 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         assert data1 == data2
 
     def test_is_empty_property(
-        self, empty_container: CircularDoublyLinkedContainer, simple_container: CircularDoublyLinkedContainer
+        self, empty_container: CircularDoublyLinkedContainer, simple_container: CircularDoublyLinkedContainer,
     ) -> None:
         """Test the is_empty property.
 
@@ -260,7 +260,7 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         assert simple_container.first_node.previous is last_node
 
     def test_len(
-        self, empty_container: CircularDoublyLinkedContainer, simple_container: CircularDoublyLinkedContainer
+        self, empty_container: CircularDoublyLinkedContainer, simple_container: CircularDoublyLinkedContainer,
     ) -> None:
         """Test the __len__ method.
 

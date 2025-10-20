@@ -56,9 +56,6 @@ class Version(BaseObject):
 
         Returns:
             obj: The converted object of this type or the original object.
-
-        Raises:
-            TypeError: If the object cannot be converted to this type.
         """
         try:
             other = cls(other)

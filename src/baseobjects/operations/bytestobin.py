@@ -17,6 +17,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 from typing import Any
 
+
 # Definitions #
 # Constants #
 big_array = (128, 64, 32, 16, 8, 4, 2, 1)
@@ -30,10 +31,13 @@ def bytes_to_bin(bytes_: bytes, byteorder: str = "big", out_type: type = int) ->
     Args:
         bytes_: The bytes to convert to binary.
         byteorder: The byte order of bytes to use for the conversion, either 'little' or 'big'.
-        out_type: The type to represent the binary values as, such as int, bool, or str,
+        out_type: The type to represent the binary values as, such as int, bool, or str.
 
     Returns:
         The tuple of binary values from the bytes.
+
+    Raises:
+        ValueError: If byteorder is not 'little' or 'big'.
     """
     if byteorder == "big":
         return tuple(out_type(bool(byte & place)) for byte in bytes_ for place in big_array)

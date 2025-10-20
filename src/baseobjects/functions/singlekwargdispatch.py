@@ -2,8 +2,8 @@
 Extends singledispatch to allow kwargs to be used for dispatching.
 
 The normal single dispatching requires at least one arg for dispatching. This object retains this functionality, but
-allows the first kwarg to be used for dispatching if no args are provided. Furthermore, a kwarg name can be
-specified to have the dispatcher use that kwarg instead of the first kwarg.
+allows the first kwarg to be used for dispatching if no args are provided. Furthermore, a kwarg name can be specified to
+have the dispatcher use that kwarg instead of the first kwarg.
 """
 
 # Header #
@@ -34,11 +34,11 @@ from .callablemultiplexer import MethodMultiplexer
 
 # Definitions #
 # Functions #
-def _is_union_type(cls):
+def _is_union_type(cls: Any) -> bool:
     return get_origin(cls) in {Union, UnionType}
 
 
-def _is_valid_dispatch_type(cls):
+def _is_valid_dispatch_type(cls: Any) -> bool:
     return isinstance(cls, type) or (_is_union_type(cls) and all(isinstance(arg, type) for arg in get_args(cls)))
 
 
@@ -122,7 +122,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
 
         # Object Creation #
         if init:
-            self.construct(func=func, kwarg=kwarg, *args, **kwargs)
+            self.construct(func, kwarg, *args, **kwargs)
 
     def __setstate__(self, state: Any) -> None:
         """Sets the object's state from a pickled state.
@@ -135,7 +135,8 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         1. None: No state to restore, so nothing is done
         2. dict: The state represents __dict__ attributes, which are updated into the object's __dict__
         3. tuple[None, dict]: The state represents __slots__ attributes, which are set individually
-        4. tuple[dict, dict]: The state represents both __dict__ and __slots__ attributes, which are restored accordingly
+        4. tuple[dict, dict]: The state represents both __dict__ and __slots__ attributes, which are restored
+           accordingly
 
         If the state is of an unexpected type, a TypeError is raised.
 
@@ -149,9 +150,6 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         Args:
             state: An object which can be used to set the state of this object. This should be the value previously
                 returned by __getstate__.
-
-        Raises:
-            TypeError: If the state is not None, dict, or tuple.
         """
         super().__setstate__(state)
         self.create_dispatcher_function()
@@ -170,6 +168,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
 
         Args:
             func: The function to wrap.
+            kwarg: The keyword argument name (or callable) to use for dispatch when no positional arg is provided.
             *args: Arguments for inheritance.
             wrapper_method: The name of the method which will act as the wrapper for this decorator.
             **kwargs: Keyword arguments for inheritance.
@@ -185,18 +184,18 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
                 self._default_parse = parameters[self.kwarg].default.__class__
                 self.arg_position = list(parameters).index(self.kwarg)
 
-        super().construct(func=func, *args, **kwargs)
+        super().construct(func, *args, **kwargs)
 
     def create_dispatcher_function(self) -> AnyCallable:
         """Creates the dispatcher function for this object."""
         if isinstance(self.__wrapped__, classmethod):
 
-            def dispatch_function(self_, *args, **kwargs):
+            def dispatch_function(self_: Any, *args: Any, **kwargs: Any) -> Any:
                 return self.dispatch(self.parse(args, kwargs)).__get__(None, self_)(*args, **kwargs)
 
         else:
 
-            def dispatch_function(self_, *args, **kwargs):
+            def dispatch_function(self_: Any, *args: Any, **kwargs: Any) -> Any:
                 return self.dispatch(self.parse(args, kwargs, is_method=True)).__get__(self_)(*args, **kwargs)
 
         dispatch_function.__isabstractmethod__ = getattr(self.__wrapped__, "__isabstractmethod__", False)
@@ -250,9 +249,6 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
 
         Returns:
             The class to be used for dispatching.
-
-        Raises:
-            TypeError: If no args or kwargs are given to dispatch.
         """
         try:
             return kwargs[self._kwarg].__class__
@@ -265,7 +261,12 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
 
     # Registering
     def register(self, cls: type[Any], func: AnyCallable | None = None) -> AnyCallable:
-        """Registers a function for a type or union of types."""
+        """Registers a function for a type or union of types.
+
+        Raises:
+            TypeError: If the provided dispatch key or function annotation is not a
+                class or a union of classes, or if the decorator is used incorrectly.
+        """
         if _is_valid_dispatch_type(cls):
             if func is None:
                 return partial(self._register, cls=cls)

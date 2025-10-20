@@ -44,7 +44,7 @@ class TestBaseDict(BaseObjectTestSuite):
         """A subclass of BaseDict for testing purposes."""
 
     # Attributes #
-    TestClass: Type[BaseDict] = BaseTestDict
+    TestClass: type[BaseDict] = BaseTestDict
 
     # Instance Methods #
     # Fixtures

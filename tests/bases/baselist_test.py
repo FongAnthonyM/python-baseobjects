@@ -45,7 +45,7 @@ class TestBaseList(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BaseList] = BaseTestList
+    TestClass: type[BaseList] = BaseTestList
 
     # Instance Methods #
     # Fixtures

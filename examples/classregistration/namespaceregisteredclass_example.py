@@ -236,7 +236,7 @@ class Helicopter(Vehicle):
 
 # Functions #
 # Example Sections #
-def automatic_namespace_registration():
+def automatic_namespace_registration() -> None:
     """Demonstrates automatic registration of subclasses with namespaces."""
     print("Automatic Namespace Registration:\n")
 
@@ -251,7 +251,7 @@ def automatic_namespace_registration():
     if Vehicle.class_registry is not None:
         for namespace, classes in Vehicle.class_registry.items():
             print(f"Namespace: {namespace}")
-            for name, (cls, kwargs) in classes.items():
+            for name, (cls, _kwargs) in classes.items():
                 print(f"  - {name}: {cls.__name__}")
 
     # Verify that all expected classes are registered in their correct namespaces
@@ -265,7 +265,7 @@ def automatic_namespace_registration():
     print()
 
 
-def creating_instances_from_registry():
+def creating_instances_from_registry() -> None:
     """Demonstrates creating instances from registered classes."""
     print("Creating Instances from Registry:\n")
 
@@ -302,7 +302,7 @@ def creating_instances_from_registry():
     print()
 
 
-def custom_namespace_and_name():
+def custom_namespace_and_name() -> None:
     """Demonstrates registering a class with a custom namespace and name."""
     print("Custom Namespace and Name:\n")
 
@@ -354,7 +354,7 @@ def custom_namespace_and_name():
     print()
 
 
-def module_based_namespace():
+def module_based_namespace() -> None:
     """Demonstrates using the module name as the namespace."""
     print("Module-Based Namespace:\n")
 
@@ -397,7 +397,7 @@ def module_based_namespace():
     print("\nAll namespaces in registry:")
     for namespace, classes in Vehicle.class_registry.items():
         print(f"Namespace: {namespace}")
-        for name, (cls, kwargs) in classes.items():
+        for name, (cls, _kwargs) in classes.items():
             print(f"  - {name}: {cls.__name__}")
 
     # Find the spaceship in the registry
@@ -420,7 +420,7 @@ def module_based_namespace():
     print()
 
 
-def vehicle_factory():
+def vehicle_factory() -> None:
     """Demonstrates using the class registry as a factory for vehicles."""
     print("Vehicle Factory:\n")
 
@@ -442,7 +442,8 @@ def vehicle_factory():
         """
         vehicle_class = Vehicle.get_registered_class(namespace, vehicle_type)
         if vehicle_class is None:
-            raise ValueError(f"Unknown vehicle type: {vehicle_type} in namespace {namespace}")
+            msg = f"Unknown vehicle type: {vehicle_type} in namespace {namespace}"
+            raise ValueError(msg)
         return vehicle_class(name, **kwargs)
 
     # Use the factory to create vehicles

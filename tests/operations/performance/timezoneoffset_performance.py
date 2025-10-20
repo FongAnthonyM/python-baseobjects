@@ -48,7 +48,7 @@ class CustomTimezone(tzinfo):
     This class returns different offsets based on the date provided.
     """
 
-    def __init__(self, hours: int = 1, complex_calculation: bool = False):
+    def __init__(self, hours: int = 1, complex_calculation: bool = False) -> None:
         self.hours = hours
         self.complex_calculation = complex_calculation
 
@@ -66,7 +66,7 @@ class CustomTimezone(tzinfo):
     def dst(self, dt):
         return timedelta(0)
 
-    def tzname(self, dt):
+    def tzname(self, dt) -> str:
         return f"CustomTZ({self.hours})"
 
 
@@ -278,7 +278,7 @@ class TestTimezoneOffset(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNew (timezone_offset complex custom): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+            f"\nNew (timezone_offset complex custom): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)",
         )
         assert percent < self.speed_tolerance
 

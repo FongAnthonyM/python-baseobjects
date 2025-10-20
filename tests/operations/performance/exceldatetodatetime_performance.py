@@ -81,7 +81,7 @@ def standard_excel_date_to_datetime_bytes(timestamp: bytes, tzinfo=timezone.utc)
     return EXCEL_INIT_DATE.replace(tzinfo=tzinfo) + timedelta(days=float(timestamp))
 
 
-def standard_excel_date_to_datetime(timestamp: Union[int, float, str, bytes], tzinfo=timezone.utc) -> datetime:
+def standard_excel_date_to_datetime(timestamp: int | float | str | bytes, tzinfo=timezone.utc) -> datetime:
     """Standard implementation of excel_date_to_datetime using type checking.
 
     Args:
@@ -100,7 +100,8 @@ def standard_excel_date_to_datetime(timestamp: Union[int, float, str, bytes], tz
     elif isinstance(timestamp, bytes):
         return standard_excel_date_to_datetime_bytes(timestamp, tzinfo)
     else:
-        raise TypeError(f"{timestamp.__class__} cannot be converted to a datetime")
+        msg = f"{timestamp.__class__} cannot be converted to a datetime"
+        raise TypeError(msg)
 
 
 # Classes #
@@ -166,7 +167,7 @@ class TestExcelDateToDatetime(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNew (excel_date_to_datetime float): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+            f"\nNew (excel_date_to_datetime float): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)",
         )
         assert percent < self.speed_tolerance
 
@@ -220,7 +221,7 @@ class TestExcelDateToDatetime(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNew (excel_date_to_datetime bytes): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+            f"\nNew (excel_date_to_datetime bytes): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)",
         )
         assert percent < self.speed_tolerance
 
@@ -282,7 +283,7 @@ class TestExcelDateToDatetime(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNew (excel_date_to_datetime dispatch): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+            f"\nNew (excel_date_to_datetime dispatch): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)",
         )
         assert percent < self.speed_tolerance
 

@@ -95,7 +95,8 @@ class BaseReducible(BaseObject):
         1. None: No state to restore, so nothing is done
         2. dict: The state represents __dict__ attributes, which are updated into the object's __dict__
         3. tuple[None, dict]: The state represents __slots__ attributes, which are set individually
-        4. tuple[dict, dict]: The state represents both __dict__ and __slots__ attributes, which are restored accordingly
+        4. tuple[dict, dict]: The state represents both __dict__ and __slots__ attributes, which are restored
+           accordingly
 
         If the state is of an unexpected type, a TypeError is raised.
 

@@ -20,7 +20,7 @@ from baseobjects.operations import timezone_offset
 
 
 # Example Sections #
-def basic_usage_example():
+def basic_usage_example() -> None:
     """Demonstrate basic usage of timezone_offset."""
     print("\nBasic timezone_offset Usage:")
 
@@ -55,7 +55,7 @@ def basic_usage_example():
     print("Expected: 1:00:00 (1 hour ahead of UTC)")
 
 
-def different_timezone_types_example():
+def different_timezone_types_example() -> None:
     """Demonstrate timezone_offset with different timezone types."""
     print("\nDifferent Timezone Types Example:")
 
@@ -87,7 +87,7 @@ def different_timezone_types_example():
         print("\nZoneInfo example skipped: requires Python 3.9+ and tzdata package on Windows")
 
 
-def timezone_aware_datetime_example():
+def timezone_aware_datetime_example() -> None:
     """Demonstrate working with timezone-aware datetime objects."""
     print("\nTimezone-Aware Datetime Example:")
 
@@ -121,7 +121,7 @@ def timezone_aware_datetime_example():
     print(f"Time values should be equal: {eastern_to_utc.hour == (eastern_now.hour + 5) % 24}")
 
 
-def practical_example():
+def practical_example() -> None:
     """Demonstrate a practical use case for timezone_offset."""
     print("\nPractical Example - Meeting Scheduler:")
 

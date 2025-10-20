@@ -56,7 +56,7 @@ class TestCallableMultiplexerPerformance(BasePerformanceTestSuite):
     timeit_runs: int = 1000000
     speed_tolerance: int = 400
 
-    TestClass: Type[CallableMultiplexer] = CallableMultiplexer
+    TestClass: type[CallableMultiplexer] = CallableMultiplexer
 
     # Instance Methods #
     # Fixtures
@@ -108,7 +108,7 @@ class TestCallableMultiplexerPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nDictionary creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nDictionary creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"CallableMultiplexer creation: {mean_new:.3f} μs ({percent:.3f}% of dictionary creation time)")
         assert percent < self.speed_tolerance
@@ -146,7 +146,7 @@ class TestCallableMultiplexerPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal function call: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nNormal function call: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"CallableMultiplexer call: {mean_new:.3f} μs ({percent:.3f}% of normal function call time)")
         assert percent < self.speed_tolerance
@@ -216,7 +216,7 @@ class TestMethodMultiplexerPerformance(BasePerformanceTestSuite):
     timeit_runs: int = 1000000
     speed_tolerance: int = 400
 
-    TestClass: Type[MethodMultiplexer] = MethodMultiplexer
+    TestClass: type[MethodMultiplexer] = MethodMultiplexer
 
     # Instance Methods #
     # Fixtures
@@ -231,7 +231,7 @@ class TestMethodMultiplexerPerformance(BasePerformanceTestSuite):
 
     @pytest.fixture
     def test_multiplexer(
-        self, test_class_instance: "TestMethodMultiplexerPerformance.ExampleInstanceClass"
+        self, test_class_instance: "TestMethodMultiplexerPerformance.ExampleInstanceClass",
     ) -> MethodMultiplexer:
         """Create a test multiplexer instance for use in tests.
 
@@ -247,7 +247,7 @@ class TestMethodMultiplexerPerformance(BasePerformanceTestSuite):
 
     # Tests
     def test_instance_creation(
-        self, test_class_instance: "TestMethodMultiplexerPerformance.ExampleInstanceClass"
+        self, test_class_instance: "TestMethodMultiplexerPerformance.ExampleInstanceClass",
     ) -> None:
         """Test that instances of MethodMultiplexer can be created efficiently.
 
@@ -276,7 +276,7 @@ class TestMethodMultiplexerPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nDictionary of methods creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nDictionary of methods creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"MethodMultiplexer creation: {mean_new:.3f} μs ({percent:.3f}% of dictionary creation time)")
         assert percent < self.speed_tolerance

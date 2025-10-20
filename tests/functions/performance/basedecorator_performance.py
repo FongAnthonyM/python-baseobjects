@@ -53,7 +53,7 @@ class TestBaseDecoratorPerformance(BasePerformanceTestSuite):
     timeit_runs: int = 1000000
     speed_tolerance: int = 400
 
-    TestClass: Type[BaseTestDecorator] = BaseTestDecorator
+    TestClass: type[BaseTestDecorator] = BaseTestDecorator
 
     # Instance Methods #
     # Fixtures
@@ -98,7 +98,7 @@ class TestBaseDecoratorPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal function creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nNormal function creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"BaseDecorator creation: {mean_new:.3f} μs ({percent:.3f}% of normal function creation time)")
         assert percent < self.speed_tolerance
@@ -139,7 +139,7 @@ class TestBaseDecoratorPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal function call: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nNormal function call: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"BaseDecorator call: {mean_new:.3f} μs ({percent:.3f}% of normal function call time)")
         assert percent < self.speed_tolerance
@@ -178,7 +178,7 @@ class TestBaseDecoratorPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal decorator wrap: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nNormal decorator wrap: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"BaseDecorator wrap: {mean_new:.3f} μs ({percent:.3f}% of normal decorator construction time)")
         assert percent < self.speed_tolerance

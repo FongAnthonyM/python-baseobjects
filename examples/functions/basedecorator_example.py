@@ -18,7 +18,8 @@ import asyncio
 import pickle
 import time
 from functools import wraps
-from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
+from typing import Any, Dict, List, Optional, TypeVar, Union
+from collections.abc import Callable
 
 # Source Packages #
 from baseobjects.functions import BaseDecorator
@@ -34,7 +35,7 @@ class TimerDecorator(BaseDecorator):
     function takes to execute.
     """
 
-    def __init__(self, func: AnyCallable, decimal_places: int = 4):
+    def __init__(self, func: AnyCallable, decimal_places: int = 4) -> None:
         """Initialize the timer decorator.
 
         Args:
@@ -70,7 +71,7 @@ class RepeatDecorator(BaseDecorator):
     behavior.
     """
 
-    def __init__(self, func: AnyCallable, times: int = 1, show_iteration: bool = True):
+    def __init__(self, func: AnyCallable, times: int = 1, show_iteration: bool = True) -> None:
         """Initialize the repeat decorator.
 
         Args:
@@ -82,7 +83,7 @@ class RepeatDecorator(BaseDecorator):
         self.times = times
         self.show_iteration = show_iteration
 
-    def __call__(self, *args: Any, **kwargs: Any) -> List[Any]:
+    def __call__(self, *args: Any, **kwargs: Any) -> list[Any]:
         """Execute the decorated function multiple times.
 
         Args:
@@ -108,7 +109,7 @@ class AsyncRetryDecorator(BaseDecorator):
     This decorator demonstrates how BaseDecorator can handle coroutine functions.
     """
 
-    def __init__(self, func: AnyCallable, max_retries: int = 3, delay: float = 1.0):
+    def __init__(self, func: AnyCallable, max_retries: int = 3, delay: float = 1.0) -> None:
         """Initialize the async retry decorator.
 
         Args:
@@ -142,12 +143,13 @@ class AsyncRetryDecorator(BaseDecorator):
             except Exception as e:
                 last_exception = e
                 if attempt < self.max_retries:
-                    print(f"Attempt {attempt + 1} failed: {str(e)}")
+                    print(f"Attempt {attempt + 1} failed: {e!s}")
                     print(f"Waiting {self.delay} seconds before next attempt...")
                     await asyncio.sleep(self.delay)
                 else:
                     print(f"All {self.max_retries} retry attempts failed.")
                     raise last_exception
+        return None
 
 
 # Decorator with State #
@@ -157,7 +159,7 @@ class CounterDecorator(BaseDecorator):
     This decorator demonstrates how to create a decorator with state.
     """
 
-    def __init__(self, func: AnyCallable):
+    def __init__(self, func: AnyCallable) -> None:
         """Initialize the counter decorator.
 
         Args:
@@ -184,7 +186,7 @@ class CounterDecorator(BaseDecorator):
         """Reset the call counter to zero."""
         self.call_count = 0
 
-    def __getstate__(self) -> Dict[str, Any]:
+    def __getstate__(self) -> dict[str, Any]:
         """Get the state of the decorator for pickling.
 
         Returns:
@@ -194,7 +196,7 @@ class CounterDecorator(BaseDecorator):
         state["call_count"] = self.call_count
         return state
 
-    def __setstate__(self, state: Dict[str, Any]) -> None:
+    def __setstate__(self, state: dict[str, Any]) -> None:
         """Set the state of the decorator from unpickling.
 
         Args:
@@ -235,7 +237,7 @@ def fibonacci(n: int) -> int:
         return fibonacci(n - 1) + fibonacci(n - 2)
 
 
-async def fetch_data(url: str, timeout: float = 1.0) -> Dict[str, Any]:
+async def fetch_data(url: str, timeout: float = 1.0) -> dict[str, Any]:
     """Simulate fetching data from a URL.
 
     Args:
@@ -253,18 +255,20 @@ async def fetch_data(url: str, timeout: float = 1.0) -> Dict[str, Any]:
 
     # Simulate random failures
     if "error" in url:
-        raise Exception(f"Failed to fetch data from {url}")
+        msg = f"Failed to fetch data from {url}"
+        raise Exception(msg)
 
     # Simulate timeout
     if timeout < 0.2:
-        raise TimeoutError(f"Request timed out after {timeout} seconds")
+        msg = f"Request timed out after {timeout} seconds"
+        raise TimeoutError(msg)
 
     # Return simulated data
     return {"url": url, "timestamp": time.time(), "data": f"Data from {url}"}
 
 
 # Example Sections #
-def basic_decorator_example():
+def basic_decorator_example() -> None:
     """Demonstrates basic usage of BaseDecorator."""
     print("Basic Decorator Example:\n")
 
@@ -296,7 +300,7 @@ def basic_decorator_example():
     print()
 
 
-def decorator_with_arguments_example():
+def decorator_with_arguments_example() -> None:
     """Demonstrates creating decorators that accept arguments."""
     print("Decorator with Arguments Example:\n")
 
@@ -335,7 +339,7 @@ def decorator_with_arguments_example():
     print()
 
 
-async def async_decorator_example():
+async def async_decorator_example() -> None:
     """Demonstrates using BaseDecorator with async functions."""
     print("Async Decorator Example:\n")
 
@@ -375,7 +379,7 @@ async def async_decorator_example():
     print()
 
 
-def decorator_with_state_example():
+def decorator_with_state_example() -> None:
     """Demonstrates creating decorators with state."""
     print("Decorator with State Example:\n")
 
@@ -408,7 +412,7 @@ def decorator_with_state_example():
     print()
 
 
-def pickling_decorator_example():
+def pickling_decorator_example() -> None:
     """Demonstrates pickling and unpickling decorators."""
     print("Pickling Decorator Example:\n")
 

@@ -274,7 +274,7 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
         method = self.create_method_object()
 
         # Create a new scope to control the lifetime of the instance
-        def inner_scope():
+        def inner_scope() -> weakref.ReferenceType[Any]:
             # Create a local instance
             local_instance = self.create_bind_target()
 

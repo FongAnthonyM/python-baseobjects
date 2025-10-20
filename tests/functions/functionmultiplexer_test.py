@@ -44,7 +44,7 @@ def multiply_function(x: int, y: int = 3) -> int:
 class FunctionMultiplexerTestObject:
     """A test class for testing method binding and selection."""
 
-    def __init__(self, value: int = 10):
+    def __init__(self, value: int = 10) -> None:
         """Initialize with a value."""
         self.value = value
 
@@ -67,7 +67,7 @@ class TestFunctionMultiplexer(BaseCallableTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[FunctionMultiplexer] = FunctionMultiplexer
+    TestClass: type[FunctionMultiplexer] = FunctionMultiplexer
 
     # Instance Methods #
     # Fixtures
@@ -243,7 +243,7 @@ class TestFunctionMultiplexer(BaseCallableTestSuite):
         """
 
     @pytest.mark.skip(
-        reason="FunctionMultiplexer doesn't implement the descriptor protocol the same way as BaseCallable"
+        reason="FunctionMultiplexer doesn't implement the descriptor protocol the same way as BaseCallable",
     )
     def test_descriptor_protocol(self, test_method_object: FunctionMultiplexer) -> None:
         """Test that the callable implements the descriptor protocol for method binding.

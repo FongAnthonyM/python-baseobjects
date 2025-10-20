@@ -64,7 +64,7 @@ class TestAutomaticProperties(AutomaticPropertiesTestSuite):
 
         # Validate
         assert hasattr(self.TestClass, "complex_prop")
-        assert isinstance(getattr(self.TestClass, "complex_prop"), property)
+        assert isinstance(self.TestClass.complex_prop, property)
         assert obj.complex_prop == "complex value"
 
     def test_default_property_function_factory(self) -> None:
@@ -87,7 +87,7 @@ class TestAutomaticProperties(AutomaticPropertiesTestSuite):
 
         # Validate
         assert hasattr(TestClass, "default_factory_prop")
-        assert isinstance(getattr(TestClass, "default_factory_prop"), property)
+        assert isinstance(TestClass.default_factory_prop, property)
         assert obj.default_factory_prop == "default factory value"
 
     def test_property_inheritance(self) -> None:
@@ -112,9 +112,9 @@ class TestAutomaticProperties(AutomaticPropertiesTestSuite):
         assert hasattr(ChildClass, "test_prop")
         assert hasattr(ChildClass, "another_prop")
         assert hasattr(ChildClass, "child_prop")
-        assert isinstance(getattr(ChildClass, "test_prop"), property)
-        assert isinstance(getattr(ChildClass, "another_prop"), property)
-        assert isinstance(getattr(ChildClass, "child_prop"), property)
+        assert isinstance(ChildClass.test_prop, property)
+        assert isinstance(ChildClass.another_prop, property)
+        assert isinstance(ChildClass.child_prop, property)
         assert obj.test_prop == "test value"
         assert obj.another_prop == "another value"
         assert obj.child_prop == "child value"

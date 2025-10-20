@@ -32,8 +32,6 @@ from src.baseobjects.testsuite.bases import BaseClassTestSuite
 class BaseTestMeta(BaseMeta):
     """A subclass of BaseMeta for testing purposes."""
 
-    pass
-
 
 class BaseTestClass(metaclass=BaseTestMeta):
     """A class that uses BaseTestMeta as its metaclass."""
@@ -52,13 +50,13 @@ class TestBaseMeta(BaseClassTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BaseMeta] = BaseTestMeta
-    TestBaseClass: Type[BaseTestClass] = BaseTestClass
+    TestClass: type[BaseMeta] = BaseTestMeta
+    TestBaseClass: type[BaseTestClass] = BaseTestClass
 
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_class(self) -> Type:
+    def test_class(self) -> type:
         """Create a test class with the test metaclass.
 
         Returns:
@@ -80,7 +78,7 @@ class TestBaseMeta(BaseClassTestSuite):
         # Validate
         assert TestClass.__class__ is self.TestClass
 
-    def test_class_instance_creation(self, test_class: Type) -> None:
+    def test_class_instance_creation(self, test_class: type) -> None:
         """Test that instances of classes with the metaclass can be created.
 
         Args:

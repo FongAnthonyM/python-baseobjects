@@ -16,7 +16,8 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import timeit
-from typing import Any, Generator, List, Tuple
+from typing import Any, List, Tuple
+from collections.abc import Generator
 
 # Third-Party Packages #
 import pytest
@@ -63,7 +64,7 @@ def standard_iter_public_method_names(obj: Any) -> Generator[str, None, None]:
             yield name
 
 
-def standard_get_method_names(obj: Any) -> Tuple[str, ...]:
+def standard_get_method_names(obj: Any) -> tuple[str, ...]:
     """Standard implementation of get_method_names using a list comprehension.
 
     Args:
@@ -75,7 +76,7 @@ def standard_get_method_names(obj: Any) -> Tuple[str, ...]:
     return tuple(name for name in dir(obj) if callable(getattr(obj, name, None)))
 
 
-def standard_get_public_method_names(obj: Any) -> Tuple[str, ...]:
+def standard_get_public_method_names(obj: Any) -> tuple[str, ...]:
     """Standard implementation of get_public_method_names using a list comprehension.
 
     Args:
@@ -100,31 +101,24 @@ class TestMethodNames(BasePerformanceTestSuite):
 
         def public_method(self) -> None:
             """A public method."""
-            pass
 
         def another_public_method(self) -> None:
             """Another public method."""
-            pass
 
         def third_public_method(self) -> None:
             """A third public method."""
-            pass
 
         def _private_method(self) -> None:
             """A private method."""
-            pass
 
         def _another_private_method(self) -> None:
             """Another private method."""
-            pass
 
         def __dunder_method__(self) -> None:
             """A dunder method."""
-            pass
 
         def __another_dunder_method__(self) -> None:
             """Another dunder method."""
-            pass
 
         @property
         def some_property(self) -> str:
@@ -157,7 +151,7 @@ class TestMethodNames(BasePerformanceTestSuite):
         return self.TestClass()
 
     @pytest.fixture
-    def builtin_object(self) -> List[int]:
+    def builtin_object(self) -> list[int]:
         """Create a built-in object for use in tests.
 
         Returns:
@@ -278,7 +272,7 @@ class TestMethodNames(BasePerformanceTestSuite):
         print(f"\nNew (get_public_method_names): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
         assert percent < self.speed_tolerance
 
-    def test_with_builtin_object_speed(self, builtin_object: List[int]) -> None:
+    def test_with_builtin_object_speed(self, builtin_object: list[int]) -> None:
         """Test the performance of method name functions with a built-in object.
 
         This test compares the speed of the method name functions with a built-in object.

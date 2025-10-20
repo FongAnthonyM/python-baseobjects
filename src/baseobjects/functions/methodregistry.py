@@ -69,7 +69,7 @@ class BaseMethodRegistry(FunctionRegistry, BaseReducible):
 
         # Object Construction #
         if init:
-            self.construct(methods=methods, object_=object_, objects=objects, *args, **kwargs)
+            self.construct(methods, object_, objects, *args, **kwargs)
 
     @property
     def __func__(self) -> FunctionRegistry:
@@ -99,7 +99,7 @@ class BaseMethodRegistry(FunctionRegistry, BaseReducible):
             *args: Arguments for inheritance.
             **kwargs: Keyword arguments for inheritance.
         """
-        super().construct(functions=methods, object_=object_, objects=objects, *args, **kwargs)
+        super().construct(methods, object_, objects, *args, **kwargs)
 
 
 class BoundMethodRegistry(BaseMethodRegistry):
@@ -228,9 +228,6 @@ class BoundMethodRegistry(BaseMethodRegistry):
 
         Returns:
             The function bound as a method to the instance.
-
-        Raises:
-            KeyError: If the key is not found in the registry.
         """
         return MethodType(self.data[key], self._self_())
 

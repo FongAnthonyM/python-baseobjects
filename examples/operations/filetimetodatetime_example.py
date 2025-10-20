@@ -20,7 +20,7 @@ from baseobjects.operations import filetime_to_datetime
 
 
 # Example Sections #
-def basic_usage_example():
+def basic_usage_example() -> None:
     """Demonstrate basic usage of filetime_to_datetime."""
     print("\nBasic filetime_to_datetime Usage:")
 
@@ -43,7 +43,7 @@ def basic_usage_example():
     print("Expected: UTC")
 
 
-def different_types_example():
+def different_types_example() -> None:
     """Demonstrate converting different types of filetime values."""
     print("\nDifferent Types Example:")
 
@@ -81,7 +81,7 @@ def different_types_example():
     print(f"  All equal: {dt_from_int == dt_from_float == dt_from_str == dt_from_bytes}")
 
 
-def timezone_example():
+def timezone_example() -> None:
     """Demonstrate working with different timezones."""
     print("\nTimezone Example:")
 
@@ -126,7 +126,7 @@ def timezone_example():
     print("  Expected difference: 5 hours")
 
 
-def current_filetime_example():
+def current_filetime_example() -> None:
     """Demonstrate converting current time to filetime and back."""
     print("\nCurrent Filetime Example:")
 
@@ -155,7 +155,7 @@ def current_filetime_example():
     print("Expected: Close to 0 seconds (allowing for processing time)")
 
 
-def practical_example():
+def practical_example() -> None:
     """Demonstrate a practical use case for filetime_to_datetime."""
     print("\nPractical Example - Windows File Metadata:")
 
@@ -202,7 +202,7 @@ def practical_example():
     print(f"Accessed: {access_dt.strftime(date_format)}")
 
 
-def error_handling_example():
+def error_handling_example() -> None:
     """Demonstrate error handling with filetime_to_datetime."""
     print("\nError Handling Example:")
 

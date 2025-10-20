@@ -20,7 +20,8 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import asyncio
-from typing import Any, Callable, Type
+from typing import Any, Type
+from collections.abc import Callable
 
 # Third-Party Packages #
 import pytest
@@ -66,7 +67,7 @@ def instance_method(self, x: int, y: int = 2) -> tuple[int, Any]:
 class DynamicFunctionTestObject:
     """A test class for testing method binding and selection."""
 
-    def __init__(self, value: int = 10):
+    def __init__(self, value: int = 10) -> None:
         """Initialize with a value."""
         self.value = value
 
@@ -88,7 +89,7 @@ class TestDynamicFunction(DynamicFunctionTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[DynamicFunction] = DynamicFunction
+    TestClass: type[DynamicFunction] = DynamicFunction
 
     # Instance Methods #
     def create_test_method_object(self) -> DynamicFunction:

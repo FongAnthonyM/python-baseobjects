@@ -1,15 +1,15 @@
 """staticwrapper.py
 A wrapper that creates property descriptors for wrapped objects' attributes and methods.
 
-StaticWrapper calls wrapped attributes/functions by creating property descriptor objects for each of the wrapped objects'
-attributes/functions. There are some limitations to how StaticWrapper can be used. First, for any given subclass of
-StaticWrapper all object instances must contain the same wrapped object types because descriptors are handled at the
-class scope. Second, creating property descriptors does not happen automatically, creation must be invoked through the
-_wrap method. This means a subclass must call _wrap to initialize at some point. Also, if the wrapped objects create new
-attributes/functions afterwards, then _wrap or _rewrap must be called to add the new attributes/functions. Overall, this
-means subclasses should be designed to wrap the same objects and be used to wrap objects that do not create new
-attributes/functions after initialization. These limitations are strict, but it leads to great performance preservation
-when compared to normal object attribute/method access.
+StaticWrapper calls wrapped attributes/functions by creating property descriptor objects for each of the wrapped
+objects' attributes/functions. There are some limitations to how StaticWrapper can be used. First, for any given
+subclass of StaticWrapper all object instances must contain the same wrapped object types because descriptors are
+handled at the class scope. Second, creating property descriptors does not happen automatically, creation must be
+invoked through the _wrap method. This means a subclass must call _wrap to initialize at some point. Also, if the
+wrapped objects create new attributes/functions afterwards, then _wrap or _rewrap must be called to add the new
+attributes/functions. Overall, this means subclasses should be designed to wrap the same objects and be used to wrap
+objects that do not create new attributes/functions after initialization. These limitations are strict, but it leads to
+great performance preservation when compared to normal object attribute/method access.
 """
 
 # Header #
@@ -25,7 +25,6 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from builtins import property
 from functools import partial, partialmethod
 from types import MethodDescriptorType
 from typing import Any, ClassVar, get_type_hints
@@ -46,9 +45,9 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
     _wrapped_map_ list.
 
     This object does not truly use method resolution, but instead creates property descriptors that call the
-    attributes/functions of the wrapped objects. To create the property descriptors the _wrap method must be called after
-    the objects to wrap are stored in this object. Keep in mind, all objects of this class must have the same type of
-    wrapped objects, because descriptors are on the class scope. Additionally, this object cannot detect when wrapped
+    attributes/functions of the wrapped objects. To create the property descriptors the _wrap method must be called
+    after the objects to wrap are stored in this object. Keep in mind, all objects of this class must have the same type
+    of wrapped objects, because descriptors are on the class scope. Additionally, this object cannot detect when wrapped
     objects create new or delete attributes/functions. Therefore, subclasses, or the user, must decide when to call
     _wrap to ensure all the attributes/functions are present. This object is best used to wrap frozen objects or ones
     that do not create or delete attributes/functions after initialization.

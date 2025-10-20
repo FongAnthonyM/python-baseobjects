@@ -22,7 +22,8 @@ import asyncio
 import copy
 import pickle
 from functools import partial
-from typing import Any, Callable, Type, Union
+from typing import Any, Type, Union
+from collections.abc import Callable
 
 # Third-Party Packages #
 import pytest
@@ -50,7 +51,7 @@ def _(x: str, y: int = 2) -> Any:
 
 
 @singlekwargdispatch(kwarg="x")
-def dispatch_kwarg_function(x: int | str = None, y: int = 2) -> Any:
+def dispatch_kwarg_function(x: int | str | None = None, y: int = 2) -> Any:
     return f"Default: {x}, {y}"
 
 

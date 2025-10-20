@@ -50,7 +50,7 @@ class TestNamespaceRegisteredClass(NamespaceRegisteredClassTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[ExampleNamespaceRegisteredClass] = ExampleNamespaceRegisteredClass
+    TestClass: type[ExampleNamespaceRegisteredClass] = ExampleNamespaceRegisteredClass
 
     # Instance Methods #
     # Tests

@@ -27,7 +27,7 @@ class SimpleClassRegistry(BaseClassRegistry):
     This registry uses class names as keys to store and retrieve classes.
     """
 
-    def register_class(self, cls: type, name: str = None, **kwargs: Any) -> None:
+    def register_class(self, cls: type, name: str | None = None, **kwargs: Any) -> None:
         """Registers a class with the given name.
 
         Args:
@@ -40,7 +40,7 @@ class SimpleClassRegistry(BaseClassRegistry):
 
         self[name] = cls
 
-    def get_class(self, name: str, default: Any = None) -> Type:
+    def get_class(self, name: str, default: Any = None) -> type:
         """Gets a class from the registry by name.
 
         Args:
@@ -61,12 +61,12 @@ class Shape(BaseRegisteredClass):
     """
 
     # Class Attributes #
-    class_registry_type: ClassVar[Type[BaseClassRegistry]] = SimpleClassRegistry
+    class_registry_type: ClassVar[type[BaseClassRegistry]] = SimpleClassRegistry
     class_registration: ClassVar[bool] = True
 
     # Class Methods #
     @classmethod
-    def register_class(cls, name: str = None) -> None:
+    def register_class(cls, name: str | None = None) -> None:
         """Register this class in the class registry.
 
         Args:
@@ -81,7 +81,7 @@ class Shape(BaseRegisteredClass):
         cls.class_registry.register_class(cls, name=name)
 
     @classmethod
-    def get_registered_class(cls, name: str) -> Optional[Type["Shape"]]:
+    def get_registered_class(cls, name: str) -> type["Shape"] | None:
         """Get a registered class by name.
 
         Args:
@@ -287,7 +287,7 @@ class Triangle(Shape):
 
 # Functions #
 # Example Sections #
-def automatic_class_registration():
+def automatic_class_registration() -> None:
     """Demonstrates automatic registration of subclasses."""
     print("Automatic Class Registration:\n")
 
@@ -313,7 +313,7 @@ def automatic_class_registration():
     print()
 
 
-def creating_instances_from_registry():
+def creating_instances_from_registry() -> None:
     """Demonstrates creating instances from registered classes."""
     print("Creating Instances from Registry:\n")
 
@@ -352,7 +352,7 @@ def creating_instances_from_registry():
     print()
 
 
-def manual_class_registration():
+def manual_class_registration() -> None:
     """Demonstrates manual registration of classes."""
     print("Manual Class Registration:\n")
 
@@ -422,7 +422,7 @@ def manual_class_registration():
     print()
 
 
-def shape_factory():
+def shape_factory() -> None:
     """Demonstrates using the class registry as a factory for shapes."""
     print("Shape Factory:\n")
 
@@ -443,7 +443,8 @@ def shape_factory():
         """
         shape_class = Shape.get_registered_class(shape_type)
         if shape_class is None:
-            raise ValueError(f"Unknown shape type: {shape_type}")
+            msg = f"Unknown shape type: {shape_type}"
+            raise ValueError(msg)
         return shape_class(name, **kwargs)
 
     # Use the factory to create shapes

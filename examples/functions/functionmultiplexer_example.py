@@ -71,13 +71,14 @@ class FunctionProcessor:
             KeyError: If the operation is not in the registry.
         """
         if operation_name not in self.registry:
-            raise KeyError(f"Operation '{operation_name}' not found in registry")
+            msg = f"Operation '{operation_name}' not found in registry"
+            raise KeyError(msg)
 
         self.multiplexer.select(operation_name)
 
 
 # Functions #
-def function_processor_example():
+def function_processor_example() -> None:
     """Demonstrates using FunctionMultiplexer in a practical application."""
     print("FunctionProcessor Example:\n")
 

@@ -15,7 +15,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Generator
+from collections.abc import Generator
 
 # Third-Party Packages #
 import pytest
@@ -43,19 +43,15 @@ class TestMethodNames:
 
         def public_method(self) -> None:
             """A public method."""
-            pass
 
         def another_public_method(self) -> None:
             """Another public method."""
-            pass
 
         def _private_method(self) -> None:
             """A private method."""
-            pass
 
         def __dunder_method__(self) -> None:
             """A dunder method."""
-            pass
 
         @property
         def some_property(self) -> str:

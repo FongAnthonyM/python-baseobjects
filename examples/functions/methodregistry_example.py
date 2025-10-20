@@ -12,7 +12,8 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
+from collections.abc import Callable
 
 # Source Packages #
 from baseobjects.functions import FunctionRegistry, MethodRegistry
@@ -76,7 +77,8 @@ class MathOperations:
             ValueError: If attempting to divide by zero.
         """
         if b == 0:
-            raise ValueError("Cannot divide by zero")
+            msg = "Cannot divide by zero"
+            raise ValueError(msg)
         return a / b
 
 
@@ -185,12 +187,13 @@ class OperationsContainer:
             KeyError: If the method is not in the registry.
         """
         if method_name not in self.methods:
-            raise KeyError(f"Method '{method_name}' not found in registry")
+            msg = f"Method '{method_name}' not found in registry"
+            raise KeyError(msg)
 
         method = self.methods[method_name]
         return method(*args, **kwargs)
 
-    def list_methods(self) -> List[str]:
+    def list_methods(self) -> list[str]:
         """List all methods in the registry.
 
         Returns:
@@ -252,7 +255,8 @@ class MultiOperationsContainer:
             KeyError: If the method is not in the registry.
         """
         if method_name not in self.math_methods:
-            raise KeyError(f"Math method '{method_name}' not found in registry")
+            msg = f"Math method '{method_name}' not found in registry"
+            raise KeyError(msg)
 
         method = self.math_methods[method_name]
         return method(*args, **kwargs)
@@ -272,12 +276,13 @@ class MultiOperationsContainer:
             KeyError: If the method is not in the registry.
         """
         if method_name not in self.string_methods:
-            raise KeyError(f"String method '{method_name}' not found in registry")
+            msg = f"String method '{method_name}' not found in registry"
+            raise KeyError(msg)
 
         method = self.string_methods[method_name]
         return method(*args, **kwargs)
 
-    def list_math_methods(self) -> List[str]:
+    def list_math_methods(self) -> list[str]:
         """List all math methods in the registry.
 
         Returns:
@@ -285,7 +290,7 @@ class MultiOperationsContainer:
         """
         return list(self.math_methods.keys())
 
-    def list_string_methods(self) -> List[str]:
+    def list_string_methods(self) -> list[str]:
         """List all string methods in the registry.
 
         Returns:
@@ -296,7 +301,7 @@ class MultiOperationsContainer:
 
 # Functions #
 # Example Sections #
-def basic_method_registry():
+def basic_method_registry() -> None:
     """Demonstrates basic usage of MethodRegistry."""
     print("Basic MethodRegistry Usage:\n")
 
@@ -304,7 +309,7 @@ def basic_method_registry():
     class Example:
         methods = MethodRegistry()
 
-        def __init__(self, name):
+        def __init__(self, name) -> None:
             self.name = name
 
     # Create instances of the class
@@ -345,7 +350,7 @@ def basic_method_registry():
     print()
 
 
-def method_registry_vs_function_registry():
+def method_registry_vs_function_registry() -> None:
     """Demonstrates the difference between MethodRegistry and FunctionRegistry."""
     print("MethodRegistry vs FunctionRegistry:\n")
 
@@ -354,7 +359,7 @@ def method_registry_vs_function_registry():
         method_registry = MethodRegistry()
         function_registry = FunctionRegistry()
 
-        def __init__(self, name):
+        def __init__(self, name) -> None:
             self.name = name
 
     # Create instances of the class
@@ -382,10 +387,10 @@ def method_registry_vs_function_registry():
     # Show that method_registry instances are different for each instance
     print("\nRegistry instances:")
     print(
-        f"instance1.method_registry is instance2.method_registry: {instance1.method_registry is instance2.method_registry}"
+        f"instance1.method_registry is instance2.method_registry: {instance1.method_registry is instance2.method_registry}",
     )
     print(
-        f"instance1.function_registry is instance2.function_registry: {instance1.function_registry is instance2.function_registry}"
+        f"instance1.function_registry is instance2.function_registry: {instance1.function_registry is instance2.function_registry}",
     )
 
     # Use methods from both registries
@@ -443,7 +448,7 @@ def method_registry_vs_function_registry():
     print()
 
 
-def operations_container_example():
+def operations_container_example() -> None:
     """Demonstrates using MethodRegistry in a practical application."""
     print("OperationsContainer Example:\n")
 
@@ -501,7 +506,7 @@ def operations_container_example():
     print()
 
 
-def multi_operations_container_example():
+def multi_operations_container_example() -> None:
     """Demonstrates using multiple MethodRegistry instances in a class."""
     print("MultiOperationsContainer Example:\n")
 
@@ -538,13 +543,13 @@ def multi_operations_container_example():
     print()
 
 
-def method_binding_example():
+def method_binding_example() -> None:
     """Demonstrates how MethodRegistry binds methods to instances."""
     print("Method Binding Example:\n")
 
     # Create a class with instance methods
     class Example:
-        def __init__(self, name, value):
+        def __init__(self, name, value) -> None:
             self.name = name
             self.value = value
 

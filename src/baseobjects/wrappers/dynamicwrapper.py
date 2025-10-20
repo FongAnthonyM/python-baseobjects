@@ -32,14 +32,14 @@ class DynamicWrapper(BaseObject):
     When an object of this class has an attribute/method call it will call a listed object's attribute/method. This is
     similar to what an @property decorator can do but without having to write a decorator for each attribute. Attribute/
     method calling is done dynamically where the objects in the list can change during runtime so the available
-    attributes/functions will change based on the objects in the list. Since the available attributes/functions cannot be
-    evaluated until runtime, an IDE's auto-complete cannot display all the callable options.
+    attributes/functions will change based on the objects in the list. Since the available attributes/functions cannot
+    be evaluated until runtime, an IDE's auto-complete cannot display all the callable options.
 
-    _wrapped_map_ is the list of attributes which contain the objects that will be used for the dynamic calling. This class
-    and its subclasses can still have its own defined attributes and functions that are called. The attribute/method
-    that is called is handled in the same manner as inheritance where it will check if the attribute/method is present
-    in this object, if not, it will check in the next object in the list. Therefore, it is important to ensure the order
-    of _attribute_as_parents is the order of descending inheritance.
+    _wrapped_map_ is the list of attributes which contain the objects that will be used for the dynamic calling. This
+    class and its subclasses can still have its own defined attributes and functions that are called. The
+    attribute/method that is called is handled in the same manner as inheritance where it will check if the
+    attribute/method is present in this object, if not, it will check in the next object in the list. Therefore, it is
+    important to ensure the order of _attribute_as_parents is the order of descending inheritance.
 
     Class Attributes:
         _wrapped_map_: The list of attribute names that will contain the objects to dynamically wrap where the order is

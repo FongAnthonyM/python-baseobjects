@@ -88,7 +88,7 @@ class NameComponent(BaseComponent):
 
 # Functions #
 # Example Sections #
-def basic_component_usage():
+def basic_component_usage() -> None:
     """Demonstrates basic usage of components with a composite."""
     print("Basic Component Usage:\n")
 
@@ -120,7 +120,7 @@ def basic_component_usage():
     print()
 
 
-def multiple_components():
+def multiple_components() -> None:
     """Demonstrates using multiple components with a single composite."""
     print("Multiple Components with a Single Composite:\n")
 
@@ -149,7 +149,7 @@ def multiple_components():
     print()
 
 
-def component_serialization():
+def component_serialization() -> None:
     """Demonstrates serialization and deserialization of components."""
     print("Component Serialization and Deserialization:\n")
 
@@ -189,7 +189,7 @@ def component_serialization():
     print()
 
 
-def component_construction():
+def component_construction() -> None:
     """Demonstrates different ways to construct components."""
     print("Component Construction Methods:\n")
 

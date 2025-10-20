@@ -78,11 +78,13 @@ class WrappingDynamicCallable(DynamicCallable):
         # Simple validation: check if any argument is None
         for arg in args:
             if arg is None:
-                raise ValueError("None values are not allowed")
+                msg = "None values are not allowed"
+                raise ValueError(msg)
 
         for key, value in kwargs.items():
             if value is None:
-                raise ValueError(f"None value for {key} is not allowed")
+                msg = f"None value for {key} is not allowed"
+                raise ValueError(msg)
 
         return self.__wrapped__(*args, **kwargs)
 
@@ -94,7 +96,7 @@ class NonWrappingDynamicCallable(DynamicCallable):
     its own functionality directly through custom methods registered with the call_multiplexer.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         """Initialize the NonWrappingDynamicCallable.
 
         This constructor initializes the object without requiring a wrapped function. It registers custom methods with
@@ -160,17 +162,18 @@ class NonWrappingDynamicCallable(DynamicCallable):
             ZeroDivisionError: If b is zero.
         """
         if b == 0:
-            raise ZeroDivisionError("Cannot divide by zero")
+            msg = "Cannot divide by zero"
+            raise ZeroDivisionError(msg)
         return a / b
 
 
 class ExampleClass:
     """A class to demonstrate using DynamicCallable as a descriptor."""
 
-    def __init__(self, name):
+    def __init__(self, name) -> None:
         self.name = name
 
-    def greet(self, name):
+    def greet(self, name) -> str:
         """A static method that greets a person."""
         return f"Hello, {name}! I'm {self.name}!"
 
@@ -188,7 +191,7 @@ def example_function(a, b):
 
 
 # Example Sections #
-def basic_dynamiccallable_usage():
+def basic_dynamiccallable_usage() -> None:
     """Demonstrates basic usage of DynamicCallable."""
     print("Basic DynamicCallable Usage:\n")
 
@@ -220,7 +223,7 @@ def basic_dynamiccallable_usage():
     print()
 
 
-def wrapping_dynamiccallable_usage():
+def wrapping_dynamiccallable_usage() -> None:
     """Demonstrates usage of a wrapping DynamicCallable with additional methods."""
     print("Wrapping DynamicCallable Usage:\n")
 
@@ -251,7 +254,7 @@ def wrapping_dynamiccallable_usage():
     print()
 
 
-def dynamiccallable_as_descriptor():
+def dynamiccallable_as_descriptor() -> None:
     """Demonstrates using DynamicCallable as a descriptor."""
     print("DynamicCallable as Descriptor:\n")
 
@@ -277,7 +280,7 @@ def dynamiccallable_as_descriptor():
     print()
 
 
-def multiplexer_exploration():
+def multiplexer_exploration() -> None:
     """Explores the multiplexers in DynamicCallable."""
     print("Multiplexer Exploration:\n")
 
@@ -319,7 +322,7 @@ def multiplexer_exploration():
     print()
 
 
-def nonwrapping_dynamiccallable_usage():
+def nonwrapping_dynamiccallable_usage() -> None:
     """Demonstrates usage of a non-wrapping DynamicCallable with direct functionality."""
     print("Non-Wrapping DynamicCallable Usage:\n")
 
@@ -359,7 +362,7 @@ def nonwrapping_dynamiccallable_usage():
     print()
 
 
-def pickling_dynamiccallable():
+def pickling_dynamiccallable() -> None:
     """Demonstrates pickling and unpickling a DynamicCallable."""
     print("Pickling DynamicCallable:\n")
 

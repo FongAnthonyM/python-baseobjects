@@ -21,7 +21,8 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import copy
 import pickle
-from typing import Any, Callable, Dict, Type
+from typing import Any, Dict, Type
+from collections.abc import Callable
 
 # Third-Party Packages #
 import pytest
@@ -86,12 +87,12 @@ class TestBaseMethodRegistry(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BaseMethodRegistry] = BaseMethodRegistry
+    TestClass: type[BaseMethodRegistry] = BaseMethodRegistry
 
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_methods(self) -> Dict[str, Callable]:
+    def test_methods(self) -> dict[str, Callable]:
         """Create a dictionary of test methods.
 
         Returns:
@@ -121,7 +122,7 @@ class TestBaseMethodRegistry(BaseObjectTestSuite):
         return RegistryTestObject()
 
     @pytest.fixture
-    def populated_registry(self, test_methods: Dict[str, Callable]) -> BaseMethodRegistry:
+    def populated_registry(self, test_methods: dict[str, Callable]) -> BaseMethodRegistry:
         """Create a BaseMethodRegistry populated with test methods.
 
         Args:
@@ -271,7 +272,7 @@ class TestBaseMethodRegistry(BaseObjectTestSuite):
         assert len(registry) == 0
         assert isinstance(registry.data, FunctionRegistry)
 
-    def test_init_with_methods(self, test_methods: Dict[str, Callable]) -> None:
+    def test_init_with_methods(self, test_methods: dict[str, Callable]) -> None:
         """Test initialization with methods.
 
         This test verifies that BaseMethodRegistry can be initialized with a dictionary of methods.
@@ -342,7 +343,7 @@ class TestBaseMethodRegistry(BaseObjectTestSuite):
         assert registry["static_method"]() == RegistryTestObject.static_method()
         assert registry["class_method"](RegistryTestObject) == RegistryTestObject.class_method()
 
-    def test_construct(self, test_methods: Dict[str, Callable], test_instance: RegistryTestObject) -> None:
+    def test_construct(self, test_methods: dict[str, Callable], test_instance: RegistryTestObject) -> None:
         """Test the construct method.
 
         This test verifies that the construct method correctly sets up the registry.
@@ -423,7 +424,7 @@ class TestBaseMethodRegistry(BaseObjectTestSuite):
 
         # Create an object with non-callable attributes
         class ObjectWithAttributes:
-            def __init__(self):
+            def __init__(self) -> None:
                 self.attr1 = "value1"
                 self.attr2 = 42
                 self.attr3 = [1, 2, 3]
@@ -541,12 +542,12 @@ class TestBoundMethodRegistry(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BoundMethodRegistry] = BoundMethodRegistry
+    TestClass: type[BoundMethodRegistry] = BoundMethodRegistry
 
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_methods(self) -> Dict[str, Callable]:
+    def test_methods(self) -> dict[str, Callable]:
         """Create a dictionary of test methods.
 
         Returns:
@@ -576,7 +577,7 @@ class TestBoundMethodRegistry(BaseObjectTestSuite):
         return RegistryTestObject()
 
     @pytest.fixture
-    def base_registry(self, test_methods: Dict[str, Callable]) -> BaseMethodRegistry:
+    def base_registry(self, test_methods: dict[str, Callable]) -> BaseMethodRegistry:
         """Create a BaseMethodRegistry populated with test methods.
 
         Args:
@@ -589,7 +590,7 @@ class TestBoundMethodRegistry(BaseObjectTestSuite):
 
     @pytest.fixture
     def bound_registry(
-        self, base_registry: BaseMethodRegistry, test_instance: RegistryTestObject
+        self, base_registry: BaseMethodRegistry, test_instance: RegistryTestObject,
     ) -> BoundMethodRegistry:
         """Create a BoundMethodRegistry bound to a test instance.
 
@@ -746,7 +747,7 @@ class TestBoundMethodRegistry(BaseObjectTestSuite):
         # Pickle and Unpickle Object
         items = (bound_registry, test_instance)
         pickled = pickle.dumps(items)
-        unpickled_registry, unpickled_instance = pickle.loads(pickled)
+        unpickled_registry, _unpickled_instance = pickle.loads(pickled)
 
         # Validate
         assert unpickled_registry is not bound_registry
@@ -760,7 +761,7 @@ class TestBoundMethodRegistry(BaseObjectTestSuite):
         assert unpickled_registry.__owner__ is bound_registry.__owner__
 
     def test_init_with_registry_and_instance(
-        self, base_registry: BaseMethodRegistry, test_instance: RegistryTestObject
+        self, base_registry: BaseMethodRegistry, test_instance: RegistryTestObject,
     ) -> None:
         """Test initialization with a registry and instance.
 
@@ -852,12 +853,12 @@ class TestMethodRegistry(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[MethodRegistry] = MethodRegistry
+    TestClass: type[MethodRegistry] = MethodRegistry
 
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_methods(self) -> Dict[str, Callable]:
+    def test_methods(self) -> dict[str, Callable]:
         """Create a dictionary of test methods.
 
         Returns:
@@ -887,7 +888,7 @@ class TestMethodRegistry(BaseObjectTestSuite):
         return RegistryTestObject()
 
     @pytest.fixture
-    def populated_registry(self, test_methods: Dict[str, Callable]) -> MethodRegistry:
+    def populated_registry(self, test_methods: dict[str, Callable]) -> MethodRegistry:
         """Create a MethodRegistry populated with test methods.
 
         Args:

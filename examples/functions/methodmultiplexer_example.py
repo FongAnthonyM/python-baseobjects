@@ -75,7 +75,8 @@ class MathOperations:
             ValueError: If attempting to divide by zero.
         """
         if b == 0:
-            raise ValueError("Cannot divide by zero")
+            msg = "Cannot divide by zero"
+            raise ValueError(msg)
         return a / b
 
 
@@ -187,13 +188,14 @@ class MethodProcessor:
             KeyError: If the operation is not in the registry.
         """
         if operation_name not in self.registry:
-            raise KeyError(f"Operation '{operation_name}' not found in registry")
+            msg = f"Operation '{operation_name}' not found in registry"
+            raise KeyError(msg)
 
         self.multiplexer.select(operation_name)
 
 
 # Functions #
-def method_processor_example():
+def method_processor_example() -> None:
     """Demonstrates using MethodMultiplexer in a practical application."""
     print("MethodProcessor Example:\n")
 
@@ -222,7 +224,7 @@ def method_processor_example():
     print()
 
 
-def dynamic_method_multiplexer_example():
+def dynamic_method_multiplexer_example() -> None:
     """Demonstrates MethodMultiplexer's ability to dynamically select methods from the instance it wraps.
 
     This example highlights how MethodMultiplexer can directly access and bind methods from the wrapped
@@ -232,7 +234,7 @@ def dynamic_method_multiplexer_example():
 
     # Create a class with various methods that we'll dynamically select between
     class DataProcessor:
-        def __init__(self, name):
+        def __init__(self, name) -> None:
             self.name = name
             self.data = {"numbers": [1, 2, 3, 4, 5], "text": "Hello World", "mixed": [10, "abc", 30, "xyz"]}
 
@@ -281,7 +283,7 @@ def dynamic_method_multiplexer_example():
             return self.method_selector()
 
         # Method to change the selected method
-        def set_processor(self, method_name):
+        def set_processor(self, method_name) -> str:
             """Change the processing method.
 
             Args:

@@ -22,7 +22,7 @@ from baseobjects.bases import BaseReducible
 class Person(BaseReducible):
     """A simple class that inherits from BaseReducible using __dict__."""
 
-    def __init__(self, name: str = "", age: int = 0, *args: Any, **kwargs: Any):
+    def __init__(self, name: str = "", age: int = 0, *args: Any, **kwargs: Any) -> None:
         """Initialize a Person object.
 
         Args:
@@ -51,9 +51,9 @@ class Person(BaseReducible):
 class SlottedPerson(BaseReducible):
     """A class that inherits from BaseReducible using __slots__."""
 
-    __slots__ = ("name", "age", "friends")
+    __slots__ = ("age", "friends", "name")
 
-    def __init__(self, name: str = "", age: int = 0, *args: Any, **kwargs: Any):
+    def __init__(self, name: str = "", age: int = 0, *args: Any, **kwargs: Any) -> None:
         """Initialize a SlottedPerson object.
 
         Args:
@@ -82,9 +82,9 @@ class SlottedPerson(BaseReducible):
 class HybridPerson(BaseReducible):
     """A class that inherits from BaseReducible using both __slots__ and __dict__."""
 
-    __slots__ = ("name", "age")
+    __slots__ = ("age", "name")
 
-    def __init__(self, name: str = "", age: int = 0, *args: Any, **kwargs: Any):
+    def __init__(self, name: str = "", age: int = 0, *args: Any, **kwargs: Any) -> None:
         """Initialize a HybridPerson object.
 
         Args:
@@ -112,7 +112,7 @@ class HybridPerson(BaseReducible):
 
 
 # Example Sections #
-def dict_based_example():
+def dict_based_example() -> None:
     """Demonstrate pickling and unpickling of dict-based BaseReducible objects."""
     print("\nDict-Based BaseReducible Example:")
 
@@ -147,7 +147,7 @@ def dict_based_example():
     print(f"Same friends object? {id(person.friends) == id(unpickled_person.friends)} == False")
 
 
-def slotted_example():
+def slotted_example() -> None:
     """Demonstrate pickling and unpickling of slotted BaseReducible objects."""
     print("\nSlotted BaseReducible Example:")
 
@@ -189,7 +189,7 @@ def slotted_example():
         print(f"Attribute assignment failed as expected: {e}")
 
 
-def hybrid_example():
+def hybrid_example() -> None:
     """Demonstrate pickling and unpickling of hybrid BaseReducible objects with both __slots__ and __dict__."""
     print("\nHybrid BaseReducible Example:")
 

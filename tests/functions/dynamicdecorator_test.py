@@ -20,7 +20,8 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import asyncio
-from typing import Any, Callable, Type
+from typing import Any, Type
+from collections.abc import Callable
 
 # Third-Party Packages #
 import pytest
@@ -52,7 +53,7 @@ def multiply_function(x: int, y: int = 3) -> int:
 class TestClass:
     """A test class for testing decorator binding."""
 
-    def __init__(self, value: int = 10):
+    def __init__(self, value: int = 10) -> None:
         """Initialize with a value."""
         self.value = value
 
@@ -74,7 +75,7 @@ class TestDynamicDecorator(DynamicDecoratorTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[DynamicDecorator] = DynamicDecorator
+    TestClass: type[DynamicDecorator] = DynamicDecorator
 
     # Instance Methods #
     def create_test_method_object(self) -> DynamicDecorator:

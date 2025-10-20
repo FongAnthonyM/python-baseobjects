@@ -15,15 +15,16 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, UTC
 from datetime import tzinfo as TZInfo
 
 # Local Packages #
 from ..functions import singlekwargdispatch
 
+
 # Definitions #
 # Constants #
-EXCEL_INIT_DATE = datetime(1899, 12, 30)  # The initial date of Filetime.
+EXCEL_INIT_DATE = datetime(1899, 12, 30, tzinfo=UTC)  # The initial date of Filetime.
 
 
 # Functions #
@@ -37,6 +38,9 @@ def excel_date_to_datetime(timestamp: int | float | str | bytes, tzinfo: TZInfo 
 
     Returns:
         The datetime of the filetime.
+
+    Raises:
+        TypeError: If the provided timestamp type is unsupported.
     """
     msg = f"{timestamp.__class__} cannot be converted to a datetime"
     raise TypeError(msg)

@@ -40,7 +40,7 @@ class TestGroupedList(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[GroupedList] = GroupedList
+    TestClass: type[GroupedList] = GroupedList
 
     # Instance Methods #
     # Fixtures
@@ -917,14 +917,14 @@ class TestGroupedList(BaseObjectTestSuite):
         assert result.data == [1, 2, 3, 4, 5, 6, 7, 8]
 
         # Right addition
-        result = [6, 7, 8] + simple_list
+        result = [6, 7, 8, *simple_list]
         assert isinstance(result, GroupedList)
         assert result.data == [6, 7, 8, 1, 2, 3, 4, 5]
 
         # In-place addition
         original = simple_list.copy()
         simple_list += [6, 7, 8]
-        assert simple_list.data == original.data + [6, 7, 8]
+        assert simple_list.data == [*original.data, 6, 7, 8]
 
         # Multiplication
         result = simple_list * 2

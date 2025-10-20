@@ -33,7 +33,7 @@ class Person(BaseObject):
     This class demonstrates a basic implementation of BaseObject for testing.
     """
 
-    def __init__(self, name: str, age: int, email: Optional[str] = None) -> None:
+    def __init__(self, name: str, age: int, email: str | None = None) -> None:
         """Initialize a person with a name, age, and optional email.
 
         Args:
@@ -85,7 +85,7 @@ class Employee(Person):
     """
 
     def __init__(
-        self, name: str, age: int, email: Optional[str], employee_id: str, department: str, salary: float
+        self, name: str, age: int, email: str | None, employee_id: str, department: str, salary: float,
     ) -> None:
         """Initialize an employee with personal and employment information.
 
@@ -212,7 +212,7 @@ class PersonTestSuite(BaseObjectTestSuite):
         assert id(obj_copy) != id(test_object)  # Different objects
         assert obj_copy.id == test_object.id  # Same id value (copied)
 
-    def test_deepcopy(self, test_object: Person, memo: dict = None) -> None:
+    def test_deepcopy(self, test_object: Person, memo: dict | None = None) -> None:
         """Test the deep copy behavior of the Person class.
 
         Args:
@@ -240,7 +240,7 @@ class PersonTestSuite(BaseObjectTestSuite):
         assert id(obj_deepcopy) != id(test_object)  # Different objects
         assert obj_deepcopy.id == test_object.id  # Same id value (copied)
 
-    def test_deepcopy_method(self, test_object: Person, memo: dict = None) -> None:
+    def test_deepcopy_method(self, test_object: Person, memo: dict | None = None) -> None:
         """Test the deepcopy method of the Person class.
 
         Args:
@@ -342,7 +342,7 @@ class PersonTestSuite(BaseObjectTestSuite):
 
 # Functions #
 # Example Sections #
-def test_suite_overview():
+def test_suite_overview() -> None:
     """Demonstrates the basic structure and usage of the test suite."""
     print("Test Suite Overview:\n")
 
@@ -374,7 +374,7 @@ def test_suite_overview():
     print()
 
 
-def testing_object_copying():
+def testing_object_copying() -> None:
     """Demonstrates testing object copying functionality."""
     print("Testing Object Copying:\n")
 
@@ -424,7 +424,7 @@ def testing_object_copying():
     print()
 
 
-def testing_object_pickling():
+def testing_object_pickling() -> None:
     """Demonstrates testing object pickling functionality."""
     print("Testing Object Pickling:\n")
 
@@ -453,7 +453,7 @@ def testing_object_pickling():
     print()
 
 
-def running_tests_manually():
+def running_tests_manually() -> None:
     """Demonstrates how to run tests manually without pytest."""
     print("Running Tests Manually:\n")
 
@@ -507,7 +507,7 @@ def running_tests_manually():
     print()
 
 
-def extending_test_suite():
+def extending_test_suite() -> None:
     """Demonstrates how to extend the test suite with additional tests."""
     print("Extending Test Suite:\n")
 

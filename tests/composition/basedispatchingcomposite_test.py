@@ -46,7 +46,7 @@ class ExampleDispatchingCompositeClass(BaseDispatchingComposite):
 
     # Class Attributes #
     default_component_types: ClassVar[dict[str, tuple[type, dict[str, Any]]]] = {
-        "default_component": (ExampleComponentClass, {})
+        "default_component": (ExampleComponentClass, {}),
     }
 
     # Magic Methods #
@@ -140,8 +140,8 @@ class TestBaseDispatchingComposite(BaseDispatchingCompositeTestSuite):
     """
 
     # Attributes #
-    TestComponent: Type[BaseComponent] = ExampleComponentClass
-    TestClass: Type[BaseDispatchingComposite] = ExampleDispatchingCompositeClass
+    TestComponent: type[BaseComponent] = ExampleComponentClass
+    TestClass: type[BaseDispatchingComposite] = ExampleDispatchingCompositeClass
 
     # Instance Methods #
     # Tests

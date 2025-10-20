@@ -18,7 +18,7 @@ from baseobjects.collections import TimedDict
 
 
 # Example Sections #
-def basic_usage_example():
+def basic_usage_example() -> None:
     """Demonstrate basic usage of TimedDict."""
     print("\nBasic TimedDict Usage:")
 
@@ -68,7 +68,7 @@ def basic_usage_example():
         print(f"  {key}: {value}")
 
 
-def timer_manipulation_example():
+def timer_manipulation_example() -> None:
     """Demonstrate manipulating the timer in TimedDict."""
     print("\nTimer Manipulation Example:")
 
@@ -137,7 +137,7 @@ def timer_manipulation_example():
     print(f"Cache is empty: {len(cache) == 0} == True")
 
 
-def context_manager_example():
+def context_manager_example() -> None:
     """Demonstrate using context managers with TimedDict."""
     print("\nContext Manager Example:")
 
@@ -223,7 +223,7 @@ def context_manager_example():
     print(f"Cache is empty: {len(cache) == 0} == True")
 
 
-def practical_example():
+def practical_example() -> None:
     """Demonstrate a practical use case for TimedDict."""
     print("\nPractical Example - Session Cache:")
 
@@ -285,7 +285,7 @@ def practical_example():
     print(f"  User ID: {session_cache.get('user_id')} == '12345'")
 
 
-def compare_dict_timeddict_example():
+def compare_dict_timeddict_example() -> None:
     """Compare regular dict with TimedDict."""
     print("\nComparing dict with TimedDict:")
 
@@ -318,7 +318,7 @@ def compare_dict_timeddict_example():
     print("  TimedDict - items are automatically cleared after the lifetime expires")
 
 
-def error_handling_example():
+def error_handling_example() -> None:
     """Demonstrate error handling with TimedDict."""
     print("\nError Handling Example:")
 

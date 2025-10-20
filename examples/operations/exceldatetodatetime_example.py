@@ -20,7 +20,7 @@ from baseobjects.operations import excel_date_to_datetime
 
 
 # Example Sections #
-def basic_usage_example():
+def basic_usage_example() -> None:
     """Demonstrate basic usage of excel_date_to_datetime."""
     print("\nBasic excel_date_to_datetime Usage:")
 
@@ -43,7 +43,7 @@ def basic_usage_example():
     print("Expected: UTC")
 
 
-def different_types_example():
+def different_types_example() -> None:
     """Demonstrate converting different types of Excel date values."""
     print("\nDifferent Types Example:")
 
@@ -81,7 +81,7 @@ def different_types_example():
     print("  Expected: 2023-01-01 06:00:00+00:00")
 
 
-def timezone_example():
+def timezone_example() -> None:
     """Demonstrate working with different timezones."""
     print("\nTimezone Example:")
 
@@ -119,7 +119,7 @@ def timezone_example():
     print(f"  Timezone: {dt_eastern.tzinfo}")
 
 
-def excel_date_peculiarities_example():
+def excel_date_peculiarities_example() -> None:
     """Demonstrate handling Excel date peculiarities."""
     print("\nExcel Date Peculiarities Example:")
 
@@ -157,7 +157,7 @@ def excel_date_peculiarities_example():
     print("Expected: 1900-01-01 00:00:00+00:00")
 
 
-def date_calculation_example():
+def date_calculation_example() -> None:
     """Demonstrate date calculations with Excel dates."""
     print("\nDate Calculation Example:")
 
@@ -196,7 +196,7 @@ def date_calculation_example():
     print("Expected: Today at 12:30 PM UTC")
 
 
-def practical_example():
+def practical_example() -> None:
     """Demonstrate a practical use case for excel_date_to_datetime."""
     print("\nPractical Example - Processing Excel Data:")
 
@@ -251,7 +251,7 @@ def practical_example():
         print(f"    Formatted Start Date: {start_date.strftime('%B %d, %Y')}")
 
 
-def error_handling_example():
+def error_handling_example() -> None:
     """Demonstrate error handling with excel_date_to_datetime."""
     print("\nError Handling Example:")
 

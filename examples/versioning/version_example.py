@@ -188,10 +188,11 @@ class SimpleVersion(Version):
                 try:
                     self.number = int(version)
                 except (ValueError, TypeError):
-                    raise TypeError(f"Cannot convert {type(version)} to SimpleVersion")
+                    msg = f"Cannot convert {type(version)} to SimpleVersion"
+                    raise TypeError(msg)
 
     # Type Conversion #
-    def list(self) -> List[int]:
+    def list(self) -> list[int]:
         """Convert the version to a list.
 
         Returns:
@@ -199,7 +200,7 @@ class SimpleVersion(Version):
         """
         return [self.number]
 
-    def tuple(self) -> Tuple[int]:
+    def tuple(self) -> tuple[int]:
         """Convert the version to a tuple.
 
         Returns:
@@ -217,7 +218,7 @@ class SimpleVersion(Version):
 
 
 # Example Sections #
-def creating_version_subclass_example():
+def creating_version_subclass_example() -> None:
     """Demonstrate how to create a concrete subclass of Version."""
     print("\nCreating a Version Subclass:")
 
@@ -225,12 +226,12 @@ def creating_version_subclass_example():
     version = SimpleVersion(1)
 
     print(f"Created SimpleVersion with number: {version.number} == 1")
-    print(f"String representation: {str(version)} == '1'")
+    print(f"String representation: {version!s} == '1'")
     print(f"List representation: {version.list()} == [1]")
     print(f"Tuple representation: {version.tuple()} == (1,)")
 
 
-def version_comparison_example():
+def version_comparison_example() -> None:
     """Demonstrate version comparison operations."""
     print("\nVersion Comparison:")
 
@@ -266,7 +267,7 @@ def version_comparison_example():
     print(f"v1 >= v2: {v1 >= v2} == False")
 
 
-def version_conversion_example():
+def version_conversion_example() -> None:
     """Demonstrate version conversion operations."""
     print("\nVersion Conversion:")
 
@@ -275,12 +276,12 @@ def version_conversion_example():
 
     # Convert to different formats
     print(f"Version number: {version.number} == 5")
-    print(f"String representation: {str(version)} == '5'")
+    print(f"String representation: {version!s} == '5'")
     print(f"List representation: {version.list()} == [5]")
     print(f"Tuple representation: {version.tuple()} == (5,)")
 
 
-def version_casting_example():
+def version_casting_example() -> None:
     """Demonstrate version casting operations."""
     print("\nVersion Casting:")
 

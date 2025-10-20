@@ -41,7 +41,7 @@ class TestDeepChainMap(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[DeepChainMap] = DeepChainMap
+    TestClass: type[DeepChainMap] = DeepChainMap
 
     # Instance Methods #
     # Fixtures

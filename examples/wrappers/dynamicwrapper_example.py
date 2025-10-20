@@ -25,7 +25,7 @@ from baseobjects.wrappers import DynamicWrapper
 class SimpleObject:
     """A simple object to be wrapped."""
 
-    def __init__(self, value: int = 0):
+    def __init__(self, value: int = 0) -> None:
         self.value = value
         self.name = "SimpleObject"
 
@@ -44,7 +44,7 @@ class SimpleObject:
 class ComplexObject:
     """A more complex object to be wrapped."""
 
-    def __init__(self, items: List[int] = None):
+    def __init__(self, items: list[int] | None = None) -> None:
         self.items = items or []
         self.name = "ComplexObject"
 
@@ -52,7 +52,7 @@ class ComplexObject:
         """Add an item to the list."""
         self.items.append(item)
 
-    def get_items(self) -> List[int]:
+    def get_items(self) -> list[int]:
         """Get all items."""
         return self.items
 
@@ -74,7 +74,7 @@ class CustomDynamicWrapper(DynamicWrapper):
     _simple = None
     _complex = None
 
-    def __init__(self, simple_obj: SimpleObject = None, complex_obj: ComplexObject = None):
+    def __init__(self, simple_obj: SimpleObject = None, complex_obj: ComplexObject = None) -> None:
         """Initialize the wrapper with simple and complex objects."""
         super().__init__()
         self.simple = simple_obj or SimpleObject()
@@ -86,7 +86,7 @@ class CustomDynamicWrapper(DynamicWrapper):
 
 
 # Example Sections #
-def basic_usage_example():
+def basic_usage_example() -> None:
     """Demonstrate basic usage of DynamicWrapper."""
     print("\nBasic DynamicWrapper Usage:")
 
@@ -126,7 +126,7 @@ def basic_usage_example():
     print(f"  complex.items: {complex.items} == [1, 2, 3, 4]")
 
 
-def custom_wrapper_example():
+def custom_wrapper_example() -> None:
     """Demonstrate using a custom DynamicWrapper subclass."""
     print("\nCustom DynamicWrapper Subclass Example:")
 
@@ -151,7 +151,7 @@ def custom_wrapper_example():
     print(f"  wrapper.get_combined_str(): {wrapper.get_combined_str()}")
 
 
-def attribute_resolution_example():
+def attribute_resolution_example() -> None:
     """Demonstrate attribute resolution in DynamicWrapper."""
     print("\nAttribute Resolution Example:")
 
@@ -189,7 +189,7 @@ def attribute_resolution_example():
     print(f"  wrapper.shared_attr: {wrapper.shared_attr} == 'from obj2'")
 
 
-def dynamic_attribute_example():
+def dynamic_attribute_example() -> None:
     """Demonstrate dynamic attribute handling in DynamicWrapper."""
     print("\nDynamic Attribute Example:")
 
@@ -227,7 +227,7 @@ def dynamic_attribute_example():
     print(f"  wrapper.new_attr: {wrapper.new_attr} == 'dynamically added'")
 
 
-def performance_comparison_example():
+def performance_comparison_example() -> None:
     """Demonstrate performance comparison between direct access and DynamicWrapper."""
     print("\nPerformance Comparison Example:")
 
@@ -268,7 +268,7 @@ def performance_comparison_example():
     print("Note: DynamicWrapper is typically around 4.4x slower than direct access")
 
 
-def error_handling_example():
+def error_handling_example() -> None:
     """Demonstrate error handling with DynamicWrapper."""
     print("\nError Handling Example:")
 
@@ -302,7 +302,7 @@ def error_handling_example():
         print(f"  AttributeError: {e}")
 
 
-def compare_wrappers_example():
+def compare_wrappers_example() -> None:
     """Compare DynamicWrapper with StaticWrapper."""
     print("\nComparing DynamicWrapper with StaticWrapper:")
 

@@ -20,7 +20,7 @@ from baseobjects.operations import update_recursive
 
 
 # Example Sections #
-def basic_usage_example():
+def basic_usage_example() -> None:
     """Demonstrate basic usage of update_recursive."""
     print("\nBasic update_recursive Usage:")
 
@@ -42,7 +42,7 @@ def basic_usage_example():
     print(f"Result is original: {result is original} == True")
 
 
-def nested_dictionary_example():
+def nested_dictionary_example() -> None:
     """Demonstrate updating nested dictionaries with update_recursive."""
     print("\nNested Dictionary Example:")
 
@@ -92,7 +92,7 @@ def nested_dictionary_example():
     print(f"  Settings language: {result['settings']['language']} == 'en'")
 
 
-def compare_with_dict_update_example():
+def compare_with_dict_update_example() -> None:
     """Compare update_recursive with standard dict.update()."""
     print("\nComparing update_recursive with dict.update():")
 
@@ -119,7 +119,7 @@ def compare_with_dict_update_example():
     print("  Note: The nested dictionary was preserved and updated")
 
 
-def different_mapping_types_example():
+def different_mapping_types_example() -> None:
     """Demonstrate update_recursive with different mapping types."""
     print("\nDifferent Mapping Types Example:")
 
@@ -154,7 +154,7 @@ def different_mapping_types_example():
     print("  Note: defaultdict behavior is preserved")
 
 
-def practical_example():
+def practical_example() -> None:
     """Demonstrate a practical use case for update_recursive."""
     print("\nPractical Example - Configuration Management:")
 
@@ -204,7 +204,7 @@ def practical_example():
     print(f"  Logging file: {config['logging']['file']} == 'app.log'")
 
 
-def iterable_input_example():
+def iterable_input_example() -> None:
     """Demonstrate using update_recursive with different types of iterables."""
     print("\nIterable Input Example:")
 
@@ -237,7 +237,7 @@ def iterable_input_example():
     original_copy3 = original.copy()
     keys = ["c", "b"]
     values = [3, {"z": 30}]
-    updates_zip = zip(keys, values)
+    updates_zip = zip(keys, values, strict=False)
     result3 = update_recursive(original_copy3, updates_zip)
 
     print("\nUsing zip to create an iterable of pairs:")

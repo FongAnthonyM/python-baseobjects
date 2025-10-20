@@ -41,7 +41,7 @@ class TestOrderableDict(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[OrderableDict] = OrderableDict
+    TestClass: type[OrderableDict] = OrderableDict
 
     # Instance Methods #
     # Fixtures
@@ -433,7 +433,7 @@ class TestOrderableDict(BaseObjectTestSuite):
 
         # Create a new dictionary for this test
         kw_dict = self.TestClass()
-        kw_dict.update(dict(x=1, y=2))
+        kw_dict.update({"x": 1, "y": 2})
         assert kw_dict["x"] == 1
         assert kw_dict["y"] == 2
         assert set(kw_dict.order) == {"x", "y"}

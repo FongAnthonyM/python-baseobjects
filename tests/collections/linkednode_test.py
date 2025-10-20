@@ -39,7 +39,7 @@ class TestLinkedNode(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[LinkedNode] = LinkedNode
+    TestClass: type[LinkedNode] = LinkedNode
 
     # Instance Methods #
     # Fixtures
@@ -90,8 +90,7 @@ class TestLinkedNode(BaseObjectTestSuite):
         Returns:
             LinkedNode: A LinkedNode with data and links.
         """
-        node = self.TestClass(data="test_data")
-        return node
+        return self.TestClass(data="test_data")
 
     # Tests
     def test_instance_creation(self) -> None:

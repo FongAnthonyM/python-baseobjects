@@ -20,7 +20,8 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import pickle
-from typing import Any, Callable, Dict, Type
+from typing import Any, Dict, Type
+from collections.abc import Callable
 
 # Third-Party Packages #
 import pytest
@@ -46,7 +47,7 @@ def multiply_function(x: int, y: int = 3) -> int:
 class CallableMultiplexerTestObject:
     """A test class for testing method binding and selection."""
 
-    def __init__(self, value: int = 10):
+    def __init__(self, value: int = 10) -> None:
         """Initialize with a value."""
         self.value = value
         self.callable_multiplexer = CallableMultiplexer(instance=self, select="method1", binding=True)
@@ -70,7 +71,7 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[CallableMultiplexer] = CallableMultiplexer
+    TestClass: type[CallableMultiplexer] = CallableMultiplexer
 
     # Instance Methods #
     # Fixtures
@@ -259,7 +260,7 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
         """
 
         class BindTarget:
-            def __init__(self, value: int = 10):
+            def __init__(self, value: int = 10) -> None:
                 """Initialize with a value."""
                 self.value = value
                 self.callable_multiplexer = CallableMultiplexer(instance=self, select="method1", binding=True)
@@ -349,7 +350,7 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
         assert result == 3  # 5 - 2 (default y)
 
     def test_add_method(
-        self, test_multiplexer: CallableMultiplexer, test_object_instance: CallableMultiplexerTestObject
+        self, test_multiplexer: CallableMultiplexer, test_object_instance: CallableMultiplexerTestObject,
     ) -> None:
         """Test that the add_method method correctly adds a method to the registry.
 
@@ -400,7 +401,7 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
         assert result == 3  # 5 - 2 (default y)
 
     def test_add_select_method(
-        self, test_multiplexer: CallableMultiplexer, test_object_instance: CallableMultiplexerTestObject
+        self, test_multiplexer: CallableMultiplexer, test_object_instance: CallableMultiplexerTestObject,
     ) -> None:
         """Test that the add_select_method method correctly adds and selects a method.
 

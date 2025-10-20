@@ -29,8 +29,8 @@ from ..bases import BaseObjectTestSuite
 class BaseCompositeTestSuite(BaseObjectTestSuite):
     """Base test suite for children of BaseComposite.
 
-    This class provides common test functionality for child classes of BaseComposite, including tests for
-    component management. Subclasses should set the TestClass attribute and may override or extend the test methods.
+    This class provides common test functionality for child classes of BaseComposite, including tests for component
+    management. Subclasses should set the TestClass attribute and may override or extend the test methods.
 
     Attributes:
         TestClass: The class that the test suite is testing.

@@ -20,7 +20,8 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import copy
 import pickle
-from typing import Any, Callable, Dict, Type
+from typing import Any, Dict, Type
+from collections.abc import Callable
 
 # Third-Party Packages #
 import pytest
@@ -80,12 +81,12 @@ class TestFunctionRegistry(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[FunctionRegistry] = FunctionRegistry
+    TestClass: type[FunctionRegistry] = FunctionRegistry
 
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_functions(self) -> Dict[str, Callable]:
+    def test_functions(self) -> dict[str, Callable]:
         """Create a dictionary of test functions.
 
         Returns:
@@ -115,7 +116,7 @@ class TestFunctionRegistry(BaseObjectTestSuite):
         return RegistryTestObject()
 
     @pytest.fixture
-    def populated_registry(self, test_functions: Dict[str, Callable]) -> FunctionRegistry:
+    def populated_registry(self, test_functions: dict[str, Callable]) -> FunctionRegistry:
         """Create a FunctionRegistry populated with test functions.
 
         Args:
@@ -264,7 +265,7 @@ class TestFunctionRegistry(BaseObjectTestSuite):
         registry = self.TestClass()
         assert len(registry) == 0
 
-    def test_init_with_functions(self, test_functions: Dict[str, Callable]) -> None:
+    def test_init_with_functions(self, test_functions: dict[str, Callable]) -> None:
         """Test initialization with functions.
 
         This test verifies that FunctionRegistry can be initialized with a dictionary of functions.
@@ -388,7 +389,7 @@ class TestFunctionRegistry(BaseObjectTestSuite):
         assert test_object["static_method"]() == RegistryTestObject.static_method()
         assert test_object["class_method"](RegistryTestObject) == RegistryTestObject.class_method()
 
-    def test_construct(self, test_functions: Dict[str, Callable], test_instance: RegistryTestObject) -> None:
+    def test_construct(self, test_functions: dict[str, Callable], test_instance: RegistryTestObject) -> None:
         """Test the construct method.
 
         This test verifies that the construct method correctly sets up the registry.
@@ -446,7 +447,7 @@ class TestFunctionRegistry(BaseObjectTestSuite):
 
         # Create an object with non-callable attributes
         class ObjectWithAttributes:
-            def __init__(self):
+            def __init__(self) -> None:
                 self.attr1 = "value1"
                 self.attr2 = 42
                 self.attr3 = [1, 2, 3]

@@ -22,7 +22,7 @@ from baseobjects.bases import BaseCallable, BaseFunction, BaseMethod
 class Calculator:
     """A simple calculator class to demonstrate BaseCallable functionality."""
 
-    def __init__(self, initial_value: int = 0):
+    def __init__(self, initial_value: int = 0) -> None:
         """Initialize the calculator with an initial value.
 
         Args:
@@ -58,7 +58,7 @@ class Calculator:
 class CustomCallable(BaseCallable):
     """A custom callable that doubles its input."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize with a function that doubles its input."""
         super().__init__(lambda x: x * 2)
 
@@ -66,7 +66,7 @@ class CustomCallable(BaseCallable):
 class CustomMethod(BaseMethod):
     """A custom method that formats a greeting."""
 
-    def __init__(self, instance: Any = None):
+    def __init__(self, instance: Any = None) -> None:
         """Initialize with a greeting formatter function.
 
         Args:
@@ -82,13 +82,13 @@ class CustomMethod(BaseMethod):
 class CustomFunction(BaseFunction):
     """A custom function that formats a message."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize with a message formatter function."""
         super().__init__(lambda name, message: f"{name} says: {message}")
 
 
 # Example Sections #
-def basic_basecallable_example():
+def basic_basecallable_example() -> None:
     """Demonstrate basic usage of BaseCallable."""
     print("\nBasic BaseCallable Example:")
 
@@ -111,7 +111,7 @@ def basic_basecallable_example():
     print(f"Custom double 7: {result} == 14")
 
 
-def basemethod_example():
+def basemethod_example() -> None:
     """Demonstrate usage of BaseMethod."""
     print("\nBaseMethod Example:")
 
@@ -136,7 +136,7 @@ def basemethod_example():
     print(f"Custom greeting: {greeting} == 'Hello, Alice! Your value is 30.'")
 
 
-def basefunction_example():
+def basefunction_example() -> None:
     """Demonstrate usage of BaseFunction."""
     print("\nBaseFunction Example:")
 
@@ -151,7 +151,7 @@ def basefunction_example():
     print(f"Custom function: {result} == 'Charlie says: Good day!'")
 
 
-def binding_example():
+def binding_example() -> None:
     """Demonstrate binding callables to instances and attributes."""
     print("\nBinding Example:")
 
@@ -182,7 +182,7 @@ def binding_example():
     print(f"Calculator value: {calc.value} == 10")
 
 
-def conversion_example():
+def conversion_example() -> None:
     """Demonstrate converting callables to regular functions."""
     print("\nConversion Example:")
 

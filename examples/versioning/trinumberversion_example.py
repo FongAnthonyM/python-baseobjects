@@ -20,7 +20,7 @@ from baseobjects.versioning import TriNumberVersion
 
 
 # Example Sections #
-def basic_usage_example():
+def basic_usage_example() -> None:
     """Demonstrate basic usage of TriNumberVersion."""
     print("\nBasic TriNumberVersion Usage:")
 
@@ -49,7 +49,7 @@ def basic_usage_example():
     print(f"With named parameters: {version6} == '5.6.7'")
 
 
-def version_components_example():
+def version_components_example() -> None:
     """Demonstrate accessing and modifying version components."""
     print("\nVersion Components:")
 
@@ -77,7 +77,7 @@ def version_components_example():
     print(f"After set_version: {version} == '3.4.5'")
 
 
-def version_comparison_example():
+def version_comparison_example() -> None:
     """Demonstrate version comparison operations."""
     print("\nVersion Comparison:")
 
@@ -126,7 +126,7 @@ def version_comparison_example():
     print(f"v2 > (1, 0, 0): {v2 > (1, 0, 0)} == True")
 
 
-def version_conversion_example():
+def version_conversion_example() -> None:
     """Demonstrate version conversion operations."""
     print("\nVersion Conversion:")
 
@@ -144,7 +144,7 @@ def version_conversion_example():
     print(f"In string context: {message} == 'Current version is 2.3.4'")
 
 
-def semantic_versioning_example():
+def semantic_versioning_example() -> None:
     """Demonstrate using TriNumberVersion for semantic versioning."""
     print("\nSemantic Versioning Example:")
 
@@ -168,12 +168,12 @@ def semantic_versioning_example():
     print(f"After breaking change: {version} == '2.0.0'")
 
 
-def version_management_example():
+def version_management_example() -> None:
     """Demonstrate practical version management."""
     print("\nVersion Management Example:")
 
     # Define a dictionary of software components and their versions
-    components: Dict[str, TriNumberVersion] = {
+    components: dict[str, TriNumberVersion] = {
         "api": TriNumberVersion(1, 2, 3),
         "database": TriNumberVersion(2, 0, 1),
         "ui": TriNumberVersion(1, 1, 0),
@@ -202,7 +202,7 @@ def version_management_example():
         print(f"  {name}: {version}")
 
 
-def error_handling_example():
+def error_handling_example() -> None:
     """Demonstrate error handling with TriNumberVersion."""
     print("\nError Handling Example:")
 

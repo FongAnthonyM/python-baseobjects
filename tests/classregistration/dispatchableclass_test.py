@@ -69,11 +69,11 @@ class TestDispatchableClass(DispatchableClassTestSuite):
         """A base test subclass of DispatchableClass for testing purposes."""
 
         # Class Attributes #
-        class_registry_type: ClassVar[Type[BaseClassRegistry]] = ConcreteClassRegistry
+        class_registry_type: ClassVar[type[BaseClassRegistry]] = ConcreteClassRegistry
         class_registration: ClassVar[bool] = True
 
         @classmethod
-        def get_class_information(cls, *args: Any, **kwargs: Any) -> Tuple[str]:
+        def get_class_information(cls, *args: Any, **kwargs: Any) -> tuple[str]:
             """Gets a class's lookup information from a given set of arguments.
 
             Args:
@@ -126,7 +126,7 @@ class TestDispatchableClass(DispatchableClassTestSuite):
         class_registration = True
 
     # Attributes #
-    TestClass: Type[ExampleDispatchableClass] = ExampleDispatchableClass
+    TestClass: type[ExampleDispatchableClass] = ExampleDispatchableClass
 
     # Instance Methods #
     # Tests

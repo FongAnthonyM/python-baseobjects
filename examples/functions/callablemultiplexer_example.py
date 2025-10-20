@@ -77,7 +77,8 @@ class MathOperations:
             ValueError: If attempting to divide by zero.
         """
         if b == 0:
-            raise ValueError("Cannot divide by zero")
+            msg = "Cannot divide by zero"
+            raise ValueError(msg)
         return a / b
 
 
@@ -134,7 +135,7 @@ class StringOperations:
 
 # Functions #
 # Example Sections #
-def basic_callable_multiplexer():
+def basic_callable_multiplexer() -> None:
     """Demonstrates basic usage of CallableMultiplexer."""
     print("Basic CallableMultiplexer Usage:\n")
 
@@ -178,7 +179,7 @@ def basic_callable_multiplexer():
     print()
 
 
-def multiplexer_types_comparison():
+def multiplexer_types_comparison() -> None:
     """Demonstrates the differences between the three multiplexer types."""
     print("Comparing Multiplexer Types:\n")
 
@@ -281,13 +282,13 @@ def multiplexer_types_comparison():
     print()
 
 
-def dynamic_method_selection():
+def dynamic_method_selection() -> None:
     """Demonstrates dynamic method selection with CallableMultiplexer."""
     print("Dynamic Method Selection Example:\n")
 
     # Create a class with instance methods
     class DynamicProcessor:
-        def __init__(self, name):
+        def __init__(self, name) -> None:
             self.name = name
             self.value = 0
 

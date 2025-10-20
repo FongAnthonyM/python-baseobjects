@@ -46,8 +46,8 @@ class TestBaseComponent(BaseComponentTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BaseComponent] = ExampleComponentClass
-    TestComposite: Type[BaseComposite] = ExampleCompositeClass
+    TestClass: type[BaseComponent] = ExampleComponentClass
+    TestComposite: type[BaseComposite] = ExampleCompositeClass
 
     # Instance Methods #
     # Fixtures

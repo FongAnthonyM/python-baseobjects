@@ -23,7 +23,8 @@ import asyncio
 import copy
 import pickle
 from collections import deque
-from typing import Any, Callable, Dict
+from typing import Any, Dict
+from collections.abc import Callable
 
 # Third-Party Packages #
 import pytest
@@ -64,10 +65,10 @@ class TestCallbackManager(BaseObjectTestSuite):
             CallbackManager: A test CallbackManager instance with callbacks.
         """
 
-        def callback1(*args, **kwargs):
+        def callback1(*args, **kwargs) -> str:
             return "callback1 called"
 
-        def callback2(*args, **kwargs):
+        def callback2(*args, **kwargs) -> str:
             return "callback2 called"
 
         manager = self.TestClass()
@@ -183,7 +184,7 @@ class TestCallbackManager(BaseObjectTestSuite):
         """
 
         # Define a test callback
-        def test_callback(*args, **kwargs):
+        def test_callback(*args, **kwargs) -> str:
             return "test callback called"
 
         # Register the callback
@@ -200,10 +201,10 @@ class TestCallbackManager(BaseObjectTestSuite):
         """
 
         # Define test callbacks
-        def callback1(*args, **kwargs):
+        def callback1(*args, **kwargs) -> str:
             return "callback1 called"
 
-        def callback2(*args, **kwargs):
+        def callback2(*args, **kwargs) -> str:
             return "callback2 called"
 
         # Register callbacks
@@ -234,7 +235,7 @@ class TestCallbackManager(BaseObjectTestSuite):
         """
 
         # Define a test callback that uses arguments
-        def test_callback(arg1, arg2, kwarg1=None, kwarg2=None):
+        def test_callback(arg1, arg2, kwarg1=None, kwarg2=None) -> str:
             return f"{arg1}, {arg2}, {kwarg1}, {kwarg2}"
 
         # Register the callback
@@ -253,10 +254,10 @@ class TestCallbackManager(BaseObjectTestSuite):
         """
 
         # Define test callback and condition
-        def test_callback(*args, **kwargs):
+        def test_callback(*args, **kwargs) -> str:
             return "test callback called"
 
-        def test_condition(*args, **kwargs):
+        def test_condition(*args, **kwargs) -> bool:
             return True
 
         # Register the conditional callback
@@ -274,14 +275,14 @@ class TestCallbackManager(BaseObjectTestSuite):
         # Define test callback and conditions
         result = []
 
-        def test_callback(*args, **kwargs):
+        def test_callback(*args, **kwargs) -> str:
             result.append("test callback called")
             return "test callback called"
 
-        def true_condition(*args, **kwargs):
+        def true_condition(*args, **kwargs) -> bool:
             return True
 
-        def false_condition(*args, **kwargs):
+        def false_condition(*args, **kwargs) -> bool:
             return False
 
         # Test with true condition
@@ -312,7 +313,7 @@ class TestCallbackManager(BaseObjectTestSuite):
         """
 
         # Define a new callback
-        def new_callback(*args, **kwargs):
+        def new_callback(*args, **kwargs) -> str:
             return "new callback called"
 
         # Register the new callback with an existing name
@@ -333,7 +334,7 @@ class TestCallbackManager(BaseObjectTestSuite):
         """
 
         # Define a test async callback
-        async def test_async_callback(*args, **kwargs):
+        async def test_async_callback(*args, **kwargs) -> str:
             return "async callback called"
 
         # Register the async callback
@@ -351,7 +352,7 @@ class TestCallbackManager(BaseObjectTestSuite):
         """
 
         # Define a test async callback
-        async def test_async_callback(*args, **kwargs):
+        async def test_async_callback(*args, **kwargs) -> str:
             return "async callback called"
 
         # Register the async callback
@@ -371,7 +372,7 @@ class TestCallbackManager(BaseObjectTestSuite):
         """
 
         # Define a test async function
-        async def test_async_function(*args, **kwargs):
+        async def test_async_function(*args, **kwargs) -> str:
             return "async function called"
 
         # Call the async function
@@ -389,14 +390,14 @@ class TestCallbackManager(BaseObjectTestSuite):
         # Define test async callback and conditions
         result = []
 
-        async def test_async_callback(*args, **kwargs):
+        async def test_async_callback(*args, **kwargs) -> str:
             result.append("async callback called")
             return "async callback called"
 
-        async def true_condition_async(*args, **kwargs):
+        async def true_condition_async(*args, **kwargs) -> bool:
             return True
 
-        async def false_condition_async(*args, **kwargs):
+        async def false_condition_async(*args, **kwargs) -> bool:
             return False
 
         # Test with true condition
@@ -463,7 +464,7 @@ class TestCallbackManager(BaseObjectTestSuite):
         # Define test async callback and condition
         call_count = 0
 
-        async def test_async_callback(*args, **kwargs):
+        async def test_async_callback(*args, **kwargs) -> str:
             nonlocal call_count
             call_count += 1
             return f"call {call_count}"
@@ -490,7 +491,7 @@ class TestCallbackManager(BaseObjectTestSuite):
         """
 
         # Create some tasks
-        async def async_task():
+        async def async_task() -> str:
             await asyncio.sleep(0.1)
             return "task completed"
 
@@ -516,7 +517,7 @@ class TestCallbackManager(BaseObjectTestSuite):
         # Create a task that can be cancelled
         cancel_requested = False
 
-        async def cancellable_task():
+        async def cancellable_task() -> None:
             nonlocal cancel_requested
             try:
                 while not cancel_requested:
@@ -548,7 +549,7 @@ class TestCallbackManager(BaseObjectTestSuite):
         for t in [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]:
             t.cancel()
         await asyncio.gather(
-            *[t for t in asyncio.all_tasks() if t is not asyncio.current_task()], return_exceptions=True
+            *[t for t in asyncio.all_tasks() if t is not asyncio.current_task()], return_exceptions=True,
         )
 
     def test_format_conditional_callback(self, test_object: CallbackManager) -> None:
@@ -558,10 +559,10 @@ class TestCallbackManager(BaseObjectTestSuite):
         """
 
         # Define test callback, condition, and caller
-        def test_callback(*args, **kwargs):
+        def test_callback(*args, **kwargs) -> str:
             return "test callback called"
 
-        def test_condition(*args, **kwargs):
+        def test_condition(*args, **kwargs) -> bool:
             return True
 
         def test_caller(condition, callback, *args, **kwargs):
@@ -595,11 +596,11 @@ class TestCallbackManager(BaseObjectTestSuite):
         # Define test callback, condition, and caller
         result = []
 
-        def test_callback(*args, **kwargs):
+        def test_callback(*args, **kwargs) -> str:
             result.append("test callback called")
             return "test callback called"
 
-        def test_condition(*args, **kwargs):
+        def test_condition(*args, **kwargs) -> bool:
             return True
 
         def test_caller(condition, callback, *args, **kwargs):
@@ -625,13 +626,13 @@ class TestCallbackManager(BaseObjectTestSuite):
         """
 
         # Define test callbacks and conditions
-        async def test_callback1(*args, **kwargs):
+        async def test_callback1(*args, **kwargs) -> str:
             return "test callback1 called"
 
-        async def test_callback2(*args, **kwargs):
+        async def test_callback2(*args, **kwargs) -> str:
             return "test callback2 called"
 
-        async def test_condition(*args, **kwargs):
+        async def test_condition(*args, **kwargs) -> bool:
             return True
 
         # Register conditional callbacks with is_async=True
@@ -655,13 +656,13 @@ class TestCallbackManager(BaseObjectTestSuite):
         """
 
         # Define test callbacks and conditions
-        def test_callback1(*args, **kwargs):
+        def test_callback1(*args, **kwargs) -> str:
             return "test callback1 called"
 
-        def test_callback2(*args, **kwargs):
+        def test_callback2(*args, **kwargs) -> str:
             return "test callback2 called"
 
-        def test_condition(*args, **kwargs):
+        def test_condition(*args, **kwargs) -> bool:
             return True
 
         # Register conditional callbacks
@@ -685,13 +686,13 @@ class TestCallbackManager(BaseObjectTestSuite):
         """
 
         # Define test callbacks and conditions
-        async def test_callback1(*args, **kwargs):
+        async def test_callback1(*args, **kwargs) -> str:
             return "test callback1 called"
 
-        async def test_callback2(*args, **kwargs):
+        async def test_callback2(*args, **kwargs) -> str:
             return "test callback2 called"
 
-        async def test_condition(*args, **kwargs):
+        async def test_condition(*args, **kwargs) -> bool:
             return True
 
         # Register conditional callbacks with is_async=True
@@ -700,7 +701,7 @@ class TestCallbackManager(BaseObjectTestSuite):
 
         # Register a conditional scheduler
         test_object.register_conditional_scheduler(
-            "test_conditional_scheduler", condition_names=["test_conditional1", "test_conditional2"]
+            "test_conditional_scheduler", condition_names=["test_conditional1", "test_conditional2"],
         )
 
         # Validate
@@ -716,13 +717,13 @@ class TestCallbackManager(BaseObjectTestSuite):
         """
 
         # Define test callbacks and conditions
-        def test_callback1(*args, **kwargs):
+        def test_callback1(*args, **kwargs) -> str:
             return "test callback1 called"
 
-        def test_callback2(*args, **kwargs):
+        def test_callback2(*args, **kwargs) -> str:
             return "test callback2 called"
 
-        def test_condition(*args, **kwargs):
+        def test_condition(*args, **kwargs) -> bool:
             return True
 
         # Register conditional callbacks and a scheduler
@@ -748,7 +749,7 @@ class TestCallbackManager(BaseObjectTestSuite):
         # Define test callback and condition
         call_count = 0
 
-        def test_callback(*args, **kwargs):
+        def test_callback(*args, **kwargs) -> str:
             nonlocal call_count
             call_count += 1
             return f"call {call_count}"
@@ -809,7 +810,7 @@ class TestCallbackManager(BaseObjectTestSuite):
         call_count = 0
         tasks = deque()
 
-        async def test_async_callback(*args, **kwargs):
+        async def test_async_callback(*args, **kwargs) -> str:
             nonlocal call_count
             call_count += 1
             await asyncio.sleep(0.1)

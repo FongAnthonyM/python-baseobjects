@@ -63,7 +63,7 @@ class FunctionRegistry(BaseDict):
 
         # Object Construction #
         if init:
-            self.construct(functions=functions, object_=object_, objects=objects, *args, **kwargs)
+            self.construct(functions, object_, objects, *args, **kwargs)
 
     # Instance Methods #
     # Constructors/Destructors

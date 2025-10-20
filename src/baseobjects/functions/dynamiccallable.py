@@ -145,6 +145,8 @@ class DynamicCallable(BaseCallable):
         Args:
             func: The function to wrap.
             *args: Arguments for inheritance.
+            bind_method: The name of the bind method to use initially.
+            call_method: The name of the call method to use initially.
             **kwargs: Keyword arguments for inheritance.
         """
         if bind_method is not None:

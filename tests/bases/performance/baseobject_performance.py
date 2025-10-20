@@ -32,7 +32,7 @@ from src.baseobjects.testsuite import BasePerformanceTestSuite
 class NormalObject:
     """A normal Python object for comparison with BaseObject."""
 
-    def __init__(self, value: Any = None, mutable: List[int] = None, mapping: Dict[str, int] = None) -> None:
+    def __init__(self, value: Any = None, mutable: list[int] | None = None, mapping: dict[str, int] | None = None) -> None:
         """Initialize with some attributes."""
         self.value = value
         self.mutable = mutable or [1, 2, 3]
@@ -50,7 +50,7 @@ class TestBaseObjectPerformance(BasePerformanceTestSuite):
     class TestObject(BaseObject):
         """A concrete subclass of BaseObject for testing purposes."""
 
-        def __init__(self, value: Any = None, mutable: List[int] = None, mapping: Dict[str, int] = None) -> None:
+        def __init__(self, value: Any = None, mutable: list[int] | None = None, mapping: dict[str, int] | None = None) -> None:
             """Initialize with some attributes."""
             super().__init__()
             self.value = value
@@ -105,13 +105,13 @@ class TestBaseObjectPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal object creation: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nNormal object creation: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"BaseObject subclass creation: {mean_base:.3f} μs ({percent:.3f}% of normal object creation time)")
         assert percent < self.speed_tolerance * 1.5  # Allow some overhead for BaseObject initialization
 
     def test_copy_performance(
-        self, test_object: "TestBaseObjectPerformance.TestObject", test_normal_object: NormalObject
+        self, test_object: "TestBaseObjectPerformance.TestObject", test_normal_object: NormalObject,
     ) -> None:
         """Test the performance of the __copy__ method of BaseObject.
 
@@ -139,13 +139,13 @@ class TestBaseObjectPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal object copy: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nNormal object copy: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"BaseObject.copy: {mean_base:.3f} μs ({percent:.3f}% of normal object copy time)")
         assert percent < self.speed_tolerance * 2  # Allow more overhead for copy operations
 
     def test_deepcopy_performance(
-        self, test_object: "TestBaseObjectPerformance.TestObject", test_normal_object: NormalObject
+        self, test_object: "TestBaseObjectPerformance.TestObject", test_normal_object: NormalObject,
     ) -> None:
         """Test the performance of the __deepcopy__ method of BaseObject.
 
@@ -173,13 +173,13 @@ class TestBaseObjectPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal object deepcopy: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nNormal object deepcopy: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"BaseObject.deepcopy: {mean_base:.3f} μs ({percent:.3f}% of normal object deepcopy time)")
         assert percent < self.speed_tolerance * 3  # Allow more overhead for deepcopy operations
 
     def test_attribute_access_performance(
-        self, test_object: "TestBaseObjectPerformance.TestObject", test_normal_object: NormalObject
+        self, test_object: "TestBaseObjectPerformance.TestObject", test_normal_object: NormalObject,
     ) -> None:
         """Test the performance of accessing attributes of BaseObject vs normal object.
 
@@ -211,15 +211,15 @@ class TestBaseObjectPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal object attribute access: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nNormal object attribute access: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(
-            f"BaseObject attribute access: {mean_base:.3f} μs ({percent:.3f}% of normal object attribute access time)"
+            f"BaseObject attribute access: {mean_base:.3f} μs ({percent:.3f}% of normal object attribute access time)",
         )
         assert percent < self.speed_tolerance  # Should be very similar to normal attribute access
 
     def test_attribute_modification_performance(
-        self, test_object: "TestBaseObjectPerformance.TestObject", test_normal_object: NormalObject
+        self, test_object: "TestBaseObjectPerformance.TestObject", test_normal_object: NormalObject,
     ) -> None:
         """Test the performance of modifying attributes of BaseObject vs normal object.
 
@@ -251,10 +251,10 @@ class TestBaseObjectPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal object attribute modification: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nNormal object attribute modification: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(
-            f"BaseObject attribute modification: {mean_base:.3f} μs ({percent:.3f}% of normal object attribute modification time)"
+            f"BaseObject attribute modification: {mean_base:.3f} μs ({percent:.3f}% of normal object attribute modification time)",
         )
         assert percent < self.speed_tolerance  # Should be very similar to normal attribute modification
 
@@ -274,7 +274,7 @@ class TestBaseObjectPerformance(BasePerformanceTestSuite):
                 self.mutable = None
                 self.mapping = None
 
-            def construct(self, value: Any = None, mutable: List[int] = None, mapping: Dict[str, int] = None) -> None:
+            def construct(self, value: Any = None, mutable: list[int] | None = None, mapping: dict[str, int] | None = None) -> None:
                 """Construct the object with the given attributes."""
                 super().construct()
                 self.value = value
@@ -337,14 +337,14 @@ class TestBaseObjectPerformance(BasePerformanceTestSuite):
 
         # Calculate the mean time in microseconds for complex normal object copy
         normal_time = timeit.timeit(
-            copy_complex_normal, number=self.timeit_runs // 10
+            copy_complex_normal, number=self.timeit_runs // 10,
         )  # Reduce runs for complex objects
         mean_normal = normal_time / (self.timeit_runs // 10) * 1000000
         percent = (mean_base / mean_normal) * 100
 
         # Print the performance comparison
         print(
-            f"\nComplex normal object copy: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nComplex normal object copy: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"Complex BaseObject copy: {mean_base:.3f} μs ({percent:.3f}% of complex normal object copy time)")
         assert percent < self.speed_tolerance * 3  # Allow more overhead for complex object copying

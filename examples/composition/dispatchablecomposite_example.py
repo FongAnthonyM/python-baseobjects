@@ -287,9 +287,9 @@ class DataPipeline(DispatchableComposite):
     """
 
     # Class Attributes #
-    class_registry_type: ClassVar[Type[NamespaceClassRegistry]] = NamespaceClassRegistry
+    class_registry_type: ClassVar[type[NamespaceClassRegistry]] = NamespaceClassRegistry
     class_registration: ClassVar[bool] = True
-    default_component_types: ClassVar[Dict[str, Tuple[Type[BaseComponent], Dict[str, Any]]]] = {
+    default_component_types: ClassVar[dict[str, tuple[type[BaseComponent], dict[str, Any]]]] = {
         "data_source": (FileDataSource, {}),
         "processor": (FilterProcessor, {}),
         "output": (ConsoleOutput, {}),
@@ -297,7 +297,7 @@ class DataPipeline(DispatchableComposite):
 
     # Class Methods #
     @classmethod
-    def register_class(cls, name: str = None, namespace: str = None) -> None:
+    def register_class(cls, name: str | None = None, namespace: str | None = None) -> None:
         """Register this class in the class registry.
 
         Args:
@@ -316,7 +316,7 @@ class DataPipeline(DispatchableComposite):
         cls.class_registry.register_class(cls, namespace=namespace, name=name)
 
     @classmethod
-    def get_registered_class(cls, namespace: str, name: str) -> Optional[Type["DataPipeline"]]:
+    def get_registered_class(cls, namespace: str, name: str) -> type["DataPipeline"] | None:
         """Get a registered class by namespace and name.
 
         Args:
@@ -332,7 +332,7 @@ class DataPipeline(DispatchableComposite):
         return cls.class_registry.get_class(namespace, name)
 
     @classmethod
-    def get_class_information(cls, pipeline_type: str = None, *args: Any, **kwargs: Any) -> Tuple[str, str]:
+    def get_class_information(cls, pipeline_type: str | None = None, *args: Any, **kwargs: Any) -> tuple[str, str]:
         """Get the class information based on the pipeline type.
 
         Args:
@@ -378,8 +378,8 @@ class DataPipeline(DispatchableComposite):
         )
 
     def dispatch_component_types(
-        self, *args: Any, **kwargs: Any
-    ) -> Dict[str, Tuple[Type[BaseComponent], Dict[str, Any]]]:
+        self, *args: Any, **kwargs: Any,
+    ) -> dict[str, tuple[type[BaseComponent], dict[str, Any]]]:
         """Dispatch component types using the given arguments.
 
         This method determines which component types to instantiate based on the provided arguments.
@@ -537,10 +537,10 @@ DataPipeline.component_types_registry.register_class(APIDataSource, namespace="s
 
 DataPipeline.component_types_registry.register_class(FilterProcessor, namespace="processor", name="FilterProcessor")
 DataPipeline.component_types_registry.register_class(
-    TransformProcessor, namespace="processor", name="TransformProcessor"
+    TransformProcessor, namespace="processor", name="TransformProcessor",
 )
 DataPipeline.component_types_registry.register_class(
-    AggregateProcessor, namespace="processor", name="AggregateProcessor"
+    AggregateProcessor, namespace="processor", name="AggregateProcessor",
 )
 
 DataPipeline.component_types_registry.register_class(ConsoleOutput, namespace="output", name="ConsoleOutput")
@@ -550,7 +550,7 @@ DataPipeline.component_types_registry.register_class(EmailOutput, namespace="out
 
 # Functions #
 # Example Sections #
-def basic_dispatchable_composite_usage():
+def basic_dispatchable_composite_usage() -> None:
     """Demonstrates basic usage of DispatchableComposite."""
     print("Basic DispatchableComposite Usage:\n")
 
@@ -568,7 +568,7 @@ def basic_dispatchable_composite_usage():
     print()
 
 
-def class_dispatching():
+def class_dispatching() -> None:
     """Demonstrates class dispatching based on pipeline type."""
     print("Class Dispatching Based on Pipeline Type:\n")
 
@@ -592,7 +592,7 @@ def class_dispatching():
     analytics_pipeline.process()
 
 
-def component_dispatching():
+def component_dispatching() -> None:
     """Demonstrates component dispatching based on parameters."""
     print("Component Dispatching Based on Parameters:\n")
 
@@ -623,7 +623,7 @@ def component_dispatching():
     print()
 
 
-def combined_dispatching():
+def combined_dispatching() -> None:
     """Demonstrates combined class and component dispatching."""
     print("Combined Class and Component Dispatching:\n")
 
@@ -674,7 +674,7 @@ def combined_dispatching():
     analytics_pipeline.process()
 
 
-def custom_pipeline_creation():
+def custom_pipeline_creation() -> None:
     """Demonstrates creating a custom pipeline with manual component creation."""
     print("Custom Pipeline Creation:\n")
 

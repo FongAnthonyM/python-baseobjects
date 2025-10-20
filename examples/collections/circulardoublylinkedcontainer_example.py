@@ -20,7 +20,7 @@ from baseobjects.collections.circulardoublylinkedcontainer import LinkedNode
 
 
 # Example Sections #
-def basic_usage_example():
+def basic_usage_example() -> None:
     """Demonstrate basic usage of CircularDoublyLinkedContainer."""
     print("\nBasic CircularDoublyLinkedContainer Usage:")
 
@@ -70,7 +70,7 @@ def basic_usage_example():
     print(f"Node at index -2: {node_at_minus_2.data} == 'Second Node'")
 
 
-def node_manipulation_example():
+def node_manipulation_example() -> None:
     """Demonstrate node manipulation in CircularDoublyLinkedContainer."""
     print("\nNode Manipulation Example:")
 
@@ -130,7 +130,7 @@ def node_manipulation_example():
         print(f"  Node {i}: {node.data}")
 
 
-def iteration_example():
+def iteration_example() -> None:
     """Demonstrate iteration through CircularDoublyLinkedContainer."""
     print("\nIteration Example:")
 
@@ -170,7 +170,7 @@ def iteration_example():
         print(f"  Iteration {i}: {node.data}")
 
 
-def shift_example():
+def shift_example() -> None:
     """Demonstrate shifting the start position in CircularDoublyLinkedContainer."""
     print("\nShift Example:")
 
@@ -204,7 +204,7 @@ def shift_example():
         print(f"  Node {i}: {node.data}")
 
 
-def custom_node_example():
+def custom_node_example() -> None:
     """Demonstrate using custom LinkedNode objects."""
     print("\nCustom Node Example:")
 
@@ -236,17 +236,17 @@ def custom_node_example():
     print(f"Previous node's previous: {current.previous.previous.data}")
 
 
-def practical_example():
+def practical_example() -> None:
     """Demonstrate a practical use case for CircularDoublyLinkedContainer."""
     print("\nPractical Example - Circular Buffer:")
 
     # Create a circular buffer with a maximum size of 3
     class CircularBuffer:
-        def __init__(self, max_size):
+        def __init__(self, max_size) -> None:
             self.container = CircularDoublyLinkedContainer()
             self.max_size = max_size
 
-        def add(self, item):
+        def add(self, item) -> None:
             if len(self.container) >= self.max_size:
                 # Remove the oldest item (first node)
                 self.container.pop(0)
@@ -279,7 +279,7 @@ def practical_example():
     print(f"Buffer contents: {buffer.get_items()} == ['Item 3', 'Item 4', 'Item 5']")
 
 
-def deep_copy_example():
+def deep_copy_example() -> None:
     """Demonstrate deep copying of CircularDoublyLinkedContainer."""
     print("\nDeep Copy Example:")
 

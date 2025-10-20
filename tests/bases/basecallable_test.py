@@ -38,7 +38,7 @@ class TestBaseCallable(BaseCallableTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BaseCallable] = BaseCallable
+    TestClass: type[BaseCallable] = BaseCallable
 
     # Instance Methods #
     # Tests

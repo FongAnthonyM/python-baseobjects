@@ -21,7 +21,8 @@ import asyncio
 import time
 from asyncio import create_task
 from collections import deque
-from typing import Any, Callable, Dict, List
+from typing import Any, Dict, List
+from collections.abc import Callable
 
 # Source Packages #
 from baseobjects.objects import CallbackManager
@@ -38,7 +39,7 @@ class DataRoutingProcessor:
     highlights the basic usage in a synchronous context.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize with data and a callback manager.
 
         Args:
@@ -102,7 +103,7 @@ class DataRoutingProcessor:
         """Print the data point B."""
         print(f"B is a string: {self.point_b}")
 
-    def run_callbacks(self):
+    def run_callbacks(self) -> None:
         """Run all callbacks."""
         self.callback_manager.conditional_callbacks["all_strings"]()
         self.callback_manager.conditional_callbacks["all_numbers"]()
@@ -111,7 +112,7 @@ class DataRoutingProcessor:
 
 
 # Example Sections #
-def basic_callback_example():
+def basic_callback_example() -> None:
     """Demonstrate basic usage of CallbackManager with simple callbacks."""
     print("\nBasic Callback Example:")
 
@@ -150,7 +151,7 @@ def basic_callback_example():
     callback_manager.call_callback("error", 404, "Resource not found")
 
 
-def conditional_callback_example():
+def conditional_callback_example() -> None:
     """Demonstrate conditional callbacks with CallbackManager."""
     print("\nConditional Callback Example:")
 
@@ -200,7 +201,7 @@ def conditional_callback_example():
     callback_manager.conditional_callbacks["code_printer"]()
 
 
-def data_processor_example():
+def data_processor_example() -> None:
     """Demonstrate using CallbackManager in a class."""
     print("\nData Processor Example:")
 
@@ -239,7 +240,7 @@ def data_processor_example():
 
 
 # Asynchronous Example Sections #
-async def basic_callback_example_async():
+async def basic_callback_example_async() -> None:
     """Demonstrate basic usage of CallbackManager with asynchronous callbacks."""
     print("\nBasic Async Callback Example:")
 
@@ -276,7 +277,7 @@ async def basic_callback_example_async():
         print(f"Async error {error_code}: {message}")
 
     callback_manager.register_callbacks(
-        callbacks_async={"warning_async": on_warning_async, "error_async": on_error_async}
+        callbacks_async={"warning_async": on_warning_async, "error_async": on_error_async},
     )
 
     print("\nCalling multiple registered async callbacks:")
@@ -284,7 +285,7 @@ async def basic_callback_example_async():
     await callback_manager.call_callback_async("error_async", 404, "Resource not found")
 
 
-async def conditional_callback_example_async():
+async def conditional_callback_example_async() -> None:
     """Demonstrate conditional callbacks with CallbackManager using async methods."""
     print("\nConditional Async Callback Example:")
 
@@ -304,13 +305,13 @@ async def conditional_callback_example_async():
     print("Using call_conditional_async directly:")
     print("Calling with priority 3 (should not execute):")
     await callback_manager.call_conditional_async(
-        lambda: is_important_async(3), lambda: process_message_async("Low priority message", 3)
+        lambda: is_important_async(3), lambda: process_message_async("Low priority message", 3),
     )
     print("(Did not print)")
 
     print("Calling with priority 7 (should execute):")
     await callback_manager.call_conditional_async(
-        lambda: is_important_async(7), lambda: process_message_async("High priority message", 7)
+        lambda: is_important_async(7), lambda: process_message_async("High priority message", 7),
     )
 
     # Define async condition and callback function with mutable state
@@ -344,7 +345,7 @@ async def conditional_callback_example_async():
     await callback_manager.conditional_callbacks_async["code_printer_async"]()
 
 
-async def task_management_example_async():
+async def task_management_example_async() -> None:
     """Demonstrate task management with CallbackManager."""
     print("\nTask Management Example:")
 
@@ -418,7 +419,7 @@ async def task_management_example_async():
     print("Task management example completed")
 
 
-async def scheduler_example_async():
+async def scheduler_example_async() -> None:
     """Demonstrate using schedulers with CallbackManager asynchronously."""
     print("\nAsync Scheduler Example:")
 
@@ -466,17 +467,17 @@ async def scheduler_example_async():
 
     # Register conditional callbacks
     callback_manager.register_conditional_callback(
-        "async_condition1", async_task1, condition1, "call_conditional_async", is_async=True
+        "async_condition1", async_task1, condition1, "call_conditional_async", is_async=True,
     )
 
     callback_manager.register_conditional_callback(
-        "async_condition2", async_task2, condition2, "call_conditional_async", is_async=True
+        "async_condition2", async_task2, condition2, "call_conditional_async", is_async=True,
     )
 
     # Create a conditional scheduler
     print("Creating and registering a conditional scheduler:")
     callback_manager.register_conditional_scheduler(
-        "conditional_scheduler", condition_names=["async_condition1", "async_condition2"]
+        "conditional_scheduler", condition_names=["async_condition1", "async_condition2"],
     )
 
     # Start the conditional scheduler

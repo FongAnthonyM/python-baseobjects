@@ -59,7 +59,7 @@ class ExampleRegisteredClass(BaseRegisteredClass):
     """A base test subclass of BaseRegisteredClass for testing purposes."""
 
     # Class Attributes #
-    class_registry_type: ClassVar[Type[BaseClassRegistry]] = ConcreteClassRegistry
+    class_registry_type: ClassVar[type[BaseClassRegistry]] = ConcreteClassRegistry
     class_registration: ClassVar[bool] = True
 
     @classmethod
@@ -98,7 +98,7 @@ class TestBaseRegisteredClass(BaseRegisteredClassTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[ExampleRegisteredClass] = ExampleRegisteredClass
+    TestClass: type[ExampleRegisteredClass] = ExampleRegisteredClass
 
     # Instance Methods #
     # Tests

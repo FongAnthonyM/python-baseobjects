@@ -42,7 +42,7 @@ class TestBaseMethod(BaseMethodTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BaseMethod] = BaseMethod
+    TestClass: type[BaseMethod] = BaseMethod
 
     # Instance Methods #
     # Tests
@@ -242,7 +242,7 @@ class TestBaseMethod(BaseMethodTestSuite):
         # Test with a custom name
         new_method = self.create_method_object()
         new_bind_target = self.create_bind_target()
-        bound_method_named = new_method.bind_to_attribute(
+        new_method.bind_to_attribute(
             new_bind_target,
             self.BindTargetClass,
             name="custom_method",

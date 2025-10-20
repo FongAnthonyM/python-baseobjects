@@ -38,7 +38,7 @@ class ExampleCompositeClass(BaseComposite):
 
     # Class Attributes #
     default_component_types: ClassVar[dict[str, tuple[type, dict[str, Any]]]] = {
-        "default_component": (ExampleComponentClass, {})
+        "default_component": (ExampleComponentClass, {}),
     }
 
 
@@ -51,8 +51,8 @@ class TestBaseComposite(BaseCompositeTestSuite):
     """
 
     # Attributes #
-    TestComponent: Type[BaseComponent] = ExampleComponentClass
-    TestClass: Type[BaseComposite] = ExampleCompositeClass
+    TestComponent: type[BaseComponent] = ExampleComponentClass
+    TestClass: type[BaseComposite] = ExampleCompositeClass
 
     # Instance Methods #
     # Tests

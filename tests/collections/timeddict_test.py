@@ -41,7 +41,7 @@ class TestTimedDict(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[TimedDict] = TimedDict
+    TestClass: type[TimedDict] = TimedDict
 
     # Instance Methods #
     # Fixtures

@@ -177,9 +177,11 @@ class TestVersion(Version):
                 try:
                     self.value = int(version)
                 except ValueError:
-                    raise TypeError(f"Cannot convert string '{version}' to TestVersion")
+                    msg = f"Cannot convert string '{version}' to TestVersion"
+                    raise TypeError(msg)
             else:
-                raise TypeError(f"Cannot convert {type(version).__name__} to TestVersion")
+                msg = f"Cannot convert {type(version).__name__} to TestVersion"
+                raise TypeError(msg)
         else:
             self.value = 0
 
@@ -215,7 +217,7 @@ class TestVersionTests(VersionTestSuite):
     """
 
     # Class Attributes #
-    TestClass: Type[Version] = TestVersion
+    TestClass: type[Version] = TestVersion
 
     # Instance Methods #
     # Fixtures

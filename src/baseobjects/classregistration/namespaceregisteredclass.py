@@ -61,6 +61,7 @@ class NamespaceRegisteredClass(BaseRegisteredClass):
         Args:
             namespace: The namespace to register the subclass under. If None, uses class_registry_namespace.
             name: The name to register the subclass as. If None, uses class_registry_name or class name.
+            register_kwargs: Additional keyword arguments passed to the class registry during registration.
             **kwargs: Keyword arguments for creating a subclass.
         """
         n_kwargs = {"namespace": namespace or cls.class_registry_namespace, "name": name}

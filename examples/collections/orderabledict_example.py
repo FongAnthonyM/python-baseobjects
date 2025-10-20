@@ -17,7 +17,7 @@ from baseobjects.collections import OrderableDict
 
 
 # Example Sections #
-def basic_usage_example():
+def basic_usage_example() -> None:
     """Demonstrate basic usage of OrderableDict."""
     print("\nBasic OrderableDict Usage:")
 
@@ -64,7 +64,7 @@ def basic_usage_example():
     print(f"  {list(user_info.keys())} == ['name', 'age', 'phone', 'address']")
 
 
-def order_manipulation_example():
+def order_manipulation_example() -> None:
     """Demonstrate manipulating the order of items in OrderableDict."""
     print("\nOrder Manipulation Example:")
 
@@ -124,7 +124,7 @@ def order_manipulation_example():
         print(f"  {i + 1}. {section}: {items}")
 
 
-def index_access_example():
+def index_access_example() -> None:
     """Demonstrate accessing items by index in OrderableDict."""
     print("\nIndex Access Example:")
 
@@ -164,7 +164,7 @@ def index_access_example():
     print(f"Key at index 2: {third_key} == 'blue'")
 
 
-def compare_with_dict_example():
+def compare_with_dict_example() -> None:
     """Compare OrderableDict with regular dict and collection.OrderedDict."""
     print("\nComparing OrderableDict with other dictionary types:")
 
@@ -203,7 +203,7 @@ def compare_with_dict_example():
     print("\nWith regular dict, you can't manipulate the order directly.")
 
 
-def practical_example():
+def practical_example() -> None:
     """Demonstrate a practical use case for OrderableDict."""
     print("\nPractical Example - Form Field Ordering:")
 
@@ -251,7 +251,7 @@ def practical_example():
         print(f"  {field_props['label']} ({field_name}): {field_props['type']} field")
 
 
-def error_handling_example():
+def error_handling_example() -> None:
     """Demonstrate error handling with OrderableDict."""
     print("\nError Handling Example:")
 

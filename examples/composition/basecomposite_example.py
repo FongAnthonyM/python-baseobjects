@@ -135,7 +135,7 @@ class Calculator(BaseComposite):
     """
 
     # Class Attributes #
-    default_component_types: ClassVar[Dict[str, Tuple[Type[BaseComponent], Dict[str, Any]]]] = {
+    default_component_types: ClassVar[dict[str, tuple[type[BaseComponent], dict[str, Any]]]] = {
         "math": (MathComponent, {}),
         "logging": (LoggingComponent, {}),
     }
@@ -147,7 +147,7 @@ class Calculator(BaseComposite):
 
 # Functions #
 # Example Sections #
-def basic_composite_usage():
+def basic_composite_usage() -> None:
     """Demonstrates basic usage of a composite with components."""
     print("Basic Composite Usage:\n")
 
@@ -182,7 +182,7 @@ def basic_composite_usage():
     print()
 
 
-def adding_components():
+def adding_components() -> None:
     """Demonstrates adding components to a composite."""
     print("Adding Components to a Composite:\n")
 
@@ -220,7 +220,7 @@ def adding_components():
     print()
 
 
-def component_creation_methods():
+def component_creation_methods() -> None:
     """Demonstrates different ways to create components in a composite."""
     print("Component Creation Methods:\n")
 
@@ -261,7 +261,7 @@ def component_creation_methods():
     print()
 
 
-def component_interaction():
+def component_interaction() -> None:
     """Demonstrates interaction between components in a composite."""
     print("Component Interaction in a Composite:\n")
 
@@ -297,7 +297,7 @@ def component_interaction():
     print()
 
 
-def composite_serialization():
+def composite_serialization() -> None:
     """Demonstrates serialization and deserialization of composites with components."""
     print("Composite Serialization and Deserialization:\n")
 

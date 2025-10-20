@@ -17,7 +17,8 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import timeit
 from types import MethodType
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 from weakref import ReferenceType
 
 # Third-Party Packages #
@@ -38,7 +39,7 @@ def simple_method(self, x: int) -> int:
 class NormalMethod:
     """A normal Python method-like object for comparison with BaseMethod."""
 
-    def __init__(self, func: Callable = None, instance: Any = None, owner: type = None) -> None:
+    def __init__(self, func: Callable | None = None, instance: Any = None, owner: type | None = None) -> None:
         """Initialize with a function, instance, and owner."""
         self.func = func or simple_method
         self._self = None if instance is None else ReferenceType(instance)
@@ -64,7 +65,7 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
     class TestMethod(BaseMethod):
         """A subclass of BaseMethod for testing purposes."""
 
-        def __init__(self, func: Callable = None, instance: Any = None, owner: type = None) -> None:
+        def __init__(self, func: Callable | None = None, instance: Any = None, owner: type | None = None) -> None:
             """Initialize with a function, instance, and owner."""
             super().__init__(func or simple_method, instance, owner)
 
@@ -92,7 +93,7 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
 
     @pytest.fixture
     def test_method(
-        self, example_instance: "TestBaseMethodPerformance.ExampleClass"
+        self, example_instance: "TestBaseMethodPerformance.ExampleClass",
     ) -> "TestBaseMethodPerformance.TestMethod":
         """Create a test method instance for use in tests.
 
@@ -160,7 +161,7 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal method call: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nNormal method call: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"BaseMethod.__call__: {mean_base:.3f} μs ({percent:.3f}% of normal method call time)")
         assert percent < self.speed_tolerance
@@ -196,7 +197,7 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard method binding: {mean_standard:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nStandard method binding: {mean_standard:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"BaseMethod.bind_self: {mean_base:.3f} μs ({percent:.3f}% of standard method binding time)")
         assert percent < self.speed_tolerance * 2  # Allow more overhead for method creation
@@ -262,7 +263,7 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal method call: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nNormal method call: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"Bound BaseMethod call: {mean_bound:.3f} μs ({percent:.3f}% of normal method call time)")
         assert percent < self.speed_tolerance * 1.5  # Allow some overhead for method call
@@ -327,7 +328,7 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal bound method call: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nNormal bound method call: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"BaseMethod.call_binding: {mean_binding:.3f} μs ({percent:.3f}% of normal bound method call time)")
         assert percent < self.speed_tolerance * 1.5  # Allow some overhead for binding call
@@ -401,7 +402,7 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nBinding with is_binding=False: {mean_non_binding:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nBinding with is_binding=False: {mean_non_binding:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"Binding with is_binding=True: {mean_binding:.3f} μs ({percent:.3f}% of non-binding time)")
         # The performance should be similar or binding might be slightly slower due to extra operations
@@ -456,7 +457,7 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal method with large args: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nNormal method with large args: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"BaseMethod with large args: {mean_base:.3f} μs ({percent:.3f}% of normal method with large args time)")
         assert percent < self.speed_tolerance * 2  # Allow more overhead for large argument processing
@@ -515,7 +516,7 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNested normal method calls: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nNested normal method calls: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"Nested BaseMethod calls: {mean_base:.3f} μs ({percent:.3f}% of nested normal method calls time)")
         assert percent < self.speed_tolerance * 1.5  # Allow some overhead for nested calls
@@ -560,7 +561,7 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nCreating new bindings: {mean_new_binding:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)"
+            f"\nCreating new bindings: {mean_new_binding:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"Rebinding existing method: {mean_rebind:.3f} μs ({percent:.3f}% of new binding creation time)")
         # Rebinding should be faster than creating new bindings

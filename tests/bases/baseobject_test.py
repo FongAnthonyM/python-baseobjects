@@ -54,7 +54,7 @@ class TestBaseObject(BaseObjectTestSuite):
     """
 
     # Attributes #
-    TestClass: Type[BaseObject] = BaseTestObject
+    TestClass: type[BaseObject] = BaseTestObject
 
     # Instance Methods #
     # Tests
@@ -240,7 +240,7 @@ class TestBaseObject(BaseObjectTestSuite):
                 """Initialize with an initial value."""
                 self.value = initial_value
 
-            def __get__(self, instance: Any, owner: Type) -> Any:
+            def __get__(self, instance: Any, owner: type) -> Any:
                 """Get the descriptor value."""
                 if instance is None:
                     return self

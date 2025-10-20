@@ -18,7 +18,7 @@ from baseobjects.collections import GroupedList
 
 
 # Example Sections #
-def basic_usage_example():
+def basic_usage_example() -> None:
     """Demonstrate basic usage of GroupedList."""
     print("\nBasic GroupedList Usage:")
 
@@ -72,7 +72,7 @@ def basic_usage_example():
     print(f"As flat tuple: {flat_tuple}")
 
 
-def group_operations_example():
+def group_operations_example() -> None:
     """Demonstrate operations with named groups."""
     print("\nGroup Operations Example:")
 
@@ -133,7 +133,7 @@ def group_operations_example():
     print(f"Total number of items: {len(grouped_list)} == 6")
 
 
-def nested_groups_example():
+def nested_groups_example() -> None:
     """Demonstrate nested groups and hierarchical data."""
     print("\nNested Groups Example:")
 
@@ -192,7 +192,7 @@ def nested_groups_example():
     print(f"Fifth file: {file_system[4]} == 'vacation.jpg'")
 
 
-def comparison_operations_example():
+def comparison_operations_example() -> None:
     """Demonstrate comparison operations with GroupedList."""
     print("\nComparison Operations Example:")
 
@@ -226,14 +226,14 @@ def comparison_operations_example():
 
     # Arithmetic operations
     print("\nArithmetic operations:")
-    list4 = list1 + ["d", "e"]
+    list4 = [*list1, "d", "e"]
     print(f"list1 + ['d', 'e']: {list4}")
 
     list5 = list1 * 2
     print(f"list1 * 2: {list5}")
 
 
-def practical_example():
+def practical_example() -> None:
     """Demonstrate a practical use case for GroupedList."""
     print("\nPractical Example - Task Management System:")
 
@@ -305,7 +305,7 @@ def practical_example():
     print(f"High priority work tasks: {len(tasks['work']['high_priority'])} == 3")
 
 
-def error_handling_example():
+def error_handling_example() -> None:
     """Demonstrate error handling with GroupedList."""
     print("\nError Handling Example:")
 

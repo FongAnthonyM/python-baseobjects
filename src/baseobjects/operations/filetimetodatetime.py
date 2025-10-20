@@ -19,16 +19,17 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, UTC
 from datetime import tzinfo as TZInfo
 from typing import Literal
 
 # Local Packages #
 from ..functions import singlekwargdispatch
 
+
 # Definitions #
 # Constants #
-FILETIME_INIT_DATE = datetime(1601, 1, 1, tzinfo=timezone.utc)  # The initial date of Filetime.
+FILETIME_INIT_DATE = datetime(1601, 1, 1, tzinfo=UTC)  # The initial date of Filetime.
 
 
 # Functions #
@@ -47,6 +48,9 @@ def filetime_to_datetime(
 
     Returns:
         The datetime of the filetime.
+
+    Raises:
+        TypeError: If the provided timestamp type is unsupported.
     """
     msg = f"{timestamp.__class__} cannot be converted to a datetime"
     raise TypeError(msg)

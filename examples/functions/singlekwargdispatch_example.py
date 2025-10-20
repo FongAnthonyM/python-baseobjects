@@ -33,7 +33,7 @@ def convert_value(value: Any) -> str:
     Returns:
         The string representation of the value.
     """
-    return f"Default: {str(value)}"
+    return f"Default: {value!s}"
 
 
 @convert_value.register
@@ -131,11 +131,11 @@ def _(data: Any, format_as: str, precision: int = 2) -> str:
             rows = [f"| {k} | {v} |" for k, v in data.items()]
             header = "| Key | Value |"
             separator = "|-----|-------|"
-            return "Table:\n" + "\n".join([header, separator] + rows)
+            return "Table:\n" + "\n".join([header, separator, *rows])
         else:
             return f"Cannot format {type(data).__name__} as table"
     else:
-        return f"String format: {str(data)}"
+        return f"String format: {data!s}"
 
 
 @format_data.register
@@ -173,13 +173,11 @@ def _(data: Any, format_as: int, precision: int = 2) -> str:
 class Shape:
     """Base class for shapes."""
 
-    pass
-
 
 class Circle(Shape):
     """A circle shape."""
 
-    def __init__(self, radius: float):
+    def __init__(self, radius: float) -> None:
         """Initialize a circle with a radius.
 
         Args:
@@ -194,7 +192,7 @@ class Circle(Shape):
 class Rectangle(Shape):
     """A rectangle shape."""
 
-    def __init__(self, width: float, height: float):
+    def __init__(self, width: float, height: float) -> None:
         """Initialize a rectangle with width and height.
 
         Args:
@@ -211,7 +209,7 @@ class Rectangle(Shape):
 class Triangle(Shape):
     """A triangle shape."""
 
-    def __init__(self, base: float, height: float):
+    def __init__(self, base: float, height: float) -> None:
         """Initialize a triangle with base and height.
 
         Args:
@@ -240,7 +238,8 @@ class ShapeProcessor:
         Raises:
             NotImplementedError: If the shape type is not supported.
         """
-        raise NotImplementedError(f"Area calculation not implemented for {type(shape).__name__}")
+        msg = f"Area calculation not implemented for {type(shape).__name__}"
+        raise NotImplementedError(msg)
 
     @calculate_area.register
     def _(self, shape: Circle) -> float:
@@ -298,7 +297,7 @@ class DataProcessor:
         Returns:
             The processed data as a string.
         """
-        return f"{prefix}: {str(data)}"
+        return f"{prefix}: {data!s}"
 
     @process.register
     def _(self, prefix: str, data: int) -> str:
@@ -437,7 +436,7 @@ class MultiParameterProcessor:
 
 
 # Example Sections #
-def function_singlekwargdispatch_example():
+def function_singlekwargdispatch_example() -> None:
     """Demonstrates using singlekwargdispatch as a function."""
     print("Dispatching Function Examples:\n")
 
@@ -503,7 +502,7 @@ def function_singlekwargdispatch_example():
     print()
 
 
-def method_singlekwargdispatch_example():
+def method_singlekwargdispatch_example() -> None:
     """Demonstrates usage of singlekwargdispatch as a method."""
     print("Dispatching Method Examples:\n")
 
@@ -575,7 +574,7 @@ def method_singlekwargdispatch_example():
     print()
 
 
-def flexible_keyword_dispatching_example():
+def flexible_keyword_dispatching_example() -> None:
     """Demonstrates singlekwargdispatch with the dispatching keyword not as the first argument."""
     print("Flexible Keyword Dispatching Example:\n")
 

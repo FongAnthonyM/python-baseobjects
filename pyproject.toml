@@ -142,7 +142,7 @@ exclude = [
     "node_modules",
     "site-packages",
     "venv",
-    "examples",
+    #"examples",
     "tests",
     "tutorials",
     "docs",
@@ -178,20 +178,23 @@ select = [
     "RUF",
 ]
 ignore = [
-    "ANN401",
-    "S101",
-    "S301",
-    "S403",
-    "B024",
-    "B027",
-    "A003",
-    "A005",
-    "RET505",
-    "E501",
-    "D205",
-    "D415",
-    "F401",
-    "F403",
+    "ANN401",  # Disallow typing.Any
+    "S101",  # Disallow assert
+    "S301",  # Disallow pickle
+    "S403",  # Disallow pickle, pickle.load, pickle.loads
+    "B024",  # Disallow abstract base class without abstract methods
+    "B027",  # Empty methods MUST be abstract methods
+    "A003",  # Disallow class attribute shadowing builtins
+    "A005",  # Disallow class attribute shadowing module-level variables
+    "RET505",  # Disallow unnecessary else after return statement
+    "N801",  # Class name must use CapWords convention
+    "N812",  # Lowercase imports must be casted "as" lowercase as well
+    "DOC201",  # Returns must be documented in docstring
+    "DOC202",  # Disallow Returns in docstring if there are no Returns
+    "D205",  # 1 blank line required between summary line and description
+    "D415",  # The first line must end with a period
+    "F401",  # All imports must be used
+    "F403",  # Disallow wildcard imports (from module import *)
 ]
 
 [tool.ruff.lint.pydocstyle]

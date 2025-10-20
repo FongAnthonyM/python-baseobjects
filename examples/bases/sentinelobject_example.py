@@ -23,7 +23,7 @@ from baseobjects.bases import DEFAULTSENTINEL, SEARCHSENTINEL, SentinelObject
 class CacheManager:
     """A simple cache manager that uses sentinel objects to mark special values."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the cache manager with an empty cache."""
         self.cache = {}
         self.NOT_FOUND = SentinelObject("NOT_FOUND")
@@ -82,7 +82,7 @@ class CacheManager:
 class ConfigManager:
     """A configuration manager that uses sentinel objects for default values."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the configuration manager with default settings."""
         self.settings = {}
         self.UNSET = SentinelObject("UNSET")
@@ -115,7 +115,7 @@ class ConfigManager:
 
 
 # Example Sections #
-def basic_sentinel_example():
+def basic_sentinel_example() -> None:
     """Demonstrate basic usage of SentinelObject."""
     print("\nBasic SentinelObject Example:")
 
@@ -145,7 +145,7 @@ def basic_sentinel_example():
         print("Value is something else")
 
 
-def sentinel_as_markers_example():
+def sentinel_as_markers_example() -> None:
     """Demonstrate using sentinel objects as markers in a cache."""
     print("\nSentinel Objects as Markers Example:")
 
@@ -173,7 +173,7 @@ def sentinel_as_markers_example():
         print("key3 has expired")
 
 
-def sentinel_in_collections_example():
+def sentinel_in_collections_example() -> None:
     """Demonstrate using sentinel objects in dictionaries and sets."""
     print("\nSentinel Objects in Collections Example:")
 
@@ -197,7 +197,7 @@ def sentinel_in_collections_example():
     print(f"Is BLUE selected? {BLUE in selected_colors} == True")
 
 
-def pickling_sentinel_example():
+def pickling_sentinel_example() -> None:
     """Demonstrate pickling and unpickling sentinel objects."""
     print("\nPickling Sentinel Objects Example:")
 
@@ -231,7 +231,7 @@ def pickling_sentinel_example():
     print(f"Original PENDING is unpickled PENDING? {original_pending is unpickled_pending} == True")
 
 
-def predefined_sentinels_example():
+def predefined_sentinels_example() -> None:
     """Demonstrate using the predefined sentinel constants."""
     print("\nPredefined Sentinel Constants Example:")
 
@@ -240,7 +240,7 @@ def predefined_sentinels_example():
     print(f"SEARCHSENTINEL: {SEARCHSENTINEL}")
 
     # Create a function that uses DEFAULTSENTINEL
-    def get_value(data: Dict[str, Any], key: str, default: Any = DEFAULTSENTINEL) -> Any:
+    def get_value(data: dict[str, Any], key: str, default: Any = DEFAULTSENTINEL) -> Any:
         """Get a value from a dictionary with a special default sentinel.
 
         Args:
@@ -255,7 +255,8 @@ def predefined_sentinels_example():
 
         if value is DEFAULTSENTINEL:
             if default is DEFAULTSENTINEL:
-                raise KeyError(f"Key '{key}' not found and no default provided")
+                msg = f"Key '{key}' not found and no default provided"
+                raise KeyError(msg)
             return default
         return value
 

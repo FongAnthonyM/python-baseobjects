@@ -122,7 +122,7 @@ class DictionaryProcessor(DataProcessor):
 
 # Functions #
 # Example Sections #
-def basic_namespace_registry_usage():
+def basic_namespace_registry_usage() -> None:
     """Demonstrates basic usage of a namespace class registry."""
     print("Basic Namespace Registry Usage:\n")
 
@@ -141,7 +141,7 @@ def basic_namespace_registry_usage():
     print("\nRegistry structure:")
     for namespace, classes in registry.items():
         print(f"Namespace: {namespace}")
-        for name, (cls, kwargs) in classes.items():
+        for name, (cls, _kwargs) in classes.items():
             print(f"  - {name}: {cls.__name__}")
     print()
 
@@ -169,7 +169,7 @@ def basic_namespace_registry_usage():
     print()
 
 
-def default_values_and_error_handling():
+def default_values_and_error_handling() -> None:
     """Demonstrates handling missing classes and namespaces."""
     print("Default Values and Error Handling:\n")
 
@@ -220,7 +220,7 @@ def default_values_and_error_handling():
     print()
 
 
-def class_kwargs_and_instantiation():
+def class_kwargs_and_instantiation() -> None:
     """Demonstrates using class_kwargs and creating instances directly."""
     print("Class Kwargs and Instantiation:\n")
 
@@ -231,15 +231,15 @@ def class_kwargs_and_instantiation():
     # Register classes with class_kwargs
     print("Registering classes with class_kwargs...")
     registry.register_class(
-        NumberProcessor, namespace="numeric", name="DoubleProcessor", class_kwargs={"multiplier": 2.0}
+        NumberProcessor, namespace="numeric", name="DoubleProcessor", class_kwargs={"multiplier": 2.0},
     )
 
     registry.register_class(
-        NumberProcessor, namespace="numeric", name="TripleProcessor", class_kwargs={"multiplier": 3.0}
+        NumberProcessor, namespace="numeric", name="TripleProcessor", class_kwargs={"multiplier": 3.0},
     )
 
     registry.register_class(
-        NumberProcessor, namespace="numeric", name="HalfProcessor", class_kwargs={"multiplier": 0.5}
+        NumberProcessor, namespace="numeric", name="HalfProcessor", class_kwargs={"multiplier": 0.5},
     )
 
     # Get classes with their kwargs
@@ -281,7 +281,7 @@ def class_kwargs_and_instantiation():
     # Override kwargs when creating instances
     print("\nOverriding kwargs when creating instances...")
     custom_double = registry.get_new(
-        "numeric", "DoubleProcessor", name="Custom Double", class_kwargs={"multiplier": 4.0}
+        "numeric", "DoubleProcessor", name="Custom Double", class_kwargs={"multiplier": 4.0},
     )
 
     # Use the instance with overridden kwargs
@@ -289,7 +289,7 @@ def class_kwargs_and_instantiation():
     print()
 
 
-def multiple_registration_methods():
+def multiple_registration_methods() -> None:
     """Demonstrates different ways to register classes."""
     print("Multiple Registration Methods:\n")
 
@@ -307,7 +307,7 @@ def multiple_registration_methods():
         [
             (NumberProcessor, "numeric", "NumberProcessor", None),
             (ListProcessor, "collections", "ListProcessor", None),
-        ]
+        ],
     )
 
     # Method 3: Register classes using a dictionary in the constructor
@@ -318,13 +318,13 @@ def multiple_registration_methods():
     print("\nFirst registry structure:")
     for namespace, classes in registry.items():
         print(f"Namespace: {namespace}")
-        for name, (cls, kwargs) in classes.items():
+        for name, (cls, _kwargs) in classes.items():
             print(f"  - {name}: {cls.__name__}")
 
     print("\nSecond registry structure:")
     for namespace, classes in new_registry.items():
         print(f"Namespace: {namespace}")
-        for name, (cls, kwargs) in classes.items():
+        for name, (cls, _kwargs) in classes.items():
             print(f"  - {name}: {cls.__name__}")
 
     # Method 4: Update classes from another registry
@@ -334,12 +334,12 @@ def multiple_registration_methods():
     print("\nUpdated registry structure:")
     for namespace, classes in registry.items():
         print(f"Namespace: {namespace}")
-        for name, (cls, kwargs) in classes.items():
+        for name, (cls, _kwargs) in classes.items():
             print(f"  - {name}: {cls.__name__}")
     print()
 
 
-def module_import_feature():
+def module_import_feature() -> None:
     """Demonstrates the module import feature."""
     print("Module Import Feature:\n")
 
@@ -375,7 +375,7 @@ def module_import_feature():
     print()
 
 
-def processor_factory():
+def processor_factory() -> None:
     """Demonstrates using the registry as a factory for processors."""
     print("Processor Factory:\n")
 

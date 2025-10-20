@@ -30,7 +30,7 @@ class SimpleObject:
     value: int = 0
     name: str
 
-    def __init__(self, value: int = 0):
+    def __init__(self, value: int = 0) -> None:
         self.value = value
         self.name = "SimpleObject"
 
@@ -49,7 +49,7 @@ class SimpleObject:
 class ComplexObject:
     """A more complex object to be wrapped."""
 
-    def __init__(self, items: List[int] = None):
+    def __init__(self, items: list[int] | None = None) -> None:
         # Defining attributes outside the class namespace means that StaticWrapper's _wrap() must be call so they are
         # available to the StaticWrapper
         self.items = items or []
@@ -59,7 +59,7 @@ class ComplexObject:
         """Add an item to the list."""
         self.items.append(item)
 
-    def get_items(self) -> List[int]:
+    def get_items(self) -> list[int]:
         """Get all items."""
         return self.items
 
@@ -77,7 +77,7 @@ class CustomStaticWrapper(StaticWrapper):
     # Define which attributes contain objects to wrap
     _wrapped_map_ = [("simple", SimpleObject), ("complex", ComplexObject)]
 
-    def __init__(self, simple_obj: SimpleObject = None, complex_obj: ComplexObject = None):
+    def __init__(self, simple_obj: SimpleObject = None, complex_obj: ComplexObject = None) -> None:
         """Initialize the wrapper with simple and complex objects."""
         # Initialize attributes to store wrapped objects
         self._simple = simple_obj or SimpleObject()
@@ -89,7 +89,7 @@ class CustomStaticWrapper(StaticWrapper):
 
 
 # Example Sections #
-def basic_usage_example():
+def basic_usage_example() -> None:
     """Demonstrate basic usage of StaticWrapper."""
     print("\nBasic StaticWrapper Usage:")
 
@@ -141,7 +141,7 @@ def basic_usage_example():
     print(f"  complex.items: {complex.items} == [1, 2, 3, 4]")
 
 
-def custom_wrapper_example():
+def custom_wrapper_example() -> None:
     """Demonstrate using a custom StaticWrapper subclass."""
     print("\nCustom StaticWrapper Subclass Example:")
 
@@ -169,7 +169,7 @@ def custom_wrapper_example():
     print(f"  wrapper.get_combined_str(): {wrapper.get_combined_str()}")
 
 
-def attribute_resolution_example():
+def attribute_resolution_example() -> None:
     """Demonstrate attribute resolution in StaticWrapper."""
     print("\nAttribute Resolution Example:")
 
@@ -213,7 +213,7 @@ def attribute_resolution_example():
     print(f"  reversed_wrapper.shared_attr: {reversed_wrapper.shared_attr} == 'from obj2'")
 
 
-def rewrapping_example():
+def rewrapping_example() -> None:
     """Demonstrate rewrapping objects in StaticWrapper."""
     print("\nRewrapping Example:")
 
@@ -251,7 +251,7 @@ def rewrapping_example():
     print(f"  wrapper.value: {wrapper.value} == 20")
 
 
-def performance_comparison_example():
+def performance_comparison_example() -> None:
     """Demonstrate performance comparison between direct access and StaticWrapper."""
     print("\nPerformance Comparison Example:")
 
@@ -294,7 +294,7 @@ def performance_comparison_example():
     print("      because it uses property descriptors instead of dynamic lookup")
 
 
-def error_handling_example():
+def error_handling_example() -> None:
     """Demonstrate error handling with StaticWrapper."""
     print("\nError Handling Example:")
 
@@ -338,7 +338,7 @@ def error_handling_example():
         print(f"  AttributeError: {e}")
 
 
-def compare_wrappers_example():
+def compare_wrappers_example() -> None:
     """Compare StaticWrapper with DynamicWrapper."""
     print("\nComparing StaticWrapper with DynamicWrapper:")
 

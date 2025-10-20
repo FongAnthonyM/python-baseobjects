@@ -134,7 +134,8 @@ class BaseDecoratorTestSuite(BaseFunctionTestSuite):
         be overridden to validation that the decorator functions as intended.
 
         Args:
-            test_function: A fixture providing a function to decorate.
+            *args: Positional arguments to pass to the decorator constructor.
+            **kwargs: Keyword arguments to pass to the decorator constructor.
         """
         # Test Initialization
         decorated_func = self.TestClass(example_function, *args, **kwargs)

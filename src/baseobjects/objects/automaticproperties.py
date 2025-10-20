@@ -15,7 +15,6 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from builtins import property
 from collections.abc import Callable, Iterable
 from functools import partial
 from typing import Any, ClassVar
@@ -60,7 +59,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
     # Property Methods
     @classmethod
-    def property_class_get(cls, self, name: str) -> Any:
+    def property_class_get(cls, self: "AutomaticProperties", name: str) -> Any:
         """A generic class method get for properties which can be implemented in a subclass.
 
         Args:
@@ -73,7 +72,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         return getattr(self, name)
 
     @classmethod
-    def property_class_set(cls, self, value: Any, name: str) -> None:
+    def property_class_set(cls, self: "AutomaticProperties", value: Any, name: str) -> None:
         """A generic class method set for properties which can be implemented in a subclass.
 
         Args:
@@ -84,7 +83,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         setattr(self, name, value)
 
     @classmethod
-    def property_class_del(cls, self, name: str) -> None:
+    def property_class_del(cls, self: "AutomaticProperties", name: str) -> None:
         """A generic class method delete for properties which can be implemented in a subclass.
 
         Args:
@@ -141,9 +140,6 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
         Args:
             property_map: A list to map the properties from.
-
-        Raises:
-            AttributeError: If an attribute in the map is not in the object.
         """
         if property_map is None:
             property_map = cls.properties

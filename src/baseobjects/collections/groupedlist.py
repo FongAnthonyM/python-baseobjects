@@ -111,8 +111,6 @@ class GroupedList(BaseList):
 
         Raises:
             TypeError: If the index type is not supported.
-            IndexError: If the index is out of range.
-            KeyError: If the group name does not exist.
         """
         match i:
             case slice():
@@ -136,8 +134,6 @@ class GroupedList(BaseList):
 
         Raises:
             TypeError: If the index type is not supported.
-            IndexError: If the index is out of range.
-            KeyError: If the group name does not exist.
         """
         match i:
             case slice():
@@ -160,8 +156,6 @@ class GroupedList(BaseList):
 
         Raises:
             TypeError: If the index type is not supported.
-            IndexError: If the index is out of range.
-            KeyError: If the group name does not exist.
         """
         match i:
             case slice():
@@ -518,9 +512,6 @@ class GroupedList(BaseList):
         Args:
             group: The group to remove, either as a string name or a GroupedList object.
 
-        Raises:
-            KeyError: If the group name does not exist.
-            ValueError: If the group object is not in this GroupedList.
         """
         if isinstance(group, str):
             name = group
@@ -541,9 +532,6 @@ class GroupedList(BaseList):
 
         Returns:
             The group with the given name.
-
-        Raises:
-            KeyError: If the group name does not exist.
         """
         if isinstance(name, str):
             names = [name]
@@ -566,6 +554,10 @@ class GroupedList(BaseList):
         Args:
             group: The group to add.
             name: The name to give to the group.
+
+        Raises:
+            ValueError: If attempting to add this GroupedList to itself or to add a parent group.
+            KeyError: If a group with the provided name already exists.
         """
         if group is self:
             msg = "Cannot add this GroupedList to itself."
@@ -592,7 +584,6 @@ class GroupedList(BaseList):
 
         Raises:
             IndexError: If the index is out of range.
-            KeyError: If the group name does not exist.
         """
         if group is not None:
             return self.groups[group].get_item(i)
@@ -633,9 +624,6 @@ class GroupedList(BaseList):
 
         Returns:
             A list containing the items in the specified slice.
-
-        Raises:
-            KeyError: If the group name does not exist.
         """
         if group is not None:
             return self.groups[group].get_slice(slice_)
@@ -652,7 +640,6 @@ class GroupedList(BaseList):
 
         Raises:
             IndexError: If the index is out of range.
-            KeyError: If the group name does not exist.
         """
         if group is not None:
             return self.groups[group].set_item(i, value)
@@ -701,7 +688,6 @@ class GroupedList(BaseList):
 
         Raises:
             ValueError: If the length of values doesn't match the slice length.
-            KeyError: If the group name does not exist.
         """
         if group is not None:
             return self.groups[group].set_slice(slice_, value)
@@ -727,7 +713,6 @@ class GroupedList(BaseList):
 
         Raises:
             IndexError: If the index is out of range.
-            KeyError: If the group name does not exist.
         """
         if group is not None:
             return self.groups[group].delete_item(i)
@@ -773,9 +758,6 @@ class GroupedList(BaseList):
         Args:
             slice_: The slice of items to delete.
             group: The name of the group to delete the items from, or None to delete from this GroupedList.
-
-        Raises:
-            KeyError: If the group name does not exist.
         """
         if group is not None:
             return self.groups[group].delete_slice(slice_)
@@ -809,9 +791,6 @@ class GroupedList(BaseList):
             i: The index where the item should be inserted.
             item: The item to insert.
             group: The name of the group to insert the item into, or None to insert into this GroupedList.
-
-        Raises:
-            KeyError: If the group name does not exist.
         """
         if group is None:
             return self.data.insert(i, item)
@@ -863,10 +842,6 @@ class GroupedList(BaseList):
 
         Returns:
             The item that was removed.
-
-        Raises:
-            IndexError: If the index is out of range.
-            KeyError: If the group name does not exist.
         """
         if group is not None:
             return self.groups[group].delete_item(i)
@@ -914,7 +889,6 @@ class GroupedList(BaseList):
 
         Raises:
             ValueError: If the item is not found.
-            KeyError: If the group name does not exist.
         """
         if group is not None:
             return self.groups[group].remove(item)
@@ -935,9 +909,6 @@ class GroupedList(BaseList):
 
         Args:
             group: The name of the group to clear, or None to clear this GroupedList.
-
-        Raises:
-            KeyError: If the group name does not exist.
         """
         if group is None:
             self.data.clear()
@@ -966,8 +937,6 @@ class GroupedList(BaseList):
         Returns:
             The index of the first occurrence of the item.
 
-        Raises:
-            ValueError: If the item is not found.
         """
         return self.as_flat_list().index(item, *args)
 
@@ -978,7 +947,7 @@ class GroupedList(BaseList):
             if isinstance(item, GroupedList) and self.check_if_child(item):
                 item.reverse()
 
-    def sort(self, /, *args, **kwds) -> None:
+    def sort(self, /, *args: Any, **kwds: Any) -> None:
         """Sorts the items in this GroupedList.
 
         Args:
@@ -993,9 +962,6 @@ class GroupedList(BaseList):
         Args:
             other: The iterable to extend with.
             group: The name of the group to extend, or None to extend this GroupedList.
-
-        Raises:
-            KeyError: If the group name does not exist.
         """
         if isinstance(other, GroupedList):
             other.add_parent_to_children(self)
@@ -1040,7 +1006,7 @@ class GroupedList(BaseList):
         new.extend(self)
         return new
 
-    def iadd(self, other) -> GroupedList:
+    def iadd(self, other: Any) -> GroupedList:
         """Adds another object to this GroupedList in-place.
 
         Args:

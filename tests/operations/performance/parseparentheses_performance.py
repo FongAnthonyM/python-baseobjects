@@ -18,7 +18,8 @@ __version__ = "1.12.0"
 import re
 import timeit
 from collections import deque
-from typing import Any, Callable, List, Set, Union
+from typing import Any, List, Set, Union
+from collections.abc import Callable
 
 # Third-Party Packages #
 import pytest
@@ -32,10 +33,10 @@ from src.baseobjects.testsuite import BasePerformanceTestSuite
 # Functions #
 def standard_parse_parentheses_str(
     expression: str,
-    include: Set[str] = None,
-    exclude: Set[str] = None,
+    include: set[str] | None = None,
+    exclude: set[str] | None = None,
     cast: Callable = lambda x: x,
-) -> List[Any]:
+) -> list[Any]:
     """Standard implementation of parse_parentheses for string input using a stack-based approach.
 
     Args:
@@ -76,24 +77,26 @@ def standard_parse_parentheses_str(
             try:
                 stack.pop()
             except IndexError:
-                raise ValueError("Unbalanced parentheses")
+                msg = "Unbalanced parentheses"
+                raise ValueError(msg)
         elif (not include or token in include) and token not in exclude:
             # Add the token to the current list if it passes the filters
             stack[-1].append(cast(token.strip()))
 
     # Check for unbalanced parentheses
     if len(stack) != 1:
-        raise ValueError("Unbalanced parentheses")
+        msg = "Unbalanced parentheses"
+        raise ValueError(msg)
 
     return stack[0]
 
 
 def standard_parse_parentheses_bytes(
-    expression: Union[bytes, bytearray],
-    include: Set[bytes] = None,
-    exclude: Set[bytes] = None,
+    expression: bytes | bytearray,
+    include: set[bytes] | None = None,
+    exclude: set[bytes] | None = None,
     cast: Callable = lambda x: x,
-) -> List[Any]:
+) -> list[Any]:
     """Standard implementation of parse_parentheses for bytes/bytearray input using a stack-based approach.
 
     Args:
@@ -117,7 +120,7 @@ def standard_parse_parentheses_bytes(
     rb_single_quote_group = rb"'((?:[^']|\\.)*)(?<!\\)'"
     rb_group_between_characters = rb"[^,'\"\(\)]+"
     rb_expression = rb"|".join(
-        (rb_parentheses, rb_double_quote_group, rb_single_quote_group, rb_group_between_characters)
+        (rb_parentheses, rb_double_quote_group, rb_single_quote_group, rb_group_between_characters),
     )
 
     # Stack to keep track of nested lists
@@ -136,14 +139,16 @@ def standard_parse_parentheses_bytes(
             try:
                 stack.pop()
             except IndexError:
-                raise ValueError("Unbalanced parentheses")
+                msg = "Unbalanced parentheses"
+                raise ValueError(msg)
         elif (not include or token in include) and token not in exclude:
             # Add the token to the current list if it passes the filters
             stack[-1].append(cast(token.strip()))
 
     # Check for unbalanced parentheses
     if len(stack) != 1:
-        raise ValueError("Unbalanced parentheses")
+        msg = "Unbalanced parentheses"
+        raise ValueError(msg)
 
     return stack[0]
 
@@ -308,7 +313,7 @@ class TestParseParentheses(BasePerformanceTestSuite):
         assert percent < self.speed_tolerance
 
     def test_parse_parentheses_filtering_speed(
-        self, simple_expression: str, include_set: set, exclude_set: set
+        self, simple_expression: str, include_set: set, exclude_set: set,
     ) -> None:
         """Test the performance of parse_parentheses with filtering.
 
@@ -351,7 +356,7 @@ class TestParseParentheses(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNew (parse_parentheses filtering): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)"
+            f"\nNew (parse_parentheses filtering): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)",
         )
         assert percent < self.speed_tolerance
 

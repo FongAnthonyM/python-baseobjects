@@ -20,7 +20,7 @@ from baseobjects.operations import parse_parentheses
 
 
 # Example Sections #
-def basic_usage_example():
+def basic_usage_example() -> None:
     """Demonstrate basic usage of parse_parentheses."""
     print("\nBasic parse_parentheses Usage:")
 
@@ -43,7 +43,7 @@ def basic_usage_example():
     print("Expected: ['function', ['arg1', 'arg2']]")
 
 
-def nested_parentheses_example():
+def nested_parentheses_example() -> None:
     """Demonstrate parsing expressions with nested parentheses."""
     print("\nNested Parentheses Example:")
 
@@ -74,7 +74,7 @@ def nested_parentheses_example():
     print("Expected: ['a', ['b', ['c', ['d', ['e']]]]]")
 
 
-def filtering_example():
+def filtering_example() -> None:
     """Demonstrate filtering parsed elements."""
     print("\nFiltering Example:")
 
@@ -111,7 +111,7 @@ def filtering_example():
     print("Expected: ['function', ['arg1', 'True']]")
 
 
-def casting_example():
+def casting_example() -> None:
     """Demonstrate casting parsed elements to different types."""
     print("\nCasting Example:")
 
@@ -159,7 +159,7 @@ def casting_example():
     print("Expected: ['mixed', [1, 2.5, 'text', True]]")
 
 
-def different_input_types_example():
+def different_input_types_example() -> None:
     """Demonstrate parsing different input types."""
     print("\nDifferent Input Types Example:")
 
@@ -188,7 +188,7 @@ def different_input_types_example():
     print("Expected: [b'function', [b'arg1', b'arg2']]")
 
 
-def error_handling_example():
+def error_handling_example() -> None:
     """Demonstrate error handling with parse_parentheses."""
     print("\nError Handling Example:")
 
@@ -226,7 +226,7 @@ def error_handling_example():
         print("Expected: ValueError about unsupported input type")
 
 
-def quoted_strings_example():
+def quoted_strings_example() -> None:
     """Demonstrate handling quoted strings in expressions."""
     print("\nQuoted Strings Example:")
 
@@ -251,7 +251,7 @@ def quoted_strings_example():
     print("Expected: ['function', ['\"string with \\\"escaped\\\" quotes\"']]")
 
 
-def practical_example():
+def practical_example() -> None:
     """Demonstrate a practical use case for parse_parentheses."""
     print("\nPractical Example - Simple Expression Evaluator:")
 

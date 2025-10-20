@@ -180,9 +180,6 @@ class BaseComposite(BaseObject):
 
         Returns:
             The removed component.
-
-        Raises:
-            KeyError: If no component with the given name exists.
         """
         component = self.components[name]
         del self.components[name]

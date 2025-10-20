@@ -118,8 +118,8 @@ class TextProcessor(BaseDispatchingComposite):
 
     # Class Attributes #
     # Specify default components
-    default_component_types: ClassVar[Dict[str, Tuple[Type[BaseComponent], Dict[str, Any]]]] = {
-        "uppercase": (UppercaseComponent, {})
+    default_component_types: ClassVar[dict[str, tuple[type[BaseComponent], dict[str, Any]]]] = {
+        "uppercase": (UppercaseComponent, {}),
     }
 
     # Attributes #
@@ -234,7 +234,8 @@ class TextProcessor(BaseDispatchingComposite):
             The processed text.
         """
         if component_name not in self.components:
-            raise ValueError(f"Component '{component_name}' not found")
+            msg = f"Component '{component_name}' not found"
+            raise ValueError(msg)
 
         component = self.components[component_name]
         return component.process(text)
@@ -262,7 +263,7 @@ TextProcessor.component_types_registry.register_class(
 
 # Functions #
 # Example Sections #
-def basic_dispatching_composite_usage():
+def basic_dispatching_composite_usage() -> None:
     """Demonstrates basic usage of a dispatching composite."""
     print("Basic Dispatching Composite Usage:\n")
 
@@ -285,7 +286,7 @@ def basic_dispatching_composite_usage():
     print()
 
 
-def creating_components_with_string_identifiers():
+def creating_components_with_string_identifiers() -> None:
     """Demonstrates creating components using string identifiers."""
     print("Creating Components with String Identifiers:\n")
 
@@ -308,7 +309,7 @@ def creating_components_with_string_identifiers():
     print()
 
 
-def multiple_dispatched_components():
+def multiple_dispatched_components() -> None:
     """Demonstrates using multiple dispatched components."""
     print("Multiple Dispatched Components:\n")
 
@@ -349,7 +350,7 @@ def multiple_dispatched_components():
     print()
 
 
-def dynamic_component_selection():
+def dynamic_component_selection() -> None:
     """Demonstrates dynamic component selection based on user input."""
     print("Dynamic Component Selection:\n")
 
@@ -378,7 +379,7 @@ def dynamic_component_selection():
     print()
 
 
-def custom_component_registry():
+def custom_component_registry() -> None:
     """Demonstrates creating and using a custom component registry."""
     print("Custom Component Registry:\n")
 

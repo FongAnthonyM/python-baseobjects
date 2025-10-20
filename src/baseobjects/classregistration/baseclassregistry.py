@@ -92,7 +92,7 @@ class BaseClassRegistry(BaseDict):
         """
 
     @abstractmethod
-    def get_class(self, *args, **kwargs) -> Any:
+    def get_class(self, *args: Any, **kwargs: Any) -> Any:
         """Gets a class from the registry.
 
         Args:

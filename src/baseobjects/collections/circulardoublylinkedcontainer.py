@@ -167,6 +167,8 @@ class LinkedNode(BaseReducible):
             data: The data to contain within this node.
             previous: The previous node.
             next_: The next node.
+            *args: Additional positional arguments forwarded to BaseObject.construct.
+            **kwargs: Additional keyword arguments forwarded to BaseObject.construct.
         """
         if previous is not None:
             self._previous = weakref.ref(previous)
@@ -212,7 +214,7 @@ class CircularDoublyLinkedContainer(BaseObject):
         # Attributes #
         self.nodes: set[LinkedNode] = set()
 
-    def __deepcopy__(self, memo: dict | None = None, _nil=None) -> "CircularDoublyLinkedContainer":
+    def __deepcopy__(self, memo: dict | None = None, _nil: list[Any] | None = None) -> "CircularDoublyLinkedContainer":
         """Creates a deep copy of this object.
 
         Args:

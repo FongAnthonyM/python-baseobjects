@@ -15,11 +15,12 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from datetime import datetime, timedelta, tzinfo
+from datetime import datetime, timedelta, tzinfo, UTC
+
 
 # Definitions #
 # Constants
-INIT_DATE = datetime(1970, 1, 1)
+INIT_DATE = datetime(1970, 1, 1, tzinfo=UTC)
 
 
 # Functions #
