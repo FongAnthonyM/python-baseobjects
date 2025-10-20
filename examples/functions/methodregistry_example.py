@@ -12,7 +12,7 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Optional
 from collections.abc import Callable
 
 # Source Packages #
@@ -309,7 +309,7 @@ def basic_method_registry() -> None:
     class Example:
         methods = MethodRegistry()
 
-        def __init__(self, name) -> None:
+        def __init__(self, name: str) -> None:
             self.name = name
 
     # Create instances of the class
@@ -359,7 +359,7 @@ def method_registry_vs_function_registry() -> None:
         method_registry = MethodRegistry()
         function_registry = FunctionRegistry()
 
-        def __init__(self, name) -> None:
+        def __init__(self, name: str) -> None:
             self.name = name
 
     # Create instances of the class
@@ -386,12 +386,10 @@ def method_registry_vs_function_registry() -> None:
 
     # Show that method_registry instances are different for each instance
     print("\nRegistry instances:")
-    print(
-        f"instance1.method_registry is instance2.method_registry: {instance1.method_registry is instance2.method_registry}",
-    )
-    print(
-        f"instance1.function_registry is instance2.function_registry: {instance1.function_registry is instance2.function_registry}",
-    )
+    same_method_registry = instance1.method_registry is instance2.method_registry
+    print("method_registry same across instances:", same_method_registry)
+    same_function_registry = instance1.function_registry is instance2.function_registry
+    print("function_registry same across instances:", same_function_registry)
 
     # Use methods from both registries
     print("\nUsing methods from both registries:")
@@ -427,11 +425,13 @@ def method_registry_vs_function_registry() -> None:
 
     # Define static methods
     @staticmethod
-    def static_add(a, b):
+    def static_add(a: float, b: float) -> float:
+        """Add two numbers without requiring an instance."""
         return a + b
 
     @staticmethod
-    def static_uppercase(text):
+    def static_uppercase(text: str) -> str:
+        """Uppercase text without requiring an instance."""
         return text.upper()
 
     # Add the static methods to the function_registry
@@ -479,7 +479,8 @@ def operations_container_example() -> None:
     print(f"\nAdding a custom method to {container2.name}...")
 
     # Define a method for the math_ops instance
-    def power_method(self, a, b):
+    def power_method(self, a: float, b: float) -> float:
+        """Raise a to the power of b."""
         return a**b
 
     # Add the method to the math_ops instance
@@ -549,7 +550,7 @@ def method_binding_example() -> None:
 
     # Create a class with instance methods
     class Example:
-        def __init__(self, name, value) -> None:
+        def __init__(self, name: str, value: Any) -> None:
             self.name = name
             self.value = value
 
@@ -560,10 +561,10 @@ def method_binding_example() -> None:
             self.methods["get"] = self.get_value
             self.methods["set"] = self.set_value
 
-        def get_value(self):
+        def get_value(self) -> Any:
             return self.value
 
-        def set_value(self, value):
+        def set_value(self, value: Any) -> Any:
             self.value = value
             return self.value
 

@@ -11,7 +11,7 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 import copy
-from typing import Any, List, Optional
+from typing import Any
 
 # Source Packages #
 from baseobjects.bases.collections import BaseList
@@ -226,9 +226,8 @@ def unique_list_example() -> None:
 
     # Extend the list
     unique_list.extend(["fig", "grape", "apple"])
-    print(
-        f"After extend(['fig', 'grape', 'apple']): {unique_list} == ['elderberry', 'apple', 'banana', 'cherry', 'date', 'fig', 'grape']",
-    )
+    expected = "['elderberry', 'apple', 'banana', 'cherry', 'date', 'fig', 'grape']"
+    print(f"After extend(['fig', 'grape', 'apple']): {unique_list} == {expected}")
 
 
 def baseobject_features_example() -> None:

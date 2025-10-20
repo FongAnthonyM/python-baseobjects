@@ -11,7 +11,7 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 from collections import ChainMap
-from typing import Any, Dict
+from typing import Any
 
 # Source Packages #
 from baseobjects.collections import DeepChainMap
@@ -41,7 +41,8 @@ def basic_usage_example() -> None:
     print("\nOriginal dictionaries:")
     print(f"  Session settings: {session_settings} == {{'theme': 'dark'}}")
     print(f"  User settings: {user_settings} == {{'language': 'fr', 'timeout': 60}}")
-    print(f"  Defaults: {defaults} == {{'theme': 'default', 'language': 'en', 'timeout': 30, 'debug': False}}")
+    print("  Defaults:")
+    print(f"    {defaults} == {{'theme': 'default', 'language': 'en', 'timeout': 30, 'debug': False}}")
 
     # Add a new key
     print("\nAdding a new key 'notifications':")
@@ -54,9 +55,8 @@ def basic_usage_example() -> None:
     settings["language"] = "es"
     print(f"  Settings['language']: {settings['language']} == 'es'")
     print(f"  User settings: {user_settings} == {{'language': 'es', 'timeout': 60}}")
-    print(
-        f"  Defaults (unchanged): {defaults} == {{'theme': 'default', 'language': 'en', 'timeout': 30, 'debug': False}}",
-    )
+    print("  Defaults (unchanged):")
+    print(f"    {defaults} == {{'theme': 'default', 'language': 'en', 'timeout': 30, 'debug': False}}")
 
     # Delete a key
     print("\nDeleting key 'timeout':")

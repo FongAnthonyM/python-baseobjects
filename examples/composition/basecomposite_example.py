@@ -14,7 +14,7 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 import pickle
-from typing import Any, ClassVar, Dict, Tuple, Type
+from typing import Any, ClassVar
 
 # Source Packages #
 from baseobjects.composition import BaseComponent, BaseComposite

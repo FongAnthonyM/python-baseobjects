@@ -98,7 +98,7 @@ def basic_basecallable_example() -> None:
     print(f"Double 5: {result} == 10")
 
     # Create a BaseCallable with a regular function
-    def square(x):
+    def square(x: int) -> int:
         return x * x
 
     square_callable = BaseCallable(square)
@@ -159,7 +159,7 @@ def binding_example() -> None:
     calc = Calculator(5)
 
     # Define a standalone function
-    def increment(self, amount):
+    def increment(self: "Calculator", amount: int) -> int:
         self.value += amount
         return self.value
 
@@ -171,7 +171,7 @@ def binding_example() -> None:
     print(f"Calculator value: {calc.value} == 8")
 
     # Bind a function to an attribute
-    def reset(self, value=0):
+    def reset(self: "Calculator", value: int = 0) -> int:
         self.value = value
         return self.value
 

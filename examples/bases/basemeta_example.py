@@ -12,7 +12,7 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 import copy
-from typing import Any, ClassVar, Dict, List
+from typing import Any, ClassVar
 
 # Source Packages #
 from baseobjects.bases import BaseMeta
@@ -39,6 +39,11 @@ class BaseWithMeta(metaclass=ExampleMeta):
     """A base class that uses ExampleMeta as its metaclass."""
 
     def __init__(self, name: str) -> None:
+        """Initialize the base instance.
+
+        Args:
+            name: The name for this instance.
+        """
         self.name = name
         self.data = {"key": "value"}
         self.items = [1, 2, 3]
@@ -48,6 +53,12 @@ class ChildClass(BaseWithMeta):
     """A child class that inherits from BaseWithMeta."""
 
     def __init__(self, name: str, value: int) -> None:
+        """Initialize the child instance.
+
+        Args:
+            name: The name for this instance.
+            value: An integer value associated with the instance.
+        """
         super().__init__(name)
         self.value = value
         self.nested = {"nested_key": [4, 5, 6]}

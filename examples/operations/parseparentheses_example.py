@@ -119,7 +119,7 @@ def casting_example() -> None:
     expression = "calculate(1, 2, 3, 4)"
 
     # Define a cast function to convert strings to integers where possible
-    def cast_to_int(s):
+    def cast_to_int(s: str) -> int | str:
         try:
             return int(s)
         except ValueError:
@@ -136,7 +136,7 @@ def casting_example() -> None:
     expression = "mixed(1, 2.5, 'text', True)"
 
     # Define a more complex cast function
-    def smart_cast(s):
+    def smart_cast(s: str) -> int | float | bool | str:
         s = s.strip()
         try:
             return int(s)
@@ -256,14 +256,14 @@ def practical_example() -> None:
     print("\nPractical Example - Simple Expression Evaluator:")
 
     # Define a simple expression evaluator
-    def evaluate_expression(expr):
+    def evaluate_expression(expr: str) -> float:
         # Parse the expression
         parsed = parse_parentheses(expr)
 
         # Evaluate the parsed expression
-        return evaluate_parsed(parsed)
+        return float(evaluate_parsed(parsed))
 
-    def evaluate_parsed(parsed):
+    def evaluate_parsed(parsed: object) -> float:
         if not parsed:
             return 0
 

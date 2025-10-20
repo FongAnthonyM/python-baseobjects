@@ -18,7 +18,7 @@ import asyncio
 import pickle
 import time
 from functools import wraps
-from typing import Any, Dict, List, Optional, TypeVar, Union
+from typing import Any, Optional, TypeVar, Union
 from collections.abc import Callable
 
 # Source Packages #
@@ -130,11 +130,8 @@ class AsyncRetryDecorator(BaseDecorator):
 
         Returns:
             The result of the decorated coroutine function.
-
-        Raises:
-            Exception: If all retry attempts fail.
         """
-        last_exception = None
+        last_exception: Exception | None = None
         for attempt in range(self.max_retries + 1):
             try:
                 if attempt > 0:
@@ -148,7 +145,8 @@ class AsyncRetryDecorator(BaseDecorator):
                     await asyncio.sleep(self.delay)
                 else:
                     print(f"All {self.max_retries} retry attempts failed.")
-                    raise last_exception
+                    if last_exception is not None:
+                        raise last_exception from None
         return None
 
 
@@ -248,7 +246,8 @@ async def fetch_data(url: str, timeout: float = 1.0) -> dict[str, Any]:
         A dictionary containing the fetched data.
 
     Raises:
-        Exception: If the URL is invalid or the timeout is exceeded.
+        Exception: If the URL is invalid.
+        TimeoutError: If the timeout is exceeded.
     """
     # Simulate network delay
     await asyncio.sleep(0.1)
@@ -285,7 +284,7 @@ def basic_decorator_example() -> None:
 
     # Use the decorator as a function decorator
     @TimerDecorator
-    def calculate_sum(n):
+    def calculate_sum(n: int) -> int:
         """Calculate the sum of numbers from 1 to n."""
         return sum(range(1, n + 1))
 
@@ -314,7 +313,7 @@ def decorator_with_arguments_example() -> None:
 
     # Use the decorator with arguments
     @RepeatDecorator(times=2, show_iteration=False)
-    def greet(name):
+    def greet(name: str) -> str:
         """Greet a person."""
         greeting = f"Hello, {name}!"
         print(greeting)
@@ -327,7 +326,7 @@ def decorator_with_arguments_example() -> None:
 
     # Use the decorator without arguments (default values)
     @RepeatDecorator
-    def square(x):
+    def square(x: int) -> int:
         """Square a number."""
         return x * x
 
@@ -364,7 +363,7 @@ async def async_decorator_example() -> None:
 
     # Use the decorator as a function decorator
     @AsyncRetryDecorator(max_retries=2, delay=0.3)
-    async def fetch_with_timeout(url, timeout=0.5):
+    async def fetch_with_timeout(url: str, timeout: float = 0.5) -> dict[str, Any]:
         """Fetch data with a specified timeout."""
         return await fetch_data(url, timeout)
 

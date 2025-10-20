@@ -11,7 +11,7 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 import copy
-from typing import Any, Dict, List
+from typing import Any
 
 # Source Packages #
 from baseobjects.bases.collections import BaseDict
@@ -21,15 +21,15 @@ from baseobjects.bases.collections import BaseDict
 class ConfigDict(BaseDict):
     """A custom dictionary for configuration settings that inherits from BaseDict."""
 
-    def __init__(self, dict: dict[str, Any] | None = None, /, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, data: dict[str, Any] | None = None, /, *args: Any, **kwargs: Any) -> None:
         """Initialize a ConfigDict object.
 
         Args:
-            dict: Initial dictionary data
+            data: Initial dictionary data
             *args: Additional arguments for parent classes
             **kwargs: Additional keyword arguments for parent classes
         """
-        super().__init__(dict, *args, **kwargs)
+        super().__init__(data, *args, **kwargs)
         self.construct()
 
     def construct(self, *args: Any, **kwargs: Any) -> None:

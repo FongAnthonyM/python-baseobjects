@@ -242,17 +242,17 @@ def practical_example() -> None:
 
     # Create a circular buffer with a maximum size of 3
     class CircularBuffer:
-        def __init__(self, max_size) -> None:
+        def __init__(self, max_size: int) -> None:
             self.container = CircularDoublyLinkedContainer()
             self.max_size = max_size
 
-        def add(self, item) -> None:
+        def add(self, item: object) -> None:
             if len(self.container) >= self.max_size:
                 # Remove the oldest item (first node)
                 self.container.pop(0)
             self.container.append(item)
 
-        def get_items(self):
+        def get_items(self) -> list[object]:
             return [node.data for node in self.container]
 
     # Create a buffer and add items

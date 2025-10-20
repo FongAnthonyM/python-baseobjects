@@ -15,7 +15,6 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 import timeit
-from typing import List
 
 # Source Packages #
 from baseobjects.wrappers import StaticWrapper

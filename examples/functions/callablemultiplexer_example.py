@@ -247,7 +247,7 @@ def multiplexer_types_comparison() -> None:
     print("\nUsing standalone functions with different multiplexers:")
 
     # Define a standalone function
-    def standalone_add(a, b):
+    def standalone_add(a: int, b: int) -> int:
         return a + b
 
     # Add the function to all registries
@@ -288,7 +288,7 @@ def dynamic_method_selection() -> None:
 
     # Create a class with instance methods
     class DynamicProcessor:
-        def __init__(self, name) -> None:
+        def __init__(self, name: str) -> None:
             self.name = name
             self.value = 0
 
@@ -298,20 +298,20 @@ def dynamic_method_selection() -> None:
             # No need to add methods to a registry, we'll use the instance's methods directly
             self.multiplexer.select("increment")
 
-        def increment(self, amount=1):
+        def increment(self, amount: int = 1) -> int:
             self.value += amount
             return self.value
 
-        def decrement(self, amount=1):
+        def decrement(self, amount: int = 1) -> int:
             self.value -= amount
             return self.value
 
-        def reset(self):
+        def reset(self) -> int:
             old_value = self.value
             self.value = 0
             return old_value
 
-        def process(self):
+        def process(self) -> int:
             # Call the currently selected method
             return self.multiplexer()
 

@@ -10,7 +10,7 @@ This example demonstrates:
 """
 # Imports #
 # Standard Libraries #
-from typing import Any, Dict
+from typing import Any
 
 # Source Packages #
 from baseobjects.collections import OrderableDict

@@ -27,6 +27,7 @@ class DataProcessor:
     """Base class for data processors."""
 
     def __init__(self, name: str) -> None:
+        """Initialize the data processor with a name."""
         self.name = name
 
     def process(self, data: Any) -> Any:
@@ -41,6 +42,7 @@ class DataProcessor:
         return data
 
     def __str__(self) -> str:
+        """Return a human-readable representation of the processor."""
         return f"{self.name} (Base Processor)"
 
 
@@ -59,6 +61,7 @@ class TextProcessor(DataProcessor):
         return data.strip().upper()
 
     def __str__(self) -> str:
+        """Return a human-readable representation of the text processor."""
         return f"{self.name} (Text Processor)"
 
 
@@ -66,6 +69,12 @@ class NumberProcessor(DataProcessor):
     """A processor for numeric data."""
 
     def __init__(self, name: str, multiplier: float = 1.0) -> None:
+        """Initialize a NumberProcessor.
+
+        Args:
+            name: The processor name.
+            multiplier: The numeric multiplier applied during processing.
+        """
         super().__init__(name)
         self.multiplier = multiplier
 
@@ -81,6 +90,7 @@ class NumberProcessor(DataProcessor):
         return data * self.multiplier
 
     def __str__(self) -> str:
+        """Return a human-readable representation of the number processor."""
         return f"{self.name} (Number Processor, multiplier={self.multiplier})"
 
 
@@ -99,6 +109,7 @@ class ListProcessor(DataProcessor):
         return sorted(data)
 
     def __str__(self) -> str:
+        """Return a human-readable representation of the list processor."""
         return f"{self.name} (List Processor)"
 
 
@@ -117,6 +128,7 @@ class DictionaryProcessor(DataProcessor):
         return {k.upper(): v for k, v in data.items()}
 
     def __str__(self) -> str:
+        """Return a human-readable representation of the dictionary processor."""
         return f"{self.name} (Dictionary Processor)"
 
 
@@ -356,7 +368,7 @@ def module_import_feature() -> None:
     print("(Note: This would normally try to import a module, but we'll simulate the behavior)")
 
     # Simulate the module import by registering the class after the first attempt
-    def simulate_import(namespace, name, module):
+    def simulate_import(namespace: str, name: str, module: str) -> type:
         print(f"Simulating import of module '{module}'...")
         registry.register_class(NumberProcessor, namespace=namespace, name=name)
         return registry.get_class(namespace, name)
@@ -401,9 +413,6 @@ def processor_factory() -> None:
 
         Returns:
             An instance of the requested processor type.
-
-        Raises:
-            KeyError: If the processor type is not found in the registry.
         """
         return registry.get_new(data_type, processor_name, **kwargs)
 

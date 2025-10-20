@@ -12,7 +12,7 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any, Type
+from typing import Any
 
 # Source Packages #
 from baseobjects.classregistration import BaseClassRegistry
@@ -57,6 +57,7 @@ class Animal:
     """Base class for animals."""
 
     def __init__(self, name: str) -> None:
+        """Initialize the animal with a name."""
         self.name = name
 
     def speak(self) -> str:

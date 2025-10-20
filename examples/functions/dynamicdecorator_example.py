@@ -15,7 +15,7 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 import time
-from typing import Any, Dict, List, Optional, TypeVar, Union
+from typing import Any, Optional, TypeVar, Union
 from collections.abc import Callable
 
 # Source Packages #

@@ -13,7 +13,7 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar, Dict, Tuple, Type
+from typing import Any, ClassVar
 
 # Source Packages #
 from baseobjects.classregistration import NamespaceClassRegistry
@@ -221,7 +221,7 @@ class TextProcessor(BaseDispatchingComposite):
         Returns:
             A dictionary of the names of the components, their types, and their keyword arguments.
         """
-        return {name: self.component_types_registry.get_class(namespace, class_name, with_kwargs=True, *args, **kwargs)}
+        return {name: self.component_types_registry.get_class(namespace, class_name, *args, with_kwargs=True, **kwargs)}
 
     def process_text(self, text: str, component_name: str) -> str:
         """Process text using the specified component.
@@ -232,6 +232,9 @@ class TextProcessor(BaseDispatchingComposite):
 
         Returns:
             The processed text.
+
+        Raises:
+            ValueError: If the specified component is not found in this composite.
         """
         if component_name not in self.components:
             msg = f"Component '{component_name}' not found"

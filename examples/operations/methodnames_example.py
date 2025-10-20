@@ -28,22 +28,22 @@ from baseobjects.operations import (
 class ExampleClass:
     """A simple example class to demonstrate method name functions."""
 
-    def __init__(self, value=0) -> None:
+    def __init__(self, value: int = 0) -> None:
         self.value = value
 
-    def public_method(self):
+    def public_method(self) -> int:
         """A public method."""
         return self.value
 
-    def another_public_method(self, x):
+    def another_public_method(self, x: int) -> int:
         """Another public method."""
         return self.value + x
 
-    def _private_method(self):
+    def _private_method(self) -> int:
         """A private method (by convention)."""
         return self.value * 2
 
-    def __special_method__(self):
+    def __special_method__(self) -> int:
         """A special method."""
         return self.value**2
 
@@ -51,11 +51,11 @@ class ExampleClass:
 class DerivedClass(ExampleClass):
     """A derived class that inherits from ExampleClass."""
 
-    def additional_method(self):
+    def additional_method(self) -> int:
         """An additional public method."""
         return self.value - 1
 
-    def _another_private_method(self):
+    def _another_private_method(self) -> float:
         """Another private method."""
         return self.value / 2
 
@@ -220,7 +220,7 @@ def standard_library_example() -> None:
     print("\nStandard Library Example:")
 
     # Create some standard library objects
-    dt = datetime.datetime.now()
+    dt = datetime.datetime.now(datetime.timezone.utc)
     js = json.JSONEncoder()
 
     # Get their method names
@@ -245,7 +245,7 @@ def practical_example() -> None:
     """Demonstrate a practical use case for method name functions."""
     print("\nPractical Example - Simple Object Inspector:")
 
-    def inspect_object(obj) -> None:
+    def inspect_object(obj: object) -> None:
         """A simple object inspector function."""
         # Get basic object information
         obj_type = type(obj).__name__

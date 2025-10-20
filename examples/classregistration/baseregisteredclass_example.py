@@ -13,7 +13,7 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar, Optional, Type
+from typing import Any, ClassVar, Optional
 
 # Source Packages #
 from baseobjects.classregistration import BaseClassRegistry, BaseRegisteredClass

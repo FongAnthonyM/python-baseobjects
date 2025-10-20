@@ -15,7 +15,6 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 import time
-from typing import List
 
 # Source Packages #
 from baseobjects.wrappers import DynamicWrapper

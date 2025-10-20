@@ -11,7 +11,7 @@ This example demonstrates:
 """
 # Imports #
 # Standard Libraries #
-from typing import Any, Dict, List
+from typing import Any
 
 # Source Packages #
 from baseobjects.bases import BaseObject
@@ -101,7 +101,7 @@ class Employee(Person):
         self.projects = []  # Mutable attribute to demonstrate deep vs shallow copy
 
         # Call parent's construct with remaining args/kwargs
-        super().construct(name=name, age=age, *args, **kwargs)
+        super().construct(name, age, *args, **kwargs)
 
 
 # Example Sections #

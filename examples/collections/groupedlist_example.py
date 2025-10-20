@@ -11,7 +11,7 @@ This example demonstrates:
 """
 # Imports #
 # Standard Libraries #
-from typing import Any, List
+from typing import Any
 
 # Source Packages #
 from baseobjects.collections import GroupedList

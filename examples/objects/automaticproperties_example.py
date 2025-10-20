@@ -13,7 +13,7 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar, Dict, List, NoReturn
+from typing import Any, ClassVar, NoReturn
 
 # Source Packages #
 from baseobjects.objects import AutomaticProperties

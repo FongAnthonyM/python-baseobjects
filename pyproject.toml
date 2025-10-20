@@ -30,11 +30,8 @@ changelog = "https://github.com/AnthonyTechnologies/python-baseobjects/releases"
 # Optional Dependencies
 [project.optional-dependencies]
 dev = [
-    "bandit>=1.7.4",
-    "black>=21.10b0",
     "coverage[toml]>=6.2",
     "click>=8.0.3",
-    "darglint>=1.8.1",
     "flake8>=4.0.1",
     "flake8-bugbear>=21.9.2",
     "flake8-docstrings>=1.6.0",
@@ -142,9 +139,9 @@ exclude = [
     "node_modules",
     "site-packages",
     "venv",
-    #"examples",
-    "tests",
-    "tutorials",
+    "examples",  # Has a separate lint
+    "tests",  # Has a separate lint
+    "tutorials",  # Has a separate lint
     "docs",
 ]
 line-length = 120
@@ -196,6 +193,11 @@ ignore = [
     "F401",  # All imports must be used
     "F403",  # Disallow wildcard imports (from module import *)
 ]
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

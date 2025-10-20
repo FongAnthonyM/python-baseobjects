@@ -15,7 +15,7 @@ This example demonstrates:
 # Standard Libraries #
 import copy
 import pickle
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 # Third-Party Packages #
 import pytest

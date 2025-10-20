@@ -13,7 +13,7 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 import pickle
-from typing import Any, Dict
+from typing import Any
 
 # Source Packages #
 from baseobjects.bases import DEFAULTSENTINEL, SEARCHSENTINEL, SentinelObject
@@ -120,26 +120,26 @@ def basic_sentinel_example() -> None:
     print("\nBasic SentinelObject Example:")
 
     # Create sentinel objects
-    NULL = SentinelObject("NULL")
-    MISSING = SentinelObject("MISSING")
+    null = SentinelObject("NULL")
+    missing = SentinelObject("MISSING")
 
-    print(f"Created NULL sentinel: {NULL}")
-    print(f"Created MISSING sentinel: {MISSING}")
+    print(f"Created NULL sentinel: {null}")
+    print(f"Created MISSING sentinel: {missing}")
 
     # Demonstrate that sentinel objects are singletons
-    NULL2 = SentinelObject("NULL")
-    print(f"Created another NULL sentinel: {NULL2}")
-    print(f"Are they the same object? {NULL is NULL2} == True")
+    null2 = SentinelObject("NULL")
+    print(f"Created another NULL sentinel: {null2}")
+    print(f"Are they the same object? {null is null2} == True")
 
     # Demonstrate that different sentinel objects are different
-    print(f"NULL is MISSING? {NULL is MISSING} == False")
+    print(f"NULL is MISSING? {null is missing} == False")
 
     # Use sentinel objects as markers
-    value = NULL
+    value = null
 
-    if value is NULL:
+    if value is null:
         print("Value is NULL")
-    elif value is MISSING:
+    elif value is missing:
         print("Value is MISSING")
     else:
         print("Value is something else")
@@ -178,23 +178,23 @@ def sentinel_in_collections_example() -> None:
     print("\nSentinel Objects in Collections Example:")
 
     # Create sentinel objects
-    RED = SentinelObject("RED")
-    GREEN = SentinelObject("GREEN")
-    BLUE = SentinelObject("BLUE")
+    red = SentinelObject("RED")
+    green = SentinelObject("GREEN")
+    blue = SentinelObject("BLUE")
 
     # Use sentinel objects as dictionary keys
-    color_values = {RED: "#FF0000", GREEN: "#00FF00", BLUE: "#0000FF"}
+    color_values = {red: "#FF0000", green: "#00FF00", blue: "#0000FF"}
 
-    print(f"RED value: {color_values[RED]} == '#FF0000'")
-    print(f"GREEN value: {color_values[GREEN]} == '#00FF00'")
-    print(f"BLUE value: {color_values[BLUE]} == '#0000FF'")
+    print(f"RED value: {color_values[red]} == '#FF0000'")
+    print(f"GREEN value: {color_values[green]} == '#00FF00'")
+    print(f"BLUE value: {color_values[blue]} == '#0000FF'")
 
     # Use sentinel objects in sets
-    selected_colors = {RED, BLUE}
+    selected_colors = {red, blue}
 
-    print(f"Is RED selected? {RED in selected_colors} == True")
-    print(f"Is GREEN selected? {GREEN in selected_colors} == False")
-    print(f"Is BLUE selected? {BLUE in selected_colors} == True")
+    print(f"Is RED selected? {red in selected_colors} == True")
+    print(f"Is GREEN selected? {green in selected_colors} == False")
+    print(f"Is BLUE selected? {blue in selected_colors} == True")
 
 
 def pickling_sentinel_example() -> None:
@@ -202,15 +202,15 @@ def pickling_sentinel_example() -> None:
     print("\nPickling Sentinel Objects Example:")
 
     # Create sentinel objects
-    PENDING = SentinelObject("PENDING")
-    COMPLETED = SentinelObject("COMPLETED")
+    pending = SentinelObject("PENDING")
+    completed = SentinelObject("COMPLETED")
 
     # Create a dictionary with sentinel objects
-    status = {"task1": PENDING, "task2": COMPLETED, "task3": PENDING}
+    status = {"task1": pending, "task2": completed, "task3": pending}
 
     print("Original status:")
-    print(f"task1: {status['task1'] is PENDING} == True")
-    print(f"task2: {status['task2'] is COMPLETED} == True")
+    print(f"task1: {status['task1'] is pending} == True")
+    print(f"task2: {status['task2'] is completed} == True")
 
     # Pickle the dictionary
     print("\nPickling the status dictionary...")
@@ -222,8 +222,8 @@ def pickling_sentinel_example() -> None:
 
     # Verify that the sentinel objects maintain their identity
     print("\nVerifying unpickled status:")
-    print(f"task1 is PENDING? {unpickled_status['task1'] is PENDING} == True")
-    print(f"task2 is COMPLETED? {unpickled_status['task2'] is COMPLETED} == True")
+    print(f"task1 is PENDING? {unpickled_status['task1'] is pending} == True")
+    print(f"task2 is COMPLETED? {unpickled_status['task2'] is completed} == True")
 
     # Demonstrate that sentinel objects maintain their identity across pickling
     original_pending = status["task1"]
@@ -250,6 +250,9 @@ def predefined_sentinels_example() -> None:
 
         Returns:
             The value from the dictionary, or the default if the key is not found
+
+        Raises:
+            KeyError: If the key is not found and no default is provided
         """
         value = data.get(key, DEFAULTSENTINEL)
 

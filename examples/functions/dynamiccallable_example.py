@@ -14,6 +14,8 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
+from typing import Any
+from collections.abc import Callable
 
 # Source Packages #
 from baseobjects.functions import DynamicCallable
@@ -27,7 +29,7 @@ class WrappingDynamicCallable(DynamicCallable):
     This class demonstrates how to extend DynamicCallable with custom binding and calling methods.
     """
 
-    def bind_with_prefix(self, instance, owner=None):
+    def bind_with_prefix(self, instance: object, owner: type | None = None) -> Callable[..., Any]:
         """A custom binding method that adds a prefix to the callable.
 
         Args:
@@ -39,7 +41,7 @@ class WrappingDynamicCallable(DynamicCallable):
         """
 
         # Create a new callable that adds a prefix
-        def prefixed_callable(*args, **kwargs):
+        def prefixed_callable(*args: Any, **kwargs: Any) -> Any:
             result = self.__wrapped__(instance, *args, **kwargs)
             if isinstance(result, str):
                 return f"[Prefixed] {result}"
@@ -47,7 +49,7 @@ class WrappingDynamicCallable(DynamicCallable):
 
         return prefixed_callable
 
-    def call_with_logging(self, *args, **kwargs):
+    def call_with_logging(self, *args: Any, **kwargs: Any) -> Any:
         """A custom calling method that logs the call.
 
         Args:
@@ -62,7 +64,7 @@ class WrappingDynamicCallable(DynamicCallable):
         print(f"Result: {result}")
         return result
 
-    def call_with_validation(self, *args, **kwargs):
+    def call_with_validation(self, *args: Any, **kwargs: Any) -> Any:
         """A custom calling method that validates the arguments.
 
         Args:
@@ -112,7 +114,7 @@ class NonWrappingDynamicCallable(DynamicCallable):
         # Set the default call method
         self.call_method = "add"
 
-    def add(self, a, b):
+    def add(self, a: float, b: float) -> float:
         """Add two numbers.
 
         Args:
@@ -124,7 +126,7 @@ class NonWrappingDynamicCallable(DynamicCallable):
         """
         return a + b
 
-    def subtract(self, a, b):
+    def subtract(self, a: float, b: float) -> float:
         """Subtract b from a.
 
         Args:
@@ -136,7 +138,7 @@ class NonWrappingDynamicCallable(DynamicCallable):
         """
         return a - b
 
-    def multiply(self, a, b):
+    def multiply(self, a: float, b: float) -> float:
         """Multiply two numbers.
 
         Args:
@@ -148,7 +150,7 @@ class NonWrappingDynamicCallable(DynamicCallable):
         """
         return a * b
 
-    def divide(self, a, b):
+    def divide(self, a: float, b: float) -> float:
         """Divide a by b.
 
         Args:
