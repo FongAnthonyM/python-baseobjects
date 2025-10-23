@@ -8,6 +8,7 @@ This example demonstrates:
 3. Inheriting from BaseList to create custom list classes
 4. Using BaseObject features with list-like objects
 """
+
 # Imports #
 # Standard Libraries #
 import copy

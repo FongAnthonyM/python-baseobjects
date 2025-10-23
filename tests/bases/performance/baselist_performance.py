@@ -2,6 +2,7 @@
 """baselist_performance.py
 Performance tests for the BaseList class in the baseobjects.bases.collections package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -370,20 +371,23 @@ class TestBaseListPerformance(BasePerformanceTestSuite):
 
         # Calculate the mean time in microseconds for BaseList insert
         base_time = timeit.timeit(
-            insert_into_base_list, number=self.timeit_runs // 10,
+            insert_into_base_list,
+            number=self.timeit_runs // 10,
         )  # Reduce runs for insert operations
         mean_base = base_time / (self.timeit_runs // 10) * 1000000
 
         # Calculate the mean time in microseconds for UserList insert
         user_time = timeit.timeit(
-            insert_into_user_list, number=self.timeit_runs // 10,
+            insert_into_user_list,
+            number=self.timeit_runs // 10,
         )  # Reduce runs for insert operations
         mean_user = user_time / (self.timeit_runs // 10) * 1000000
         percent_user = (mean_base / mean_user) * 100
 
         # Calculate the mean time in microseconds for standard list insert
         std_time = timeit.timeit(
-            insert_into_std_list, number=self.timeit_runs // 10,
+            insert_into_std_list,
+            number=self.timeit_runs // 10,
         )  # Reduce runs for insert operations
         mean_std = std_time / (self.timeit_runs // 10) * 1000000
         percent_std = (mean_base / mean_std) * 100

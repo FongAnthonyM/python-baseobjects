@@ -8,6 +8,7 @@ This example demonstrates:
 3. Using context managers to pause the timer
 4. Practical use cases for TimedDict
 """
+
 # Imports #
 # Standard Libraries #
 import time

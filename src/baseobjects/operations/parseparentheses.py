@@ -17,12 +17,11 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import re
 from collections import deque
-from typing import Any
 from collections.abc import Callable
+from typing import Any
 
 # Local Packages #
 from ..functions import singlekwargdispatch
-
 
 # Definitions #
 # Regular Expressions #
@@ -114,7 +113,7 @@ def _parse_parentheses(
         exclude = set()
     list_bank = deque([[]])
     for match_object in re.finditer(r_expression, expression.strip()):
-        match (token := match_object[0]):
+        match token := match_object[0]:
             case "(":
                 new_list = []
                 list_bank[-1].append(new_list)
@@ -165,7 +164,7 @@ def _parse_parentheses(
         exclude = set()
     list_bank = deque([[]])
     for match_object in re.finditer(rb_expression, expression.strip()):
-        match (token := match_object[0]):
+        match token := match_object[0]:
             case b"(":
                 new_list = []
                 list_bank[-1].append(new_list)

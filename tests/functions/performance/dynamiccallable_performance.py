@@ -2,6 +2,7 @@
 """dynamiccallable_performance.py
 Performance tests for the DynamicCallable, DynamicMethod, and DynamicFunction classes in the baseobjects.functions package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -233,7 +234,8 @@ class TestDynamicMethodPerformance(BasePerformanceTestSuite):
 
     @pytest.fixture
     def test_method(
-        self, test_class_instance: "TestDynamicMethodPerformance.ExampleInstanceClass",
+        self,
+        test_class_instance: "TestDynamicMethodPerformance.ExampleInstanceClass",
     ) -> "TestDynamicMethodPerformance.TestDynamicMethod":
         """Create a test method instance for use in tests.
 

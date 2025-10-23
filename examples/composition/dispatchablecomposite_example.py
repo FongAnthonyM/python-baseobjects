@@ -11,7 +11,6 @@ This example demonstrates:
 6. Factory pattern implementation with composite structure
 """
 
-
 # Imports #
 # Standard Libraries #
 from typing import Any, ClassVar, Optional
@@ -378,7 +377,9 @@ class DataPipeline(DispatchableComposite):
         )
 
     def dispatch_component_types(
-        self, *args: Any, **kwargs: Any,
+        self,
+        *args: Any,
+        **kwargs: Any,
     ) -> dict[str, tuple[type[BaseComponent], dict[str, Any]]]:
         """Dispatch component types using the given arguments.
 
@@ -537,10 +538,14 @@ DataPipeline.component_types_registry.register_class(APIDataSource, namespace="s
 
 DataPipeline.component_types_registry.register_class(FilterProcessor, namespace="processor", name="FilterProcessor")
 DataPipeline.component_types_registry.register_class(
-    TransformProcessor, namespace="processor", name="TransformProcessor",
+    TransformProcessor,
+    namespace="processor",
+    name="TransformProcessor",
 )
 DataPipeline.component_types_registry.register_class(
-    AggregateProcessor, namespace="processor", name="AggregateProcessor",
+    AggregateProcessor,
+    namespace="processor",
+    name="AggregateProcessor",
 )
 
 DataPipeline.component_types_registry.register_class(ConsoleOutput, namespace="output", name="ConsoleOutput")

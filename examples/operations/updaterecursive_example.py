@@ -10,7 +10,6 @@ This example demonstrates:
 5. Practical use cases for update_recursive
 """
 
-
 # Imports #
 # Standard Libraries #
 from collections import defaultdict

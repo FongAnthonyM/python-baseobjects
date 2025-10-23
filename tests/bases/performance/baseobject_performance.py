@@ -2,6 +2,7 @@
 """baseobject_performance.py
 Performance tests for the BaseObject class in the baseobjects.bases package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -32,7 +33,9 @@ from src.baseobjects.testsuite import BasePerformanceTestSuite
 class NormalObject:
     """A normal Python object for comparison with BaseObject."""
 
-    def __init__(self, value: Any = None, mutable: list[int] | None = None, mapping: dict[str, int] | None = None) -> None:
+    def __init__(
+        self, value: Any = None, mutable: list[int] | None = None, mapping: dict[str, int] | None = None
+    ) -> None:
         """Initialize with some attributes."""
         self.value = value
         self.mutable = mutable or [1, 2, 3]
@@ -50,7 +53,9 @@ class TestBaseObjectPerformance(BasePerformanceTestSuite):
     class TestObject(BaseObject):
         """A concrete subclass of BaseObject for testing purposes."""
 
-        def __init__(self, value: Any = None, mutable: list[int] | None = None, mapping: dict[str, int] | None = None) -> None:
+        def __init__(
+            self, value: Any = None, mutable: list[int] | None = None, mapping: dict[str, int] | None = None
+        ) -> None:
             """Initialize with some attributes."""
             super().__init__()
             self.value = value
@@ -111,7 +116,9 @@ class TestBaseObjectPerformance(BasePerformanceTestSuite):
         assert percent < self.speed_tolerance * 1.5  # Allow some overhead for BaseObject initialization
 
     def test_copy_performance(
-        self, test_object: "TestBaseObjectPerformance.TestObject", test_normal_object: NormalObject,
+        self,
+        test_object: "TestBaseObjectPerformance.TestObject",
+        test_normal_object: NormalObject,
     ) -> None:
         """Test the performance of the __copy__ method of BaseObject.
 
@@ -145,7 +152,9 @@ class TestBaseObjectPerformance(BasePerformanceTestSuite):
         assert percent < self.speed_tolerance * 2  # Allow more overhead for copy operations
 
     def test_deepcopy_performance(
-        self, test_object: "TestBaseObjectPerformance.TestObject", test_normal_object: NormalObject,
+        self,
+        test_object: "TestBaseObjectPerformance.TestObject",
+        test_normal_object: NormalObject,
     ) -> None:
         """Test the performance of the __deepcopy__ method of BaseObject.
 
@@ -179,7 +188,9 @@ class TestBaseObjectPerformance(BasePerformanceTestSuite):
         assert percent < self.speed_tolerance * 3  # Allow more overhead for deepcopy operations
 
     def test_attribute_access_performance(
-        self, test_object: "TestBaseObjectPerformance.TestObject", test_normal_object: NormalObject,
+        self,
+        test_object: "TestBaseObjectPerformance.TestObject",
+        test_normal_object: NormalObject,
     ) -> None:
         """Test the performance of accessing attributes of BaseObject vs normal object.
 
@@ -219,7 +230,9 @@ class TestBaseObjectPerformance(BasePerformanceTestSuite):
         assert percent < self.speed_tolerance  # Should be very similar to normal attribute access
 
     def test_attribute_modification_performance(
-        self, test_object: "TestBaseObjectPerformance.TestObject", test_normal_object: NormalObject,
+        self,
+        test_object: "TestBaseObjectPerformance.TestObject",
+        test_normal_object: NormalObject,
     ) -> None:
         """Test the performance of modifying attributes of BaseObject vs normal object.
 
@@ -274,7 +287,9 @@ class TestBaseObjectPerformance(BasePerformanceTestSuite):
                 self.mutable = None
                 self.mapping = None
 
-            def construct(self, value: Any = None, mutable: list[int] | None = None, mapping: dict[str, int] | None = None) -> None:
+            def construct(
+                self, value: Any = None, mutable: list[int] | None = None, mapping: dict[str, int] | None = None
+            ) -> None:
                 """Construct the object with the given attributes."""
                 super().construct()
                 self.value = value
@@ -337,7 +352,8 @@ class TestBaseObjectPerformance(BasePerformanceTestSuite):
 
         # Calculate the mean time in microseconds for complex normal object copy
         normal_time = timeit.timeit(
-            copy_complex_normal, number=self.timeit_runs // 10,
+            copy_complex_normal,
+            number=self.timeit_runs // 10,
         )  # Reduce runs for complex objects
         mean_normal = normal_time / (self.timeit_runs // 10) * 1000000
         percent = (mean_base / mean_normal) * 100

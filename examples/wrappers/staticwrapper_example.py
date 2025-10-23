@@ -11,7 +11,6 @@ This example demonstrates:
 6. Performance comparison with normal attribute access and DynamicWrapper
 """
 
-
 # Imports #
 # Standard Libraries #
 import timeit

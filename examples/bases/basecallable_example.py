@@ -10,6 +10,7 @@ This example demonstrates:
 5. Converting callables to regular functions
 6. Working with coroutines
 """
+
 # Imports #
 # Standard Libraries #
 from typing import Any

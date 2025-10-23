@@ -2,6 +2,7 @@
 """circulardoublylinkedcontainer_performance.py
 Performance tests for the CircularDoublyLinkedContainer and LinkedNode classes in the baseobjects.collections package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -235,7 +236,9 @@ class TestCircularDoublyLinkedContainerPerformance(BasePerformanceTestSuite):
         assert percent < self.speed_tolerance
 
     def test_get_item_speed_performance(
-        self, populated_test_container: CircularDoublyLinkedContainer, populated_normal_list: list,
+        self,
+        populated_test_container: CircularDoublyLinkedContainer,
+        populated_normal_list: list,
     ) -> None:
         """Test the performance of getting an item from a CircularDoublyLinkedContainer.
 
@@ -309,7 +312,9 @@ class TestCircularDoublyLinkedContainerPerformance(BasePerformanceTestSuite):
         assert percent < self.speed_tolerance
 
     def test_pop_speed_performance(
-        self, populated_test_container: CircularDoublyLinkedContainer, populated_normal_list: list,
+        self,
+        populated_test_container: CircularDoublyLinkedContainer,
+        populated_normal_list: list,
     ) -> None:
         """Test the performance of popping an item from a CircularDoublyLinkedContainer.
 
@@ -351,7 +356,9 @@ class TestCircularDoublyLinkedContainerPerformance(BasePerformanceTestSuite):
         assert percent < self.speed_tolerance
 
     def test_iteration_speed_performance(
-        self, populated_test_container: CircularDoublyLinkedContainer, populated_normal_list: list,
+        self,
+        populated_test_container: CircularDoublyLinkedContainer,
+        populated_normal_list: list,
     ) -> None:
         """Test the performance of iterating over a CircularDoublyLinkedContainer.
 

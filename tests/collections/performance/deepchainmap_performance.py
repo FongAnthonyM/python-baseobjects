@@ -2,6 +2,7 @@
 """deepchainmap_performance.py
 Performance tests for the DeepChainMap class in the baseobjects.collections package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -237,7 +238,9 @@ class TestDeepChainMapPerformance(BasePerformanceTestSuite):
         assert percent < self.speed_tolerance
 
     def test_set_item_speed_existing_performance(
-        self, nested_test_map: DeepChainMap, nested_normal_map: ChainMap,
+        self,
+        nested_test_map: DeepChainMap,
+        nested_normal_map: ChainMap,
     ) -> None:
         """Test the performance of updating an existing item in a DeepChainMap.
 

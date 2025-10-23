@@ -15,8 +15,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from datetime import datetime, timedelta, tzinfo, UTC
-
+from datetime import UTC, datetime, timedelta, tzinfo
 
 # Definitions #
 # Constants

@@ -22,9 +22,9 @@ __version__ = "1.12.0"
 import asyncio
 import copy
 import pickle
+from collections.abc import Callable
 from functools import partial
 from typing import Any, Type
-from collections.abc import Callable
 
 # Third-Party Packages #
 import pytest

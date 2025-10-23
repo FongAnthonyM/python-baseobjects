@@ -9,7 +9,6 @@ This example demonstrates:
 4. Practical applications of timezone offsets
 """
 
-
 # Imports #
 # Standard Libraries #
 import datetime

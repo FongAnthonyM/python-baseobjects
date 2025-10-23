@@ -2,6 +2,7 @@
 """basefunction_performance.py
 Performance tests for the BaseFunction class in the baseobjects.bases package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -16,9 +17,9 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import timeit
+from collections.abc import Callable
 from types import MethodType
 from typing import Any
-from collections.abc import Callable
 
 # Third-Party Packages #
 import pytest

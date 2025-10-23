@@ -9,7 +9,6 @@ This example demonstrates:
 4. Using the registry to create instances of registered classes
 """
 
-
 # Imports #
 # Standard Libraries #
 from typing import Any

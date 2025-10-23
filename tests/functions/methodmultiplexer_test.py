@@ -96,7 +96,9 @@ class TestMethodMultiplexer(BaseCallableTestSuite):
 
     @pytest.fixture
     def test_multiplexer(
-        self, test_registry: FunctionRegistry, test_object_instance: MethodMultiplexerTestObject,
+        self,
+        test_registry: FunctionRegistry,
+        test_object_instance: MethodMultiplexerTestObject,
     ) -> MethodMultiplexer:
         """Create a test multiplexer with a registry and object instance.
 
@@ -123,7 +125,9 @@ class TestMethodMultiplexer(BaseCallableTestSuite):
 
     @pytest.fixture
     def test_function_object(
-        self, test_registry: FunctionRegistry, test_object_instance: MethodMultiplexerTestObject,
+        self,
+        test_registry: FunctionRegistry,
+        test_object_instance: MethodMultiplexerTestObject,
     ) -> MethodMultiplexer:
         """Create a test callable object that wraps a function.
 

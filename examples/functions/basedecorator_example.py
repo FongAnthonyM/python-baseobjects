@@ -11,15 +11,14 @@ This example demonstrates:
 6. Pickling and unpickling decorators
 """
 
-
 # Imports #
 # Standard Libraries #
 import asyncio
 import pickle
 import time
+from collections.abc import Callable
 from functools import wraps
 from typing import Any, Optional, TypeVar, Union
-from collections.abc import Callable
 
 # Source Packages #
 from baseobjects.functions import BaseDecorator

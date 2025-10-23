@@ -51,6 +51,102 @@ class DynamicCallable(BaseCallable):
     default_call_method: str = "call_wrapped"
     call_multiplexer: MethodMultiplexer
 
+    # Pickling
+    def __getstate__(self) -> dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]] | None:
+        """Gets the object's state for pickling.
+
+        This method is called by the pickle module when serializing the object. It extracts the object's state from both
+        __dict__ (if present) and __slots__ (if present), and returns it in a format that can be properly restored by
+        __setstate__ during unpickling.
+
+        The method handles four different cases:
+        1. Neither __dict__ nor __slots__ are present: Returns None
+        2. Only __dict__ is present: Returns a copy of the __dict__
+        3. Only __slots__ is present: Returns a tuple of (None, slots_dict)
+        4. Both __dict__ and __slots__ are present: Returns a tuple of (dict_copy, slots_dict)
+
+        Returns:
+            The state returned will be either of the following types based on the presence of __dict__ and __slots__:
+                None: Neither __dict__ nor __slots__ are present.
+                dict: __dict__ is present and __slots__ is not present.
+                tuple[None, dict]: __dict__ is not present and __slots__ is present.
+                tuple[dict, dict]: __dict__ is present and __slots__ is present.
+        """
+        state = super().__getstate__()
+        if state is None:
+            d_state: dict[str, Any] = {}
+            slots: dict[str, Any] | None = None
+        elif isinstance(state, tuple):
+            d_state = {} if state[0] is None else state[0].copy()
+            slots = state[1]
+        else:
+            d_state = state.copy()
+            slots = None
+
+        # Store the selected methods and drop the multiplexer instances
+        if (multiplexer := d_state.pop("bind_multiplexer", None)) is not None:
+            d_state["_bind_method"] = multiplexer.selected
+        if (multiplexer := d_state.pop("call_multiplexer", None)) is not None:
+            d_state["_call_method"] = multiplexer.selected
+
+        # Return in the same structural shape as BaseReducible returns
+        if slots is None:
+            return d_state
+        return (d_state, slots)
+
+    def __setstate__(self, state: Any) -> None:
+        """Sets the object's state from a pickled state.
+
+        This method is called by the pickle module when deserializing the object. It restores the object's state from
+        the data that was previously returned by __getstate__ during pickling. The method handles different state
+        formats to properly restore both __dict__ and __slots__ attributes.
+
+        The method handles four different cases based on the type of state:
+        1. None: No state to restore, so nothing is done
+        2. dict: The state represents __dict__ attributes, which are updated into the object's __dict__
+        3. tuple[None, dict]: The state represents __slots__ attributes, which are set individually
+        4. tuple[dict, dict]: The state represents both __dict__ and __slots__ attributes, which are restored
+           accordingly
+
+        If the state is of an unexpected type, a TypeError is raised.
+
+        By default, the state can be one of the following types with the corresponding behavior:
+            None: Will not set any state.
+            dict: Will set the __dict__ attribute to the state.
+            tuple[None, dict]: Will set the slot values to the second dict of the tuple.
+            tuple[dict, dict]: Will set the __dict__ attribute to the first dict of the tuple and set the slot values
+                to the second dict of the tuple.
+
+        Args:
+            state: An object which can be used to set the state of this object. This should be the value previously
+                returned by __getstate__.
+        """
+        # Extract our saved config first
+        match state:
+            case dict():
+                saved_bind = state.pop("_bind_method", None)
+                saved_call = state.pop("_call_method", None)
+            case tuple():
+                if state[0] is not None:
+                    saved_bind = state[0].pop("_bind_method", None)
+                    saved_call = state[0].pop("_call_method", None)
+            case _:
+                saved_bind = None
+                saved_call = None
+
+        # Restore base state
+        super().__setstate__(state)
+
+        # Recreate multiplexers
+        self.bind_multiplexer = MethodMultiplexer(instance=self, select=self.default_bind_method, is_binding=False)
+        self.call_multiplexer = MethodMultiplexer(instance=self, select=self.default_call_method, is_binding=False)
+        if saved_bind is not None:
+            self.bind_multiplexer.select(saved_bind)
+            self.default_bind_method = saved_bind
+        if saved_call is not None:
+            self.call_multiplexer.select(saved_call)
+            self.default_call_method = saved_call
+
     # Properties #
     @property
     def bind_method(self) -> str | None:

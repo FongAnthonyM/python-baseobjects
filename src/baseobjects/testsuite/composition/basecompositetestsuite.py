@@ -42,7 +42,8 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
 
     # Instance Methods #
     def create_components(
-        self, component_types: dict[str, tuple[type, dict[str, Any]]] | None = None,
+        self,
+        component_types: dict[str, tuple[type, dict[str, Any]]] | None = None,
     ) -> dict[str, Any]:
         """Create components for the test composite.
 

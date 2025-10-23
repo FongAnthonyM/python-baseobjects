@@ -2,6 +2,7 @@
 """unionrecursive_performance.py
 Performance tests for the union_recursive function in the baseobjects.operations package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -237,7 +238,8 @@ class TestUnionRecursive(BasePerformanceTestSuite):
         assert percent < self.speed_tolerance
 
     def test_union_recursive_deeply_nested_speed(
-        self, deeply_nested_dicts: tuple[dict[str, Any], dict[str, Any]],
+        self,
+        deeply_nested_dicts: tuple[dict[str, Any], dict[str, Any]],
     ) -> None:
         """Test the performance of union_recursive with dictionaries that have deeply nested dictionaries.
 

@@ -8,7 +8,6 @@ This example demonstrates:
 3. Selecting which function to use at runtime
 """
 
-
 # Imports #
 # Standard Libraries #
 from typing import Any

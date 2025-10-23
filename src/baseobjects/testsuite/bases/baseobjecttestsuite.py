@@ -37,7 +37,7 @@ import pytest
 
 # Local Packages #
 from ...bases import BaseObject
-from ..bases import BaseClassTestSuite
+from .baseclasstestsuite import BaseClassTestSuite
 
 
 # Definitions #

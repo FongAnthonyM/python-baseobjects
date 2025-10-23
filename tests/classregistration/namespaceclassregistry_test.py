@@ -2,6 +2,7 @@
 """namespaceclassregistry_test.py
 Tests for the NamespaceClassRegistry class in the baseobjects package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -226,7 +227,9 @@ class TestNamespaceClassRegistry(BaseClassRegistryTestSuite):
 
         # Get a new instance with additional keyword arguments
         instance = populated_registry.get_new(
-            "test_namespace", "TestClassWithKwargs", class_kwargs={"arg2": "custom_value"},
+            "test_namespace",
+            "TestClassWithKwargs",
+            class_kwargs={"arg2": "custom_value"},
         )
 
         # Verify instance was created with merged keyword arguments
@@ -257,7 +260,10 @@ class TestNamespaceClassRegistry(BaseClassRegistryTestSuite):
 
         # Get a new instance without using default keyword arguments
         instance = populated_registry.get_new(
-            "test_namespace", "TestClassWithKwargs", with_kwargs=False, class_kwargs={"arg2": "custom_value"},
+            "test_namespace",
+            "TestClassWithKwargs",
+            with_kwargs=False,
+            class_kwargs={"arg2": "custom_value"},
         )
 
         # Verify instance was created with only the provided keyword arguments

@@ -2,6 +2,7 @@
 """parseparentheses_performance.py
 Performance tests for the parse_parentheses function in the baseobjects.operations package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -18,8 +19,8 @@ __version__ = "1.12.0"
 import re
 import timeit
 from collections import deque
-from typing import Any, List, Set, Union
 from collections.abc import Callable
+from typing import Any, List, Set, Union
 
 # Third-Party Packages #
 import pytest
@@ -313,7 +314,10 @@ class TestParseParentheses(BasePerformanceTestSuite):
         assert percent < self.speed_tolerance
 
     def test_parse_parentheses_filtering_speed(
-        self, simple_expression: str, include_set: set, exclude_set: set,
+        self,
+        simple_expression: str,
+        include_set: set,
+        exclude_set: set,
     ) -> None:
         """Test the performance of parse_parentheses with filtering.
 

@@ -11,7 +11,6 @@ This example demonstrates:
 6. Performance comparison with normal attribute access
 """
 
-
 # Imports #
 # Standard Libraries #
 import time

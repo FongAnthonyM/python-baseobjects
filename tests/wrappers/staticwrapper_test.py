@@ -2,6 +2,7 @@
 """staticwrapper_test.py
 Tests for the StaticWrapper class in the baseobjects package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

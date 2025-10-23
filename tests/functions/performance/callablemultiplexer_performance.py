@@ -2,6 +2,7 @@
 """callablemultiplexer_performance.py
 Performance tests for the CallableMultiplexer and MethodMultiplexer classes in the baseobjects.functions package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -231,7 +232,8 @@ class TestMethodMultiplexerPerformance(BasePerformanceTestSuite):
 
     @pytest.fixture
     def test_multiplexer(
-        self, test_class_instance: "TestMethodMultiplexerPerformance.ExampleInstanceClass",
+        self,
+        test_class_instance: "TestMethodMultiplexerPerformance.ExampleInstanceClass",
     ) -> MethodMultiplexer:
         """Create a test multiplexer instance for use in tests.
 
@@ -247,7 +249,8 @@ class TestMethodMultiplexerPerformance(BasePerformanceTestSuite):
 
     # Tests
     def test_instance_creation(
-        self, test_class_instance: "TestMethodMultiplexerPerformance.ExampleInstanceClass",
+        self,
+        test_class_instance: "TestMethodMultiplexerPerformance.ExampleInstanceClass",
     ) -> None:
         """Test that instances of MethodMultiplexer can be created efficiently.
 

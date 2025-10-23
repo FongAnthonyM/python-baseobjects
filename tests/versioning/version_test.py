@@ -6,6 +6,7 @@ This module contains tests for the Version abstract class, which provides the ba
 for version objects. Since Version is an abstract class, a concrete test implementation is created
 for testing purposes.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

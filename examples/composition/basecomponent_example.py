@@ -10,7 +10,6 @@ This example demonstrates:
 5. Component serialization and deserialization
 """
 
-
 # Imports #
 # Standard Libraries #
 import pickle

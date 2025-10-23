@@ -21,8 +21,8 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import copy
 import pickle
-from typing import Any, Dict, Type
 from collections.abc import Callable
+from typing import Any, Dict, Type
 
 # Third-Party Packages #
 import pytest
@@ -590,7 +590,9 @@ class TestBoundMethodRegistry(BaseObjectTestSuite):
 
     @pytest.fixture
     def bound_registry(
-        self, base_registry: BaseMethodRegistry, test_instance: RegistryTestObject,
+        self,
+        base_registry: BaseMethodRegistry,
+        test_instance: RegistryTestObject,
     ) -> BoundMethodRegistry:
         """Create a BoundMethodRegistry bound to a test instance.
 
@@ -638,8 +640,8 @@ class TestBoundMethodRegistry(BaseObjectTestSuite):
         assert len(new) == len(bound_registry)
         for key in new:
             assert key in bound_registry
-            assert new[key] == bound_registry[key]
-            assert id(new[key]) == id(bound_registry[key])
+            assert new[key].__func__ == bound_registry[key].__func__
+            assert id(new[key].__func__) == id(bound_registry[key].__func__)
 
         # Verify the instance binding was preserved
         assert new.__self__ is bound_registry.__self__
@@ -663,8 +665,8 @@ class TestBoundMethodRegistry(BaseObjectTestSuite):
         assert len(new) == len(bound_registry)
         for key in new:
             assert key in bound_registry
-            assert new[key] == bound_registry[key]
-            assert id(new[key]) == id(bound_registry[key])
+            assert new[key].__func__ == bound_registry[key].__func__
+            assert id(new[key].__func__) == id(bound_registry[key].__func__)
 
         # Verify the instance binding was preserved
         assert new.__self__ is bound_registry.__self__
@@ -691,9 +693,9 @@ class TestBoundMethodRegistry(BaseObjectTestSuite):
         assert len(new) == len(bound_registry)
         for key in new:
             assert key in bound_registry
-            assert new[key] == bound_registry[key]
+            assert new[key].__func__ == bound_registry[key].__func__
             # Methods are not deep-copied, so the ids should be the same
-            assert id(new[key]) == id(bound_registry[key])
+            assert id(new[key].__func__) == id(bound_registry[key].__func__)
 
         # Verify the instance binding was preserved
         assert new.__self__ is not bound_registry.__self__
@@ -720,9 +722,9 @@ class TestBoundMethodRegistry(BaseObjectTestSuite):
         assert len(new) == len(bound_registry)
         for key in new:
             assert key in bound_registry
-            assert new[key] == bound_registry[key]
+            assert new[key].__func__ == bound_registry[key].__func__
             # Methods are not deep-copied, so the ids should be the same
-            assert id(new[key]) == id(bound_registry[key])
+            assert id(new[key].__func__) == id(bound_registry[key].__func__)
 
         # Verify the instance binding was preserved
         assert new.__self__ is not bound_registry.__self__
@@ -761,7 +763,9 @@ class TestBoundMethodRegistry(BaseObjectTestSuite):
         assert unpickled_registry.__owner__ is bound_registry.__owner__
 
     def test_init_with_registry_and_instance(
-        self, base_registry: BaseMethodRegistry, test_instance: RegistryTestObject,
+        self,
+        base_registry: BaseMethodRegistry,
+        test_instance: RegistryTestObject,
     ) -> None:
         """Test initialization with a registry and instance.
 

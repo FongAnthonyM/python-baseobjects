@@ -2,6 +2,7 @@
 """methodnames_performance.py
 Performance tests for the method name functions in the baseobjects.operations package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -16,8 +17,8 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import timeit
-from typing import Any, List, Tuple
 from collections.abc import Generator
+from typing import Any, List, Tuple
 
 # Third-Party Packages #
 import pytest

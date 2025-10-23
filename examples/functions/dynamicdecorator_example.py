@@ -11,12 +11,11 @@ This example demonstrates:
 6. Comparing DynamicDecorator with BaseDecorator
 """
 
-
 # Imports #
 # Standard Libraries #
 import time
-from typing import Any, Optional, TypeVar, Union
 from collections.abc import Callable
+from typing import Any, Optional, TypeVar, Union
 
 # Source Packages #
 from baseobjects.bases import BaseCallable, BaseMethod

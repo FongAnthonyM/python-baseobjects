@@ -2,6 +2,7 @@
 """basemethod_performance.py
 Performance tests for the BaseMethod class in the baseobjects.bases package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -16,9 +17,9 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import timeit
+from collections.abc import Callable
 from types import MethodType
 from typing import Any
-from collections.abc import Callable
 from weakref import ReferenceType
 
 # Third-Party Packages #
@@ -93,7 +94,8 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
 
     @pytest.fixture
     def test_method(
-        self, example_instance: "TestBaseMethodPerformance.ExampleClass",
+        self,
+        example_instance: "TestBaseMethodPerformance.ExampleClass",
     ) -> "TestBaseMethodPerformance.TestMethod":
         """Create a test method instance for use in tests.
 

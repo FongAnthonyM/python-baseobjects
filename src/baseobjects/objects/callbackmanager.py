@@ -1011,7 +1011,11 @@ class CallbackManager(BaseReducible):
             tasks.append(scheduler_task)  # Add task to tasks deque.
 
     async def start_scheduler_async(
-        self, scheduler: CallbackScheduler, tasks: deque, *args: Any, **kwargs: Any,
+        self,
+        scheduler: CallbackScheduler,
+        tasks: deque,
+        *args: Any,
+        **kwargs: Any,
     ) -> None:
         """Asynchronously starts the scheduler for callback execution and management.
 

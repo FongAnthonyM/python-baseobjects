@@ -9,6 +9,7 @@ This example demonstrates:
 4. Handling both __dict__ and __slots__ attributes during serialization
 5. Comparing original and deserialized objects
 """
+
 # Imports #
 # Standard Libraries #
 import pickle

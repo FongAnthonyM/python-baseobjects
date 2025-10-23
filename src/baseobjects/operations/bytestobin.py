@@ -17,7 +17,6 @@ __version__ = "1.12.0"
 # Standard Libraries #
 from typing import Any
 
-
 # Definitions #
 # Constants #
 big_array = (128, 64, 32, 16, 8, 4, 2, 1)

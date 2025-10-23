@@ -272,7 +272,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
                 return partial(self._register, cls=cls)
         else:
             if func is not None:
-                msg = f"Invalid first argument to `registry()`. " f"{cls!r} is not a class or union type."
+                msg = f"Invalid first argument to `registry()`. {cls!r} is not a class or union type."
                 raise TypeError(msg)
             ann = getattr(cls, "__annotations__", {})
             if not ann:
@@ -294,9 +294,9 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
                 argname = self._kwarg
             if not _is_valid_dispatch_type(cls):
                 if _is_union_type(cls):
-                    msg = f"Invalid annotation for {argname!r}. " f"{cls!r} not all arguments are classes."
+                    msg = f"Invalid annotation for {argname!r}. {cls!r} not all arguments are classes."
                     raise TypeError(msg)
-                msg = f"Invalid annotation for {argname!r}. " f"{cls!r} is not a class."
+                msg = f"Invalid annotation for {argname!r}. {cls!r} is not a class."
                 raise TypeError(msg)
 
         if _is_union_type(cls):

@@ -18,8 +18,8 @@ import copy
 import pickle
 import time
 from abc import abstractmethod
-from typing import Any
 from collections.abc import Callable
+from typing import Any
 
 # Third-Party Packages #
 import pytest

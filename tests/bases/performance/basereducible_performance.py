@@ -2,6 +2,7 @@
 """basereducible_performance.py
 Performance tests for the BaseReducible class in the baseobjects.bases package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -32,7 +33,9 @@ from src.baseobjects.testsuite import BasePerformanceTestSuite
 class NormalReducible:
     """A normal Python object with pickle support for comparison with BaseReducible."""
 
-    def __init__(self, value: Any = None, mutable: list[int] | None = None, mapping: dict[str, int] | None = None) -> None:
+    def __init__(
+        self, value: Any = None, mutable: list[int] | None = None, mapping: dict[str, int] | None = None
+    ) -> None:
         """Initialize with some attributes."""
         self.value = value
         self.mutable = mutable or [1, 2, 3]
@@ -52,7 +55,9 @@ class SlottedNormalReducible:
 
     __slots__ = ["mapping", "mutable", "value"]
 
-    def __init__(self, value: Any = None, mutable: list[int] | None = None, mapping: dict[str, int] | None = None) -> None:
+    def __init__(
+        self, value: Any = None, mutable: list[int] | None = None, mapping: dict[str, int] | None = None
+    ) -> None:
         """Initialize with some attributes."""
         self.value = value
         self.mutable = mutable or [1, 2, 3]
@@ -79,7 +84,9 @@ class TestBaseReduciblePerformance(BasePerformanceTestSuite):
     class TestReducible(BaseReducible):
         """A concrete subclass of BaseReducible for testing purposes."""
 
-        def __init__(self, value: Any = None, mutable: list[int] | None = None, mapping: dict[str, int] | None = None) -> None:
+        def __init__(
+            self, value: Any = None, mutable: list[int] | None = None, mapping: dict[str, int] | None = None
+        ) -> None:
             """Initialize with some attributes."""
             super().__init__()
             self.value = value
@@ -91,7 +98,9 @@ class TestBaseReduciblePerformance(BasePerformanceTestSuite):
 
         __slots__ = ["mapping", "mutable", "value"]
 
-        def __init__(self, value: Any = None, mutable: list[int] | None = None, mapping: dict[str, int] | None = None) -> None:
+        def __init__(
+            self, value: Any = None, mutable: list[int] | None = None, mapping: dict[str, int] | None = None
+        ) -> None:
             """Initialize with some attributes."""
             super().__init__()
             self.value = value
@@ -103,7 +112,9 @@ class TestBaseReduciblePerformance(BasePerformanceTestSuite):
 
         __slots__ = ["value"]
 
-        def __init__(self, value: Any = None, mutable: list[int] | None = None, mapping: dict[str, int] | None = None) -> None:
+        def __init__(
+            self, value: Any = None, mutable: list[int] | None = None, mapping: dict[str, int] | None = None
+        ) -> None:
             """Initialize with some attributes."""
             super().__init__()
             self.value = value
@@ -421,7 +432,8 @@ class TestBaseReduciblePerformance(BasePerformanceTestSuite):
 
         # Calculate the mean time in microseconds for unpickling normal object
         normal_time = timeit.timeit(
-            unpickle_normal_reducible, number=self.timeit_runs // 10,
+            unpickle_normal_reducible,
+            number=self.timeit_runs // 10,
         )  # Reduce runs for unpickling
         mean_normal = normal_time / (self.timeit_runs // 10) * 1000000
         percent = (mean_base / mean_normal) * 100

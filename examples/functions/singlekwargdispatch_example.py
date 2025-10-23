@@ -310,7 +310,7 @@ class DataProcessor:
         Returns:
             The processed integer data.
         """
-        return f"{prefix}: Integer {data} (squared = {data ** 2})"
+        return f"{prefix}: Integer {data} (squared = {data**2})"
 
     @process.register
     def _(self, prefix: str, data: float) -> str:

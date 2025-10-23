@@ -14,15 +14,14 @@ This example demonstrates:
 6. Managing callback tasks
 """
 
-
 # Imports #
 # Standard Libraries #
 import asyncio
 import time
 from asyncio import create_task
 from collections import deque
-from typing import Any
 from collections.abc import Callable
+from typing import Any
 
 # Source Packages #
 from baseobjects.objects import CallbackManager
@@ -305,13 +304,15 @@ async def conditional_callback_example_async() -> None:
     print("Using call_conditional_async directly:")
     print("Calling with priority 3 (should not execute):")
     await callback_manager.call_conditional_async(
-        lambda: is_important_async(3), lambda: process_message_async("Low priority message", 3),
+        lambda: is_important_async(3),
+        lambda: process_message_async("Low priority message", 3),
     )
     print("(Did not print)")
 
     print("Calling with priority 7 (should execute):")
     await callback_manager.call_conditional_async(
-        lambda: is_important_async(7), lambda: process_message_async("High priority message", 7),
+        lambda: is_important_async(7),
+        lambda: process_message_async("High priority message", 7),
     )
 
     # Define async condition and callback function with mutable state
@@ -467,17 +468,26 @@ async def scheduler_example_async() -> None:
 
     # Register conditional callbacks
     callback_manager.register_conditional_callback(
-        "async_condition1", async_task1, condition1, "call_conditional_async", is_async=True,
+        "async_condition1",
+        async_task1,
+        condition1,
+        "call_conditional_async",
+        is_async=True,
     )
 
     callback_manager.register_conditional_callback(
-        "async_condition2", async_task2, condition2, "call_conditional_async", is_async=True,
+        "async_condition2",
+        async_task2,
+        condition2,
+        "call_conditional_async",
+        is_async=True,
     )
 
     # Create a conditional scheduler
     print("Creating and registering a conditional scheduler:")
     callback_manager.register_conditional_scheduler(
-        "conditional_scheduler", condition_names=["async_condition1", "async_condition2"],
+        "conditional_scheduler",
+        condition_names=["async_condition1", "async_condition2"],
     )
 
     # Start the conditional scheduler

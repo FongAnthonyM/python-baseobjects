@@ -31,7 +31,6 @@ from ...bases import BaseObject
 from ...functions import DynamicCallable, DynamicDecorator, DynamicMethod, MethodMultiplexer
 from ...typing import AnyCallable
 
-
 # Definitions #
 # Constants #
 _KWD_MARK = object()  # Sentinel for create_key kwd_mark to avoid B008 (no calls in defaults)
@@ -148,6 +147,45 @@ class BaseTimedCacheCallable(DynamicCallable):
     _cache_method: str = "no_cache"
     _previous_cache_method: str = "no_cache"
     cache: MethodMultiplexer
+
+    # Pickling
+    def __getstate__(self) -> dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]] | None:
+        """Prepare a pickle-safe state by excluding the cache multiplexer instance."""
+        state = super().__getstate__()
+        # Normalize to a dict for augmentation
+        if state is None:
+            d: dict[str, Any] = {}
+            slots: dict[str, Any] | None = None
+        elif isinstance(state, tuple):
+            d = {} if state[0] is None else state[0].copy()
+            slots = state[1]
+        else:
+            d = state.copy()
+            slots = None
+        # Save and drop cache multiplexer
+        try:
+            d["_saved_cache_method"] = None if self.cache is None else self.cache.selected
+        except AttributeError:
+            d["_saved_cache_method"] = None
+        d.pop("cache", None)
+        if slots is None:
+            return d
+        return (d, slots)
+
+    def __setstate__(self, state: Any) -> None:
+        """Reconstruct cache multiplexer from stored configuration after unpickling."""
+        saved_cache = None
+        if isinstance(state, dict):
+            saved_cache = state.pop("_saved_cache_method", None)
+        elif isinstance(state, tuple):
+            if state[0] is not None:
+                saved_cache = state[0].pop("_saved_cache_method", None)
+        super().__setstate__(state)
+        # Recreate cache multiplexer and reselect method
+        self.cache = MethodMultiplexer(instance=self, select=self._cache_method)
+        if saved_cache is not None:
+            self.cache.select(saved_cache)
+            self._cache_method = saved_cache
 
     # Properties #
     @property

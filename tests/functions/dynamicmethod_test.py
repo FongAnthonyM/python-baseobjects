@@ -159,7 +159,9 @@ class TestDynamicMethod(DynamicMethodTestSuite):
 
     @pytest.fixture
     def bound_method_object(
-        self, test_method_object: DynamicMethod, test_object_instance: DynamicMethodTestObject,
+        self,
+        test_method_object: DynamicMethod,
+        test_object_instance: DynamicMethodTestObject,
     ) -> DynamicMethod:
         """Create a bound method object.
 
@@ -216,7 +218,9 @@ class TestDynamicMethod(DynamicMethodTestSuite):
         assert instance is test_object_instance
 
     def test_as_function(
-        self, test_method_object: DynamicMethod, test_object_instance: DynamicMethodTestObject,
+        self,
+        test_method_object: DynamicMethod,
+        test_object_instance: DynamicMethodTestObject,
     ) -> None:
         """Test that the method object can be converted to a standard Python function.
 
@@ -243,7 +247,9 @@ class TestDynamicMethod(DynamicMethodTestSuite):
         assert instance is test_object_instance
 
     def test_call_wrapped(
-        self, test_method_object: DynamicMethod, test_object_instance: DynamicMethodTestObject,
+        self,
+        test_method_object: DynamicMethod,
+        test_object_instance: DynamicMethodTestObject,
     ) -> None:
         """Test that the wrapped function can be called directly.
 
@@ -266,7 +272,9 @@ class TestDynamicMethod(DynamicMethodTestSuite):
         assert instance is test_object_instance
 
     def test_call_binding(
-        self, test_method_object: DynamicMethod, test_object_instance: DynamicMethodTestObject,
+        self,
+        test_method_object: DynamicMethod,
+        test_object_instance: DynamicMethodTestObject,
     ) -> None:
         """Test that the bound method correctly passes the instance as the first argument when called.
 
@@ -366,7 +374,9 @@ class TestDynamicMethod(DynamicMethodTestSuite):
         assert instance is test_object_instance
 
     def test_coroutine(
-        self, test_coroutine_object: DynamicMethod, test_object_instance: DynamicMethodTestObject,
+        self,
+        test_coroutine_object: DynamicMethod,
+        test_object_instance: DynamicMethodTestObject,
     ) -> None:
         """Test that the method object correctly handles coroutine functions.
 
@@ -394,7 +404,9 @@ class TestDynamicMethod(DynamicMethodTestSuite):
         assert instance is test_object_instance
 
     def test_as_function_coroutine(
-        self, test_coroutine_object: DynamicMethod, test_object_instance: DynamicMethodTestObject,
+        self,
+        test_coroutine_object: DynamicMethod,
+        test_object_instance: DynamicMethodTestObject,
     ) -> None:
         """Test that the method object wrapping a coroutine can be converted to a coroutine function.
 

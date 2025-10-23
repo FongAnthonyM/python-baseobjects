@@ -3,7 +3,6 @@
 Nox sessions.
 """
 
-
 # Imports #
 # Standard Libraries #
 import os
@@ -35,12 +34,12 @@ python_versions = ["3.12"]
 nox.needs_version = ">= 2021.6.6"
 nox.options.sessions = (
     "pre-commit",
-    # "safety",
-    # "mypy",
-    # "tests",
-    # "typeguard",
-    # "xdoctest",
-    # "docs-build",
+    "safety",
+    "mypy",
+    "tests",
+    "typeguard",
+    "xdoctest",
+    "docs-build",
 )
 
 
@@ -124,20 +123,11 @@ def precommit(session: Session) -> None:
         "--show-diff-on-failure",
     ]
     session.install(
-        "bandit",
-        "black",
-        "darglint",
-        "flake8",
-        "flake8-bugbear",
-        "flake8-docstrings",
-        "flake8-rst-docstrings",
-        "flake8-pyproject",
         "isort",
         "pep8-naming",
         "pre-commit",
         "pre-commit-hooks",
         "pyupgrade",
-        "ruff",
     )
     session.run("pre-commit", *args)
     if args and args[0] == "install":
@@ -156,7 +146,7 @@ def safety(session: Session) -> None:
 def mypy(session: Session) -> None:
     """Type-check using mypy."""
     args = session.posargs or ["src", "tests", "docs/conf.py"]
-    session.install(".")
+    session.install(".[dev]")
     session.install("mypy", "pytest")
     session.run("mypy", *args)
     if not session.posargs:
@@ -166,7 +156,7 @@ def mypy(session: Session) -> None:
 @session(python=python_versions)
 def tests(session: Session) -> None:
     """Run the test suite."""
-    session.install(".")
+    session.install(".[dev]")
     session.install("coverage[toml]", "pytest", "pytest-asyncio", "pygments")
     try:
         session.run("coverage", "run", "--parallel", "-m", "pytest", *session.posargs)
@@ -191,7 +181,7 @@ def coverage(session: Session) -> None:
 @session(python=python_versions[0])
 def typeguard(session: Session) -> None:
     """Runtime type checking using Typeguard."""
-    session.install(".")
+    session.install(".[dev]")
     session.install("pytest", "pytest-asyncio", "typeguard", "pygments")
     session.run("pytest", f"--typeguard-packages={package}", *session.posargs)
 
@@ -206,7 +196,7 @@ def xdoctest(session: Session) -> None:
         if "FORCE_COLOR" in os.environ:
             args.append("--colored=1")
 
-    session.install(".")
+    session.install(".[dev]")
     session.install("xdoctest[colors]")
     session.run("python", "-m", "xdoctest", *args)
 
@@ -218,7 +208,7 @@ def docs_build(session: Session) -> None:
     if not session.posargs and "FORCE_COLOR" in os.environ:
         args.insert(0, "--color")
 
-    session.install(".")
+    session.install(".[dev]")
     session.install("sphinx", "sphinx-click", "sphinx-rtd-theme", "furo", "myst-parser")
 
     build_dir = Path("docs", "_build")
@@ -232,7 +222,7 @@ def docs_build(session: Session) -> None:
 def docs(session: Session) -> None:
     """Build and serve the documentation with live reloading on file changes."""
     args = session.posargs or ["--open-browser", "docs", "docs/_build"]
-    session.install(".")
+    session.install(".[dev]")
     session.install("sphinx", "sphinx-autobuild", "sphinx-click", "sphinx-rtd-theme", "furo", "myst-parser", "pytest")
 
     build_dir = Path("docs", "_build")

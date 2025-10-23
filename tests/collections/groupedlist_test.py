@@ -917,7 +917,7 @@ class TestGroupedList(BaseObjectTestSuite):
         assert result.data == [1, 2, 3, 4, 5, 6, 7, 8]
 
         # Right addition
-        result = [6, 7, 8, *simple_list]
+        result = [6, 7, 8] + simple_list
         assert isinstance(result, GroupedList)
         assert result.data == [6, 7, 8, 1, 2, 3, 4, 5]
 

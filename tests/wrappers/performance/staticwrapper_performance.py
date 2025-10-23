@@ -2,6 +2,7 @@
 """staticwrapper_performance.py
 Performance tests for the StaticWrapper class in the baseobjects.wrappers package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

@@ -11,7 +11,6 @@ This example demonstrates:
 6. Method binding behavior and self parameter handling
 """
 
-
 # Imports #
 # Standard Libraries #
 from typing import Any

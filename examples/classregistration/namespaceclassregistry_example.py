@@ -10,7 +10,6 @@ This example demonstrates:
 5. Handling missing classes and namespaces
 """
 
-
 # Imports #
 # Standard Libraries #
 from typing import Any
@@ -243,15 +242,24 @@ def class_kwargs_and_instantiation() -> None:
     # Register classes with class_kwargs
     print("Registering classes with class_kwargs...")
     registry.register_class(
-        NumberProcessor, namespace="numeric", name="DoubleProcessor", class_kwargs={"multiplier": 2.0},
+        NumberProcessor,
+        namespace="numeric",
+        name="DoubleProcessor",
+        class_kwargs={"multiplier": 2.0},
     )
 
     registry.register_class(
-        NumberProcessor, namespace="numeric", name="TripleProcessor", class_kwargs={"multiplier": 3.0},
+        NumberProcessor,
+        namespace="numeric",
+        name="TripleProcessor",
+        class_kwargs={"multiplier": 3.0},
     )
 
     registry.register_class(
-        NumberProcessor, namespace="numeric", name="HalfProcessor", class_kwargs={"multiplier": 0.5},
+        NumberProcessor,
+        namespace="numeric",
+        name="HalfProcessor",
+        class_kwargs={"multiplier": 0.5},
     )
 
     # Get classes with their kwargs
@@ -293,7 +301,10 @@ def class_kwargs_and_instantiation() -> None:
     # Override kwargs when creating instances
     print("\nOverriding kwargs when creating instances...")
     custom_double = registry.get_new(
-        "numeric", "DoubleProcessor", name="Custom Double", class_kwargs={"multiplier": 4.0},
+        "numeric",
+        "DoubleProcessor",
+        name="Custom Double",
+        class_kwargs={"multiplier": 4.0},
     )
 
     # Use the instance with overridden kwargs

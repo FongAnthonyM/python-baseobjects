@@ -2,6 +2,7 @@
 """sentinelobject_performance.py
 Performance tests for the SentinelObject class in the baseobjects.bases package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -233,13 +234,15 @@ class TestSentinelObjectPerformance(BasePerformanceTestSuite):
 
         # Calculate the mean time in microseconds for unpickling SentinelObject
         sentinel_time = timeit.timeit(
-            unpickle_sentinel_object, number=self.timeit_runs // 10,
+            unpickle_sentinel_object,
+            number=self.timeit_runs // 10,
         )  # Reduce runs for unpickling
         mean_sentinel = sentinel_time / (self.timeit_runs // 10) * 1000000
 
         # Calculate the mean time in microseconds for unpickling normal sentinel
         normal_time = timeit.timeit(
-            unpickle_normal_sentinel, number=self.timeit_runs // 10,
+            unpickle_normal_sentinel,
+            number=self.timeit_runs // 10,
         )  # Reduce runs for unpickling
         mean_normal = normal_time / (self.timeit_runs // 10) * 1000000
         percent = (mean_sentinel / mean_normal) * 100
@@ -304,13 +307,15 @@ class TestSentinelObjectPerformance(BasePerformanceTestSuite):
 
         # Calculate the mean time in microseconds for creating multiple SentinelObjects
         sentinel_time = timeit.timeit(
-            create_multiple_sentinel_objects, number=self.timeit_runs // 100,
+            create_multiple_sentinel_objects,
+            number=self.timeit_runs // 100,
         )  # Reduce runs for multiple creations
         mean_sentinel = sentinel_time / (self.timeit_runs // 100) * 1000000
 
         # Calculate the mean time in microseconds for creating multiple normal sentinels
         normal_time = timeit.timeit(
-            create_multiple_normal_sentinels, number=self.timeit_runs // 100,
+            create_multiple_normal_sentinels,
+            number=self.timeit_runs // 100,
         )  # Reduce runs for multiple creations
         mean_normal = normal_time / (self.timeit_runs // 100) * 1000000
         percent = (mean_sentinel / mean_normal) * 100

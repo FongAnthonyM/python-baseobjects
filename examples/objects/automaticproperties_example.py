@@ -10,7 +10,6 @@ This example demonstrates:
 5. Extending AutomaticProperties for specialized behavior
 """
 
-
 # Imports #
 # Standard Libraries #
 from typing import Any, ClassVar, NoReturn

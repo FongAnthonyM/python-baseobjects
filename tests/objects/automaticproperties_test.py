@@ -5,6 +5,7 @@ Test for the AutomaticProperties class.
 This module provides tests for the AutomaticProperties class, which is an abstract class that creates properties
 automatically based on a properties dictionary.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

@@ -9,7 +9,6 @@ This example demonstrates:
 4. Converting versions to different formats
 """
 
-
 # Imports #
 # Standard Libraries #
 from typing import Any

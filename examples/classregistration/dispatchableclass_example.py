@@ -360,7 +360,11 @@ def custom_dispatching_logic() -> None:
 
         @classmethod
         def get_class_information(
-            cls, filename: str, content_type: str | None = None, *args: Any, **kwargs: Any,
+            cls,
+            filename: str,
+            content_type: str | None = None,
+            *args: Any,
+            **kwargs: Any,
         ) -> tuple[str]:
             """Get the class information based on the filename and content type.
 

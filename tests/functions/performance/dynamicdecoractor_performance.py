@@ -2,6 +2,7 @@
 """dynamicdecoractor_performance.py
 Performance tests for the DynamicDecorator class in the baseobjects.functions package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -16,8 +17,8 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import timeit
-from typing import Any, Type
 from collections.abc import Callable
+from typing import Any, Type
 
 # Third-Party Packages #
 import pytest

@@ -2,6 +2,7 @@
 """singlekwargdispatch_performance.py
 Performance tests for the singlekwargdispatchmethod and singlekwargdispatch classes in the baseobjects.functions package.
 """
+
 # Future Imports #
 from __future__ import annotations
 
@@ -128,7 +129,8 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
 
     # Tests
     def test_dispatch_call_speed_with_arg(
-        self, test_class_instance: TestSingleKwargDispatchPerformance.DispatchTestClass,
+        self,
+        test_class_instance: TestSingleKwargDispatchPerformance.DispatchTestClass,
     ) -> None:
         """Test the performance of the dispatch_call method with a positional argument.
 
@@ -175,7 +177,8 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
         assert percent_to_old < self.speed_tolerance
 
     def test_dispatch_call_speed_with_kwarg(
-        self, test_class_instance: TestSingleKwargDispatchPerformance.DispatchTestClass,
+        self,
+        test_class_instance: TestSingleKwargDispatchPerformance.DispatchTestClass,
     ) -> None:
         """Test the performance of the dispatch_call method with a keyword argument.
 
@@ -225,7 +228,8 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
         assert percent_to_baseline < self.speed_tolerance * 2  # Allow more overhead for kwarg dispatch
 
     def test_edge_case_multiple_types(
-        self, test_class_instance: TestSingleKwargDispatchPerformance.DispatchTestClass,
+        self,
+        test_class_instance: TestSingleKwargDispatchPerformance.DispatchTestClass,
     ) -> None:
         """Test the performance with an edge case of multiple registered types.
 
@@ -351,7 +355,8 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
         assert percent < self.speed_tolerance * 1.5  # Allow more overhead for many types
 
     def test_edge_case_nested_dispatch(
-        self, test_class_instance: TestSingleKwargDispatchPerformance.DispatchTestClass,
+        self,
+        test_class_instance: TestSingleKwargDispatchPerformance.DispatchTestClass,
     ) -> None:
         """Test the performance with an edge case of nested dispatch.
 

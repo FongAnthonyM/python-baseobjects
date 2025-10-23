@@ -11,7 +11,6 @@ This example demonstrates:
 6. Converting between functions and methods
 """
 
-
 # Imports #
 # Standard Libraries #
 from typing import Any

@@ -5,6 +5,7 @@ Tests for the TriNumberVersion class in the baseobjects package.
 This module contains tests for the TriNumberVersion class, which is a concrete implementation of the Version
 abstract class that represents a version with three numbers (major.minor.patch).
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

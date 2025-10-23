@@ -99,7 +99,10 @@ class NamespaceRegisteredClass(BaseRegisteredClass):
 
     @classmethod
     def get_registered_class(
-        cls, namespace: str, name: str, module: str | None = None,
+        cls,
+        namespace: str,
+        name: str,
+        module: str | None = None,
     ) -> BaseRegisteredClass | None:
         """Gets a subclass from the registry.
 

@@ -2,6 +2,7 @@
 """bytestobin_performance.py
 Performance tests for the bytes_to_bin function in the baseobjects.operations package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 

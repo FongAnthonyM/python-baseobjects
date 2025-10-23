@@ -5,6 +5,7 @@ Test for the CallbackManager class.
 This module provides tests for the CallbackManager class, which is a class that manages callbacks
 and provides functionality for registering, calling, and scheduling callbacks.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -23,8 +24,8 @@ import asyncio
 import copy
 import pickle
 from collections import deque
-from typing import Any, Dict
 from collections.abc import Callable
+from typing import Any, Dict
 
 # Third-Party Packages #
 import pytest
@@ -549,7 +550,8 @@ class TestCallbackManager(BaseObjectTestSuite):
         for t in [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]:
             t.cancel()
         await asyncio.gather(
-            *[t for t in asyncio.all_tasks() if t is not asyncio.current_task()], return_exceptions=True,
+            *[t for t in asyncio.all_tasks() if t is not asyncio.current_task()],
+            return_exceptions=True,
         )
 
     def test_format_conditional_callback(self, test_object: CallbackManager) -> None:
@@ -701,7 +703,8 @@ class TestCallbackManager(BaseObjectTestSuite):
 
         # Register a conditional scheduler
         test_object.register_conditional_scheduler(
-            "test_conditional_scheduler", condition_names=["test_conditional1", "test_conditional2"],
+            "test_conditional_scheduler",
+            condition_names=["test_conditional1", "test_conditional2"],
         )
 
         # Validate

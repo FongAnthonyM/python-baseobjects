@@ -10,7 +10,6 @@ This example demonstrates:
 5. Practical applications for Excel date conversion
 """
 
-
 # Imports #
 # Standard Libraries #
 import datetime

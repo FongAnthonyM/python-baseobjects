@@ -11,11 +11,10 @@ This example demonstrates:
 6. Creating a DynamicCallable subclass that defines functionality directly without wrapping
 """
 
-
 # Imports #
 # Standard Libraries #
-from typing import Any
 from collections.abc import Callable
+from typing import Any
 
 # Source Packages #
 from baseobjects.functions import DynamicCallable

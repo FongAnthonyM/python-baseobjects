@@ -20,8 +20,8 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import copy
 import pickle
-from typing import Any, Dict, Type
 from collections.abc import Callable
+from typing import Any, Dict, Type
 
 # Third-Party Packages #
 import pytest

@@ -10,7 +10,6 @@ This example demonstrates:
 5. Using the class registry for dispatching
 """
 
-
 # Imports #
 # Standard Libraries #
 from typing import Any, ClassVar

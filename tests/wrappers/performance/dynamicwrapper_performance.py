@@ -2,6 +2,7 @@
 """dynamicwrapper_performance.py
 Performance tests for the DynamicWrapper class in the baseobjects.wrappers package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -110,7 +111,9 @@ class TestDynamicWrapperPerformance(WrapperPerformanceTestSuite):
         # No assertion here, just measuring performance
 
     def test_getattr_performance(
-        self, test_object: DynamicWrapperTestObject, test_example_one: "WrapperPerformanceTestSuite.ExampleOne",
+        self,
+        test_object: DynamicWrapperTestObject,
+        test_example_one: "WrapperPerformanceTestSuite.ExampleOne",
     ) -> None:
         """Test the performance of the __getattr__ method.
 
@@ -141,7 +144,9 @@ class TestDynamicWrapperPerformance(WrapperPerformanceTestSuite):
         assert percent < self.speed_tolerance
 
     def test_setattr_performance(
-        self, test_object: DynamicWrapperTestObject, test_example_one: "WrapperPerformanceTestSuite.ExampleOne",
+        self,
+        test_object: DynamicWrapperTestObject,
+        test_example_one: "WrapperPerformanceTestSuite.ExampleOne",
     ) -> None:
         """Test the performance of the __setattr__ method.
 

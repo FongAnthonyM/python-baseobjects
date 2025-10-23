@@ -10,7 +10,6 @@ This example demonstrates:
 5. Practical use cases for union_recursive
 """
 
-
 # Imports #
 # Standard Libraries #
 from copy import deepcopy

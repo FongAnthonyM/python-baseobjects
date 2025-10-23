@@ -9,7 +9,6 @@ This example demonstrates:
 4. Practical applications for method name introspection
 """
 
-
 # Imports #
 # Standard Libraries #
 import datetime

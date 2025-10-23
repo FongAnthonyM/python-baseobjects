@@ -10,6 +10,7 @@ This example demonstrates:
 5. Pickling and unpickling sentinel objects
 6. Using the predefined sentinel constants
 """
+
 # Imports #
 # Standard Libraries #
 import pickle

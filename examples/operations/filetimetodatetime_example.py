@@ -9,7 +9,6 @@ This example demonstrates:
 4. Practical applications for Windows filetime conversion
 """
 
-
 # Imports #
 # Standard Libraries #
 import datetime

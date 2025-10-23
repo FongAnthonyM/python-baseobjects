@@ -12,8 +12,8 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any, Optional
 from collections.abc import Callable
+from typing import Any, Optional
 
 # Source Packages #
 from baseobjects.functions import FunctionRegistry

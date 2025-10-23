@@ -9,6 +9,7 @@ This example demonstrates:
 4. Accessing and manipulating items across groups
 5. Practical use cases for GroupedList
 """
+
 # Imports #
 # Standard Libraries #
 from typing import Any

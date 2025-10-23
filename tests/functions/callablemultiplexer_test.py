@@ -20,8 +20,8 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import pickle
-from typing import Any, Dict, Type
 from collections.abc import Callable
+from typing import Any, Dict, Type
 
 # Third-Party Packages #
 import pytest
@@ -350,7 +350,9 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
         assert result == 3  # 5 - 2 (default y)
 
     def test_add_method(
-        self, test_multiplexer: CallableMultiplexer, test_object_instance: CallableMultiplexerTestObject,
+        self,
+        test_multiplexer: CallableMultiplexer,
+        test_object_instance: CallableMultiplexerTestObject,
     ) -> None:
         """Test that the add_method method correctly adds a method to the registry.
 
@@ -401,7 +403,9 @@ class TestCallableMultiplexer(BaseCallableTestSuite):
         assert result == 3  # 5 - 2 (default y)
 
     def test_add_select_method(
-        self, test_multiplexer: CallableMultiplexer, test_object_instance: CallableMultiplexerTestObject,
+        self,
+        test_multiplexer: CallableMultiplexer,
+        test_object_instance: CallableMultiplexerTestObject,
     ) -> None:
         """Test that the add_select_method method correctly adds and selects a method.
 

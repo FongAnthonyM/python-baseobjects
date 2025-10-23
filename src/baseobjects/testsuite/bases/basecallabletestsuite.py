@@ -23,9 +23,9 @@ import asyncio
 import copy
 import pickle
 from abc import abstractmethod
+from collections.abc import Callable
 from types import MethodType
 from typing import Any
-from collections.abc import Callable
 
 # Third-Party Packages #
 import pytest

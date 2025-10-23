@@ -223,7 +223,9 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         assert data1 == data2
 
     def test_is_empty_property(
-        self, empty_container: CircularDoublyLinkedContainer, simple_container: CircularDoublyLinkedContainer,
+        self,
+        empty_container: CircularDoublyLinkedContainer,
+        simple_container: CircularDoublyLinkedContainer,
     ) -> None:
         """Test the is_empty property.
 
@@ -260,7 +262,9 @@ class TestCircularDoublyLinkedContainer(BaseObjectTestSuite):
         assert simple_container.first_node.previous is last_node
 
     def test_len(
-        self, empty_container: CircularDoublyLinkedContainer, simple_container: CircularDoublyLinkedContainer,
+        self,
+        empty_container: CircularDoublyLinkedContainer,
+        simple_container: CircularDoublyLinkedContainer,
     ) -> None:
         """Test the __len__ method.
 

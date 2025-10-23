@@ -21,3 +21,4 @@ __version__ = "1.12.0"
 # Imports #
 # Local Packages #
 from .basetimedcachecallabletestsuite import BaseTimedCacheCallableTestSuite
+from .cachingtoolstestsuite import TimedCacheTestSuite

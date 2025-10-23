@@ -19,8 +19,8 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any, Type
 from collections.abc import Callable
+from typing import Any, Type
 
 # Third-Party Packages #
 import pytest

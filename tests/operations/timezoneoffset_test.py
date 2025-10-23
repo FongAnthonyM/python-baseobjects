@@ -2,6 +2,7 @@
 """timezoneoffset_test.py
 Tests for the timezone_offset function in the baseobjects package.
 """
+
 # Header #
 __package_name__ = "baseobjects"
 
@@ -13,10 +14,9 @@ __license__ = "MIT"
 __version__ = "1.12.0"
 
 
+# Imports #
 # Standard Libraries #
 import zoneinfo
-
-# Imports #
 from datetime import timedelta, timezone, tzinfo
 
 # Third-Party Packages #
@@ -89,22 +89,28 @@ class TestTimezoneOffset:
         timezones.
         """
         try:
-            # Test with America/New_York timezone
             tz = zoneinfo.ZoneInfo("America/New_York")
-            result = timezone_offset(tz)
-            # The offset depends on whether DST is in effect at INIT_DATE
-            # January 1, 1970 is not in DST, so it should be UTC-5
-            expected = timedelta(hours=-5)
-            assert result == expected
+        except zoneinfo.ZoneInfoNotFoundError:
+            try:
+                # Third-Party Packages #
+                import tzdata
+            except ImportError:
+                # Skip if zoneinfo is not available
+                pytest.skip("Time Zone Info and tzdata not available")
 
-            # Test with Asia/Tokyo timezone
-            tz = zoneinfo.ZoneInfo("Asia/Tokyo")
-            result = timezone_offset(tz)
-            expected = timedelta(hours=9)
-            assert result == expected
-        except ImportError:
-            # Skip if zoneinfo is not available
-            pytest.skip("zoneinfo module not available")
+        # Test with America/New_York timezone
+        tz = zoneinfo.ZoneInfo("America/New_York")
+        result = timezone_offset(tz)
+        # The offset depends on whether DST is in effect at INIT_DATE
+        # January 1, 1970 is not in DST, so it should be UTC-5
+        expected = timedelta(hours=-5)
+        assert result == expected
+
+        # Test with Asia/Tokyo timezone
+        tz = zoneinfo.ZoneInfo("Asia/Tokyo")
+        result = timezone_offset(tz)
+        expected = timedelta(hours=9)
+        assert result == expected
 
     def test_timezone_offset_init_date(self) -> None:
         """Test that the timezone_offset function uses the correct reference date.

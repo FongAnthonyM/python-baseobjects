@@ -10,7 +10,6 @@ This example demonstrates:
 5. Extending the test suite with additional tests
 """
 
-
 # Imports #
 # Standard Libraries #
 import copy
@@ -85,7 +84,13 @@ class Employee(Person):
     """
 
     def __init__(
-        self, name: str, age: int, email: str | None, employee_id: str, department: str, salary: float,
+        self,
+        name: str,
+        age: int,
+        email: str | None,
+        employee_id: str,
+        department: str,
+        salary: float,
     ) -> None:
         """Initialize an employee with personal and employment information.
 
