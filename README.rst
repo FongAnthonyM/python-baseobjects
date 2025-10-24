@@ -39,7 +39,10 @@ baseobjects
 Features
 --------
 
-This package contains useful base objects meant for inheritance and helper functions.
+Baseobjects is a collection of carefully designed, reusable building blocks for Python applications. It provides a
+consistent set of base classes, utilities, and patterns intended for inheritance and composition so you can build
+reliable, testable, and maintainable software faster. The package focuses on practical foundations: common object
+patterns, light-weight data containers, function helpers, and robust operational utilities.
 
 * bases: Low level base classes.
 * cachingtools: Objects and decorators for local caching.
@@ -70,6 +73,18 @@ You can install *baseobjects* via pip_ from PyPI_:
    $ pip install baseobjects
 
 
+Documentation
+------------
+
+For comprehensive guides, see the full documentation on Read the Docs:
+https://python-baseobjects.readthedocs.io/
+
+The documentation includes a user guide, API reference, tutorials, and examples to help you get productive quickly.
+See `Usage`_ for a quick start.
+
+For project-wide conventions and contribution standards, refer to the `Python Style Guide`_.
+
+
 Contributing
 ------------
 
@@ -94,15 +109,15 @@ please `file an issue`_ along with a detailed description.
 Credits
 -------
 
-This project was generated from `@cjolowicz`_'s `Hypermodern Python Cookiecutter`_ template.
+This project is based on `@cjolowicz`_'s `Hypermodern Python Cookiecutter`_.
 
 .. _@cjolowicz: https://github.com/cjolowicz
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
+.. _Hypermodern Python Cookiecutter: https://github.com/cjolowicz/cookiecutter-hypermodern-python
 .. _MIT license: https://opensource.org/licenses/MIT
 .. _PyPI: https://pypi.org/
-.. _Hypermodern Python Cookiecutter: https://github.com/cjolowicz/cookiecutter-hypermodern-python
 .. _file an issue: https://github.com/AnthonyTechnologies/python-baseobjects/issues
 .. _pip: https://pip.pypa.io/
+.. _Python Style Guide: docs/python-styleguide
 .. github-only
 .. _Contributor Guide: CONTRIBUTING.rst
 .. _Usage: https://python-baseobjects.readthedocs.io/en/latest/usage.html
