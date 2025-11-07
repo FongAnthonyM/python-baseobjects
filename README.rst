@@ -5,7 +5,7 @@ baseobjects
 
 |Read the Docs| |Tests| |Codecov|
 
-|pre-commit| |Black|
+|pre-commit|
 
 .. |PyPI| image:: https://img.shields.io/pypi/v/baseobjects.svg
    :target: https://pypi.org/project/baseobjects/
@@ -31,9 +31,6 @@ baseobjects
 .. |pre-commit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
    :target: https://github.com/pre-commit/pre-commit
    :alt: pre-commit
-.. |Black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
-   :target: https://github.com/psf/black
-   :alt: Black
 
 
 Features
@@ -60,7 +57,7 @@ patterns, light-weight data containers, function helpers, and robust operational
 Requirements
 ------------
 
-* Python 3.10 or later
+* Python 3.11 or later
 * bidict
 
 Installation

@@ -1,4 +1,4 @@
-Tutorials and Exmaples
+Tutorials and Examples
 ======================
 
 .. contents:: On this page

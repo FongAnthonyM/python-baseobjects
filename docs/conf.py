@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 """Sphinx configuration for baseobjects.
 
-This configuration enables extensive API documentation using autodoc and
-autosummary, better type and Google/NumPy style docstring parsing via
-Napoleon, and several convenience extensions like viewcode, intersphinx,
-and todo.
+This configuration enables extensive API documentation using autodoc and autosummary, better type and Google/NumPy style
+docstring parsing via Napoleon, and several convenience extensions like viewcode, intersphinx, and todo.
 """
 
 # Imports #
@@ -12,6 +10,7 @@ and todo.
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+
 
 # Ensure src is on sys.path for autodoc
 ROOT = Path(__file__).parent.parent.resolve()

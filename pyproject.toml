@@ -4,18 +4,18 @@
 name = "baseobjects"
 description = "Basic object templates."
 dynamic = ["version", "readme"]  # Get the version and readme from the tool.poetry section
-classifiers = ["Development Status :: 4 - Beta", ]
+classifiers = ["Development Status :: 4 - Beta"]
 
 # Staff
-authors = [{name = "Anthony Fong", email = "FongAnthonyM@gmail.com"},]
-maintainers = [{name = "Anthony Fong", email = "FongAnthonyM@gmail.com"},]
+authors = [{name = "Anthony Fong", email = "FongAnthonyM@gmail.com"}]
+maintainers = [{name = "Anthony Fong", email = "FongAnthonyM@gmail.com"}]
 
 # License
 license = "MIT"
 license-files = ["LICENSE.rst"]
 
 # Package Dependencies
-requires-python = ">=3.10"  # Upper bound defined in tool.poetry.dependencies
+requires-python = ">=3.11"  # Upper bound defined in tool.poetry.dependencies
 dependencies = [
     "bidict>=0.22.0",
 ]
