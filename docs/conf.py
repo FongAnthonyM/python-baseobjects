@@ -11,7 +11,6 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-
 # Ensure src is on sys.path for autodoc
 ROOT = Path(__file__).parent.parent.resolve()
 SRC = ROOT / "src"

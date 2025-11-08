@@ -7,7 +7,7 @@ Tutorials and Examples
 
 This project includes additional tutorials and examples in the repository to help you learn by doing.
 
-Repository tutorials
+Repository Tutorials
 --------------------
 
 - Jupyter notebooks: see the ``tutorials/`` directory.

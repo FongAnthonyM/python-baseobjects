@@ -3,7 +3,7 @@ Testing
 
 This project uses pytest and nox to run tests and ensure code quality.
 
-Running the test suite
+Running the Test Suite
 ----------------------
 
 You can run the tests locally with pytest:
@@ -20,7 +20,7 @@ Alternatively, you can use the provided nox sessions (recommended):
    pip install nox
    nox -s tests
 
-Test coverage
+Test Coverage
 -------------
 
 To measure test coverage:
@@ -31,7 +31,7 @@ To measure test coverage:
 
 The HTML coverage report will be available under ``.nox/coverage/htmlcov/index.html``.
 
-Type checking and linting
+Type Checking and Linting
 -------------------------
 
 Static type checking and code quality checks are available via dedicated nox sessions:
@@ -39,9 +39,9 @@ Static type checking and code quality checks are available via dedicated nox ses
 .. code-block:: bash
 
    nox -s mypy
-   nox -s lint
+   nox -s pre-commit
 
-Continuous integration
+Continuous Integration
 ----------------------
 
 Tests are also executed in CI. Refer to ``noxfile.py`` for the authoritative list of sessions and their parameters.

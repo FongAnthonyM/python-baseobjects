@@ -1,5 +1,5 @@
 API Reference
-=========
+=============
 
 .. contents::
     :local:
@@ -7,7 +7,7 @@ API Reference
     :backlinks: none
 
 
-bases
+Bases
 ----------------
 
 Core base classes and common primitives that other modules build upon.
@@ -27,7 +27,7 @@ BaseMeta
 .. autoclass:: baseobjects.bases.basemeta.BaseMeta
    :members:
 
-bases.basecallable
+Bases Base Callable
 ----------------------------
 
 .. automodule:: baseobjects.bases.basecallable
@@ -45,13 +45,13 @@ SentinelObject
 .. autoclass:: baseobjects.bases.sentinelobject.SentinelObject
    :members:
 
-bases.collections
+Bases Collections
 ---------------------------
 
 .. automodule:: baseobjects.bases.collections
    :members:
 
-bases.collections.basedict
+Bases Collections Base Dict
 ---------------------------------
 
 .. automodule:: baseobjects.bases.collections.basedict
@@ -63,7 +63,7 @@ bases.collections.baselist
 .. automodule:: baseobjects.bases.collections.baselist
    :members:
 
-cachingtools
+Caching Tools
 ----------------------
 
 Caching utilities and cache abstractions for performance-sensitive workloads.
@@ -71,7 +71,7 @@ Caching utilities and cache abstractions for performance-sensitive workloads.
 .. automodule:: baseobjects.cachingtools
    :members:
 
-cachingtools.cachingobject
+Caching Tools Caching Object
 --------------------------------
 
 .. automodule:: baseobjects.cachingtools.cachingobject

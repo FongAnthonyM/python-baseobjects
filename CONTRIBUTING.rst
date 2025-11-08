@@ -17,8 +17,8 @@ Here is a list of important resources for contributors:
 .. _Documentation: https://python-baseobjects.readthedocs.io/
 .. _Issue Tracker: https://github.com/AnthonyTechnologies/python-baseobjects/issues
 
-How to report a bug
--------------------
+Reporting Bugs
+--------------
 
 Report bugs on the `Issue Tracker`_.
 
@@ -34,14 +34,14 @@ The best way to get your bug fixed is to provide a test case,
 and/or steps to reproduce the issue.
 
 
-How to request a feature
-------------------------
+Requesting Features
+-------------------
 
 Request features on the `Issue Tracker`_.
 
 
-How to set up your development environment
-------------------------------------------
+Development Environment Setup
+------------------------------
 
 You need Python 3.7+ and the following tools:
 
@@ -68,8 +68,8 @@ or the command-line interface:
 .. _nox-poetry: https://nox-poetry.readthedocs.io/
 
 
-How to test the project
------------------------
+Testing the Project
+---------------------
 
 Run the full test suite:
 
@@ -96,8 +96,8 @@ and are written using the pytest_ testing framework.
 .. _pytest: https://pytest.readthedocs.io/
 
 
-How to submit changes
----------------------
+Submitting Changes
+------------------
 
 Open a `pull request`_ to submit changes to this project.
 
