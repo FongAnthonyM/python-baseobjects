@@ -3,11 +3,19 @@
 
 .. _Contributor Guide: contributing.html
 
+
+Table of Contents
+-----------------
+.. toctree::
+   :maxdepth: 0
+   :titlesonly:
+
+   Overview <overview>
+
 .. toctree::
    :caption: Getting Started
    :maxdepth: 1
 
-   index
    installation
 
 .. toctree::

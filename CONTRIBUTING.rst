@@ -69,7 +69,7 @@ or the command-line interface:
 
 
 Testing the Project
----------------------
+-------------------
 
 Run the full test suite:
 

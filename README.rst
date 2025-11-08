@@ -77,7 +77,6 @@ For comprehensive guides, see the full documentation on Read the Docs:
 https://python-baseobjects.readthedocs.io/
 
 The documentation includes a user guide, API reference, tutorials, and examples to help you get productive quickly.
-See `Usage`_ for a quick start.
 
 For project-wide conventions and contribution standards, refer to the `Python Style Guide`_.
 
@@ -114,7 +113,6 @@ This project is based on `@cjolowicz`_'s `Hypermodern Python Cookiecutter`_.
 .. _PyPI: https://pypi.org/
 .. _file an issue: https://github.com/AnthonyTechnologies/python-baseobjects/issues
 .. _pip: https://pip.pypa.io/
-.. _Python Style Guide: docs/python-styleguide
+.. _Python Style Guide: https://github.com/AnthonyTechnologies/python-styleguide
 .. github-only
 .. _Contributor Guide: CONTRIBUTING.rst
-.. _Usage: https://python-baseobjects.readthedocs.io/en/latest/usage.html
