@@ -78,7 +78,7 @@ https://python-baseobjects.readthedocs.io/
 
 The documentation includes a user guide, API reference, tutorials, and examples to help you get productive quickly.
 
-For project-wide conventions and contribution standards, refer to the `Python Style Guide`_.
+For project-wide conventions and contribution standards, refer to `Anthony's Python Style Guide`_.
 
 
 Contributing
@@ -91,8 +91,7 @@ To learn more, see the `Contributor Guide`_.
 License
 -------
 
-Distributed under the terms of the `MIT license`_,
-*baseobjects* is free and open source software.
+Distributed under the terms of the `MIT license`_, *baseobjects* is free and open source software.
 
 
 Issues
@@ -105,14 +104,15 @@ please `file an issue`_ along with a detailed description.
 Credits
 -------
 
-This project is based on `@cjolowicz`_'s `Hypermodern Python Cookiecutter`_.
+Project Organization: `Anthony's Python Style Guide`_ based on `The Google Style Guide`_ and `Hypermodern Python`_ by `Claudio Jolowicz`_.
 
-.. _@cjolowicz: https://github.com/cjolowicz
-.. _Hypermodern Python Cookiecutter: https://github.com/cjolowicz/cookiecutter-hypermodern-python
-.. _MIT license: https://opensource.org/licenses/MIT
-.. _PyPI: https://pypi.org/
-.. _file an issue: https://github.com/AnthonyTechnologies/python-baseobjects/issues
 .. _pip: https://pip.pypa.io/
-.. _Python Style Guide: https://github.com/AnthonyTechnologies/python-styleguide
+.. _PyPI: https://pypi.org/
+.. _MIT license: https://opensource.org/licenses/MIT
+.. _file an issue: https://github.com/AnthonyTechnologies/python-baseobjects/issues
+.. _Anthony's Python Style Guide: https://github.com/AnthonyTechnologies/python-styleguide
+.. _The Google Style Guide: https://google.github.io/styleguide/pyguide.html
+.. _Hypermodern Python: https://cjolowicz.github.io/posts/hypermodern-python-01-setup/
+.. _Claudio Jolowicz: https://github.com/cjolowicz
 .. github-only
 .. _Contributor Guide: CONTRIBUTING.rst

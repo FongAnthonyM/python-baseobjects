@@ -31,6 +31,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.todo",
     "sphinx_click",
+    "myst_parser",
 ]
 
 # Autodoc / Autosummary
