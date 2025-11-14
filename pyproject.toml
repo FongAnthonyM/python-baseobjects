@@ -12,7 +12,7 @@ maintainers = [{name = "Anthony Fong", email = "FongAnthonyM@gmail.com"}]
 
 # License
 license = "MIT"
-license-files = ["LICENSE.rst"]
+license-files = ["LICENSE"]
 
 # Package Dependencies
 requires-python = ">=3.11"  # Upper bound defined in tool.poetry.dependencies
