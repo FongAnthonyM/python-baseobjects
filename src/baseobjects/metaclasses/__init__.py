@@ -1,5 +1,8 @@
 """__init__.py
-Description: More specific objects for the package.
+Metaclass utilities for class construction and initialization.
+
+This package contains metaclass helpers used by baseobjects to customize class creation and provide class-level
+initialization hooks.
 """
 
 # Header #

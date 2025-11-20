@@ -1,5 +1,9 @@
 """initmeta.py
 InitMeta is an abstract metaclass that implements an init class method which allows some setup after a class is created.
+
+This module defines InitMeta, a lightweight extension of BaseMeta that adds a class-level initialization hook. After a
+class is constructed, InitMeta invokes the class method `_init_class_`, enabling post-creation configuration such as
+registering the class in registries, validating class attributes, or wiring up auxiliary state needed by the framework.
 """
 
 # Header #

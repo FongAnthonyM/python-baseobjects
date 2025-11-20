@@ -1,5 +1,8 @@
 """__init__.py
-Adds additional Warnings.
+Adds additional warnings.
+
+This package defines custom warning classes used within the baseobjects library to signal runtime conditions such as
+unimplemented functionality and timeouts.
 """
 
 # Header #

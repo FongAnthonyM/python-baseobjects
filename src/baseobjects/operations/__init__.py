@@ -1,5 +1,8 @@
 """__init__.py
-General functions are commonly used.
+General functions that are commonly used.
+
+This package contains small, reusable operations such as byte and datetime conversions, method name introspection,
+parsing utilities, and recursive collection helpers.
 """
 
 # Header #

@@ -1,5 +1,12 @@
 """bytestobin.py
 A function to convert bytes to a tuple of binary values.
+
+This module provides a utility for expanding a bytes-like object into its bitwise representation. For each byte, the
+function emits eight binary values ordered according to the requested endianness ("big" or "little"). The output value
+type can be customized (for example, int, bool, or str) to suit downstream processing and readability needs.
+
+Typical use cases include compact bitfield decoding, flag extraction, and low-level protocol inspection where individual
+bits need to be examined or transformed.
 """
 
 # Header #

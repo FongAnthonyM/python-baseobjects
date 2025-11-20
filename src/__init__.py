@@ -1,5 +1,9 @@
 """__init__.py
 The source code of baseobjects.
+
+This package directory contains all Python source files that make up the
+baseobjects library. Subpackages are organized by functionality such as bases,
+objects, functions, wrappers, and more.
 """
 
 # Header #

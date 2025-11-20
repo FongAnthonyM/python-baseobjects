@@ -86,7 +86,7 @@ class CallbackScheduler(BaseObject):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        """Initialize a new CallbackScheduler instance.
+        """Initializes a new CallbackScheduler instance.
 
         Args:
             callback_map: An iterable of tuples containing callback functions and their associated task queues.
@@ -265,7 +265,7 @@ class CallbackManager(BaseReducible):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        """Initialize the callback manager.
+        """Initializes the callback manager.
 
         Initializes internal registries and optionally constructs the instance using
         provided callback entries and defaults.

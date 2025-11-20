@@ -1024,12 +1024,25 @@ pyflakes = ">=3.4.0,<3.5.0"
 
 [[package]]
 name = "fqdn"
+version = "1.4.0"
+description = "Validate fully-qualified domain names compliant to RFC 1035 and the preferred form in RFC 3686 s. 2."
+optional = true
+python-versions = "*"
+groups = ["main"]
+markers = "python_version >= \"3.14\" and extra == \"jupyter\""
+files = [
+    {file = "fqdn-1.4.0-py3-none-any.whl", hash = "sha256:e935616ae81c9c60a22267593fe8e6af68cecc68549cc71bb9bfbcbbcb383386"},
+    {file = "fqdn-1.4.0.tar.gz", hash = "sha256:30e8f2e685ce87cdace4712fd97c5d09f5e6fa519bbb66e8f188f6a7cb3a5c4e"},
+]
+
+[[package]]
+name = "fqdn"
 version = "1.5.1"
 description = "Validates fully-qualified domain names against RFC 1123, so that they are acceptable to modern bowsers"
 optional = true
 python-versions = ">=2.7, !=3.0, !=3.1, !=3.2, !=3.3, !=3.4, <4"
 groups = ["main"]
-markers = "extra == \"jupyter\""
+markers = "python_version < \"3.14\" and extra == \"jupyter\""
 files = [
     {file = "fqdn-1.5.1-py3-none-any.whl", hash = "sha256:3a179af3761e4df6eb2e026ff9e1a3033d3587bf980a0b1b2e1e5d08d7358014"},
     {file = "fqdn-1.5.1.tar.gz", hash = "sha256:105ed3677e767fb5ca086a0c1f4bb66ebc3c100be518f0e0d755d9eae164d89f"},
@@ -4669,5 +4682,5 @@ jupyter = ["jupyter"]
 
 [metadata]
 lock-version = "2.1"
-python-versions = ">=3.11, <4.0"
-content-hash = "ada541a17a848125bd9f3262a1e2f5d31d7a5b8e4a8dfdeefdf7e84bed68ff61"
+python-versions = ">=3.11"
+content-hash = "6de0bc9131b4f9da28ae5e507aced1f8031edb0d41e6ce86f57672c956b7f8bb"

@@ -1,13 +1,13 @@
 """__init__.py
 bases.collection provides base classes for collection-type objects.
 
-This package contains abstract base classes that combine the functionality of Python's standard collection
-classes (like UserDict and UserList) with the BaseObject class. These hybrid classes serve as foundations
-for creating custom collection types that have both the standard collection behavior and the enhanced
-functionality provided by BaseObject, such as proper copying and deep copying support.
+This package contains abstract base classes that combine the functionality of Python's standard collection classes (like
+UserDict and UserList) with the BaseObject class. These hybrid classes serve as foundations for creating custom
+collection types that have both the standard collection behavior and the enhanced functionality provided by BaseObject,
+such as proper copying and deep copying support.
 
-The classes in this package are designed to be subclassed rather than used directly, providing a consistent
-interface and behavior for all collection objects in the baseobjects framework.
+The classes in this package are designed to be subclassed rather than used directly, providing a consistent interface
+and behavior for all collection objects in the baseobjects framework.
 """
 
 # Header #

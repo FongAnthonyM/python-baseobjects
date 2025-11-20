@@ -1,5 +1,8 @@
 """__init__.py
 Specialized containers.
+
+This package provides data structures such as linked containers, grouped lists, and ordered dictionaries used by the
+baseobjects library.
 """
 
 # Header #

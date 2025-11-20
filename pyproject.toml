@@ -15,7 +15,7 @@ license = "MIT"
 license-files = ["LICENSE"]
 
 # Package Dependencies
-requires-python = ">=3.11"  # Upper bound defined in tool.poetry.dependencies
+requires-python = ">=3.11"
 dependencies = [
     "bidict>=0.22.0",
 ]
@@ -72,11 +72,6 @@ readme = ["README.rst"]
 packages = [
     { include = "baseobjects", from = "src" },
 ]
-
-# Lock Dependencies
-[tool.poetry.dependencies]
-python = ">=3.11, <4.0"
-bidict = ">=0.22.0"
 
 [tool.poetry.requires-plugins]
 poetry-plugin-export = ">=1.8"

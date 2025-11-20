@@ -1,9 +1,9 @@
 """__init__.py
 More specific objects for the package.
 
-This module serves as an initialization file for the objects package, which provides specialized object classes
-with specific functionality. It imports and exposes classes like AutomaticProperties and CallbackManager,
-making them available for direct import from the objects package.
+This module serves as an initialization file for the objects package, which provides specialized object classes with
+specific functionality. It imports and exposes classes like AutomaticProperties and CallbackManager, making them
+available for direct import from the objects package.
 """
 
 # Header #
