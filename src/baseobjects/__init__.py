@@ -22,3 +22,32 @@ __version__ = "1.12.0"
 from .bases import *
 from .composition import *
 from .functions import *
+
+__all__ = [
+    "DEFAULTSENTINEL",
+    "SEARCHSENTINEL",
+    "BaseCallable",
+    "BaseComponent",
+    "BaseComposite",
+    "BaseDecorator",
+    "BaseDict",
+    "BaseDispatchingComposite",
+    "BaseFunction",
+    "BaseList",
+    "BaseMeta",
+    "BaseMethod",
+    "BaseObject",
+    "BaseReducible",
+    "CallableMultiplexer",
+    "DispatchableComposite",
+    "DynamicCallable",
+    "DynamicDecorator",
+    "DynamicFunction",
+    "DynamicMethod",
+    "FunctionMultiplexer",
+    "FunctionRegistry",
+    "MethodMultiplexer",
+    "MethodRegistry",
+    "SentinelObject",
+    "singlekwargdispatch",
+]

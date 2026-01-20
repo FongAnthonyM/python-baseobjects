@@ -8,9 +8,6 @@ list. The class supports named groups, parent-child relationships, and various o
 hierarchical structure.
 """
 
-# Future Imports #
-from __future__ import annotations
-
 # Header #
 __package_name__ = "baseobjects"
 
@@ -26,7 +23,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 from collections import deque
 from collections.abc import Iterable, Iterator
-from typing import Any
+from typing import Any, SupportsIndex, overload
 
 # Third-Party Packages #
 import bidict
@@ -48,7 +45,7 @@ class GroupedList(BaseList):
     # Attributes #
     # Attributes #
     parents: set[GroupedList]
-    groups: bidict.bidict
+    groups: bidict.bidict[str, GroupedList]
 
     # Magic Methods #
     # Construction/Destruction #
@@ -59,7 +56,7 @@ class GroupedList(BaseList):
         parents: Iterable[GroupedList] | None = None,
         init: bool = True,
     ) -> None:
-        """Initialize a GroupedList.
+        """Initializes this object with the given arguments.
 
         Args:
             items: Optional initial items to populate the list.
@@ -79,7 +76,7 @@ class GroupedList(BaseList):
             self.construct(items=items, parent=parent, parents=parents)
 
     def __copy__(self) -> GroupedList:
-        """Creates a shallow copy of this GroupedList.
+        """Creates a shallow copy of this object.
 
         Returns:
             A new GroupedList instance with the same data, parents, and groups.
@@ -98,7 +95,16 @@ class GroupedList(BaseList):
         """
         return self.get_length()
 
-    def __getitem__(self, i: int | str | slice) -> Any | list[Any]:
+    @overload  # type: ignore[override]
+    def __getitem__(self, i: SupportsIndex) -> Any: ...
+
+    @overload
+    def __getitem__(self, i: slice) -> list[Any]: ...
+
+    @overload
+    def __getitem__(self, i: str) -> GroupedList: ...
+
+    def __getitem__(self, i: SupportsIndex | str | slice, /) -> Any:
         """Gets an item or group from this GroupedList.
 
         Args:
@@ -120,10 +126,13 @@ class GroupedList(BaseList):
             case int():
                 return self.get_item(i)
             case _:
-                msg = f"Invalid index type: {type(i)}"
-                raise TypeError(msg)
+                try:
+                    return self.get_item(int(i))
+                except ValueError, TypeError:
+                    msg = f"Invalid index type: {type(i)}"
+                    raise TypeError(msg) from None
 
-    def __setitem__(self, i: int | str | slice, item: Any) -> None:
+    def __setitem__(self, i: SupportsIndex | str | slice, item: Any, /) -> None:
         """Sets an item in this GroupedList.
 
         Args:
@@ -143,10 +152,13 @@ class GroupedList(BaseList):
             case int():
                 self.set_item(i, item)
             case _:
-                msg = f"Invalid index type: {type(i)}"
-                raise TypeError(msg)
+                try:
+                    self.set_item(int(i), item)
+                except ValueError, TypeError:
+                    msg = f"Invalid index type: {type(i)}"
+                    raise TypeError(msg) from None
 
-    def __delitem__(self, i: int | str | slice) -> None:
+    def __delitem__(self, i: SupportsIndex | str | slice, /) -> None:
         """Deletes an item from this GroupedList.
 
         Args:
@@ -165,8 +177,11 @@ class GroupedList(BaseList):
             case int():
                 self.delete_item(i)
             case _:
-                msg = f"Invalid index type: {type(i)}"
-                raise TypeError(msg)
+                try:
+                    self.delete_item(int(i))
+                except ValueError, TypeError:
+                    msg = f"Invalid index type: {type(i)}"
+                    raise TypeError(msg) from None
 
     def __iter__(self) -> Iterator[Any]:
         """Returns an iterator over all items in this GroupedList, including items in child groups.
@@ -200,7 +215,7 @@ class GroupedList(BaseList):
         """
         return repr(self.as_flat_tuple())
 
-    def __hash__(self) -> int:
+    def __hash__(self) -> int:  # type: ignore[override]
         """Overrides hash to make the class hashable.
 
         Returns:
@@ -209,7 +224,7 @@ class GroupedList(BaseList):
         return id(self)
 
     # Type Conversion
-    def __cast(self, other: Any) -> Any:
+    def __cast(self, other: Any) -> list[Any] | Any:
         """Casts another object to a comparable type.
 
         Args:
@@ -231,7 +246,7 @@ class GroupedList(BaseList):
         Returns:
             True if this GroupedList is less than the other object, False otherwise.
         """
-        return self.as_flat_list() < self.__cast(other)
+        return bool(self.as_flat_list() < self.__cast(other))
 
     def __le__(self, other: Any) -> bool:
         """Checks if this GroupedList is less than or equal to another object.
@@ -242,7 +257,7 @@ class GroupedList(BaseList):
         Returns:
             True if this GroupedList is less than or equal to the other object, False otherwise.
         """
-        return self.as_flat_list() <= self.__cast(other)
+        return bool(self.as_flat_list() <= self.__cast(other))
 
     def __eq__(self, other: Any) -> bool:
         """Checks if this GroupedList is equal to another object.
@@ -253,7 +268,7 @@ class GroupedList(BaseList):
         Returns:
             True if this GroupedList is equal to the other object, False otherwise.
         """
-        return self.as_flat_list() == self.__cast(other)
+        return bool(self.as_flat_list() == self.__cast(other))
 
     def __gt__(self, other: Any) -> bool:
         """Checks if this GroupedList is greater than another object.
@@ -264,7 +279,7 @@ class GroupedList(BaseList):
         Returns:
             True if this GroupedList is greater than the other object, False otherwise.
         """
-        return self.as_flat_list() > self.__cast(other)
+        return bool(self.as_flat_list() > self.__cast(other))
 
     def __ge__(self, other: Any) -> bool:
         """Checks if this GroupedList is greater than or equal to another object.
@@ -275,7 +290,7 @@ class GroupedList(BaseList):
         Returns:
             True if this GroupedList is greater than or equal to the other object, False otherwise.
         """
-        return self.as_flat_list() >= self.__cast(other)
+        return bool(self.as_flat_list() >= self.__cast(other))
 
     # Arithmetic
     def __add__(self, other: Any) -> GroupedList:
@@ -347,7 +362,7 @@ class GroupedList(BaseList):
         parent: GroupedList | None = None,
         parents: Iterable[GroupedList] | None = None,
     ) -> None:
-        """Constructs this object.
+        """Constructs this object with the given arguments.
 
         Args:
             items: The items to add to this GroupList.
@@ -406,7 +421,7 @@ class GroupedList(BaseList):
             if isinstance(item, GroupedList) and self.check_if_child(item):
                 item.parents.remove(other)
 
-    def get_group_lengths(self, recurse: bool = False) -> tuple[int, tuple]:
+    def get_group_lengths(self, recurse: bool = False) -> tuple[int, tuple[Any, ...]] | int:
         """Gets the lengths of this GroupedList and its child groups.
 
         Args:
@@ -417,8 +432,10 @@ class GroupedList(BaseList):
             A tuple containing:
                 - The number of non-group items in this GroupedList
                 - A tuple of lengths of child groups
+
+            Or an int if there are no child groups.
         """
-        lengths = deque()
+        lengths: deque[Any] = deque()
         for item in self.data:
             if isinstance(item, GroupedList) and self.check_if_child(item):
                 if recurse:
@@ -445,7 +462,7 @@ class GroupedList(BaseList):
     def create_group(
         self,
         name: str,
-        items: Iterable | None = None,
+        items: Iterable[Any] | None = None,
         parents: Iterable[GroupedList] | None = None,
     ) -> GroupedList:
         """Creates a new group with the given name and adds it to this GroupedList.
@@ -473,7 +490,7 @@ class GroupedList(BaseList):
     def require_group(
         self,
         name: str | Iterable[str],
-        items: Iterable | None = None,
+        items: Iterable[Any] | None = None,
         parents: Iterable[GroupedList] | None = None,
     ) -> GroupedList:
         """Gets an existing group with the given name or creates it if it doesn't exist.
@@ -502,9 +519,9 @@ class GroupedList(BaseList):
 
         # Recurse if needed
         if names:
-            new_group = new_group.require_group(names)
+            new_group = new_group.require_group(names)  # type: ignore[union-attr]
 
-        return new_group
+        return new_group  # type: ignore[return-value]
 
     def remove_group(self, group: str | GroupedList) -> None:
         """Removes a group from this GroupedList.
@@ -571,8 +588,9 @@ class GroupedList(BaseList):
 
         self.data.append(group)
         self.groups[name] = group
+        group.parents.add(self)
 
-    def get_item(self, i: int, group: str | None = None) -> Any:
+    def get_item(self, i: int, group: str | Iterable[str] | None = None) -> Any:
         """Gets an item from this GroupedList or a specific group.
 
         Args:
@@ -586,9 +604,9 @@ class GroupedList(BaseList):
             IndexError: If the index is out of range.
         """
         if group is not None:
-            return self.groups[group].get_item(i)
+            return self.get_group(group).get_item(i)
         elif i < 0:
-            data = reversed(self.data)
+            data: Iterable[Any] = reversed(self.data)
             i = -i - 1
             reverse = True
         else:
@@ -615,7 +633,7 @@ class GroupedList(BaseList):
         msg = "index out of range"
         raise IndexError(msg)
 
-    def get_slice(self, slice_: slice, group: str | None = None) -> list[Any]:
+    def get_slice(self, slice_: slice, group: str | Iterable[str] | None = None) -> list[Any]:
         """Gets a slice of items from this GroupedList or a specific group.
 
         Args:
@@ -626,11 +644,11 @@ class GroupedList(BaseList):
             A list containing the items in the specified slice.
         """
         if group is not None:
-            return self.groups[group].get_slice(slice_)
+            return self.get_group(group).get_slice(slice_)
         else:
             return self.as_flat_list()[slice_]
 
-    def set_item(self, i: int, value: Any, group: str | None = None) -> None:
+    def set_item(self, i: int, value: Any, group: str | Iterable[str] | None = None) -> None:
         """Sets an item in this GroupedList or a specific group.
 
         Args:
@@ -642,7 +660,7 @@ class GroupedList(BaseList):
             IndexError: If the index is out of range.
         """
         if group is not None:
-            return self.groups[group].set_item(i, value)
+            return self.get_group(group).set_item(i, value)
         elif i < 0:
             self.data.reverse()
             i = -i - 1
@@ -678,7 +696,7 @@ class GroupedList(BaseList):
         msg = "index out of range"
         raise IndexError(msg)
 
-    def set_slice(self, slice_: slice, value: Iterable[Any], group: str | None = None) -> None:
+    def set_slice(self, slice_: slice, value: Iterable[Any], group: str | Iterable[str] | None = None) -> None:
         """Sets a slice of items in this GroupedList or a specific group.
 
         Args:
@@ -690,7 +708,7 @@ class GroupedList(BaseList):
             ValueError: If the length of values doesn't match the slice length.
         """
         if group is not None:
-            return self.groups[group].set_slice(slice_, value)
+            return self.get_group(group).set_slice(slice_, value)
 
         flat_list = self.as_flat_list()
         indices = range(*slice_.indices(len(flat_list)))
@@ -704,7 +722,7 @@ class GroupedList(BaseList):
             self.set_item(i, val)
         return None
 
-    def delete_item(self, i: int, group: str | None = None) -> None:
+    def delete_item(self, i: int, group: str | Iterable[str] | None = None) -> None:
         """Deletes an item from this GroupedList or a specific group.
 
         Args:
@@ -715,7 +733,7 @@ class GroupedList(BaseList):
             IndexError: If the index is out of range.
         """
         if group is not None:
-            return self.groups[group].delete_item(i)
+            return self.get_group(group).delete_item(i)
         elif i < 0:
             self.data.reverse()
             i = -i - 1
@@ -752,7 +770,7 @@ class GroupedList(BaseList):
         msg = "index out of range"
         raise IndexError(msg)
 
-    def delete_slice(self, slice_: slice, group: str | None = None) -> None:
+    def delete_slice(self, slice_: slice, group: str | Iterable[str] | None = None) -> None:
         """Deletes a slice of items from this GroupedList or a specific group.
 
         Args:
@@ -760,7 +778,7 @@ class GroupedList(BaseList):
             group: The name of the group to delete the items from, or None to delete from this GroupedList.
         """
         if group is not None:
-            return self.groups[group].delete_slice(slice_)
+            return self.get_group(group).delete_slice(slice_)
 
         flat_list = self.as_flat_list()
         indices = range(*slice_.indices(len(flat_list)))
@@ -770,7 +788,7 @@ class GroupedList(BaseList):
             self.delete_item(i)
         return None
 
-    def append(self, item: Any, group: str | None = None) -> None:
+    def append(self, item: Any, group: str | Iterable[str] | None = None) -> None:
         """Appends an item to this GroupedList or a specific group.
 
         Args:
@@ -781,10 +799,10 @@ class GroupedList(BaseList):
         if group is None:
             self.data.append(item)
         else:
-            group = self.require_group(name=group)
-            group.append(item)
+            target_group = self.require_group(name=group)
+            target_group.append(item)
 
-    def insert(self, i: int, item: Any, group: str | None = None) -> None:
+    def insert(self, i: int, item: Any, group: str | Iterable[str] | None = None) -> None:
         """Inserts an item at a specific position in this GroupedList or a specific group.
 
         Args:
@@ -794,46 +812,10 @@ class GroupedList(BaseList):
         """
         if group is None:
             return self.data.insert(i, item)
-        elif i < 0:
-            self.data.reverse()
-            i = -i - 1
-            reverse = True
         else:
-            reverse = False
+            return self.require_group(name=group).insert(i, item)
 
-        for j in range(len(self.data)):
-            contained_item = self.data[j]
-            if i <= 0:
-                if isinstance(contained_item, GroupedList) and self.check_if_child(contained_item):
-                    i = -i - 1 if reverse else i
-                    contained_item.set_item(i, item)
-                else:
-                    index = -j - 1 if reverse else j
-                    self.data.insert(index, item)
-
-                if reverse:
-                    self.data.reverse()
-
-                return None
-            elif isinstance(contained_item, GroupedList) and self.check_if_child(contained_item):
-                n_items = len(contained_item)
-                if i < n_items:
-                    i = -i - 1 if reverse else i
-                    contained_item.insert(i, item)
-                    if reverse:
-                        self.data.reverse()
-                    return None
-                else:
-                    i -= n_items
-            else:
-                i -= 1
-
-        self.data.append(item)
-        if reverse:
-            self.data.reverse()
-        return None
-
-    def pop(self, i: int = -1, group: str | None = None) -> Any:
+    def pop(self, i: int = -1, group: str | Iterable[str] | None = None) -> Any:
         """Removes and returns an item at a specific position in this GroupedList or a specific group.
 
         Args:
@@ -844,7 +826,7 @@ class GroupedList(BaseList):
             The item that was removed.
         """
         if group is not None:
-            return self.groups[group].delete_item(i)
+            return self.get_group(group).pop(i)
         elif i < 0:
             self.data.reverse()
             i = -i - 1
@@ -859,9 +841,8 @@ class GroupedList(BaseList):
                     i = -i - 1 if reverse else i
                     result = item.pop(i)
                 else:
-                    index = -j - 1 if reverse else j
-                    result = self.data[index]
-                    del self.data[index]
+                    result = self.data[j]
+                    del self.data[j]
 
                 if reverse:
                     self.data.reverse()
@@ -880,7 +861,7 @@ class GroupedList(BaseList):
                 i -= 1
         return self.data.pop(i)
 
-    def remove(self, item: Any, group: str | None = None) -> None:
+    def remove(self, item: Any, group: str | Iterable[str] | None = None) -> None:
         """Removes the first occurrence of an item from this GroupedList or a specific group.
 
         Args:
@@ -891,7 +872,7 @@ class GroupedList(BaseList):
             ValueError: If the item is not found.
         """
         if group is not None:
-            return self.groups[group].remove(item)
+            return self.get_group(group).remove(item)
         else:
             for contained_item in self.data:
                 if contained_item is item:
@@ -904,7 +885,7 @@ class GroupedList(BaseList):
         msg = "item is not present in this object"
         raise ValueError(msg)
 
-    def clear(self, group: str | None = None) -> None:
+    def clear(self, group: str | Iterable[str] | None = None) -> None:
         """Removes all items from this GroupedList or a specific group.
 
         Args:
@@ -914,7 +895,7 @@ class GroupedList(BaseList):
             self.data.clear()
             self.groups.clear()
         else:
-            self.groups[group].clear()
+            self.get_group(group).clear()
 
     def count(self, item: Any) -> int:
         """Counts the number of occurrences of an item in this GroupedList.
@@ -956,7 +937,7 @@ class GroupedList(BaseList):
         """
         self.data.sort(*args, **kwds)
 
-    def extend(self, other: Iterable[Any], group: str | None = None) -> None:
+    def extend(self, other: Iterable[Any], group: str | Iterable[str] | None = None) -> None:
         """Extends this GroupedList or a specific group with items from another iterable.
 
         Args:
@@ -968,7 +949,7 @@ class GroupedList(BaseList):
             self.data.extend(other.data)
             self.groups.update(other.groups | self.groups)
         elif group is not None:
-            self.groups[group].extend(other)
+            self.get_group(group).extend(other)
         else:
             self.data.extend(other)
 
@@ -982,10 +963,10 @@ class GroupedList(BaseList):
             A new GroupedList containing the items from this GroupedList and the other object.
         """
         if not isinstance(other, Iterable):
-            other = list(other)
+            other = [other]
         new = self.copy()
         new.extend(other)
-        return new
+        return new  # type: ignore[no-any-return]
 
     def radd(self, other: Any) -> GroupedList:
         """Creates a new GroupedList by adding another object and this GroupedList (right-side addition).
@@ -1000,11 +981,11 @@ class GroupedList(BaseList):
             new = other.copy()
         else:
             if not isinstance(other, Iterable):
-                other = list(other)
+                other = [other]
             new = self.__class__(items=other)
 
         new.extend(self)
-        return new
+        return new  # type: ignore[no-any-return]
 
     def iadd(self, other: Any) -> GroupedList:
         """Adds another object to this GroupedList in-place.
@@ -1016,12 +997,12 @@ class GroupedList(BaseList):
             This GroupedList with the items from the other object added.
         """
         if not isinstance(other, Iterable):
-            other = list(other)
+            other = [other]
         self.extend(other)
         return self
 
-    def as_flat_tuple(self) -> tuple[Any]:
-        """Return the contents of this GroupList as a flat tuple.
+    def as_flat_tuple(self) -> tuple[Any, ...]:
+        """Returns the contents of this GroupList as a flat tuple.
 
         Returns:
             A tuple with the contents of this GroupList.
@@ -1029,7 +1010,7 @@ class GroupedList(BaseList):
         return tuple(iter(self))
 
     def as_flat_list(self) -> list[Any]:
-        """Return the contents of this GroupList as a flat list.
+        """Returns the contents of this GroupList as a flat list.
 
         Returns:
             A list with the contents of this GroupList.

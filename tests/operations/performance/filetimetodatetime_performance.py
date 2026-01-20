@@ -17,20 +17,19 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import timeit
-from datetime import datetime, timedelta, timezone
-from typing import Any, Union
+from datetime import datetime, timedelta, timezone, tzinfo
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.operations.filetimetodatetime import FILETIME_INIT_DATE, filetime_to_datetime
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.operations.filetimetodatetime import FILETIME_INIT_DATE, filetime_to_datetime
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
 # Functions #
-def standard_filetime_to_datetime_int(timestamp: int, tzinfo=None) -> datetime:
+def standard_filetime_to_datetime_int(timestamp: int, tzinfo: tzinfo | None = None) -> datetime:
     """Standard implementation of filetime_to_datetime for integer timestamps.
 
     Args:
@@ -46,7 +45,7 @@ def standard_filetime_to_datetime_int(timestamp: int, tzinfo=None) -> datetime:
         return (FILETIME_INIT_DATE + timedelta(microseconds=timestamp)).astimezone(tz=tzinfo)
 
 
-def standard_filetime_to_datetime_float(timestamp: float, tzinfo=None) -> datetime:
+def standard_filetime_to_datetime_float(timestamp: float, tzinfo: tzinfo | None = None) -> datetime:
     """Standard implementation of filetime_to_datetime for float timestamps.
 
     Args:
@@ -62,7 +61,7 @@ def standard_filetime_to_datetime_float(timestamp: float, tzinfo=None) -> dateti
         return (FILETIME_INIT_DATE + timedelta(microseconds=int(timestamp) / 10)).astimezone(tz=tzinfo)
 
 
-def standard_filetime_to_datetime_str(timestamp: str, tzinfo=None) -> datetime:
+def standard_filetime_to_datetime_str(timestamp: str, tzinfo: tzinfo | None = None) -> datetime:
     """Standard implementation of filetime_to_datetime for string timestamps.
 
     Args:
@@ -78,7 +77,7 @@ def standard_filetime_to_datetime_str(timestamp: str, tzinfo=None) -> datetime:
         return (FILETIME_INIT_DATE + timedelta(microseconds=int(timestamp) / 10)).astimezone(tz=tzinfo)
 
 
-def standard_filetime_to_datetime_bytes(timestamp: bytes, tzinfo=None) -> datetime:
+def standard_filetime_to_datetime_bytes(timestamp: bytes, tzinfo: tzinfo | None = None) -> datetime:
     """Standard implementation of filetime_to_datetime for bytes timestamps.
 
     Args:
@@ -95,7 +94,7 @@ def standard_filetime_to_datetime_bytes(timestamp: bytes, tzinfo=None) -> dateti
         return (FILETIME_INIT_DATE + delta).astimezone(tz=tzinfo)
 
 
-def standard_filetime_to_datetime_bytearray(timestamp: bytearray, tzinfo=None) -> datetime:
+def standard_filetime_to_datetime_bytearray(timestamp: bytearray, tzinfo: tzinfo | None = None) -> datetime:
     """Standard implementation of filetime_to_datetime for bytearray timestamps.
 
     Args:
@@ -112,7 +111,10 @@ def standard_filetime_to_datetime_bytearray(timestamp: bytearray, tzinfo=None) -
         return (FILETIME_INIT_DATE + delta).astimezone(tz=tzinfo)
 
 
-def standard_filetime_to_datetime(timestamp: int | float | str | bytes | bytearray, tzinfo=None) -> datetime:
+def standard_filetime_to_datetime(
+    timestamp: int | float | str | bytes | bytearray,
+    tzinfo: tzinfo | None = None,
+) -> datetime:
     """Standard implementation of filetime_to_datetime using type checking.
 
     Args:
@@ -121,6 +123,9 @@ def standard_filetime_to_datetime(timestamp: int | float | str | bytes | bytearr
 
     Returns:
         The datetime of the filetime.
+
+    Raises:
+        TypeError: If the timestamp is not a valid type.
     """
     if isinstance(timestamp, int):
         return standard_filetime_to_datetime_int(timestamp, tzinfo)
@@ -133,7 +138,7 @@ def standard_filetime_to_datetime(timestamp: int | float | str | bytes | bytearr
     elif isinstance(timestamp, bytearray):
         return standard_filetime_to_datetime_bytearray(timestamp, tzinfo)
     else:
-        msg = f"{timestamp.__class__} cannot be converted to a datetime"
+        msg = f"{timestamp.__class__} cannot be converted to a datetime"  # type: ignore[unreachable]
         raise TypeError(msg)
 
 
@@ -141,7 +146,8 @@ def standard_filetime_to_datetime(timestamp: int | float | str | bytes | bytearr
 class TestFiletimeToDatetime(BasePerformanceTestSuite):
     """Test the performance of the filetime_to_datetime function.
 
-    This class tests the performance of the filetime_to_datetime function, which converts a Windows filetime to a datetime.
+    This class tests the performance of the filetime_to_datetime function, which converts a Windows filetime to a
+    datetime.
     """
 
     # Attributes #
@@ -280,7 +286,8 @@ class TestFiletimeToDatetime(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNew (filetime_to_datetime bytearray): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)",
+            f"\nNew (filetime_to_datetime bytearray): {mean_new:.3f} μs ({percent:.3f}% "
+            f"of standard implementation time)",
         )
         assert percent < self.speed_tolerance
 
@@ -389,7 +396,8 @@ class TestFiletimeToDatetime(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNew (filetime_to_datetime dispatch): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)",
+            f"\nNew (filetime_to_datetime dispatch): {mean_new:.3f} μs ({percent:.3f}% "
+            f"of standard implementation time)",
         )
         assert percent < self.speed_tolerance
 

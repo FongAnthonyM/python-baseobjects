@@ -16,3 +16,11 @@ __version__ = "1.12.0"
 # Imports #
 # Local Packages #
 from .automaticpropertiestestsuite import AutomaticPropertiesTestSuite
+from .callbackmanagertestsuite import CallbackManagerTestSuite
+from .callbackschedulertestsuite import CallbackSchedulerTestSuite
+
+__all__ = [
+    "AutomaticPropertiesTestSuite",
+    "CallbackManagerTestSuite",
+    "CallbackSchedulerTestSuite",
+]

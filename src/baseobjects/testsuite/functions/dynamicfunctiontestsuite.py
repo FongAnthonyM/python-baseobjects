@@ -19,11 +19,8 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from abc import abstractmethod
-from typing import Any
-
-# Third-Party Packages #
-import pytest
+import asyncio
+from typing import Any, ClassVar
 
 # Local Packages #
 from ...functions.dynamiccallable import DynamicFunction
@@ -32,70 +29,158 @@ from .dynamiccallabletestsuite import DynamicCallableTestSuite
 
 
 # Definitions #
+# Helper Functions #
+def add_function(x: int, y: int = 2) -> int:
+    """A test function that adds two numbers.
+
+    Returns:
+        The sum of x and y.
+    """
+    return x + y
+
+
+def multiply_function(x: int, y: int = 3) -> int:
+    """A test function that multiplies two numbers.
+
+    Returns:
+        The product of x and y.
+    """
+    return x * y
+
+
+async def async_add_function(x: int, y: int = 2) -> int:
+    """An async test function that adds two numbers.
+
+    Returns:
+        The sum of x and y.
+    """
+    await asyncio.sleep(0.01)
+    return x + y
+
+
+def instance_method(self: Any, x: int, y: int = 2) -> tuple[int, Any]:
+    """A test method that works with an instance as its first argument.
+
+    Returns:
+        A tuple containing the sum and the instance.
+    """
+    return x + y, self
+
+
 # Classes #
 class DynamicFunctionTestSuite(DynamicCallableTestSuite, BaseFunctionTestSuite):
     """Base class for test suites which test DynamicFunction and its subclasses.
 
     This class provides common functionality for test suites that test dynamic function objects, including fixtures and
     test methods for verifying the behavior of DynamicFunction objects. Subclasses should implement the abstract methods
-    and set the TestClass attribute.
+    and set the UnitTestClass attribute.
 
     Attributes:
-        TestClass: The class that the test suite is testing, which should be DynamicFunction or a subclass.
+        UnitTestClass: The class that the test suite is testing, which should be DynamicFunction or a subclass.
     """
 
-    # Attributes #
-    TestClass: type[DynamicFunction]
+    UnitTestClass: ClassVar[type[DynamicFunction]]
 
-    # Instance Methods #
-    # Tests
-    @abstractmethod
-    def test_instance_creation(self, *args: Any, **kwargs: Any) -> None:
-        """Test that instances of the class can be created.
+    # Tests #
+    def test_coroutine(self, test_function_object: DynamicFunction) -> None:
+        """Tests that the callable object correctly handles coroutine functions."""
+        test_coroutine_object = self.create_coroutine_object(async_add_function)
 
-        This is an abstract method that must be implemented by subclasses.
+        # Call the coroutine function and run it in an event loop
+        coro = test_coroutine_object(3)
+        result = asyncio.run(coro)
 
-        Args:
-            *args: Positional arguments list to pass to the class constructor.
-            **kwargs: Keyword arguments to pass to the class constructor.
-        """
+        # Verify it returns the expected result
+        assert result == 5  # 3 + 2 (default y)
 
-    @abstractmethod
-    def test_call(self, test_function_object: DynamicFunction) -> None:
-        """Test that the callable object can be called and correctly delegates to the wrapped function.
+        # Call with different arguments
+        coro = test_coroutine_object(3, 4)
+        result = asyncio.run(coro)
 
-        Args:
-            test_function_object: A fixture providing a DynamicFunction instance that wraps a function.
-        """
+        # Verify it returns the expected result
+        assert result == 7  # 3 + 4
 
-    @abstractmethod
-    def test_as_function(self, test_function_object: DynamicFunction) -> None:
-        """Test that the callable object can be converted to a standard Python function.
+    def test_as_function_coroutine(self) -> None:
+        """Tests that the callable object wrapping a coroutine can be converted to a coroutine function."""
+        test_coroutine_object = self.create_coroutine_object(async_add_function)
 
-        Args:
-            test_function_object: A fixture providing a DynamicFunction instance that wraps a function.
-        """
+        # Convert to a standard Python function
+        func = test_coroutine_object.as_function()
 
-    @abstractmethod
-    def test_call_wrapped(self, test_function_object: DynamicFunction) -> None:
-        """Test that the wrapped function can be called directly.
+        # Verify it's a function
+        assert callable(func)
 
-        Args:
-            test_function_object: A fixture providing a DynamicFunction instance that wraps a function.
-        """
+        # Call the function and run it in an event loop
+        coro = func(3)
+        result = asyncio.run(coro)
 
-    @abstractmethod
-    def test_coroutine(self, test_coroutine_object: DynamicFunction) -> None:
-        """Test that the callable object correctly handles coroutine functions.
+        # Verify it returns the expected result
+        assert result == 5  # 3 + 2 (default y)
 
-        Args:
-            test_coroutine_object: A fixture providing a DynamicFunction instance that wraps a coroutine function.
-        """
+        # Call with different arguments
+        coro = func(3, 4)
+        result = asyncio.run(coro)
 
-    @abstractmethod
-    def test_as_function_coroutine(self, test_coroutine_object: DynamicFunction) -> None:
-        """Test that the callable object wrapping a coroutine can be converted to a coroutine function.
+        # Verify it returns the expected result
+        assert result == 7  # 3 + 4
 
-        Args:
-            test_coroutine_object: A fixture providing a DynamicFunction instance that wraps a coroutine function.
-        """
+    def test_function_binding(self, test_function_object: DynamicFunction) -> None:
+        """Tests that the DynamicFunction can be bound to an instance."""
+        # Create a test function object with a method that works with an instance
+        test_function_object = self.create_method_object(instance_method)  # type: ignore[assignment]
+        test_object_instance = self.create_bind_target()
+
+        # Bind the function to the instance
+        bound_function = test_function_object.bind(test_object_instance)
+
+        # Verify the binding
+        assert bound_function.__self__ is test_object_instance
+
+        # Call the bound function
+        result, instance = bound_function(5)
+
+        # Verify it returns the expected result
+        assert result == 7  # 5 + 2 (default y)
+        assert instance is test_object_instance
+
+    def test_function_binding_to_attribute(self) -> None:
+        """Tests that the DynamicFunction can be bound to an instance attribute."""
+        # Create a test function object with a method that works with an instance
+        test_function_object = self.create_method_object(instance_method)
+        test_object_instance = self.create_bind_target()
+
+        # Bind the function to an attribute of the instance
+        test_function_object.bind_to_attribute(test_object_instance, name="custom_function")  # type: ignore[attr-defined]
+
+        # Verify the binding
+        assert hasattr(test_object_instance, "custom_function")
+        assert callable(test_object_instance.custom_function)
+
+        # Call the bound function
+        result, instance = test_object_instance.custom_function(5)
+
+        # Verify it returns the expected result
+        assert result == 7  # 5 + 2 (default y)
+        assert instance is test_object_instance
+
+    def test_change_function(self, test_function_object: DynamicFunction) -> None:
+        """Tests the edge case where the function is changed after creation."""
+        # Create an instance with a function
+        instance = self.create_function_object(add_function)
+
+        # Verify it has the correct function
+        assert instance.__func__ is add_function
+
+        # Call the function
+        result = instance(3)
+        assert result == 5  # 3 + 2 (default y)
+
+        # Change the function
+        instance.__func__ = multiply_function
+
+        # Verify it has the new function
+        assert instance.__func__ is multiply_function
+
+        # Call the new function
+        result = instance(3)
+        assert result == 9  # 3 * 3 (default y)

@@ -13,7 +13,7 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar, Optional
+from typing import Any, ClassVar, cast
 
 # Source Packages #
 from baseobjects.classregistration import NamespaceClassRegistry
@@ -306,6 +306,7 @@ class DataPipeline(DispatchableComposite):
         if cls.class_registry is None:
             cls.create_class_registry()
 
+        assert cls.class_registry is not None
         if name is None:
             name = cls.__name__
 
@@ -328,7 +329,7 @@ class DataPipeline(DispatchableComposite):
         if cls.class_registry is None:
             return None
 
-        return cls.class_registry.get_class(namespace, name)
+        return cast(type["DataPipeline"] | None, cls.class_registry.get_class(namespace, name))
 
     @classmethod
     def get_class_information(cls, pipeline_type: str | None = None, *args: Any, **kwargs: Any) -> tuple[str, str]:
@@ -393,7 +394,7 @@ class DataPipeline(DispatchableComposite):
             A dictionary of component names, their types, and their keyword arguments.
         """
         # Start with an empty dictionary for components
-        components = {}
+        components: dict[str, tuple[type[BaseComponent], dict[str, Any]]] = {}
 
         # Determine data source component
         if "source_type" in kwargs:
@@ -705,11 +706,11 @@ def custom_pipeline_creation() -> None:
     print("Components in the custom pipeline:")
     for name, component in custom_pipeline.components.items():
         print(f"  - {name}: {type(component).__name__}")
-        if name == "data_source":
+        if name == "data_source" and isinstance(component, APIDataSource):
             print(f"    - API URL: {component.api_url}")
-        elif name == "processor":
+        elif name == "processor" and isinstance(component, TransformProcessor):
             print(f"    - Transform Type: {component.transform_type}")
-        elif name == "output":
+        elif name == "output" and isinstance(component, EmailOutput):
             print(f"    - Email Address: {component.email_address}")
 
     # Process data through the custom pipeline

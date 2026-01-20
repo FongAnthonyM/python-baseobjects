@@ -75,7 +75,7 @@ class BaseDispatchingComposite(BaseComposite):
             **kwargs: Keyword arguments to use in dispatching. These can be any key-value pairs that help determine
                 which component types to instantiate.
 
-        Returns:
+        Returns:  # noqa: DOC202
             A dictionary mapping component names (str) to tuples containing the component type (type) and a dictionary
             of keyword arguments (dict[str, Any]) to use when instantiating that component.
             For example: {'component_name': (ComponentClass, {'arg1': value1, 'arg2': value2})}

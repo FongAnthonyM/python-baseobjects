@@ -21,18 +21,14 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from collections.abc import Iterable, Iterator, Mapping
+from collections.abc import Hashable, Iterator
 from typing import Any
 
 # Local Packages #
-from ..bases import BaseDict
-from ..typing import KeyType, ValueType
+from ..bases import DEFAULTSENTINEL, BaseDict
+
 
 # Definitions #
-# Static #
-SENTINEL = object()
-
-
 # Classes #
 class OrderableDict(BaseDict):
     """A dictionary with an adjustable order and additional supporting methods.
@@ -47,12 +43,12 @@ class OrderableDict(BaseDict):
     """
 
     # Attributes #
-    order: list[KeyType, ...]
+    order: list[Hashable]
 
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, dict_: Any = None, /, *args: Any, **kwargs: Any) -> None:
-        """Initialize an orderable dictionary.
+        """Initializes this object with the given arguments.
 
         Args:
             dict_: Optional mapping or iterable to initialize from.
@@ -66,23 +62,23 @@ class OrderableDict(BaseDict):
         super().__init__(dict_, *args, **kwargs)
 
     # Container Methods
-    def __setitem__(self, key: KeyType, value: ValueType) -> None:
+    def __setitem__(self, key: Hashable, value: Any) -> None:
         """Sets an item in this object."""
         if key not in self.data:
             self.order.append(key)
         self.data[key] = value
 
-    def __delitem__(self, key: KeyType) -> None:
+    def __delitem__(self, key: Hashable) -> None:
         """Deletes an item from this object."""
         del self.data[key]
         self.order.remove(key)
 
-    def __iter__(self) -> Iterator[KeyType]:
+    def __iter__(self) -> Iterator[Hashable]:
         """Returns an iterator for the keys."""
         return iter(self.order)
 
     # Instance Methods #
-    def get_index(self, index: int, default: Any = SENTINEL) -> ValueType:
+    def get_index(self, index: int, default: Any = DEFAULTSENTINEL) -> Any:
         """Gets a value base on its key's index in the order.
 
         Args:
@@ -91,16 +87,19 @@ class OrderableDict(BaseDict):
 
         Returns:
             The requested value.
+
+        Raises:
+            IndexError: If the index is outside the range and no default is provided.
         """
         try:
             return self.data.get(self.order[index])
         except IndexError as e:
-            if default is not SENTINEL:
+            if default is not DEFAULTSENTINEL:
                 return default
             else:
                 raise e
 
-    def set_index(self, index: int, value: ValueType) -> None:
+    def set_index(self, index: int, value: Any) -> None:
         """Sets a key's value based on its index in the order.
 
         Args:
@@ -109,7 +108,7 @@ class OrderableDict(BaseDict):
         """
         self.data[self.order[index]] = value
 
-    def setdefault(self, key: KeyType, default: ValueType = None) -> ValueType:
+    def setdefault(self, key: Hashable, default: Any = None) -> Any:
         """Gets a value with a key but adds the key and a default value to this dictionary if it was not present.
 
         Args:
@@ -117,14 +116,14 @@ class OrderableDict(BaseDict):
             default: The value to add to the dictionary if not present.
 
         Returns:
-            ValueType: The value associated with the key (existing or the provided default).
+            Any: The value associated with the key (existing or the provided default).
         """
         if key not in self.data:
             self.order.append(key)
         return self.data.setdefault(key, default)
 
-    def insert(self, index: int, key: KeyType, value: ValueType) -> None:
-        """Adds a key and value and inserts it into order or raises an error the key if it already exists.
+    def insert(self, index: int, key: Hashable, value: Any) -> None:
+        """Adds a key and value and inserts it into order or raises an error if the key already exists.
 
         Args:
             index: The index to insert into the order.
@@ -141,7 +140,7 @@ class OrderableDict(BaseDict):
         self.order.insert(index, key)
         self.data[key] = value
 
-    def insert_move(self, index: int, key: KeyType, value: ValueType) -> None:
+    def insert_move(self, index: int, key: Hashable, value: Any) -> None:
         """Adds a key and value and inserts it into order or moves the key if it already exists.
 
         Args:
@@ -162,7 +161,7 @@ class OrderableDict(BaseDict):
 
         self.data[key] = value
 
-    def append(self, key: KeyType, value: ValueType) -> None:
+    def append(self, key: Hashable, value: Any) -> None:
         """Adds a key and value to this dictionary and appends it to the order if it was not present.
 
         Args:
@@ -171,7 +170,7 @@ class OrderableDict(BaseDict):
         """
         self[key] = value
 
-    def update(self, m: Mapping | Iterable[tuple[KeyType, ValueType]] | None = None, **kwargs: ValueType) -> None:
+    def update(self, m: Any = None, /, **kwargs: Any) -> None:
         """Updates the keys and values of this dictionary, any new keys are appended to the order.
 
         Args:
@@ -181,19 +180,29 @@ class OrderableDict(BaseDict):
         for key, value in ({} if m is None else dict(m) | kwargs).items():
             self[key] = value
 
-    def pop(self, key: KeyType) -> ValueType:
+    def pop(self, key: Hashable, default: Any = DEFAULTSENTINEL) -> Any:
         """Pops a value from the key in this orderable dictionary.
 
         Args:
             key: The key of the value to pop.
+            default: The value to return if the key is not found.
 
         Returns:
             The requested value.
-        """
-        self.order.remove(key)
-        return self.data.pop(key)
 
-    def pop_index(self, index: int = -1) -> ValueType:
+        Raises:
+            KeyError: The key was not found.
+        """
+        if key in self.data:
+            self.order.remove(key)
+            return self.data.pop(key)
+
+        if default is not DEFAULTSENTINEL:
+            return default
+
+        raise KeyError(key)
+
+    def pop_index(self, index: int = -1) -> Any:
         """Pops the value at the index in this orderable dictionary.
 
         Args:
@@ -204,21 +213,21 @@ class OrderableDict(BaseDict):
         """
         return self.data.pop(self.order.pop(index))
 
-    def popitem(self) -> tuple[KeyType, ValueType]:
+    def popitem(self) -> tuple[Hashable, Any]:
         """Pops the last key and its value.
 
         Returns:
             The key and value.
         """
         key = self.order.pop()
-        return (key, self.data.pop(key))
+        return key, self.data.pop(key)
 
-    def remove(self, key: KeyType) -> None:
+    def remove(self, key: Hashable) -> None:
         """Removes a key from this dictionary."""
         del self[key]
 
     def clear(self) -> None:
-        """Removes all items from this orderable dictionary."""
+        """Clears the contents of this object."""
         self.data.clear()
         self.order.clear()
 

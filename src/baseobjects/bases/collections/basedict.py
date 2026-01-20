@@ -28,7 +28,7 @@ from ..baseobject import BaseObject
 
 # Definitions #
 # Classes #
-class BaseDict(BaseObject, UserDict):
+class BaseDict(BaseObject, UserDict[Any, Any]):
     """An abstract class that combines UserDict and BaseObject functionality.
 
     Attributes:
@@ -39,7 +39,7 @@ class BaseDict(BaseObject, UserDict):
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, dict_: Any = None, /, *args: Any, **kwargs: Any) -> None:
-        """Initialize a new BaseDict instance.
+        """Initializes a new BaseDict instance.
 
         This constructor initializes both the BaseObject and UserDict parent classes. It accepts an optional
         dictionary-like object to initialize the contents, as well as arbitrary positional and keyword arguments that

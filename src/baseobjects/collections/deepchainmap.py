@@ -31,7 +31,7 @@ from ..typing import KeyType, ValueType
 
 # Definitions #
 # Classes #
-class DeepChainMap(BaseObject, ChainMap):
+class DeepChainMap(BaseObject, ChainMap[Any, Any]):
     """A ChainMap that updates and deletes items from the first mapping that contains the key.
 
     DeepChainMap is a subclass of ChainMap that provides a more intuitive update and delete behavior.
@@ -46,7 +46,7 @@ class DeepChainMap(BaseObject, ChainMap):
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initialize a DeepChainMap instance.
+        """Initializes this object with the given arguments.
 
         Args:
             *args: Variable length argument list. The first arguments are treated as mappings. If no mappings are

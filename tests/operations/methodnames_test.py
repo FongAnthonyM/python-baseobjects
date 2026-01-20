@@ -16,13 +16,14 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from collections.abc import Generator
+from collections.abc import Callable, Generator
+from typing import Any
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.operations import (
+from baseobjects.operations import (
     get_method_names,
     get_public_method_names,
     iter_method_names,
@@ -33,13 +34,13 @@ from src.baseobjects.operations import (
 # Definitions #
 # Classes #
 class TestMethodNames:
-    """Test the method name functions.
+    """Tests the method name functions.
 
     This class tests the functionality of the functions that retrieve method names from objects.
     """
 
     # Class Definitions #
-    class TestClass:
+    class UnitTestClass:
         """A test class with various methods for testing method name functions."""
 
         def public_method(self) -> None:
@@ -64,17 +65,29 @@ class TestMethodNames:
 
     # Instance Methods #
     # Tests
-    def test_iter_method_names(self) -> None:
-        """Test iterating over method names.
+    @pytest.mark.parametrize(
+        ("func", "return_type"),
+        [
+            (iter_method_names, Generator),
+            (get_method_names, tuple),
+        ],
+    )
+    def test_all_method_names(
+        self,
+        func: Callable[[Any], Generator[str, None, None] | tuple[str, ...]],
+        return_type: type,
+    ) -> None:
+        """Tests getting all method names.
 
-        This test verifies that the iter_method_names function correctly yields all method names of an object, including
+        This test verifies that the method name functions correctly retrieve all method names of an object, including
         public, private, and dunder methods.
         """
         # Create an instance of the test class
-        test_obj = self.TestClass()
+        test_obj = self.UnitTestClass()
 
         # Get the method names
-        method_names = list(iter_method_names(test_obj))
+        result = func(test_obj)
+        method_names = list(result)
 
         # Verify that all methods are included
         assert "public_method" in method_names
@@ -85,20 +98,32 @@ class TestMethodNames:
         # Non-callable attributes should not be included
         assert "non_callable_attr" not in method_names
 
-        # Verify the return type is a generator
-        assert isinstance(iter_method_names(test_obj), Generator)
+        # Verify the return type
+        assert isinstance(result, return_type)
 
-    def test_iter_public_method_names(self) -> None:
-        """Test iterating over public method names.
+    @pytest.mark.parametrize(
+        ("func", "return_type"),
+        [
+            (iter_public_method_names, Generator),
+            (get_public_method_names, tuple),
+        ],
+    )
+    def test_public_method_names(
+        self,
+        func: Callable[[Any], Generator[str, None, None] | tuple[str, ...]],
+        return_type: type,
+    ) -> None:
+        """Tests getting public method names.
 
-        This test verifies that the iter_public_method_names function correctly yields only public method names of an
+        This test verifies that the public method name functions correctly retrieve only public method names of an
         object (those not starting with '_').
         """
         # Create an instance of the test class
-        test_obj = self.TestClass()
+        test_obj = self.UnitTestClass()
 
         # Get the public method names
-        public_method_names = list(iter_public_method_names(test_obj))
+        result = func(test_obj)
+        public_method_names = list(result)
 
         # Verify that only public methods are included
         assert "public_method" in public_method_names
@@ -111,85 +136,28 @@ class TestMethodNames:
         # Non-callable attributes should not be included
         assert "non_callable_attr" not in public_method_names
 
-        # Verify the return type is a generator
-        assert isinstance(iter_public_method_names(test_obj), Generator)
+        # Verify the return type
+        assert isinstance(result, return_type)
 
-    def test_get_method_names(self) -> None:
-        """Test getting method names as a tuple.
-
-        This test verifies that the get_method_names function correctly returns a tuple of all method names of an
-        object.
-        """
-        # Create an instance of the test class
-        test_obj = self.TestClass()
-
-        # Get the method names
-        method_names = get_method_names(test_obj)
-
-        # Verify that all methods are included
-        assert "public_method" in method_names
-        assert "another_public_method" in method_names
-        assert "_private_method" in method_names
-        assert "__dunder_method__" in method_names
-
-        # Non-callable attributes should not be included
-        assert "non_callable_attr" not in method_names
-
-        # Verify the return type is a tuple
-        assert isinstance(method_names, tuple)
-
-    def test_get_public_method_names(self) -> None:
-        """Test getting public method names as a tuple.
-
-        This test verifies that the get_public_method_names function correctly returns a tuple of public method names of
-        an object.
-        """
-        # Create an instance of the test class
-        test_obj = self.TestClass()
-
-        # Get the public method names
-        public_method_names = get_public_method_names(test_obj)
-
-        # Verify that only public methods are included
-        assert "public_method" in public_method_names
-        assert "another_public_method" in public_method_names
-
-        # Private and dunder methods should not be included
-        assert "_private_method" not in public_method_names
-        assert "__dunder_method__" not in public_method_names
-
-        # Non-callable attributes should not be included
-        assert "non_callable_attr" not in public_method_names
-
-        # Verify the return type is a tuple
-        assert isinstance(public_method_names, tuple)
-
-    def test_with_builtin_objects(self) -> None:
-        """Test with built-in objects.
+    @pytest.mark.parametrize(
+        ("obj", "methods_to_check"),
+        [
+            ([1, 2, 3], ["append", "extend"]),
+            ({"a": 1, "b": 2}, ["keys", "values"]),
+        ],
+    )
+    def test_with_builtin_objects(self, obj: Any, methods_to_check: list[str]) -> None:
+        """Tests with built-in objects.
 
         This test verifies that the method name functions work correctly with built-in objects.
         """
-        # Test with a list
-        list_obj = [1, 2, 3]
-        list_methods = get_method_names(list_obj)
-        list_public_methods = get_public_method_names(list_obj)
+        list_methods = get_method_names(obj)
+        list_public_methods = get_public_method_names(obj)
 
-        # Verify some common list methods are included
-        assert "append" in list_methods
-        assert "append" in list_public_methods
-        assert "extend" in list_methods
-        assert "extend" in list_public_methods
-
-        # Test with a dict
-        dict_obj = {"a": 1, "b": 2}
-        dict_methods = get_method_names(dict_obj)
-        dict_public_methods = get_public_method_names(dict_obj)
-
-        # Verify some common dict methods are included
-        assert "keys" in dict_methods
-        assert "keys" in dict_public_methods
-        assert "values" in dict_methods
-        assert "values" in dict_public_methods
+        # Verify some common methods are included
+        for method in methods_to_check:
+            assert method in list_methods
+            assert method in list_public_methods
 
 
 # Main #

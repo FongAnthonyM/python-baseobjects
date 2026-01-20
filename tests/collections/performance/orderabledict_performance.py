@@ -16,17 +16,15 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-import copy
-import pickle
 import timeit
-from typing import Any, ClassVar, Dict, List
+from typing import Any
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.collections import OrderableDict
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.collections import OrderableDict
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
@@ -34,8 +32,8 @@ from src.baseobjects.testsuite import BasePerformanceTestSuite
 class TestOrderableDictPerformance(BasePerformanceTestSuite):
     """Test suite for assaying the performance of the OrderableDict class.
 
-    This test suite measures the performance of various operations on OrderableDict objects
-    and compares them with standard Python dictionary implementations.
+    This test suite measures the performance of various operations on OrderableDict objects and compares them with
+    standard Python dictionary implementations.
     """
 
     # Attributes #
@@ -66,7 +64,7 @@ class TestOrderableDictPerformance(BasePerformanceTestSuite):
         return result
 
     @pytest.fixture
-    def normal_dict(self) -> dict:
+    def normal_dict(self) -> dict[Any, Any]:
         """Create a normal dictionary for comparison.
 
         Returns:
@@ -75,7 +73,7 @@ class TestOrderableDictPerformance(BasePerformanceTestSuite):
         return {}
 
     @pytest.fixture
-    def populated_normal_dict(self) -> dict:
+    def populated_normal_dict(self) -> dict[Any, Any]:
         """Create a populated normal dictionary for comparison.
 
         Returns:
@@ -97,7 +95,7 @@ class TestOrderableDictPerformance(BasePerformanceTestSuite):
             OrderableDict()
 
         def create_normal() -> None:
-            {}
+            _ = {}
 
         # Calculate the mean time in microseconds for the OrderableDict implementation
         orderable_time = timeit.timeit(create_orderable, number=self.timeit_runs)
@@ -110,7 +108,8 @@ class TestOrderableDictPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard dict creation: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard dict creation: {mean_dict:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"OrderableDict creation: {mean_orderable:.3f} μs ({percent:.3f}% of standard dict creation time)")
         assert percent < self.speed_tolerance
@@ -139,14 +138,20 @@ class TestOrderableDictPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard dict populated creation: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard dict populated creation: {mean_dict:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(
-            f"OrderableDict populated creation: {mean_orderable:.3f} μs ({percent:.3f}% of standard dict populated creation time)",
+            f"OrderableDict populated creation: {mean_orderable:.3f} μs ({percent:.3f}%"
+            f"of standard dict populated creation time)",
         )
         assert percent < self.speed_tolerance
 
-    def test_get_item_speed_performance(self, populated_test_dict: OrderableDict, populated_normal_dict: dict) -> None:
+    def test_get_item_speed_performance(
+        self,
+        populated_test_dict: OrderableDict,
+        populated_normal_dict: dict[Any, Any],
+    ) -> None:
         """Test the performance of getting an item from an OrderableDict.
 
         This test compares the speed of getting an item from an OrderableDict with a normal dict.
@@ -174,12 +179,13 @@ class TestOrderableDictPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard dict get item: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard dict get item: {mean_dict:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"OrderableDict get item: {mean_orderable:.3f} μs ({percent:.3f}% of standard dict get item time)")
         assert percent < self.speed_tolerance
 
-    def test_set_item_speed_performance(self, test_dict: OrderableDict, normal_dict: dict) -> None:
+    def test_set_item_speed_performance(self, test_dict: OrderableDict, normal_dict: dict[Any, Any]) -> None:
         """Test the performance of setting an item in an OrderableDict.
 
         This test compares the speed of setting an item in an OrderableDict with a normal dict.
@@ -208,12 +214,17 @@ class TestOrderableDictPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard dict set item: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard dict set item: {mean_dict:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"OrderableDict set item: {mean_orderable:.3f} μs ({percent:.3f}% of standard dict set item time)")
         assert percent < self.speed_tolerance
 
-    def test_del_item_speed_performance(self, populated_test_dict: OrderableDict, populated_normal_dict: dict) -> None:
+    def test_del_item_speed_performance(
+        self,
+        populated_test_dict: OrderableDict,
+        populated_normal_dict: dict[Any, Any],
+    ) -> None:
         """Test the performance of deleting an item from an OrderableDict.
 
         This test compares the speed of deleting an item from an OrderableDict with a normal dict.
@@ -255,12 +266,17 @@ class TestOrderableDictPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard dict delete item: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard dict delete item: {mean_dict:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"OrderableDict delete item: {mean_orderable:.3f} μs ({percent:.3f}% of standard dict delete item time)")
         assert percent < self.speed_tolerance
 
-    def test_iteration_speed_performance(self, populated_test_dict: OrderableDict, populated_normal_dict: dict) -> None:
+    def test_iteration_speed_performance(
+        self,
+        populated_test_dict: OrderableDict,
+        populated_normal_dict: dict[Any, Any],
+    ) -> None:
         """Test the performance of iterating over an OrderableDict.
 
         This test compares the speed of iterating over an OrderableDict with a normal dict.
@@ -289,7 +305,8 @@ class TestOrderableDictPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard dict iteration: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard dict iteration: {mean_dict:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"OrderableDict iteration: {mean_orderable:.3f} μs ({percent:.3f}% of standard dict iteration time)")
         assert percent < self.speed_tolerance

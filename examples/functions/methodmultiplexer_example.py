@@ -233,9 +233,13 @@ def dynamic_method_multiplexer_example() -> None:
 
     # Create a class with various methods that we'll dynamically select between
     class DataProcessor:
-        def __init__(self, name) -> None:
+        def __init__(self, name: str) -> None:
             self.name = name
-            self.data = {"numbers": [1, 2, 3, 4, 5], "text": "Hello World", "mixed": [10, "abc", 30, "xyz"]}
+            self.data: dict[str, Any] = {
+                "numbers": [1, 2, 3, 4, 5],
+                "text": "Hello World",
+                "mixed": [10, "abc", 30, "xyz"],
+            }
 
             # Create a MethodMultiplexer that wraps this instance
             # Note: We don't provide a registry - we'll select methods directly from the instance
@@ -245,48 +249,83 @@ def dynamic_method_multiplexer_example() -> None:
             self.method_selector.select("sum_numbers")
 
         # Define various processing methods that we'll select between
-        def sum_numbers(self):
-            """Sum all numbers in the numbers list."""
+        def sum_numbers(self) -> Any:
+            """Sum all numbers in the numbers list.
+
+            Returns:
+                The sum.
+            """
             return sum(self.data["numbers"])
 
-        def average_numbers(self):
-            """Calculate the average of numbers in the numbers list."""
+        def average_numbers(self) -> Any:
+            """Calculate the average of numbers in the numbers list.
+
+            Returns:
+                The average.
+            """
             numbers = self.data["numbers"]
             return sum(numbers) / len(numbers)
 
-        def reverse_text(self):
-            """Reverse the text string."""
+        def reverse_text(self) -> Any:
+            """Reverse the text string.
+
+            Returns:
+                The reversed text.
+            """
             return self.data["text"][::-1]
 
-        def uppercase_text(self):
-            """Convert the text to uppercase."""
+        def uppercase_text(self) -> Any:
+            """Convert the text to uppercase.
+
+            Returns:
+                The uppercase text.
+            """
             return self.data["text"].upper()
 
-        def extract_numbers(self):
-            """Extract only the numbers from the mixed list."""
+        def extract_numbers(self) -> list[int]:
+            """Extract only the numbers from the mixed list.
+
+            Returns:
+                The list of numbers.
+            """
             return [item for item in self.data["mixed"] if isinstance(item, int)]
 
-        def extract_strings(self):
-            """Extract only the strings from the mixed list."""
+        def extract_strings(self) -> list[str]:
+            """Extract only the strings from the mixed list.
+
+            Returns:
+                The list of strings.
+            """
             return [item for item in self.data["mixed"] if isinstance(item, str)]
 
         # Method to add new data
-        def add_number(self, number):
-            """Add a number to the numbers list."""
+        def add_number(self, number: int) -> list[int]:
+            """Add a number to the numbers list.
+
+            Returns:
+                The updated list.
+            """
             self.data["numbers"].append(number)
-            return self.data["numbers"]
+            return list(self.data["numbers"])
 
         # Method to process using the currently selected method
-        def process(self):
-            """Process data using the currently selected method."""
+        def process(self) -> Any:
+            """Process data using the currently selected method.
+
+            Returns:
+                The result.
+            """
             return self.method_selector()
 
         # Method to change the selected method
-        def set_processor(self, method_name) -> str:
+        def set_processor(self, method_name: str) -> str:
             """Change the processing method.
 
             Args:
                 method_name: Name of the method to select.
+
+            Returns:
+                A confirmation message.
             """
             self.method_selector.select(method_name)
             return f"Selected method: {method_name}"
@@ -345,15 +384,19 @@ def dynamic_method_multiplexer_example() -> None:
     print("\nDynamically adding a new method to the instance:")
 
     # Add a new method to the instance
-    def count_items(self):
-        """Count the number of items in each data category."""
+    def count_items(self: DataProcessor) -> dict[str, int]:
+        """Count the number of items in each data category.
+
+        Returns:
+            A dictionary with counts.
+        """
         return {"numbers": len(self.data["numbers"]), "text": len(self.data["text"]), "mixed": len(self.data["mixed"])}
 
     # Add the method to the instance
     # Standard Libraries #
     import types
 
-    processor.count_items = types.MethodType(count_items, processor)
+    processor.count_items = types.MethodType(count_items, processor)  # type: ignore[attr-defined]
 
     # Select and use the new method
     processor.set_processor("count_items")

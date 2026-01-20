@@ -14,6 +14,7 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 import timeit
+from typing import ClassVar
 
 # Source Packages #
 from baseobjects.wrappers import StaticWrapper
@@ -29,11 +30,16 @@ class SimpleObject:
     name: str
 
     def __init__(self, value: int = 0) -> None:
+        """Initialize the object."""
         self.value = value
         self.name = "SimpleObject"
 
     def get_value(self) -> int:
-        """Get the value."""
+        """Get the value.
+
+        Returns:
+            The value.
+        """
         return self.value
 
     def set_value(self, value: int) -> None:
@@ -41,6 +47,7 @@ class SimpleObject:
         self.value = value
 
     def __str__(self) -> str:
+        """Return the string representation."""
         return f"{self.name}(value={self.value})"
 
 
@@ -48,6 +55,7 @@ class ComplexObject:
     """A more complex object to be wrapped."""
 
     def __init__(self, items: list[int] | None = None) -> None:
+        """Initialize the object."""
         # Defining attributes outside the class namespace means that StaticWrapper's _wrap() must be call so they are
         # available to the StaticWrapper
         self.items = items or []
@@ -58,7 +66,11 @@ class ComplexObject:
         self.items.append(item)
 
     def get_items(self) -> list[int]:
-        """Get all items."""
+        """Get all items.
+
+        Returns:
+            The list of items.
+        """
         return self.items
 
     def clear_items(self) -> None:
@@ -66,6 +78,7 @@ class ComplexObject:
         self.items = []
 
     def __str__(self) -> str:
+        """Return the string representation."""
         return f"{self.name}(items={self.items})"
 
 
@@ -73,17 +86,21 @@ class CustomStaticWrapper(StaticWrapper):
     """A custom StaticWrapper that wraps both simple and complex objects."""
 
     # Define which attributes contain objects to wrap
-    _wrapped_map_ = [("simple", SimpleObject), ("complex", ComplexObject)]
+    _wrapped_map_: ClassVar[list[tuple[str, type | None]]] = [("simple", SimpleObject), ("complex", ComplexObject)]
 
-    def __init__(self, simple_obj: SimpleObject = None, complex_obj: ComplexObject = None) -> None:
+    def __init__(self, simple_obj: SimpleObject | None = None, complex_obj: ComplexObject | None = None) -> None:
         """Initialize the wrapper with simple and complex objects."""
         # Initialize attributes to store wrapped objects
         self._simple = simple_obj or SimpleObject()
         self._complex = complex_obj or ComplexObject()
 
     def get_combined_str(self) -> str:
-        """Get a string representation of both wrapped objects."""
-        return f"Combined: {self.simple}, {self.complex}"
+        """Get a string representation of both wrapped objects.
+
+        Returns:
+            The combined string.
+        """
+        return f"Combined: {self.simple}, {self.complex}"  # type: ignore
 
 
 # Example Sections #
@@ -93,29 +110,29 @@ def basic_usage_example() -> None:
 
     # Create objects to wrap
     simple = SimpleObject(10)
-    complex = ComplexObject([1, 2, 3])
+    complex_obj = ComplexObject([1, 2, 3])
 
     # Create a StaticWrapper subclass
     class MyWrapper(StaticWrapper):
         # Define which attributes contain objects to wrap
-        _wrapped_map_ = [("obj1", SimpleObject), ("obj2", ComplexObject)]
+        _wrapped_map_: ClassVar[list[tuple[str, type | None]]] = [("obj1", SimpleObject), ("obj2", ComplexObject)]
 
     # Create an instance of the wrapper
     wrapper = MyWrapper()
 
     # Set the wrapped objects
-    wrapper._obj1 = simple
-    wrapper._obj2 = complex
+    wrapper._obj1 = simple  # type: ignore
+    wrapper._obj2 = complex_obj  # type: ignore
 
     print("Created wrapper with two objects:")
     print(f"  simple: {simple}")
-    print(f"  complex: {complex}")
+    print(f"  complex: {complex_obj}")
 
     # Default wrapping includes method and attributes defined in the class namespace
     print("\nCalling wrapped objects:")
-    print(f"  wrapper.get_value(): {wrapper.get_value()} == 10")
-    print(f"  wrapper.value: {wrapper.value} == 10")
-    print(f"  wrapper.name: {wrapper.name} == 'SimpleObject'")
+    print(f"  wrapper.get_value(): {wrapper.get_value()} == 10")  # type: ignore
+    print(f"  wrapper.value: {wrapper.value} == 10")  # type: ignore
+    print(f"  wrapper.name: {wrapper.name} == 'SimpleObject'")  # type: ignore
     print(f"  wrapper.items exist: {hasattr(wrapper, 'items')} == False")
 
     # Call _wrap to create property descriptors for attributes no defined in the class namespace (runtime)
@@ -123,20 +140,20 @@ def basic_usage_example() -> None:
 
     # Access wrapped object attributes
     print("\nAccessing wrapped object attributes:")
-    print(f"  wrapper.value: {wrapper.value} == 10")
-    print(f"  wrapper.name: {wrapper.name} == 'SimpleObject'")
-    print(f"  wrapper.items: {wrapper.items} == [1, 2, 3]")
+    print(f"  wrapper.value: {wrapper.value} == 10")  # type: ignore
+    print(f"  wrapper.name: {wrapper.name} == 'SimpleObject'")  # type: ignore
+    print(f"  wrapper.items: {wrapper.items} == [1, 2, 3]")  # type: ignore
 
     # Call wrapped object methods
     print("\nCalling wrapped object methods:")
-    print(f"  wrapper.get_value(): {wrapper.get_value()} == 10")
-    wrapper.set_value(20)
-    print(f"  After wrapper.set_value(20), wrapper.value: {wrapper.value} == 20")
+    print(f"  wrapper.get_value(): {wrapper.get_value()} == 10")  # type: ignore
+    wrapper.set_value(20)  # type: ignore
+    print(f"  After wrapper.set_value(20), wrapper.value: {wrapper.value} == 20")  # type: ignore
     print(f"  simple.value: {simple.value} == 20")
 
-    wrapper.add_item(4)
-    print(f"  After wrapper.add_item(4), wrapper.items: {wrapper.items} == [1, 2, 3, 4]")
-    print(f"  complex.items: {complex.items} == [1, 2, 3, 4]")
+    wrapper.add_item(4)  # type: ignore
+    print(f"  After wrapper.add_item(4), wrapper.items: {wrapper.items} == [1, 2, 3, 4]")  # type: ignore
+    print(f"  complex.items: {complex_obj.items} == [1, 2, 3, 4]")
 
 
 def custom_wrapper_example() -> None:
@@ -154,13 +171,13 @@ def custom_wrapper_example() -> None:
 
     # Access and modify wrapped object attributes
     print("\nAccessing and modifying wrapped object attributes:")
-    print(f"  Initial wrapper.value: {wrapper.value} == 5")
-    wrapper.value = 15
-    print(f"  After wrapper.value = 15: {wrapper.value} == 15")
+    print(f"  Initial wrapper.value: {wrapper.value} == 5")  # type: ignore
+    wrapper.value = 15  # type: ignore
+    print(f"  After wrapper.value = 15: {wrapper.value} == 15")  # type: ignore
 
-    print(f"  Initial wrapper.items: {wrapper.items} == [10, 20, 30]")
-    wrapper.add_item(40)
-    print(f"  After wrapper.add_item(40): {wrapper.items} == [10, 20, 30, 40]")
+    print(f"  Initial wrapper.items: {wrapper.items} == [10, 20, 30]")  # type: ignore
+    wrapper.add_item(40)  # type: ignore
+    print(f"  After wrapper.add_item(40): {wrapper.items} == [10, 20, 30, 40]")  # type: ignore
 
     # Call a method from the wrapper itself
     print("\nCalling a method from the wrapper itself:")
@@ -173,42 +190,42 @@ def attribute_resolution_example() -> None:
 
     # Create objects with overlapping attribute names
     obj1 = SimpleObject(10)
-    obj1.shared_attr = "from obj1"
+    obj1.shared_attr = "from obj1"  # type: ignore
 
     obj2 = ComplexObject([1, 2, 3])
-    obj2.shared_attr = "from obj2"
-    obj2.unique_attr = "only in obj2"
+    obj2.shared_attr = "from obj2"  # type: ignore
+    obj2.unique_attr = "only in obj2"  # type: ignore
 
     # Create a wrapper
     class AttributeWrapper(StaticWrapper):
-        _wrapped_map_ = [("first", SimpleObject), ("second", ComplexObject)]
+        _wrapped_map_: ClassVar[list[tuple[str, type | None]]] = [("first", SimpleObject), ("second", ComplexObject)]
 
     wrapper = AttributeWrapper()
-    wrapper._first = obj1
-    wrapper._second = obj2
+    wrapper._first = obj1  # type: ignore
+    wrapper._second = obj2  # type: ignore
     wrapper._wrap()
 
     print("Created wrapper with objects having overlapping attributes:")
-    print(f"  obj1.shared_attr: {obj1.shared_attr}")
-    print(f"  obj2.shared_attr: {obj2.shared_attr}")
+    print(f"  obj1.shared_attr: {obj1.shared_attr}")  # type: ignore
+    print(f"  obj2.shared_attr: {obj2.shared_attr}")  # type: ignore
 
     # Access attributes - first wrapped object takes precedence
     print("\nAccessing attributes (first wrapped object takes precedence):")
-    print(f"  wrapper.shared_attr: {wrapper.shared_attr} == 'from obj1'")
-    print(f"  wrapper.unique_attr: {wrapper.unique_attr} == 'only in obj2'")
+    print(f"  wrapper.shared_attr: {wrapper.shared_attr} == 'from obj1'")  # type: ignore
+    print(f"  wrapper.unique_attr: {wrapper.unique_attr} == 'only in obj2'")  # type: ignore
 
     # Change the order of wrapped objects
     print("\nChanging the order of wrapped objects:")
 
     class ReversedWrapper(StaticWrapper):
-        _wrapped_map_ = [("first", ComplexObject), ("second", SimpleObject)]
+        _wrapped_map_: ClassVar[list[tuple[str, type | None]]] = [("first", ComplexObject), ("second", SimpleObject)]
 
     reversed_wrapper = ReversedWrapper()
-    reversed_wrapper._first = obj2
-    reversed_wrapper._second = obj1
+    reversed_wrapper._first = obj2  # type: ignore
+    reversed_wrapper._second = obj1  # type: ignore
     reversed_wrapper._wrap()
 
-    print(f"  reversed_wrapper.shared_attr: {reversed_wrapper.shared_attr} == 'from obj2'")
+    print(f"  reversed_wrapper.shared_attr: {reversed_wrapper.shared_attr} == 'from obj2'")  # type: ignore
 
 
 def rewrapping_example() -> None:
@@ -217,36 +234,36 @@ def rewrapping_example() -> None:
 
     # Create a wrapper
     class RewrapWrapper(StaticWrapper):
-        _wrapped_map_ = [("obj", SimpleObject)]
+        _wrapped_map_: ClassVar[list[tuple[str, type | None]]] = [("obj", SimpleObject)]
 
     wrapper = RewrapWrapper()
-    wrapper._obj = SimpleObject(10)
+    wrapper._obj = SimpleObject(10)  # type: ignore
     wrapper._wrap()
 
     print("Initial wrapper with SimpleObject:")
-    print(f"  wrapper.value: {wrapper.value} == 10")
-    print(f"  wrapper.name: {wrapper.name} == 'SimpleObject'")
+    print(f"  wrapper.value: {wrapper.value} == 10")  # type: ignore
+    print(f"  wrapper.name: {wrapper.name} == 'SimpleObject'")  # type: ignore
 
     # Add a new attribute to the wrapped object
-    wrapper._obj.new_attr = "added attribute"
+    wrapper._obj.new_attr = "added attribute"  # type: ignore
 
     # Need to rewrap to access the new attribute
     print("\nAdding a new attribute without rewrapping:")
     try:
-        print(f"  wrapper.new_attr: {wrapper.new_attr}")
+        print(f"  wrapper.new_attr: {wrapper.new_attr}")  # type: ignore
     except AttributeError:
         print("  AttributeError: new_attr not accessible (need to rewrap)")
 
     # Rewrap to access the new attribute
     wrapper._wrap()
     print("\nAfter rewrapping:")
-    print(f"  wrapper.new_attr: {wrapper.new_attr} == 'added attribute'")
+    print(f"  wrapper.new_attr: {wrapper.new_attr} == 'added attribute'")  # type: ignore
 
     # Replace the wrapped object
     print("\nReplacing wrapped object with a new SimpleObject:")
-    wrapper._obj = SimpleObject(20)
+    wrapper._obj = SimpleObject(20)  # type: ignore
     wrapper._wrap()
-    print(f"  wrapper.value: {wrapper.value} == 20")
+    print(f"  wrapper.value: {wrapper.value} == 20")  # type: ignore
 
 
 def performance_comparison_example() -> None:
@@ -258,10 +275,10 @@ def performance_comparison_example() -> None:
 
     # Create a wrapper
     class PerfWrapper(StaticWrapper):
-        _wrapped_map_ = [("obj", SimpleObject)]
+        _wrapped_map_: ClassVar[list[tuple[str, type | None]]] = [("obj", SimpleObject)]
 
     wrapper = PerfWrapper()
-    wrapper._obj = simple
+    wrapper._obj = simple  # type: ignore
     wrapper._wrap()
 
     # Measure direct access performance
@@ -269,7 +286,7 @@ def performance_comparison_example() -> None:
     print(f"Running {iterations} iterations for each test...")
 
     # Direct access
-    def direct_access():
+    def direct_access() -> int:
         return simple.value
 
     direct_timer = timeit.Timer(direct_access)
@@ -279,8 +296,8 @@ def performance_comparison_example() -> None:
     simple.value = 10
 
     # Wrapper access
-    def wrapper_access():
-        return wrapper.value
+    def wrapper_access() -> int:
+        return wrapper.value  # type: ignore
 
     wrapper_timer = timeit.Timer(wrapper_access)
     wrapper_time = wrapper_timer.timeit(number=iterations)
@@ -301,27 +318,27 @@ def error_handling_example() -> None:
 
     # Create a wrapper
     class ErrorWrapper(StaticWrapper):
-        _wrapped_map_ = [("obj", SimpleObject)]
+        _wrapped_map_: ClassVar[list[tuple[str, type | None]]] = [("obj", SimpleObject)]
 
     wrapper = ErrorWrapper()
-    wrapper._obj = simple
+    wrapper._obj = simple  # type: ignore
     wrapper._wrap()
 
     # Try to access a non-existent attribute
     print("Trying to access a non-existent attribute:")
     try:
-        value = wrapper.non_existent_attr
+        value = wrapper.non_existent_attr  # type: ignore
         print(f"  Value: {value}")
     except AttributeError:
         print("  AttributeError: attribute doesn't exist")
 
     # Add the attribute to the wrapped object
     print("\nAdding the attribute to the wrapped object:")
-    simple.non_existent_attr = "Now it exists"
+    simple.non_existent_attr = "Now it exists"  # type: ignore
 
     # Try again (will still fail without rewrapping)
     try:
-        value = wrapper.non_existent_attr
+        value = wrapper.non_existent_attr  # type: ignore
         print(f"  Value: {value}")
     except AttributeError:
         print("  AttributeError: still doesn't exist (need to rewrap)")
@@ -330,7 +347,7 @@ def error_handling_example() -> None:
     wrapper._wrap()
     print("\nAfter rewrapping:")
     try:
-        value = wrapper.non_existent_attr
+        value = wrapper.non_existent_attr  # type: ignore
         print(f"  Value: {value} == 'Now it exists'")
     except AttributeError as e:
         print(f"  AttributeError: {e}")

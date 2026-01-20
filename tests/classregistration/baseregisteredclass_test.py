@@ -15,16 +15,14 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-import copy
-import pickle
-from typing import Any, ClassVar, Optional, Type
+from typing import Any, ClassVar, Optional, cast
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.classregistration import BaseClassRegistry, BaseRegisteredClass
-from src.baseobjects.testsuite.classregistration import BaseRegisteredClassTestSuite
+from baseobjects.classregistration import BaseClassRegistry, BaseRegisteredClass
+from baseobjects.testsuite.classregistration import BaseRegisteredClassTestSuite
 
 
 # Definitions #
@@ -55,7 +53,7 @@ class ConcreteClassRegistry(BaseClassRegistry):
         return self.get(name, default)
 
 
-class ExampleRegisteredClass(BaseRegisteredClass):
+class ConcreteRegisteredClass(BaseRegisteredClass):
     """A base test subclass of BaseRegisteredClass for testing purposes."""
 
     # Class Attributes #
@@ -74,7 +72,7 @@ class ExampleRegisteredClass(BaseRegisteredClass):
             cls.class_registry.register_class(cls)
 
     @classmethod
-    def get_registered_class(cls, name: str, default: Any = None) -> Optional["BaseRegisteredClass"]:
+    def get_registered_class(cls, name: str, default: Any = None) -> Optional["BaseRegisteredClass"]:  # type: ignore[override]
         """Gets a subclass from the registry.
 
         Args:
@@ -85,106 +83,55 @@ class ExampleRegisteredClass(BaseRegisteredClass):
             The requested subclass or the default value.
         """
         if cls.class_registry is None:
-            return default
-        return cls.class_registry.get_class(name, default)
+            return cast("BaseRegisteredClass | None", default)
+        return cast("BaseRegisteredClass | None", cls.class_registry.get_class(name, default))
+
+
+class DefaultRegisteredClass(BaseRegisteredClass):
+    """A test subclass of BaseRegisteredClass that uses the default register_class implementation."""
+
+    class_registry_type: ClassVar[type[BaseClassRegistry]] = ConcreteClassRegistry
+    class_registration: ClassVar[bool] = True
+
+    @classmethod
+    def get_registered_class(cls, *args: Any, **kwargs: Any) -> type[BaseRegisteredClass] | None:
+        """Gets the registered class.
+
+        Returns:
+            None.
+        """
+        return None
 
 
 # Tests #
 class TestBaseRegisteredClass(BaseRegisteredClassTestSuite):
-    """Test the BaseRegisteredClass class.
+    """Tests the BaseRegisteredClass class.
 
     This class tests the functionality of the BaseRegisteredClass class, which is an abstract class that registers
-    subclasses, allowing subclass dispatching. It creates test subclasses of BaseRegisteredClass to test with since BaseRegisteredClass is abstract.
+    subclasses, allowing subclass dispatching. It creates test subclasses of BaseRegisteredClass to test with since
+    BaseRegisteredClass is abstract.
     """
 
     # Attributes #
-    TestClass: type[ExampleRegisteredClass] = ExampleRegisteredClass
+    UnitTestClass: ClassVar[type[ConcreteRegisteredClass]] = ConcreteRegisteredClass
 
-    # Instance Methods #
-    # Tests
-    def test_copy(self, test_object: Any) -> None:
-        """Test the copy behavior of the object.
+    def test_base_register_class_coverage(self) -> None:
+        """Tests the base implementation of register_class."""
+        assert DefaultRegisteredClass.class_registry is not None
+        assert "DefaultRegisteredClass" in DefaultRegisteredClass.class_registry
 
-        This test verifies that copy creates a new object with the same attributes.
+    def test_base_register_class_no_registry_coverage(self) -> None:
+        """Tests base register_class when no registry is present."""
 
-        Args:
-            test_object: A fixture providing a test object instance.
-        """
-        # Copy Object
-        obj_copy = copy.copy(test_object)
+        class NoRegistryClass(BaseRegisteredClass):
+            class_registration = False
 
-        # Validate
-        assert obj_copy is not test_object
-        assert isinstance(obj_copy, self.TestClass)
+            @classmethod
+            def get_registered_class(cls, *args: Any, **kwargs: Any) -> None:
+                """Gets the registered class."""
 
-    def test_copy_method(self, test_object: Any) -> None:
-        """Test the copy method behavior of the object.
-
-        This test verifies that copy creates a new object with the same attributes.
-
-        Args:
-            test_object: A fixture providing a test object instance.
-        """
-        # Copy Object
-        obj_copy = test_object.copy()
-
-        # Validate
-        assert obj_copy is not test_object
-        assert isinstance(obj_copy, self.TestClass)
-
-    def test_deepcopy(self, test_object: Any, memo: dict | None = None) -> None:
-        """Test the deep copy behavior of the object.
-
-        This test verifies that deepcopy creates a new object with new mutable attributes but the same immutable
-        attributes.
-
-        Args:
-            test_object: A fixture providing a test object instance.
-            memo: A memo dictionary to pass to deepcopy.
-        """
-        # Deep Copy Object
-        if memo is None:
-            memo = {}
-        obj_deepcopy = copy.deepcopy(test_object, memo=memo)
-
-        # Validate
-        assert obj_deepcopy is not test_object
-        assert isinstance(obj_deepcopy, self.TestClass)
-
-    def test_deepcopy_method(self, test_object: Any, memo: dict | None = None) -> None:
-        """Test the deepcopy method behavior of the object.
-
-        This test verifies that deepcopy creates a new object with new mutable attributes but the same immutable
-        attributes.
-
-        Args:
-            test_object: A fixture providing a test object instance.
-            memo: A memo dictionary to pass to deepcopy.
-        """
-        # Deep Copy Object
-        if memo is None:
-            memo = {}
-        obj_deepcopy = test_object.deepcopy(memo=memo)
-
-        # Validate
-        assert obj_deepcopy is not test_object
-        assert isinstance(obj_deepcopy, self.TestClass)
-
-    def test_pickling(self, test_object: Any) -> None:
-        """Test pickling and unpickling of the object.
-
-        This test verifies that the object can be pickled and unpickled correctly.
-
-        Args:
-            test_object: A fixture providing a test object instance.
-        """
-        # Pickle and Unpickle Object
-        pickled = pickle.dumps(test_object)
-        unpickled = pickle.loads(pickled)
-
-        # Validate
-        assert unpickled is not test_object
-        assert isinstance(unpickled, self.TestClass)
+        # Manually call register_class
+        NoRegistryClass.register_class()
 
 
 # Main #

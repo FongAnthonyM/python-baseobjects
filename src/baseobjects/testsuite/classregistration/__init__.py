@@ -24,4 +24,13 @@ __version__ = "1.12.0"
 from .baseclassregistrytestsuite import BaseClassRegistryTestSuite
 from .baseregisteredclasstestsuite import BaseRegisteredClassTestSuite
 from .dispatchableclasstestsuite import DispatchableClassTestSuite
+from .namespaceclassregistrytestsuite import NamespaceClassRegistryTestSuite
 from .namespaceregisteredclasstestsuite import NamespaceRegisteredClassTestSuite
+
+__all__ = [
+    "BaseClassRegistryTestSuite",
+    "BaseRegisteredClassTestSuite",
+    "DispatchableClassTestSuite",
+    "NamespaceClassRegistryTestSuite",
+    "NamespaceRegisteredClassTestSuite",
+]

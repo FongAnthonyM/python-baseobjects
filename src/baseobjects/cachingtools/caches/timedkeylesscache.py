@@ -41,7 +41,7 @@ class TimedKeylessCacheCallable(TimedSingleCacheCallable):
     # Instance Methods #
     # Caching
     def caching(self, *args: Any, **kwargs: Any) -> Any:
-        """Caching with no limit on items in the cache.
+        """Caching that holds a single result.
 
         Args:
             *args: Arguments of the wrapped function.
@@ -51,7 +51,7 @@ class TimedKeylessCacheCallable(TimedSingleCacheCallable):
             The result of the wrapped function.
         """
         if not self.args_key:
-            self.cache_container = self.__wrapped__(*args, **kwargs)
+            self.cache_container = self.__wrapped__(*args, **kwargs)  # type:ignore[misc]
             self.args_key = True
 
         return self.cache_container

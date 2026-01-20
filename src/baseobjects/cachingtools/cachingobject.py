@@ -24,7 +24,7 @@ from typing import Any, ClassVar
 # Local Packages #
 from ..bases import BaseReducible
 from ..metaclasses import InitMeta
-from .caches import BaseTimedCache
+from .caches import BaseTimedCache, BaseTimedCacheCallable
 
 
 # Definitions #
@@ -44,7 +44,14 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
     # Construction/Destruction
     @classmethod
     def _init_class_(cls, name: str, bases: tuple[type, ...], namespace: dict[str, Any]) -> None:
-        super().__init__(name, bases, namespace)
+        """Initializes the class when it is created.
+
+        Args:
+            name: The name of the class.
+            bases: The base classes of the class.
+            namespace: The namespace of the class.
+        """
+        super().__init__(name, bases, namespace)  # type: ignore[arg-type]
         cls._caches_ = cls._caches_.copy()
 
         for name, cls_attribute in namespace.items():
@@ -72,7 +79,7 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initialize the caching object.
+        """Initializes this object with the given arguments.
 
         This constructor prepares the instance-level cache registry from the class-level
         definition and then delegates to the parent initializer. It accepts arbitrary
@@ -89,8 +96,8 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
         super().__init__(*args, **kwargs)
 
     # Pickling
-    def __getstate__(self) -> dict[str, Any]:
-        """Gets the object's state for pickling.
+    def __getstate__(self) -> dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]] | None:
+        """Gets the state of this object for pickling.
 
         Deletes all cache methods for pickling.
 
@@ -102,15 +109,21 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
                 tuple[dict, dict]: __dict__ is present and __slots__ is present.
         """
         state = super().__getstate__()
-        for name in self.get_caches():
-            if name in state:
-                del state[name]
+        match state:
+            case dict():
+                keys = [k for k, v in state.items() if isinstance(v, BaseTimedCacheCallable)]
+                for k in keys:
+                    del state[k]
+            case tuple() if state[0] is not None:
+                keys = [k for k, v in state[0].items() if isinstance(v, BaseTimedCacheCallable)]
+                for k in keys:
+                    del state[0][k]
         return state
 
     # Instance Methods #
     # Caches Operators
     def get_caches(self) -> set[str]:
-        """Get all the caches in this object.
+        """Gets all the caches in this object.
 
         Returns:
             All the cache objects within this object.

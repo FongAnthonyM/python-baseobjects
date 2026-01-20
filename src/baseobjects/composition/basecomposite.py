@@ -48,7 +48,7 @@ class BaseComposite(BaseObject):
     default_component_types: ClassVar[dict[str, tuple[type, dict[str, Any]]]] = {}
 
     # Attributes #
-    components: ClassVar[dict[str, Any]] = {}
+    components: dict[str, Any] = {}
 
     # Magic Methods #
     # Construction/Destruction
@@ -60,7 +60,7 @@ class BaseComposite(BaseObject):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        """Initialize a composite with optional components.
+        """Initializes this object with the given arguments.
 
         Args:
             component_kwargs: Keyword arguments for creating components.
@@ -93,7 +93,7 @@ class BaseComposite(BaseObject):
         components: dict[str, Any] | None = None,
         **kwargs: Any,
     ) -> None:
-        """Constructs this object.
+        """Constructs this object with the given arguments.
 
         Args:
             component_kwargs: Keyword arguments for creating the components.
@@ -154,9 +154,12 @@ class BaseComposite(BaseObject):
             component: The new component type to create.
             *args: Positional arguments for the new component.
             **kwargs: Keyword arguments for the new component.
+
+        Returns:
+            The created component.
         """
-        self.components[name] = component = component(*args, **({"composite": self} | kwargs))
-        return component
+        self.components[name] = new_component = component(*args, **({"composite": self} | kwargs))
+        return new_component
 
     def add_component(self, name: str, component: Any) -> Any:
         """Adds an existing component to this composite.

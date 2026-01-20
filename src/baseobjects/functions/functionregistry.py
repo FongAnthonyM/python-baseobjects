@@ -43,12 +43,12 @@ class FunctionRegistry(BaseDict):
         self,
         functions: dict[str, AnyCallable] | None = None,
         object_: Any = None,
-        objects: Iterable[Any, ...] | None = None,
+        objects: Iterable[Any] | None = None,
         *args: Any,
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        """Initialize a function registry.
+        """Initializes this object with the given arguments.
 
         Args:
             functions: Optional mapping of names to callables to add.
@@ -71,11 +71,11 @@ class FunctionRegistry(BaseDict):
         self,
         functions: dict[str, AnyCallable] | None = None,
         object_: Any = None,
-        objects: Iterable[Any, ...] | None = None,
+        objects: Iterable[Any] | None = None,
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        """The constructor for this object.
+        """Constructs this object with the given arguments.
 
         Args:
             functions: The functions and their keys to add to the registry.

@@ -23,7 +23,21 @@ __version__ = "1.12.0"
 from .basedecorator import BaseDecorator
 from .callablemultiplexer import CallableMultiplexer, FunctionMultiplexer, MethodMultiplexer
 from .dynamiccallable import DynamicCallable, DynamicFunction, DynamicMethod
-from .dynamicdecoractor import DynamicDecorator
+from .dynamicdecorator import DynamicDecorator
 from .functionregistry import FunctionRegistry
 from .methodregistry import MethodRegistry
 from .singlekwargdispatch import singlekwargdispatch
+
+__all__ = [
+    "BaseDecorator",
+    "CallableMultiplexer",
+    "DynamicCallable",
+    "DynamicDecorator",
+    "DynamicFunction",
+    "DynamicMethod",
+    "FunctionMultiplexer",
+    "FunctionRegistry",
+    "MethodMultiplexer",
+    "MethodRegistry",
+    "singlekwargdispatch",
+]

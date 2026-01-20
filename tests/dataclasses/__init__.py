@@ -1,5 +1,5 @@
 """__init__.py
-Examples for the bases.collections package.
+This package contains tests for the baseobjects.dataclasses package.
 """
 
 # Header #

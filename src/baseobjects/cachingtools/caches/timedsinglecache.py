@@ -44,7 +44,7 @@ class TimedSingleCacheCallable(BaseTimedCacheCallable):
     # Instance Methods #
     # Caching Methods
     def caching(self, *args: Any, **kwargs: Any) -> Any:
-        """Caching with no limit on items in the cache.
+        """Caching that holds a single result.
 
         Args:
             *args: Arguments of the wrapped function.
@@ -55,7 +55,7 @@ class TimedSingleCacheCallable(BaseTimedCacheCallable):
         """
         key = self.create_key(args, kwargs, self.typed)
         if key != self.args_key:
-            self.cache_container = self.__wrapped__(*args, **kwargs)
+            self.cache_container = self.__wrapped__(*args, **kwargs)  # type:ignore[misc]
             self.args_key = key
 
         return self.cache_container
@@ -76,6 +76,16 @@ class TimedSingleCacheCallable(BaseTimedCacheCallable):
 
 class TimedSingleCacheMethod(TimedSingleCacheCallable, BaseTimedCacheMethod):
     """A method class for TimedSingleCache."""
+
+    def construct(self, func: Any | None = None, *args: Any, **kwargs: Any) -> None:
+        """Constructs this object with the given arguments.
+
+        Args:
+            func: The function to wrap.
+            *args: Arguments for inheritance.
+            **kwargs: Keyword arguments for inheritance.
+        """
+        super().construct(func, *args, **kwargs)
 
 
 class TimedSingleCache(TimedSingleCacheCallable, BaseTimedCache):

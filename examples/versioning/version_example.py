@@ -47,10 +47,18 @@ class SimpleVersion(Version):
             *args: Additional positional arguments.
             **kwargs: Additional keyword arguments.
         """
-        super().__init__(version=version, init=False, *args, **kwargs)
+        super().__init__(version, False, *args, **kwargs)
 
         if init:
             self.construct(version=version, **kwargs)
+
+    def __hash__(self) -> int:
+        """Overrides hash to make the object hashable.
+
+        Returns:
+            The system ID of the object.
+        """
+        return hash(self.number)
 
     # Comparison #
     def __eq__(self, other: Any) -> bool:
@@ -68,7 +76,8 @@ class SimpleVersion(Version):
             return self.number == other
         else:
             try:
-                return self.number == self.cast(other).number
+                other_ver = self.cast(other)
+                return self.number == other_ver.number  # type: ignore
             except TypeError:
                 return super().__eq__(other)
 
@@ -87,7 +96,8 @@ class SimpleVersion(Version):
             return self.number != other
         else:
             try:
-                return self.number != self.cast(other).number
+                other_ver = self.cast(other)
+                return self.number != other_ver.number  # type: ignore
             except TypeError:
                 return super().__ne__(other)
 
@@ -106,7 +116,8 @@ class SimpleVersion(Version):
             return self.number < other
         else:
             try:
-                return self.number < self.cast(other).number
+                other_ver = self.cast(other)
+                return self.number < other_ver.number  # type: ignore
             except TypeError:
                 return super().__lt__(other)
 
@@ -125,7 +136,8 @@ class SimpleVersion(Version):
             return self.number > other
         else:
             try:
-                return self.number > self.cast(other).number
+                other_ver = self.cast(other)
+                return self.number > other_ver.number  # type: ignore
             except TypeError:
                 return super().__gt__(other)
 
@@ -144,7 +156,8 @@ class SimpleVersion(Version):
             return self.number <= other
         else:
             try:
-                return self.number <= self.cast(other).number
+                other_ver = self.cast(other)
+                return self.number <= other_ver.number  # type: ignore
             except TypeError:
                 return super().__le__(other)
 
@@ -163,7 +176,8 @@ class SimpleVersion(Version):
             return self.number >= other
         else:
             try:
-                return self.number >= self.cast(other).number
+                other_ver = self.cast(other)
+                return self.number >= other_ver.number  # type: ignore
             except TypeError:
                 return super().__ge__(other)
 
@@ -175,6 +189,9 @@ class SimpleVersion(Version):
         Args:
             version: An object to derive a version from.
             **kwargs: Additional keyword arguments.
+
+        Raises:
+            TypeError: If the version cannot be converted to a number.
         """
         if version is not None:
             if isinstance(version, int):
@@ -186,9 +203,9 @@ class SimpleVersion(Version):
             else:
                 try:
                     self.number = int(version)
-                except (ValueError, TypeError):
+                except (ValueError, TypeError) as e:
                     msg = f"Cannot convert {type(version)} to SimpleVersion"
-                    raise TypeError(msg)
+                    raise TypeError(msg) from e
 
     # Type Conversion #
     def list(self) -> list[int]:

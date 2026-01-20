@@ -18,33 +18,40 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import timeit
 from collections.abc import Callable
-from types import MethodType
 from typing import Any
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.bases import BaseFunction, BaseMethod
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.bases import BaseFunction, BaseMethod
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
 # Functions #
 def simple_function(x: int) -> int:
-    """A simple function that doubles its input."""
+    """A simple function that doubles its input.
+
+    Returns:
+        int: The result.
+    """
     return x * 2
 
 
 class NormalFunction:
     """A normal Python function-like object for comparison with BaseFunction."""
 
-    def __init__(self, func: Callable | None = None) -> None:
+    def __init__(self, func: Callable[..., Any] | None = None) -> None:
         """Initialize with a function."""
         self.func = func or simple_function
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        """Call the wrapped function."""
+        """Call the wrapped function.
+
+        Returns:
+            Any: The result.
+        """
         return self.func(*args, **kwargs)
 
 
@@ -59,15 +66,19 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
     class TestFunction(BaseFunction):
         """A subclass of BaseFunction for testing purposes."""
 
-        def __init__(self, func: Callable | None = None) -> None:
+        def __init__(self, func: Callable[..., Any] | None = None) -> None:
             """Initialize with a function."""
             super().__init__(func or simple_function)
 
-    class ExampleClass:
+    class ConcreteClass:
         """A class to own methods for testing."""
 
         def normal_method(self, x: int) -> int:
-            """A normal method."""
+            """A normal method.
+
+            Returns:
+                int: The result.
+            """
             return x * 2
 
     # Attributes #
@@ -144,7 +155,8 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal function call: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal function call: {mean_normal:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"BaseFunction.__call__: {mean_base:.3f} μs ({percent:.3f}% of normal function call time)")
         assert percent < self.speed_tolerance
@@ -160,13 +172,13 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
 
         test_function = self.TestFunction(test_method)
 
-        obj = self.ExampleClass()
+        obj = self.ConcreteClass()
 
         def bind_base() -> None:
             test_function.bind(obj)
 
         def bind_standard() -> None:
-            obj.normal_method
+            _ = obj.normal_method
 
         # Calculate the mean time in microseconds for BaseFunction.bind
         base_time = timeit.timeit(bind_base, number=self.timeit_runs)
@@ -179,7 +191,8 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard method binding: {mean_standard:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard method binding: {mean_standard:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"BaseFunction.bind: {mean_base:.3f} μs ({percent:.3f}% of standard method binding time)")
         assert percent < self.speed_tolerance * 2  # Allow more overhead for method creation
@@ -220,7 +233,7 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
 
         test_function = self.TestFunction(test_method)
 
-        obj = self.ExampleClass()
+        obj = self.ConcreteClass()
         arg = 5
 
         def call_bound() -> None:
@@ -240,7 +253,8 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal method call: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal method call: {mean_normal:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"Bound BaseFunction call: {mean_bound:.3f} μs ({percent:.3f}% of normal method call time)")
         assert percent < self.speed_tolerance * 1.5  # Allow some overhead for method call
@@ -262,7 +276,7 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
         custom_function = self.TestFunction()
         custom_function.method_type = CustomMethod
 
-        obj = self.ExampleClass()
+        obj = self.ConcreteClass()
 
         def bind_default() -> None:
             default_function.bind(obj)
@@ -281,7 +295,8 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nDefault method_type binding: {mean_default:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nDefault method_type binding: {mean_default:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"Custom method_type binding: {mean_custom:.3f} μs ({percent:.3f}% of default method_type binding time)")
         # The performance should be similar since the only difference is the class used
@@ -323,7 +338,8 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNested normal function calls: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNested normal function calls: {mean_normal:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"Nested BaseFunction calls: {mean_base:.3f} μs ({percent:.3f}% of nested normal function calls time)")
         assert percent < self.speed_tolerance * 1.5  # Allow some overhead for nested calls
@@ -366,10 +382,12 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal function with large args: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal function with large args: {mean_normal:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(
-            f"BaseFunction with large args: {mean_base:.3f} μs ({percent:.3f}% of normal function with large args time)",
+            f"BaseFunction with large args: {mean_base:.3f} μs "
+            f"({percent:.3f}% of normal function with large args time)",
         )
         assert percent < self.speed_tolerance * 2  # Allow more overhead for large argument processing
 

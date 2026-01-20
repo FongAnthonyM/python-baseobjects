@@ -20,37 +20,49 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import asyncio
-from collections.abc import Callable
-from typing import Any, Type
+import pickle
+from typing import Any, ClassVar, cast
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.functions import DynamicDecorator
-from src.baseobjects.testsuite.functions import DynamicDecoratorTestSuite
+from baseobjects.functions import DynamicDecorator
+from baseobjects.testsuite.functions import DynamicDecoratorTestSuite
 
 
 # Definitions #
 # Helper Functions #
 def add_function(x: int, y: int = 2) -> int:
-    """A test function that adds two numbers."""
+    """A test function that adds two numbers.
+
+    Returns:
+        The sum of x and y.
+    """
     return x + y
 
 
 async def add_coroutine(x: int, y: int = 2) -> int:
-    """An async test function that adds two numbers."""
+    """An async test function that adds two numbers.
+
+    Returns:
+        The sum of x and y.
+    """
     await asyncio.sleep(0.01)  # Small delay to simulate async operation
     return x + y
 
 
 def multiply_function(x: int, y: int = 3) -> int:
-    """A test function that multiplies two numbers."""
+    """A test function that multiplies two numbers.
+
+    Returns:
+        The product of x and y.
+    """
     return x * y
 
 
 # Helper Classes #
-class TestClass:
+class UnitTestClass:
     """A test class for testing decorator binding."""
 
     def __init__(self, value: int = 10) -> None:
@@ -58,11 +70,19 @@ class TestClass:
         self.value = value
 
     def method1(self, x: int) -> int:
-        """A test method that adds x to the value."""
+        """A test method that adds x to the value.
+
+        Returns:
+            The sum of value and x.
+        """
         return self.value + x
 
     def method2(self, x: int) -> int:
-        """A test method that multiplies the value by x."""
+        """A test method that multiplies the value by x.
+
+        Returns:
+            The product of value and x.
+        """
         return self.value * x
 
 
@@ -75,7 +95,7 @@ class TestDynamicDecorator(DynamicDecoratorTestSuite):
     """
 
     # Attributes #
-    TestClass: type[DynamicDecorator] = DynamicDecorator
+    UnitTestClass: ClassVar[type[DynamicDecorator]] = DynamicDecorator
 
     # Instance Methods #
     def create_test_method_object(self) -> DynamicDecorator:
@@ -84,7 +104,7 @@ class TestDynamicDecorator(DynamicDecoratorTestSuite):
         Returns:
             DynamicDecorator: An instance of DynamicDecorator that wraps a function.
         """
-        return self.TestClass(add_function)
+        return self.UnitTestClass(add_function)
 
     def test_bind_method_property(self) -> None:
         """Test that the bind_method property correctly gets and sets the binding method."""
@@ -115,7 +135,7 @@ class TestDynamicDecorator(DynamicDecoratorTestSuite):
         Returns:
             DynamicDecorator: An instance of DynamicDecorator that wraps a function.
         """
-        return self.TestClass(add_function)
+        return self.UnitTestClass(add_function)
 
     @pytest.fixture
     def test_coroutine_object(self) -> DynamicDecorator:
@@ -124,119 +144,101 @@ class TestDynamicDecorator(DynamicDecoratorTestSuite):
         Returns:
             DynamicDecorator: An instance of DynamicDecorator that wraps a coroutine function.
         """
-        return self.TestClass(add_coroutine)
+        return self.UnitTestClass(add_coroutine)
 
     # Tests
-    def test_instance_creation(self, *args: Any, **kwargs: Any) -> None:
-        """Test that instances of the class can be created.
+    def test_init_false(self) -> None:
+        """Test initialization with init=False."""
+        obj = self.UnitTestClass(init=False, _return_partial=False)
+        obj.construct()
+        assert obj.__func__ is None
+
+    def test_init_false_pickling(self) -> None:
+        """Test pickling of an object initialized with init=False."""
+        obj = self.UnitTestClass(init=False, _return_partial=False)
+        dump = pickle.dumps(obj)
+        loaded = pickle.loads(dump)
+        assert loaded.__wrapped__ is None
+
+    @pytest.mark.parametrize(
+        ("method_name", "expected"),
+        [
+            ("create_function_object", False),
+            ("create_coroutine_object", True),
+        ],
+    )
+    def test_is_coroutine(self, method_name: str, expected: bool) -> None:  # type: ignore[override]
+        """Test the is_coroutine property."""
+        obj = getattr(self, method_name)()
+        assert obj.is_coroutine is expected
+
+    def test_is_coroutine_marker_none(self) -> None:
+        """Test marker is None check."""
+        obj_none = self.UnitTestClass(_return_partial=False)
+        assert obj_none._is_coroutine_marker is None
+
+    @pytest.mark.parametrize("func", [add_function, add_coroutine])
+    def test_instance_creation(self, func: Any) -> None:
+        """Test that instances of the class can be created with different callables.
 
         Args:
-            *args: Positional arguments list to pass to the class constructor.
-            **kwargs: Keyword arguments to pass to the class constructor.
+            func: The function or coroutine to wrap.
         """
-        # Create an instance with a function
-        instance = self.TestClass(add_function)
+        # Create an instance
+        instance = self.UnitTestClass(func)
 
         # Verify it's an instance of the correct class
-        assert isinstance(instance, self.TestClass)
+        assert isinstance(instance, self.UnitTestClass)
 
         # Verify it has the correct function
-        assert instance.__func__ is add_function
+        assert instance.__func__ is func
 
-        # Create an instance with a coroutine
-        instance = self.TestClass(add_coroutine)
-
-        # Verify it has the correct function
-        assert instance.__func__ is add_coroutine
-
-    def test_call(self, test_function_object: DynamicDecorator) -> None:
+    @pytest.mark.parametrize("call_method", ["__call__", "call_wrapped", "as_function"])
+    def test_call(self, test_function_object: DynamicDecorator, call_method: str) -> None:  # type: ignore[override]
         """Test that the callable object can be called and correctly delegates to the wrapped function.
 
         Args:
             test_function_object: A fixture providing a DynamicDecorator instance that wraps a function.
+            call_method: The name of the method to use for calling.
         """
+        # Get the callable
+        caller: Any
+        if call_method == "__call__":
+            caller = test_function_object
+        elif call_method == "call_wrapped":
+            caller = getattr(test_function_object, call_method)
+        elif call_method == "as_function":
+            caller = test_function_object.as_function()
+            assert callable(caller)
+
         # Call the function
-        result = test_function_object(3)
+        result = caller(3)
 
         # Verify it returns the expected result
         assert result == 5  # 3 + 2 (default y)
 
         # Call with different arguments
-        result = test_function_object(3, 4)
+        result = caller(3, 4)
 
         # Verify it returns the expected result
         assert result == 7  # 3 + 4
 
-    def test_as_function(self, test_function_object: DynamicDecorator) -> None:
-        """Test that the callable object can be converted to a standard Python function.
-
-        Args:
-            test_function_object: A fixture providing a DynamicDecorator instance that wraps a function.
-        """
-        # Convert to a standard Python function
-        func = test_function_object.as_function()
-
-        # Verify it's a function
-        assert callable(func)
-
-        # Verify it returns the expected result
-        result = func(3)
-        assert result == 5  # 3 + 2 (default y)
-
-        result = func(3, 4)
-        assert result == 7  # 3 + 4
-
-    def test_call_wrapped(self, test_function_object: DynamicDecorator) -> None:
-        """Test that the wrapped function can be called directly.
-
-        Args:
-            test_function_object: A fixture providing a DynamicDecorator instance that wraps a function.
-        """
-        # Call the wrapped function directly
-        result = test_function_object.call_wrapped(3)
-
-        # Verify it returns the expected result
-        assert result == 5  # 3 + 2 (default y)
-
-        # Call with different arguments
-        result = test_function_object.call_wrapped(3, 4)
-
-        # Verify it returns the expected result
-        assert result == 7  # 3 + 4
-
-    def test_coroutine(self, test_coroutine_object: DynamicDecorator) -> None:
+    @pytest.mark.parametrize("call_method", ["__call__", "as_function"])
+    def test_coroutine(self, test_coroutine_object: DynamicDecorator, call_method: str) -> None:  # type: ignore[override]
         """Test that the callable object correctly handles coroutine functions.
 
         Args:
             test_coroutine_object: A fixture providing a DynamicDecorator instance that wraps a coroutine function.
+            call_method: The method to use for calling ('__call__' or 'as_function').
         """
+        func: Any
+        if call_method == "__call__":
+            func = test_coroutine_object
+        else:
+            func = test_coroutine_object.as_function()
+            assert callable(func)
+
         # Call the coroutine function and run it in an event loop
-        coro = test_coroutine_object(3)
-        result = asyncio.run(coro)
-
-        # Verify it returns the expected result
-        assert result == 5  # 3 + 2 (default y)
-
-        # Call with different arguments
-        coro = test_coroutine_object(3, 4)
-        result = asyncio.run(coro)
-
-        # Verify it returns the expected result
-        assert result == 7  # 3 + 4
-
-    def test_as_function_coroutine(self, test_coroutine_object: DynamicDecorator) -> None:
-        """Test that the callable object wrapping a coroutine can be converted to a coroutine function.
-
-        Args:
-            test_coroutine_object: A fixture providing a DynamicDecorator instance that wraps a coroutine function.
-        """
-        # Convert to a standard Python function
-        func = test_coroutine_object.as_function()
-
-        # Verify it's a function
-        assert callable(func)
-
-        # Call the function and run it in an event loop
         coro = func(3)
         result = asyncio.run(coro)
 
@@ -250,62 +252,47 @@ class TestDynamicDecorator(DynamicDecoratorTestSuite):
         # Verify it returns the expected result
         assert result == 7  # 3 + 4
 
-    def test_decorator_usage(self) -> None:
-        """Test using the decorator in the standard Python way.
+    @pytest.mark.parametrize(
+        ("kwargs", "expected_attrs"),
+        [
+            ({}, {}),
+            (
+                {"bind_method": "bind_wrapped", "call_method": "call_wrapped"},
+                {"bind_method": "bind_wrapped", "call_method": "call_wrapped"},
+            ),
+        ],
+    )
+    def test_decorator_init_variants(self, kwargs: dict[str, Any], expected_attrs: dict[str, Any]) -> None:
+        """Test initializing the decorator with various arguments (returning a partial)."""
+        # Create a decorator (partial)
+        decorator = self.UnitTestClass(**kwargs)
 
-        This test verifies that the decorator can be used in the standard Python way.
-        """
-        # Define a decorator
-        decorator = self.TestClass()
+        # Verify it's a partial function
+        # Standard Libraries #
+        from functools import partial
 
-        # Use the decorator to decorate a function
+        assert isinstance(decorator, partial)
+
+        # Apply decorator
         @decorator
         def test_func(x: int, y: int = 2) -> int:
             return x + y
 
-        # Verify the decorated function is an instance of the decorator class
-        assert isinstance(test_func, self.TestClass)
+        assert isinstance(test_func, self.UnitTestClass)
+        for k, v in expected_attrs.items():
+            assert getattr(test_func, k) == v
 
-        # Call the decorated function
         result = test_func(3)
-
-        # Verify it returns the expected result
         assert result == 5  # 3 + 2 (default y)
 
-    def test_decorator_with_args(self, *args: Any, **kwargs: Any) -> None:
-        """Test using the decorator with arguments.
-
-        This test verifies that the decorator can be used with arguments.
-
-        Args:
-            *args: Positional arguments to pass to the decorator.
-            **kwargs: Keyword arguments to pass to the decorator.
-        """
-        # Define a decorator with arguments
-        decorator = self.TestClass(bind_method="bind_wrapped", call_method="call_wrapped")
-
-        # Use the decorator to decorate a function
-        @decorator
-        def test_func(x: int, y: int = 2) -> int:
-            return x + y
-
-        # Verify the decorated function is an instance of the decorator class
-        assert isinstance(test_func, self.TestClass)
-
-        # Verify the decorator has the correct bind_method and call_method
-        assert test_func.bind_method == "bind_wrapped"
-        assert test_func.call_method == "call_wrapped"
-
-        # Call the decorated function
-        result = test_func(3)
-
-        # Verify it returns the expected result
-        assert result == 5  # 3 + 2 (default y)
-
-    def test_bind_multiplexer(self) -> None:
+    def test_bind_multiplexer(
+        self,
+        test_method_object: Any = None,
+        test_bind_target: Any = None,
+    ) -> None:
         """Test that the bind_multiplexer correctly delegates to the selected binding method."""
         # Create a test function object
-        test_function_object = self.TestClass(add_function)
+        test_function_object = self.UnitTestClass(add_function)
 
         # Test with default bind_method
         assert test_function_object.bind_method == "bind_builtin"
@@ -315,7 +302,7 @@ class TestDynamicDecorator(DynamicDecoratorTestSuite):
         assert test_function_object.bind_method == "bind_builtin"
 
         # Add a custom bind method to the bind_multiplexer
-        def custom_bind(self, instance, owner):
+        def custom_bind(self: Any, instance: Any, owner: Any) -> Any:
             # Just return the function itself
             return self.__func__
 
@@ -329,19 +316,18 @@ class TestDynamicDecorator(DynamicDecoratorTestSuite):
         bound_func = test_function_object.__get__(None, None)
         assert bound_func is add_function
 
-    def test_call_multiplexer(self) -> None:
+    def test_call_multiplexer(self, test_function_object: Any = None) -> None:
         """Test that the call_multiplexer correctly delegates to the selected call method."""
         # Create a test function object
-        test_function_object = self.TestClass(add_function)
+        test_function_object = self.UnitTestClass(add_function)
 
         # Test with default call_method
         assert test_function_object.call_method == "call_wrapped"
 
         # Add a custom call method to the call_multiplexer
-        def custom_call(self, *args, **kwargs):
+        def custom_call(self: Any, *args: Any, **kwargs: Any) -> int:
             # Multiply the result by 2
-            result = self.call_wrapped(*args, **kwargs)
-            return result * 2
+            return cast(int, self.call_wrapped(*args, **kwargs) * 2)
 
         test_function_object.call_multiplexer.add_function("custom_call", custom_call)
 
@@ -353,40 +339,10 @@ class TestDynamicDecorator(DynamicDecoratorTestSuite):
         result = test_function_object(3)
         assert result == 10  # (3 + 2) * 2
 
-    def test_no_function(self) -> None:
-        """Test the edge case where no function is provided."""
-        # Create an instance without a function
-        partial_decorator = self.TestClass()
-
-        # Verify it's a partial function
-        # Standard Libraries #
-        from functools import partial
-
-        assert isinstance(partial_decorator, partial)
-
-        # Create a function to decorate
-        def test_func(x: int, y: int = 2) -> int:
-            return x + y
-
-        # Apply the partial decorator to the function
-        decorated_func = partial_decorator(test_func)
-
-        # Verify the decorated function is an instance of the decorator class
-        assert isinstance(decorated_func, self.TestClass)
-
-        # Verify it has the correct function
-        assert decorated_func.__func__ is test_func
-
-        # Call the decorated function
-        result = decorated_func(3)
-
-        # Verify it returns the expected result
-        assert result == 5  # 3 + 2 (default y)
-
-    def test_change_function(self) -> None:
+    def test_change_function(self) -> None:  # type: ignore[override]
         """Test the edge case where the function is changed after creation."""
         # Create an instance with a function
-        instance = self.TestClass(add_function)
+        instance = self.UnitTestClass(add_function)
 
         # Verify it has the correct function
         assert instance.__func__ is add_function
@@ -408,8 +364,8 @@ class TestDynamicDecorator(DynamicDecoratorTestSuite):
     def test_decorator_chaining(self) -> None:
         """Test that decorators can be chained."""
         # Define two decorators
-        decorator1 = self.TestClass()
-        decorator2 = self.TestClass()
+        decorator1 = self.UnitTestClass()
+        decorator2 = self.UnitTestClass()
 
         # Use the decorators to decorate a function
         @decorator1
@@ -418,13 +374,44 @@ class TestDynamicDecorator(DynamicDecoratorTestSuite):
             return x + y
 
         # Verify the decorated function is an instance of the decorator class
-        assert isinstance(test_func, self.TestClass)
+        assert isinstance(test_func, self.UnitTestClass)
 
         # Call the decorated function
         result = test_func(3)
 
         # Verify it returns the expected result
         assert result == 5  # 3 + 2 (default y)
+
+    def test_no_function(self) -> None:
+        """Tests the edge case where no function is provided."""
+        # Standard Libraries #
+        from functools import partial
+
+        # Create an instance without a function
+        instance = self.UnitTestClass()
+
+        # Verify it's a partial
+        assert isinstance(instance, partial)
+
+    def test_decorator_usage(self) -> None:
+        """Tests using the decorator in the standard Python way."""
+        @self.UnitTestClass  # type: ignore[untyped-decorator]
+        def decorated_function(x: int, y: int = 2) -> int:
+            return x + y
+
+        assert isinstance(decorated_function, self.UnitTestClass)
+        assert decorated_function(3) == 5
+
+    def test_decorator_with_args(self, *args: Any, **kwargs: Any) -> None:
+        """Tests using the decorator with arguments."""
+        # DynamicDecorator returns a partial when initialized with args but no function
+        @self.UnitTestClass(call_method="call_wrapped")
+        def decorated_function(x: int, y: int = 2) -> int:
+            return x + y
+
+        assert isinstance(decorated_function, self.UnitTestClass)
+        assert decorated_function.call_method == "call_wrapped"
+        assert decorated_function(3) == 5
 
 
 # Main #

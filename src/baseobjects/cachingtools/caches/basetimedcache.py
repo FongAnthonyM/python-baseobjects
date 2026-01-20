@@ -21,10 +21,10 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import abc
-from collections.abc import Hashable, Iterable
-from contextlib import AbstractContextManager, contextmanager
+from collections.abc import Hashable, Iterable, Iterator
+from contextlib import contextmanager
 from time import perf_counter
-from typing import Any, ClassVar
+from typing import Any
 
 # Local Packages #
 from ...bases import BaseObject
@@ -37,36 +37,55 @@ _KWD_MARK = object()  # Sentinel for create_key kwd_mark to avoid B008 (no calls
 
 
 # Classes #
-class _HashedSeq(list):
+class _HashedSeq:
     """A hash value based on an iterable.
 
     Attributes:
+        value: The sequence value.
         hashvalue: The hash value to store.
     """
 
-    __slots__: str | Iterable[str] = "hashvalue"
+    # slots #
+    __slots__: str | Iterable[str] = ("hashvalue", "value")
+
+    # Attributes #
+    value: tuple[Any, ...]
+    hashvalue: int
 
     # Magic Methods #
     # Construction/Destruction
-    def __init__(self, tuple_: Iterable, hash_: AnyCallable = hash) -> None:
-        """Initialize a new _HashedSeq instance.
+    def __init__(self, tuple_: tuple[Any, ...], hash_: AnyCallable = hash) -> None:
+        """Initializes this object with the given arguments.
 
         Args:
             tuple_: The iterable to create a hash value from.
             hash_: The function that will create hash value.
         """
         # Attributes #
-        self[:] = tuple_
+        self.value = tuple_
         self.hashvalue = hash_(tuple_)
 
     # Representation
     def __hash__(self) -> int:
-        """Get the hash value of this object.
+        """Gets the hash value of this object.
 
         Returns:
             int: The cached hash value for this sequence.
         """
         return self.hashvalue
+
+    def __eq__(self, other: Any) -> bool:
+        """Checks if this object is equal to another object.
+
+        Args:
+            other: The object to compare to.
+
+        Returns:
+            True if the objects are equal, False otherwise.
+        """
+        if isinstance(other, _HashedSeq):
+            return self.hashvalue == other.hashvalue and self.value == other.value
+        return bool(self.value == other)
 
 
 class CacheItem(BaseObject):
@@ -93,7 +112,7 @@ class CacheItem(BaseObject):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        """Initialize a new CacheItem instance.
+        """Initializes this object with the given arguments.
 
         Args:
             key: The key to this item in the cache.
@@ -123,7 +142,7 @@ class BaseTimedCacheCallable(DynamicCallable):
         lifetime: The period between cache resets in seconds.
         expiration: The next time the cache will be reset.
 
-        cache_item_type: The class that will create the cache items.
+
         cache_container: Contains the results of the wrapped function.
         _cache_method: The name of the caching method.
         _previous_cache_method: The previous caching method used.
@@ -131,7 +150,7 @@ class BaseTimedCacheCallable(DynamicCallable):
     """
 
     # Attributes #
-    _cast_excluded: ClassVar[set[str]] = DynamicCallable._cast_excluded | {"cache"}
+    _cast_excluded: set[str] = DynamicCallable._cast_excluded | {"cache"}
     default_call_method: str = "call_caching"
 
     _instanced_cache: bool = False
@@ -150,7 +169,11 @@ class BaseTimedCacheCallable(DynamicCallable):
 
     # Pickling
     def __getstate__(self) -> dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]] | None:
-        """Prepare a pickle-safe state by excluding the cache multiplexer instance."""
+        """Gets the state of this object for pickling.
+
+        Returns:
+            The state of the object.
+        """
         state = super().__getstate__()
         # Normalize to a dict for augmentation
         if state is None:
@@ -173,7 +196,11 @@ class BaseTimedCacheCallable(DynamicCallable):
         return (d, slots)
 
     def __setstate__(self, state: Any) -> None:
-        """Reconstruct cache multiplexer from stored configuration after unpickling."""
+        """Reconstruct cache multiplexer from stored configuration after unpickling.
+
+        Args:
+            state: The state to restore.
+        """
         saved_cache = None
         if isinstance(state, dict):
             saved_cache = state.pop("_saved_cache_method", None)
@@ -220,7 +247,7 @@ class BaseTimedCacheCallable(DynamicCallable):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        """Initialize a new BaseTimedCacheCallable instance.
+        """Initializes this object with the given arguments.
 
         Args:
             func: The function to wrap.
@@ -243,11 +270,11 @@ class BaseTimedCacheCallable(DynamicCallable):
         if init:
             self.construct(
                 func,
+                typed,
+                lifetime,
+                call_method,
+                instanced,
                 *args,
-                lifetime=lifetime,
-                typed=typed,
-                call_method=call_method,
-                instanced=instanced,
                 **kwargs,
             )
 
@@ -263,7 +290,7 @@ class BaseTimedCacheCallable(DynamicCallable):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        """The constructor for this object.
+        """Constructs this object with the given arguments.
 
         Args:
             func: The function to wrap.
@@ -299,25 +326,35 @@ class BaseTimedCacheCallable(DynamicCallable):
         Returns:
             The result of the wrapped function.
         """
-        return self.__wrapped__(*args, **kwargs)
+        return self.__wrapped__(*args, **kwargs)  # type:ignore[misc]
 
     # Cache Control
     def create_key(
         self,
-        args: tuple,
-        kwds: dict,
+        args: tuple[Any, ...],
+        kwds: dict[str, Any],
         typed: bool,
-        kwd_mark: tuple | None = None,
+        kwd_mark: tuple[Any, ...] | None = None,
         fasttypes: set[type] | None = None,
         tuple_: AnyCallable = tuple,
         type_: AnyCallable = type,
         len_: AnyCallable = len,
-    ) -> _HashedSeq:
+    ) -> _HashedSeq | Hashable:
         """Make a cache key from optionally typed positional and keyword arguments.
 
         The key is constructed in a way that is flat as possible rather than as a nested structure that would take
         more memory. If there is only a single argument and its data type is known to cache its hash value, then that
         argument is returned without a wrapper. This saves space and improves lookup speed.
+
+        Args:
+            args: The positional arguments to create the key from.
+            kwds: The keyword arguments to create the key from.
+            typed: Determines if the function's arguments are type sensitive for caching.
+            kwd_mark: The sentinel to use for separating positional and keyword arguments.
+            fasttypes: The types that are known to be fast to hash.
+            tuple_: The tuple class to use.
+            type_: The type class to use.
+            len_: The len function to use.
 
         Returns:
             _HashedSeq | Hashable: A hashed sequence representing the key for lookups. When a single fast-typed
@@ -337,8 +374,8 @@ class BaseTimedCacheCallable(DynamicCallable):
             if kwds:
                 key += tuple_(type_(v) for v in kwds.values())
         elif len_(key) == 1 and type_(key[0]) in fasttypes:
-            return key[0]
-        return _HashedSeq(key)
+            return key[0]  # type: ignore[no-any-return]
+        return key
 
     def clear_condition(self, *args: Any, **kwargs: Any) -> bool:
         """The condition used to determine if the cache should be cleared.
@@ -350,7 +387,12 @@ class BaseTimedCacheCallable(DynamicCallable):
         Returns:
             Determines if the cache should be cleared.
         """
-        return self.is_timed and self.lifetime is not None and perf_counter() >= self.expiration
+        return (
+            self.is_timed
+            and self.lifetime is not None
+            and self.expiration is not None
+            and perf_counter() >= self.expiration
+        )
 
     @abc.abstractmethod
     def clear_cache(self) -> None:
@@ -369,7 +411,7 @@ class BaseTimedCacheCallable(DynamicCallable):
         self.cache_method = self._previous_cache_method
 
     @contextmanager
-    def pause_caching(self) -> AbstractContextManager[None]:
+    def pause_caching(self) -> Iterator[None]:
         """Temporarily pause caching within the context manager.
 
         Yields:
@@ -410,8 +452,50 @@ class BaseTimedCacheCallable(DynamicCallable):
         return self.cache(*args, **kwargs)
 
 
-class BaseTimedCacheMethod(BaseTimedCacheCallable, DynamicMethod):
+def _rebind_method(owner: type[Any], name: str, instance: Any) -> Any:
+    """Rebinds a method to an instance.
+
+    Args:
+        owner: The class that owns the method.
+        name: The name of the method.
+        instance: The instance to bind the method to.
+
+    Returns:
+        The bound method.
+    """
+    descriptor = getattr(owner, name)
+    return descriptor.__get__(instance, owner)
+
+
+class BaseTimedCacheMethod(BaseTimedCacheCallable, DynamicMethod):  # type: ignore[misc]
     """An abstract method class for timed caches."""
+
+    # Pickling
+    def __reduce__(self) -> str | tuple[Any, ...]:
+        """Support for pickling.
+
+        Returns:
+            The state of the object.
+        """
+        if (
+            self.__self__ is not None
+            and self.__owner__ is not None
+            and self.__wrapped__ is not None
+            and hasattr(self.__wrapped__, "__name__")
+        ):
+            state = self.__getstate__()
+            if isinstance(state, dict):
+                state = state.copy()
+                state.pop("__wrapped__", None)
+            elif isinstance(state, tuple):
+                d = state[0]
+                if d is not None:
+                    d = d.copy()
+                    d.pop("__wrapped__", None)
+                    state = (d, state[1])
+
+            return (_rebind_method, (self.__owner__, self.__wrapped__.__name__, self.__self__), state)
+        return super().__reduce__()
 
     # Instance Methods #
     # Cache Control
@@ -435,7 +519,7 @@ class BaseTimedCacheMethod(BaseTimedCacheCallable, DynamicMethod):
         if self.clear_condition():
             self.clear_cache()
 
-        return self.cache(self._self_(), *args, **kwargs)
+        return self.cache(*args, **kwargs)
 
     def call_clearing(self, *args: Any, **kwargs: Any) -> Any:
         """Clears the cache then calls the caching function.
@@ -449,14 +533,14 @@ class BaseTimedCacheMethod(BaseTimedCacheCallable, DynamicMethod):
         """
         self.clear_cache()
 
-        return self.cache(self._self_(), *args, **kwargs)
+        return self.cache(*args, **kwargs)
 
 
 class BaseTimedCache(BaseTimedCacheCallable, DynamicDecorator):
     """An abstract function class for timed caches."""
 
     # Attributes #
-    method_type: type[DynamicMethod] = BaseTimedCacheMethod
+    method_type: type[BaseTimedCacheMethod]
 
     # Properties #
     @property
@@ -517,17 +601,9 @@ class BaseTimedCache(BaseTimedCacheCallable, DynamicDecorator):
             return self
 
         if name is None:
-            name = self.__wrapped__.__name__
+            name = self.__wrapped__.__name__  # type:ignore[union-attr]
 
-        method = self.method_type(
-            func=self.__wrapped__,
-            instance=instance,
-            owner=owner,
-            typed=self.typed,
-            lifetime=self.lifetime,
-            call_method=self.call_method,
-            instanced=self.instanced_cache,
-        )
+        method = self.bind(instance, owner)
         setattr(instance, name, method)
 
         return method

@@ -44,17 +44,17 @@ class BaseMethodRegistry(FunctionRegistry, BaseReducible):
     # Construction/Destruction
     def __init__(
         self,
-        methods: dict[str, AnyCallable] | None = None,
+        functions: dict[str, AnyCallable] | None = None,
         object_: Any = None,
-        objects: Iterable[Any, ...] | None = None,
+        objects: Iterable[Any] | None = None,
         *args: Any,
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        """Initialize a base method registry.
+        """Initializes this object with the given arguments.
 
         Args:
-            methods: Optional mapping of names to callables to add.
+            functions: Optional mapping of names to callables to add.
             object_: Optional object whose functions will be registered.
             objects: Optional iterable of objects whose functions will be registered.
             *args: Additional positional arguments forwarded to parents.
@@ -65,11 +65,11 @@ class BaseMethodRegistry(FunctionRegistry, BaseReducible):
         super().__init__(*args, init=False, **kwargs)
 
         # Override Attributes #
-        self.data: FunctionRegistry = FunctionRegistry()
+        self.data: FunctionRegistry = FunctionRegistry()  # type: ignore[assignment]
 
         # Object Construction #
         if init:
-            self.construct(methods, object_, objects, *args, **kwargs)
+            self.construct(functions, object_, objects, *args, **kwargs)
 
     @property
     def __func__(self) -> FunctionRegistry:
@@ -84,22 +84,22 @@ class BaseMethodRegistry(FunctionRegistry, BaseReducible):
     # Constructors/Destructors
     def construct(
         self,
-        methods: dict[str, AnyCallable] | None = None,
+        functions: dict[str, AnyCallable] | None = None,
         object_: Any = None,
-        objects: Iterable[Any, ...] | None = None,
+        objects: Iterable[Any] | None = None,
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        """The constructor for this object.
+        """Constructs this object with the given arguments.
 
         Args:
-            methods: The functions and their keys to add to the registry.
+            functions: The functions and their keys to add to the registry.
             object_: An object whose functions will be added to the registry.
             objects: An iterable of objects whose functions will be added to the registry.
             *args: Arguments for inheritance.
             **kwargs: Keyword arguments for inheritance.
         """
-        super().construct(methods, object_, objects, *args, **kwargs)
+        super().construct(functions, object_, objects, *args, **kwargs)
 
 
 class BoundMethodRegistry(BaseMethodRegistry):
@@ -115,17 +115,16 @@ class BoundMethodRegistry(BaseMethodRegistry):
     """
 
     # Attributes #
-    _self_: ReferenceType | None = None
+    _self_: ReferenceType[Any] | None = None
     __owner__: type[Any] | None = None
 
     # Properties #
     @property
     def __self__(self) -> Any:
         """The object to bind this object to."""
-        try:
-            return self._self_()
-        except TypeError:
+        if self._self_ is None:
             return None
+        return self._self_()
 
     @__self__.setter
     def __self__(self, value: Any) -> None:
@@ -135,14 +134,14 @@ class BoundMethodRegistry(BaseMethodRegistry):
     # Construction/Destruction
     def __init__(
         self,
-        registry: BaseMethodRegistry | None = None,
+        registry: BaseMethodRegistry | dict[str, AnyCallable] | None = None,
         instance: Any = None,
         owner: type[Any] | None = None,
         *args: Any,
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        """Initialize a bound method registry.
+        """Initializes this object with the given arguments.
 
         Args:
             registry: Optional underlying method registry to wrap.
@@ -161,7 +160,7 @@ class BoundMethodRegistry(BaseMethodRegistry):
 
     # Pickling
     def __getstate__(self) -> dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]] | None:
-        """Gets the object's state for pickling.
+        """Gets the state of this object for pickling.
 
         This method prepares the object for pickling by converting the weak reference to the bound instance into a
         strong reference. This is necessary because weak references cannot be pickled directly. The method first gets
@@ -176,7 +175,13 @@ class BoundMethodRegistry(BaseMethodRegistry):
         """
         state = super().__getstate__()
         # Convert weak reference to strong reference for pickling
-        state["_self_"] = self.__self__
+        match state:
+            case dict():
+                state["_self_"] = self.__self__
+            case tuple() if state[0] is not None:
+                state[0]["_self_"] = self.__self__
+            case None:
+                state = {"_self_": self.__self__}
         return state
 
     def __setstate__(self, state: Any) -> None:
@@ -201,7 +206,7 @@ class BoundMethodRegistry(BaseMethodRegistry):
         self.__self__ = _self_
 
     # Descriptor
-    def __get__(self, instance: Any, owner: type[Any] | None = None) -> "BoundMethodRegistry":
+    def __get__(self, instance: Any, owner: type[Any] | None = None) -> BoundMethodRegistry:
         """Descriptor protocol implementation for binding the registry to an instance.
 
         This method is called when the registry is accessed as an attribute of another object. It returns a new
@@ -229,19 +234,23 @@ class BoundMethodRegistry(BaseMethodRegistry):
         Returns:
             The function bound as a method to the instance.
         """
-        return MethodType(self.data[key], self._self_())
+        item: AnyCallable = self.data[key]
+        instance = self.__self__
+        if instance is not None and callable(item):
+            return MethodType(item, instance)
+        return item
 
     # Instance Methods #
     # Constructors/Destructors
-    def construct(
+    def construct(  # type: ignore[override]
         self,
-        registry: BaseMethodRegistry | None = None,
+        registry: BaseMethodRegistry | dict[str, AnyCallable] | None = None,
         instance: Any = None,
         owner: type[Any] | None = None,
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        """The constructor for this object.
+        """Constructs this object with the given arguments.
 
         Args:
             registry: The BaseMethodRegistry which this object wraps.
@@ -251,7 +260,10 @@ class BoundMethodRegistry(BaseMethodRegistry):
             **kwargs: Keyword arguments for inheritance.
         """
         if registry is not None:
-            self.data = registry.data
+            if isinstance(registry, dict):
+                self.data = FunctionRegistry(registry)
+            else:
+                self.data = registry.data
 
         if instance is not None:
             self.__self__ = instance

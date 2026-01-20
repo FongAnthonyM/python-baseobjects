@@ -20,3 +20,5 @@ __version__ = "1.12.0"
 # Local Packages #
 from .trinumberversion import TriNumberVersion
 from .version import Version
+
+__all__ = ["TriNumberVersion", "Version"]

@@ -19,3 +19,10 @@ from .basecomponenttestsuite import BaseComponentTestSuite
 from .basecompositetestsuite import BaseCompositeTestSuite
 from .basedispatchingcompositetestsuite import BaseDispatchingCompositeTestSuite
 from .dispatchablecompositetestsuite import DispatchableCompositeTestSuite
+
+__all__ = [
+    "BaseComponentTestSuite",
+    "BaseCompositeTestSuite",
+    "BaseDispatchingCompositeTestSuite",
+    "DispatchableCompositeTestSuite",
+]

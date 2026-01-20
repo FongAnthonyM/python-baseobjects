@@ -17,20 +17,19 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import timeit
-from datetime import datetime, timedelta, timezone
-from typing import Union
+from datetime import datetime, timedelta, timezone, tzinfo
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.operations.exceldatetodatetime import EXCEL_INIT_DATE, excel_date_to_datetime
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.operations.exceldatetodatetime import EXCEL_INIT_DATE, excel_date_to_datetime
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
 # Functions #
-def standard_excel_date_to_datetime_int(timestamp: int, tzinfo=timezone.utc) -> datetime:
+def standard_excel_date_to_datetime_int(timestamp: int, tzinfo: tzinfo | None = timezone.utc) -> datetime:
     """Standard implementation of excel_date_to_datetime for integer timestamps.
 
     Args:
@@ -43,7 +42,7 @@ def standard_excel_date_to_datetime_int(timestamp: int, tzinfo=timezone.utc) -> 
     return EXCEL_INIT_DATE.replace(tzinfo=tzinfo) + timedelta(days=timestamp)
 
 
-def standard_excel_date_to_datetime_float(timestamp: float, tzinfo=timezone.utc) -> datetime:
+def standard_excel_date_to_datetime_float(timestamp: float, tzinfo: tzinfo | None = timezone.utc) -> datetime:
     """Standard implementation of excel_date_to_datetime for float timestamps.
 
     Args:
@@ -56,7 +55,7 @@ def standard_excel_date_to_datetime_float(timestamp: float, tzinfo=timezone.utc)
     return EXCEL_INIT_DATE.replace(tzinfo=tzinfo) + timedelta(days=timestamp)
 
 
-def standard_excel_date_to_datetime_str(timestamp: str, tzinfo=timezone.utc) -> datetime:
+def standard_excel_date_to_datetime_str(timestamp: str, tzinfo: tzinfo | None = timezone.utc) -> datetime:
     """Standard implementation of excel_date_to_datetime for string timestamps.
 
     Args:
@@ -69,7 +68,7 @@ def standard_excel_date_to_datetime_str(timestamp: str, tzinfo=timezone.utc) -> 
     return EXCEL_INIT_DATE.replace(tzinfo=tzinfo) + timedelta(days=float(timestamp))
 
 
-def standard_excel_date_to_datetime_bytes(timestamp: bytes, tzinfo=timezone.utc) -> datetime:
+def standard_excel_date_to_datetime_bytes(timestamp: bytes, tzinfo: tzinfo | None = timezone.utc) -> datetime:
     """Standard implementation of excel_date_to_datetime for bytes timestamps.
 
     Args:
@@ -82,7 +81,10 @@ def standard_excel_date_to_datetime_bytes(timestamp: bytes, tzinfo=timezone.utc)
     return EXCEL_INIT_DATE.replace(tzinfo=tzinfo) + timedelta(days=float(timestamp))
 
 
-def standard_excel_date_to_datetime(timestamp: int | float | str | bytes, tzinfo=timezone.utc) -> datetime:
+def standard_excel_date_to_datetime(
+    timestamp: int | float | str | bytes,
+    tzinfo: tzinfo | None = timezone.utc,
+) -> datetime:
     """Standard implementation of excel_date_to_datetime using type checking.
 
     Args:
@@ -91,6 +93,9 @@ def standard_excel_date_to_datetime(timestamp: int | float | str | bytes, tzinfo
 
     Returns:
         The datetime of the Excel date.
+
+    Raises:
+        TypeError: If the timestamp is not a valid type.
     """
     if isinstance(timestamp, int):
         return standard_excel_date_to_datetime_int(timestamp, tzinfo)
@@ -101,7 +106,7 @@ def standard_excel_date_to_datetime(timestamp: int | float | str | bytes, tzinfo
     elif isinstance(timestamp, bytes):
         return standard_excel_date_to_datetime_bytes(timestamp, tzinfo)
     else:
-        msg = f"{timestamp.__class__} cannot be converted to a datetime"
+        msg = f"{timestamp.__class__} cannot be converted to a datetime"  # type: ignore[unreachable]
         raise TypeError(msg)
 
 
@@ -284,7 +289,8 @@ class TestExcelDateToDatetime(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNew (excel_date_to_datetime dispatch): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)",
+            f"\nNew (excel_date_to_datetime dispatch): {mean_new:.3f} μs ({percent:.3f}% "
+            f"of standard implementation time)",
         )
         assert percent < self.speed_tolerance
 

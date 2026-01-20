@@ -19,106 +19,191 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any, Type
+import pickle
+from collections.abc import Callable
+from typing import Any, ClassVar
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.objects import AutomaticProperties
-from src.baseobjects.testsuite.objects import AutomaticPropertiesTestSuite
+from baseobjects.objects import AutomaticProperties
+from baseobjects.testsuite.objects import AutomaticPropertiesTestSuite
 
 
 # Definitions #
 # Classes #
-class TestAutomaticPropertiesClass(AutomaticProperties):
+class ConcreteAutomaticPropertiesClass(AutomaticProperties):
     """A concrete implementation of AutomaticProperties for testing."""
 
     # Class Attributes #
-    properties = {
+    properties: ClassVar[dict[str, str | tuple[Any, ...]]] = {
         "test_prop": "_test_prop",
         "another_prop": "_another_prop",
         "complex_prop": ("property_method_factory", "_complex_prop", {}),
     }
 
 
+class SlotAutomaticProperties(AutomaticProperties):
+    """A AutomaticProperties subclass with slots for testing."""
+
+    __slots__ = ("extra",)
+
+    def __init__(self, **kwargs: Any) -> None:
+        """Initializes SlotAutomaticProperties."""
+        self.extra = 1
+        super().__init__(**kwargs)
+
+
 class TestAutomaticProperties(AutomaticPropertiesTestSuite):
-    """Test the AutomaticProperties class.
+    """Tests the AutomaticProperties class.
 
     This class tests the functionality of the AutomaticProperties class, which is an abstract class that creates
     properties automatically based on a properties dictionary.
     """
 
     # Attributes #
-    TestClass = TestAutomaticPropertiesClass
+    UnitTestClass = ConcreteAutomaticPropertiesClass
 
     # Instance Methods #
     # Tests
-    def test_complex_property_definition(self) -> None:
-        """Test that complex property definitions work correctly.
+    def test_pickling_slots(self) -> None:
+        """Tests pickling with __slots__.
 
-        This test verifies that properties defined with a tuple of (factory, attribute, kwargs) work correctly.
+        This test verifies that objects with __slots__ can be pickled and unpickled correctly.
         """
-        # Create Object
-        obj = self.TestClass()
-        obj._complex_prop = "complex value"
+        obj = SlotAutomaticProperties()
+        dump = pickle.dumps(obj)
+        loaded = pickle.loads(dump)
+        assert loaded.extra == 1
+        assert isinstance(loaded, SlotAutomaticProperties)
 
-        # Validate
-        assert hasattr(self.TestClass, "complex_prop")
-        assert isinstance(self.TestClass.complex_prop, property)
-        assert obj.complex_prop == "complex value"
+    @pytest.mark.parametrize("prop", ["test_prop", "another_prop"])
+    def test_property_creation(self, prop: str) -> None:
+        """Tests that properties are created correctly."""
+        assert hasattr(self.UnitTestClass, prop)
+        assert isinstance(getattr(self.UnitTestClass, prop), property)
+
+    @pytest.mark.parametrize(("prop", "attr"), [("test_prop", "_test_prop"), ("another_prop", "_another_prop")])
+    def test_property_access(self, test_object: ConcreteAutomaticPropertiesClass, prop: str, attr: str) -> None:
+        """Tests that properties can be accessed correctly."""
+        setattr(test_object, attr, "test value")
+        assert getattr(test_object, prop) == "test value"
+
+    @pytest.mark.parametrize(("prop", "attr"), [("test_prop", "_test_prop"), ("another_prop", "_another_prop")])
+    def test_property_modification(self, test_object: ConcreteAutomaticPropertiesClass, prop: str, attr: str) -> None:
+        """Tests that properties can be modified correctly."""
+        setattr(test_object, prop, "new test value")
+        assert getattr(test_object, attr) == "new test value"
+        assert getattr(test_object, prop) == "new test value"
+
+    @pytest.mark.parametrize(("prop", "attr"), [("test_prop", "_test_prop"), ("another_prop", "_another_prop")])
+    def test_property_deletion(self, test_object: ConcreteAutomaticPropertiesClass, prop: str, attr: str) -> None:
+        """Tests that properties can be deleted correctly."""
+        setattr(test_object, attr, "test value")
+        delattr(test_object, prop)
+
+        assert not hasattr(test_object, attr)
+        with pytest.raises(AttributeError):
+            getattr(test_object, prop)
+
+    def test_construct_properties(self) -> None:
+        """Tests the _construct_properties_ method."""
+
+        class UnitTestClass(ConcreteAutomaticPropertiesClass):
+            """A test class for _construct_properties_."""
+
+        property_map: dict[str, Any] = {
+            "dynamic_prop": "_dynamic_prop",
+            "another_dynamic_prop": "_another_dynamic_prop",
+        }
+        UnitTestClass._construct_properties_(property_map)
+
+        obj = UnitTestClass()
+        obj._dynamic_prop = "dynamic value"  # type: ignore[attr-defined]
+        obj._another_dynamic_prop = "another dynamic value"  # type: ignore[attr-defined]
+
+        assert hasattr(UnitTestClass, "dynamic_prop")
+        assert hasattr(UnitTestClass, "another_dynamic_prop")
+        assert isinstance(UnitTestClass.dynamic_prop, property)
+        assert isinstance(UnitTestClass.another_dynamic_prop, property)
+        assert obj.dynamic_prop == "dynamic value"  # type: ignore[attr-defined]
+        assert obj.another_dynamic_prop == "another dynamic value"  # type: ignore[attr-defined]
+
+    def test_complex_property_definition(self) -> None:
+        """Tests that complex property definitions work correctly."""
+
+        class ComplexPropertyClass(ConcreteAutomaticPropertiesClass):
+            properties: ClassVar[dict[str, Any]] = {
+                "complex_prop_2": ("property_method_factory", "_complex_prop_2", {}),
+            }
+
+        obj: Any = ComplexPropertyClass()
+        obj._complex_prop_2 = "complex value"
+
+        assert hasattr(ComplexPropertyClass, "complex_prop_2")
+        assert isinstance(ComplexPropertyClass.complex_prop_2, property)
+        assert obj.complex_prop_2 == "complex value"
 
     def test_default_property_function_factory(self) -> None:
-        """Test the default_property_function_factory attribute.
+        """Tests the default_property_function_factory attribute."""
 
-        This test verifies that the default_property_function_factory attribute is used when a property is defined
-        with just a string.
-        """
-
-        # Create Test Class
-        class TestClass(AutomaticProperties):
-            """Test class for default_property_function_factory."""
+        class DefaultFactoryClass(ConcreteAutomaticPropertiesClass):
+            """A test class for default_property_function_factory."""
 
             default_property_function_factory = "property_class_method_factory"
-            properties = {"default_factory_prop": "_default_factory_prop"}
+            properties: ClassVar[dict[str, Any]] = {"default_factory_prop": "_default_factory_prop"}
 
-        # Create Object
-        obj = TestClass()
+        obj: Any = DefaultFactoryClass()
         obj._default_factory_prop = "default factory value"
 
-        # Validate
-        assert hasattr(TestClass, "default_factory_prop")
-        assert isinstance(TestClass.default_factory_prop, property)
+        assert hasattr(DefaultFactoryClass, "default_factory_prop")
+        assert isinstance(DefaultFactoryClass.default_factory_prop, property)
         assert obj.default_factory_prop == "default factory value"
 
     def test_property_inheritance(self) -> None:
-        """Test that properties are inherited correctly.
+        """Tests that properties are inherited correctly."""
 
-        This test verifies that properties defined in a parent class are available in child classes.
-        """
+        class ParentClass(ConcreteAutomaticPropertiesClass):
+            properties: ClassVar[dict[str, Any]] = {"parent_prop": "_parent_prop"}
 
-        # Create Child Class
-        class ChildClass(self.TestClass):
+        class ChildClass(ParentClass):
             """Child class for testing property inheritance."""
 
-            properties = {"child_prop": "_child_prop"}
+            properties: ClassVar[dict[str, Any]] = {"child_prop": "_child_prop"}
 
-        # Create Object
-        obj = ChildClass()
-        obj._test_prop = "test value"
-        obj._another_prop = "another value"
+        obj: Any = ChildClass()
+        obj._parent_prop = "parent value"
         obj._child_prop = "child value"
 
-        # Validate
-        assert hasattr(ChildClass, "test_prop")
-        assert hasattr(ChildClass, "another_prop")
+        assert hasattr(ChildClass, "parent_prop")
         assert hasattr(ChildClass, "child_prop")
-        assert isinstance(ChildClass.test_prop, property)
-        assert isinstance(ChildClass.another_prop, property)
+        assert isinstance(ChildClass.parent_prop, property)
         assert isinstance(ChildClass.child_prop, property)
-        assert obj.test_prop == "test value"
-        assert obj.another_prop == "another value"
+        assert obj.parent_prop == "parent value"
         assert obj.child_prop == "child value"
+
+    def test_callable_factory(self) -> None:
+        """Tests using a callable as a property factory."""
+
+        def custom_factory(
+            info: str,
+        ) -> tuple[Callable[[Any], Any], Callable[[Any, Any], None] | None, Callable[[Any], None] | None]:
+            return self.UnitTestClass.property_method_factory(info)
+
+        class CallableFactoryClass(ConcreteAutomaticPropertiesClass):
+            """A test class for callable factory."""
+
+            properties: ClassVar[dict[str, Any]] = {
+                "callable_prop": (custom_factory, "_callable_prop", {}),
+            }
+
+        obj: Any = CallableFactoryClass()
+        obj._callable_prop = "callable value"
+
+        assert hasattr(CallableFactoryClass, "callable_prop")
+        assert isinstance(CallableFactoryClass.callable_prop, property)
+        assert obj.callable_prop == "callable value"
 
 
 # Main #

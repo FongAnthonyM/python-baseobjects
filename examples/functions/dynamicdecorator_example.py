@@ -14,13 +14,12 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 import time
-from collections.abc import Callable
-from typing import Any, Optional, TypeVar, Union
+from typing import Any
 
 # Source Packages #
-from baseobjects.bases import BaseCallable, BaseMethod
-from baseobjects.functions import BaseDecorator, DynamicDecorator, DynamicFunction
-from baseobjects.typing import AnyCallable, GetObjectMethod
+from baseobjects.bases import BaseCallable
+from baseobjects.functions import BaseDecorator, DynamicDecorator
+from baseobjects.typing import AnyCallable
 
 
 # Definitions #
@@ -52,6 +51,7 @@ class MultiModeDecorator(DynamicDecorator):
         Returns:
             The result of the wrapped function.
         """
+        assert self.__wrapped__ is not None
         print(f"[Normal Mode] Calling {self.__wrapped__.__name__}")
         return self.__wrapped__(*args, **kwargs)
 
@@ -65,6 +65,7 @@ class MultiModeDecorator(DynamicDecorator):
         Returns:
             The result of the wrapped function.
         """
+        assert self.__wrapped__ is not None
         print(f"[Debug Mode] Calling {self.__wrapped__.__name__} with args: {args}, kwargs: {kwargs}")
         result = self.__wrapped__(*args, **kwargs)
         print(f"[Debug Mode] {self.__wrapped__.__name__} returned: {result}")
@@ -80,6 +81,7 @@ class MultiModeDecorator(DynamicDecorator):
         Returns:
             The result of the wrapped function.
         """
+        assert self.__wrapped__ is not None
         print(f"[Timing Mode] Calling {self.__wrapped__.__name__}")
         start_time = time.time()
         result = self.__wrapped__(*args, **kwargs)
@@ -117,7 +119,7 @@ class StaticBindingDecorator(DynamicDecorator):
 
     # Method Overrides #
     # Special method overriding which leads to less overhead.
-    __get__: GetObjectMethod = BaseCallable.bind_builtin  # Assigns __get__ to a previously defined method.
+    __get__: AnyCallable = BaseCallable.bind_builtin  # Assigns __get__ to a previously defined method.
 
     def __init__(self, func: AnyCallable, callback_mode: str = "normal") -> None:
         """Initialize the static binding decorator.
@@ -139,6 +141,7 @@ class StaticBindingDecorator(DynamicDecorator):
         Returns:
             The result of the wrapped function.
         """
+        assert self.__wrapped__ is not None
         return self.__wrapped__(*args, **kwargs)
 
     def verbose_callback(self, *args: Any, **kwargs: Any) -> Any:
@@ -151,6 +154,7 @@ class StaticBindingDecorator(DynamicDecorator):
         Returns:
             The result of the wrapped function.
         """
+        assert self.__wrapped__ is not None
         print(f"Calling {self.__wrapped__.__name__}...")
         result = self.__wrapped__(*args, **kwargs)
         print(f"Finished calling {self.__wrapped__.__name__}")
@@ -202,7 +206,7 @@ class FullyStaticDecorator(DynamicDecorator):
 
     # Method Overrides #
     # Special method overriding which leads to less overhead.
-    __get__: GetObjectMethod = BaseCallable.bind_builtin  # Assigns __get__ to a previously defined method.
+    __get__: AnyCallable = BaseCallable.bind_builtin  # Assigns __get__ to a previously defined method.
     __call__: AnyCallable = BaseCallable.call_wrapped  # Assigns __call__ to a previously defined method.
 
 
@@ -212,22 +216,45 @@ class Calculator:
 
     @MultiModeDecorator
     def add(self, a: int, b: int) -> int:
-        """Add two numbers."""
+        """Add two numbers.
+
+        Returns:
+            The sum.
+        """
         return a + b
 
     @StaticBindingDecorator
     def subtract(self, a: int, b: int) -> int:
-        """Subtract b from a."""
+        """Subtract b from a.
+
+        Returns:
+            The difference.
+        """
         return a - b
 
     @StaticCallbackDecorator
     def multiply(self, a: int, b: int) -> int:
-        """Multiply two numbers."""
+        """Multiply two numbers.
+
+        Returns:
+            The product.
+        """
         return a * b
 
     @FullyStaticDecorator
     def divide(self, a: int, b: int) -> float:
-        """Divide a by b."""
+        """Divide a by b.
+
+        Args:
+            a: Numerator
+            b: Denominator
+
+        Returns:
+            Division result
+
+        Raises:
+            ValueError: If b is zero
+        """
         if b == 0:
             msg = "Cannot divide by zero"
             raise ValueError(msg)
@@ -236,7 +263,11 @@ class Calculator:
 
 # Functions #
 def fibonacci(n: int) -> int:
-    """Calculate the nth Fibonacci number recursively."""
+    """Calculate the nth Fibonacci number recursively.
+
+    Returns:
+        The nth Fibonacci number.
+    """
     if n <= 0:
         return 0
     elif n == 1:
@@ -259,7 +290,12 @@ def basic_dynamicdecorator_usage() -> None:
 
     # Use as a decorator
     @DynamicDecorator
-    def square(x):
+    def square(x: int) -> int:
+        """Square a number.
+
+        Returns:
+            The squared number.
+        """
         return x * x
 
     result = square(4)
@@ -345,7 +381,7 @@ def static_binding_example() -> None:
     calculator = Calculator()
 
     print("Default normal callback mode:")
-    result = calculator.subtract(10, 4)
+    result = calculator.subtract(10, 4)  # type: ignore[misc]
     print(f"10 - 4 = {result} == 6\n")
 
     # Create a new instance with a different callback mode
@@ -385,12 +421,12 @@ def fully_static_example() -> None:
     calculator = Calculator()
 
     print("Using fully static decorator:")
-    result = calculator.divide(20, 4)
+    result = calculator.divide(20, 4)  # type: ignore[misc]
     print(f"20 / 4 = {result} == 5.0")
 
     # Show that it behaves like a regular method
     try:
-        result = calculator.divide(10, 0)
+        result = calculator.divide(10, 0)  # type: ignore[misc]
     except ValueError as e:
         print(f"\nError handling works: {e}")
 

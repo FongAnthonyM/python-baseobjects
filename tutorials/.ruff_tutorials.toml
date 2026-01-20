@@ -74,6 +74,7 @@ ignore = [
     "DOC201",  # Returns must be documented in docstring
     "DOC202",  # Disallow Returns in docstring if there are no Returns
     "D205",  # 1 blank line required between summary line and description
+    "D401",  # Disallow imperative mood in docstring
     "D415",  # The first line must end with a period
     "F401",  # All imports must be used
     "F403",  # Disallow wildcard imports (from module import *)

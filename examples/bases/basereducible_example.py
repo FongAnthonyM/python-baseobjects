@@ -46,7 +46,7 @@ class Person(BaseReducible):
         """
         self.name = name
         self.age = age
-        self.friends = []  # Mutable attribute to demonstrate pickling
+        self.friends: list[str] = []  # Mutable attribute to demonstrate pickling
 
 
 class SlottedPerson(BaseReducible):
@@ -77,7 +77,7 @@ class SlottedPerson(BaseReducible):
         """
         self.name = name
         self.age = age
-        self.friends = []  # Mutable attribute to demonstrate pickling
+        self.friends: list[str] = []  # Mutable attribute to demonstrate pickling
 
 
 class HybridPerson(BaseReducible):
@@ -108,8 +108,8 @@ class HybridPerson(BaseReducible):
         """
         self.name = name
         self.age = age
-        self.friends = []  # This will go in __dict__ since it's not in __slots__
-        self.hobbies = []  # This will also go in __dict__
+        self.friends: list[str] = []  # This will go in __dict__ since it's not in __slots__
+        self.hobbies: list[str] = []  # This will also go in __dict__
 
 
 # Example Sections #
@@ -184,7 +184,7 @@ def slotted_example() -> None:
 
     # Demonstrate that __slots__ restricts attribute assignment
     try:
-        person.new_attribute = "This will fail"
+        person.new_attribute = "This will fail"  # type: ignore
         print("Attribute assignment succeeded (unexpected)")
     except AttributeError as e:
         print(f"Attribute assignment failed as expected: {e}")
@@ -206,8 +206,8 @@ def hybrid_example() -> None:
     print(f"Hobbies: {person.hobbies}")
 
     # Add a dynamic attribute (goes to __dict__)
-    person.favorite_color = "Blue"
-    print(f"Favorite color: {person.favorite_color}")
+    person.favorite_color = "Blue"  # type: ignore
+    print(f"Favorite color: {person.favorite_color}")  # type: ignore
 
     # Pickle the object
     print("\nPickling the hybrid person object...")
@@ -231,7 +231,7 @@ def hybrid_example() -> None:
     print(f"Same age? {person.age == unpickled_person.age} == True")
     print(f"Same friends list? {person.friends == unpickled_person.friends} == True")
     print(f"Same hobbies list? {person.hobbies == unpickled_person.hobbies} == True")
-    print(f"Same favorite color? {person.favorite_color == unpickled_person.favorite_color} == True")
+    print(f"Same favorite color? {person.favorite_color == unpickled_person.favorite_color} == True")  # type: ignore
 
     # Demonstrate that __slots__ restricts attribute assignment for slot names
     try:

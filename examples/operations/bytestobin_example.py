@@ -11,8 +11,6 @@ This example demonstrates:
 
 
 # Imports #
-# Standard Libraries #
-
 # Source Packages #
 from baseobjects.operations import bytes_to_bin
 
@@ -124,7 +122,7 @@ def edge_cases_example() -> None:
     empty_bytes = b""
     empty_result = bytes_to_bin(empty_bytes)
 
-    print(f"Empty bytes: {empty_bytes}")
+    print(f"Empty bytes: {empty_bytes!r}")
     print(f"Result: {empty_result}")
     print("  Expected: ()")
 
@@ -174,14 +172,14 @@ def practical_example() -> None:
     flags = bytes_to_bin(flag_byte, out_type=bool)
 
     # Parse the flags
-    is_readonly = flags[0]
-    is_archive = flags[1]
-    is_system = flags[2]
-    is_hidden = flags[3]
-    is_directory = flags[4]
-    has_execute = flags[5]
-    has_write = flags[6]
-    has_read = flags[7]
+    is_readonly = bool(flags[0])
+    is_archive = bool(flags[1])
+    is_system = bool(flags[2])
+    is_hidden = bool(flags[3])
+    is_directory = bool(flags[4])
+    has_execute = bool(flags[5])
+    has_write = bool(flags[6])
+    has_read = bool(flags[7])
 
     print(f"Flag byte: {flag_byte.hex()} (hex)")
     print(f"Binary representation: {flags}")

@@ -23,8 +23,8 @@ from typing import Any
 import pytest
 
 # Source Packages #
-from src.baseobjects.operations import bytes_to_bin
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.operations import bytes_to_bin
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #

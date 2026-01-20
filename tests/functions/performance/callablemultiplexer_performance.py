@@ -17,14 +17,13 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import timeit
-from typing import Any, Type
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.functions.callablemultiplexer import CallableMultiplexer, MethodMultiplexer
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.functions.callablemultiplexer import CallableMultiplexer, MethodMultiplexer
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
@@ -32,32 +31,40 @@ from src.baseobjects.testsuite import BasePerformanceTestSuite
 class TestCallableMultiplexerPerformance(BasePerformanceTestSuite):
     """Test suite for assaying the performance of the CallableMultiplexer class.
 
-    This test suite measures the performance of various operations on CallableMultiplexer objects
-    and compares them with standard Python implementations.
+    This test suite measures the performance of various operations on CallableMultiplexer objects and compares them
+    with standard Python implementations.
 
     Attributes:
         timeit_runs: The number of times to run the timeit function.
         speed_tolerance: The maximum speed tolerance in microseconds.
-        TestClass: The class being tested.
+        UnitTestClass: The class being tested.
     """
 
     # Class Definitions #
-    class TestClass:
+    class ConcreteClass:
         """A class to test method binding."""
 
         def method1(self, x: int) -> int:
-            """First test method."""
+            """First test method.
+
+            Returns:
+                int: The result.
+            """
             return x * 2
 
         def method2(self, x: int) -> int:
-            """Second test method."""
+            """Second test method.
+
+            Returns:
+                int: The result.
+            """
             return x * 3
 
     # Attributes #
     timeit_runs: int = 1000000
     speed_tolerance: int = 400
 
-    TestClass: type[CallableMultiplexer] = CallableMultiplexer
+    UnitTestClass: type[CallableMultiplexer] = CallableMultiplexer
 
     # Instance Methods #
     # Fixtures
@@ -68,32 +75,32 @@ class TestCallableMultiplexerPerformance(BasePerformanceTestSuite):
         Returns:
             CallableMultiplexer: An instance of the test class.
         """
-        multiplexer = self.TestClass()
+        multiplexer = self.UnitTestClass()
         multiplexer.add_function("func1", lambda x: x * 2)
         multiplexer.add_function("func2", lambda x: x * 3)
         multiplexer.select("func1")
         return multiplexer
 
     @pytest.fixture
-    def test_class_instance(self) -> "TestCallableMultiplexerPerformance.TestClass":
+    def test_class_instance(self) -> "TestCallableMultiplexerPerformance.ConcreteClass":
         """Create a test class instance for use in tests.
 
         Returns:
-            TestClass: An instance of the test class.
+            ConcreteClass: An instance of the test class.
         """
-        return self.TestClass()
+        return self.ConcreteClass()
 
     # Tests
     def test_instance_creation(self) -> None:
         """Test that instances of CallableMultiplexer can be created efficiently.
 
-        This test compares the speed of creating CallableMultiplexer instances with creating
-        standard Python dictionaries.
+        This test compares the speed of creating CallableMultiplexer instances with creating standard Python
+        dictionaries.
         """
 
         # Define the performance test functions
         def create_multiplexer() -> None:
-            self.TestClass()
+            self.UnitTestClass()
 
         def create_dict() -> None:
             {"func1": lambda x: x * 2, "func2": lambda x: x * 3}
@@ -109,7 +116,8 @@ class TestCallableMultiplexerPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nDictionary creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nDictionary creation: {mean_old:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"CallableMultiplexer creation: {mean_new:.3f} μs ({percent:.3f}% of dictionary creation time)")
         assert percent < self.speed_tolerance
@@ -192,81 +200,89 @@ class TestCallableMultiplexerPerformance(BasePerformanceTestSuite):
 class TestMethodMultiplexerPerformance(BasePerformanceTestSuite):
     """Test suite for assaying the performance of the MethodMultiplexer class.
 
-    This test suite measures the performance of various operations on MethodMultiplexer objects
-    and compares them with standard Python implementations.
+    This test suite measures the performance of various operations on MethodMultiplexer objects and compares them with
+    standard Python implementations.
 
     Attributes:
         timeit_runs: The number of times to run the timeit function.
         speed_tolerance: The maximum speed tolerance in microseconds.
-        TestClass: The class being tested.
+        UnitTestClass: The class being tested.
     """
 
     # Class Definitions #
-    class ExampleInstanceClass:
+    class ConcreteInstanceClass:
         """A class to test method binding."""
 
         def method1(self, x: int) -> int:
-            """First test method."""
+            """First test method.
+
+            Returns:
+                int: The result.
+            """
             return x * 2
 
         def method2(self, x: int) -> int:
-            """Second test method."""
+            """Second test method.
+
+            Returns:
+                int: The result.
+            """
             return x * 3
 
     # Attributes #
     timeit_runs: int = 1000000
     speed_tolerance: int = 400
 
-    TestClass: type[MethodMultiplexer] = MethodMultiplexer
+    UnitTestClass: type[MethodMultiplexer] = MethodMultiplexer
 
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_class_instance(self) -> "TestMethodMultiplexerPerformance.ExampleInstanceClass":
+    def test_class_instance(self) -> "TestMethodMultiplexerPerformance.ConcreteInstanceClass":
         """Create a test class instance for use in tests.
 
         Returns:
-            TestClass: An instance of the test class.
+            UnitTestClass: An instance of the test class.
         """
-        return self.ExampleInstanceClass()
+        return self.ConcreteInstanceClass()
 
     @pytest.fixture
     def test_multiplexer(
         self,
-        test_class_instance: "TestMethodMultiplexerPerformance.ExampleInstanceClass",
+        test_class_instance: "TestMethodMultiplexerPerformance.ConcreteInstanceClass",
     ) -> MethodMultiplexer:
         """Create a test multiplexer instance for use in tests.
 
         Args:
-            test_class_instance: A fixture providing a TestClass instance.
+            test_class_instance: A fixture providing a UnitTestClass instance.
 
         Returns:
             MethodMultiplexer: An instance of the test class.
         """
-        multiplexer = self.TestClass(instance=test_class_instance)
+        multiplexer = self.UnitTestClass(instance=test_class_instance)
         multiplexer.select("method1")
         return multiplexer
 
     # Tests
     def test_instance_creation(
         self,
-        test_class_instance: "TestMethodMultiplexerPerformance.ExampleInstanceClass",
+        test_class_instance: "TestMethodMultiplexerPerformance.ConcreteInstanceClass",
     ) -> None:
         """Test that instances of MethodMultiplexer can be created efficiently.
 
-        This test compares the speed of creating MethodMultiplexer instances with creating
-        standard Python dictionaries of methods.
+        This test compares the speed of creating MethodMultiplexer instances with creating standard Python dictionaries
+        of methods.
 
         Args:
-            test_class_instance: A fixture providing a TestClass instance.
+            test_class_instance: A fixture providing a UnitTestClass instance.
         """
 
         # Define the performance test functions
         def create_multiplexer() -> None:
-            self.TestClass(instance=test_class_instance)
+            self.UnitTestClass(instance=test_class_instance)
 
         def create_dict() -> None:
-            {"method1": test_class_instance.method1, "method2": test_class_instance.method2}
+            _ = {"method1": test_class_instance.method1, "method2": test_class_instance.method2}
 
         # Calculate the mean time in microseconds for the multiplexer creation
         new_time = timeit.timeit(create_multiplexer, number=self.timeit_runs)
@@ -279,7 +295,8 @@ class TestMethodMultiplexerPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nDictionary of methods creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nDictionary of methods creation: {mean_old:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"MethodMultiplexer creation: {mean_new:.3f} μs ({percent:.3f}% of dictionary creation time)")
         assert percent < self.speed_tolerance
@@ -287,7 +304,7 @@ class TestMethodMultiplexerPerformance(BasePerformanceTestSuite):
     def test_call_speed(
         self,
         test_multiplexer: MethodMultiplexer,
-        test_class_instance: "TestMethodMultiplexerPerformance.ExampleInstanceClass",
+        test_class_instance: "TestMethodMultiplexerPerformance.ConcreteInstanceClass",
     ) -> None:
         """Test the performance of the __call__ method of MethodMultiplexer.
 
@@ -295,7 +312,7 @@ class TestMethodMultiplexerPerformance(BasePerformanceTestSuite):
 
         Args:
             test_multiplexer: A fixture providing a MethodMultiplexer instance.
-            test_class_instance: A fixture providing a TestClass instance.
+            test_class_instance: A fixture providing a UnitTestClass instance.
         """
         arg = 5
 
@@ -316,7 +333,10 @@ class TestMethodMultiplexerPerformance(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nDirect method call: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nDirect method call: {mean_old:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
+        )
         print(f"MethodMultiplexer call: {mean_new:.3f} μs ({percent:.3f}% of direct method call time)")
         assert percent < self.speed_tolerance
 

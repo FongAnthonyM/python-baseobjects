@@ -16,7 +16,41 @@ __version__ = "1.12.0"
 # Imports #
 # Local Packages #
 from .basedecoratortestsuite import BaseDecoratorTestSuite
+from .callablemultiplexertestsuite import (
+    CallableMultiplexerTestObject,
+    CallableMultiplexerTestSuite,
+    add_function,
+    multiply_function,
+)
 from .dynamiccallabletestsuite import DynamicCallableTestSuite
 from .dynamicdecoratortestsuite import DynamicDecoratorTestSuite
 from .dynamicfunctiontestsuite import DynamicFunctionTestSuite
 from .dynamicmethodtestsuite import DynamicMethodTestSuite
+from .functionmultiplexertestsuite import FunctionMultiplexerTestSuite
+from .functionregistrytestsuite import FunctionRegistryTestSuite
+from .methodmultiplexertestsuite import MethodMultiplexerTestSuite
+from .methodregistrytestsuite import (
+    BaseMethodRegistryTestSuite,
+    BoundMethodRegistryTestSuite,
+    MethodRegistryTestSuite,
+)
+from .singlekwargdispatchtestsuite import SingleKwargDispatchTestSuite
+
+__all__ = [
+    "BaseDecoratorTestSuite",
+    "BaseMethodRegistryTestSuite",
+    "BoundMethodRegistryTestSuite",
+    "CallableMultiplexerTestObject",
+    "CallableMultiplexerTestSuite",
+    "DynamicCallableTestSuite",
+    "DynamicDecoratorTestSuite",
+    "DynamicFunctionTestSuite",
+    "DynamicMethodTestSuite",
+    "FunctionMultiplexerTestSuite",
+    "FunctionRegistryTestSuite",
+    "MethodMultiplexerTestSuite",
+    "MethodRegistryTestSuite",
+    "SingleKwargDispatchTestSuite",
+    "add_function",
+    "multiply_function",
+]

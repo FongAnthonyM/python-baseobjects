@@ -24,3 +24,11 @@ from .baseregisteredclass import BaseRegisteredClass
 from .dispatchableclass import DispatchableClass
 from .namespaceclassregistry import NamespaceClassRegistry
 from .namespaceregisteredclass import NamespaceRegisteredClass
+
+__all__ = [
+    "BaseClassRegistry",
+    "BaseRegisteredClass",
+    "DispatchableClass",
+    "NamespaceClassRegistry",
+    "NamespaceRegisteredClass",
+]

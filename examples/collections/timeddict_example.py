@@ -12,7 +12,6 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 import time
-from typing import Any
 
 # Source Packages #
 from baseobjects.collections import TimedDict

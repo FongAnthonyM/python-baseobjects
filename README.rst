@@ -1,5 +1,5 @@
 baseobjects
-============
+===========
 
 |PyPI| |Status| |Python Version| |License|
 
@@ -57,7 +57,7 @@ patterns, light-weight data containers, function helpers, and robust operational
 Requirements
 ------------
 
-* Python 3.11 or later
+* Python 3.14 or later
 * bidict
 
 Installation
@@ -71,7 +71,7 @@ You can install *baseobjects* via pip_ from PyPI_:
 
 
 Documentation
-------------
+-------------
 
 For comprehensive guides, see the full documentation on Read the Docs:
 https://python-baseobjects.readthedocs.io/

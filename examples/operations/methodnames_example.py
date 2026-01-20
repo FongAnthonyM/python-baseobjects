@@ -28,34 +28,63 @@ class ExampleClass:
     """A simple example class to demonstrate method name functions."""
 
     def __init__(self, value: int = 0) -> None:
+        """Initialize the ExampleClass.
+
+        Args:
+            value: An integer value.
+        """
         self.value = value
 
     def public_method(self) -> int:
-        """A public method."""
+        """A public method.
+
+        Returns:
+            The value.
+        """
         return self.value
 
     def another_public_method(self, x: int) -> int:
-        """Another public method."""
+        """Another public method.
+
+        Returns:
+            The sum of value and x.
+        """
         return self.value + x
 
     def _private_method(self) -> int:
-        """A private method (by convention)."""
+        """A private method (by convention).
+
+        Returns:
+            Double the value.
+        """
         return self.value * 2
 
     def __special_method__(self) -> int:
-        """A special method."""
+        """A special method.
+
+        Returns:
+            Square of the value.
+        """
         return self.value**2
 
 
 class DerivedClass(ExampleClass):
-    """A derived class that inherits from ExampleClass."""
+    """A derived class that inherits from ConcreteClass."""
 
     def additional_method(self) -> int:
-        """An additional public method."""
+        """An additional public method.
+
+        Returns:
+            Value minus one.
+        """
         return self.value - 1
 
     def _another_private_method(self) -> float:
-        """Another private method."""
+        """Another private method.
+
+        Returns:
+            Half of the value.
+        """
         return self.value / 2
 
 

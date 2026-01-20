@@ -19,19 +19,19 @@ __version__ = "1.12.0"
 import timeit
 from collections.abc import Mapping
 from copy import deepcopy
-from typing import Any, Dict
+from typing import Any
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.operations import union_recursive
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.operations import union_recursive
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
 # Functions #
-def standard_union_recursive(d: Mapping, other: Mapping) -> dict[str, Any]:
+def standard_union_recursive(d: dict[str, Any], other: Mapping[str, Any]) -> dict[str, Any]:
     """Standard implementation of union_recursive using a recursive function.
 
     Args:
@@ -50,7 +50,7 @@ def standard_union_recursive(d: Mapping, other: Mapping) -> dict[str, Any]:
     return result
 
 
-def standard_union_non_recursive(d: Mapping, other: Mapping) -> dict[str, Any]:
+def standard_union_non_recursive(d: dict[str, Any], other: Mapping[str, Any]) -> dict[str, Any]:
     """Standard implementation of union_recursive using a non-recursive approach.
 
     This implementation only handles one level of nesting and is used for comparison.
@@ -151,7 +151,8 @@ class TestUnionRecursive(BasePerformanceTestSuite):
     def test_union_recursive_simple_speed(self, simple_dicts: tuple[dict[str, Any], dict[str, Any]]) -> None:
         """Test the performance of union_recursive with simple dictionaries.
 
-        This test compares the speed of union_recursive with a standard implementation for simple dictionaries.
+        This test compares the speed of union_recursive with a standard implementation for simple
+        dictionaries.
 
         Args:
             simple_dicts: A fixture providing simple dictionaries.
@@ -180,7 +181,8 @@ class TestUnionRecursive(BasePerformanceTestSuite):
     def test_union_recursive_overlapping_speed(self, overlapping_dicts: tuple[dict[str, Any], dict[str, Any]]) -> None:
         """Test the performance of union_recursive with dictionaries that have overlapping keys.
 
-        This test compares the speed of union_recursive with a standard implementation for dictionaries with overlapping keys.
+        This test compares the speed of union_recursive with a standard implementation for dictionaries with
+        overlapping keys.
 
         Args:
             overlapping_dicts: A fixture providing dictionaries with overlapping keys.
@@ -204,14 +206,16 @@ class TestUnionRecursive(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNew (union_recursive overlapping): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)",
+            f"\nNew (union_recursive overlapping): {mean_new:.3f} μs "
+            f"({percent:.3f}% of standard implementation time)",
         )
         assert percent < self.speed_tolerance
 
     def test_union_recursive_nested_speed(self, nested_dicts: tuple[dict[str, Any], dict[str, Any]]) -> None:
         """Test the performance of union_recursive with dictionaries that have nested dictionaries.
 
-        This test compares the speed of union_recursive with a standard implementation for dictionaries with nested dictionaries.
+        This test compares the speed of union_recursive with a standard implementation for dictionaries with
+        nested dictionaries.
 
         Args:
             nested_dicts: A fixture providing dictionaries with nested dictionaries.
@@ -243,7 +247,8 @@ class TestUnionRecursive(BasePerformanceTestSuite):
     ) -> None:
         """Test the performance of union_recursive with dictionaries that have deeply nested dictionaries.
 
-        This test compares the speed of union_recursive with a standard implementation for dictionaries with deeply nested dictionaries.
+        This test compares the speed of union_recursive with a standard implementation for dictionaries with
+        deeply nested dictionaries.
 
         Args:
             deeply_nested_dicts: A fixture providing dictionaries with deeply nested dictionaries.
@@ -267,14 +272,16 @@ class TestUnionRecursive(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNew (union_recursive deeply nested): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)",
+            f"\nNew (union_recursive deeply nested): {mean_new:.3f} μs ({percent:.3f}% "
+            f"of standard implementation time)",
         )
         assert percent < self.speed_tolerance
 
     def test_union_recursive_mixed_types_speed(self, mixed_type_dicts: tuple[dict[str, Any], dict[str, Any]]) -> None:
         """Test the performance of union_recursive with dictionaries that have mixed value types.
 
-        This test compares the speed of union_recursive with a standard implementation for dictionaries with mixed value types.
+        This test compares the speed of union_recursive with a standard implementation for dictionaries with
+        mixed value types.
 
         Args:
             mixed_type_dicts: A fixture providing dictionaries with mixed value types.
@@ -305,7 +312,8 @@ class TestUnionRecursive(BasePerformanceTestSuite):
     def test_union_recursive_vs_non_recursive(self, nested_dicts: tuple[dict[str, Any], dict[str, Any]]) -> None:
         """Test the performance of union_recursive compared to a non-recursive union.
 
-        This test compares the speed of union_recursive with a non-recursive implementation to measure the overhead of recursion.
+        This test compares the speed of union_recursive with a non-recursive implementation to measure the
+        overhead of recursion.
 
         Args:
             nested_dicts: A fixture providing dictionaries with nested dictionaries.

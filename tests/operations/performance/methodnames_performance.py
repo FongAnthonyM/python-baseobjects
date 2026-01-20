@@ -18,19 +18,19 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import timeit
 from collections.abc import Generator
-from typing import Any, List, Tuple
+from typing import Any
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.operations import (
+from baseobjects.operations import (
     get_method_names,
     get_public_method_names,
     iter_method_names,
     iter_public_method_names,
 )
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
@@ -41,8 +41,8 @@ def standard_iter_method_names(obj: Any) -> Generator[str, None, None]:
     Args:
         obj: The object to iterate the method names from.
 
-    Returns:
-        The iterator as a generator which iterates over the method names of an object.
+    Yields:
+        The method names of an object.
     """
     for name in dir(obj):
         attr = getattr(obj, name, None)
@@ -56,8 +56,8 @@ def standard_iter_public_method_names(obj: Any) -> Generator[str, None, None]:
     Args:
         obj: The object to iterate the public method names from.
 
-    Returns:
-        The iterator as a generator which iterates over the public method names of an object.
+    Yields:
+        The public method names of an object.
     """
     for name in dir(obj):
         attr = getattr(obj, name, None)
@@ -97,7 +97,7 @@ class TestMethodNames(BasePerformanceTestSuite):
     """
 
     # Class Definitions #
-    class TestClass:
+    class UnitTestClass:
         """A test class with various methods for testing method name functions."""
 
         def public_method(self) -> None:
@@ -143,13 +143,13 @@ class TestMethodNames(BasePerformanceTestSuite):
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_object(self) -> "TestMethodNames.TestClass":
+    def test_object(self) -> "TestMethodNames.UnitTestClass":
         """Create a test object for use in tests.
 
         Returns:
-            TestClass: An instance of the test class.
+            UnitTestClass: An instance of the test class.
         """
-        return self.TestClass()
+        return self.UnitTestClass()
 
     @pytest.fixture
     def builtin_object(self) -> list[int]:
@@ -161,7 +161,7 @@ class TestMethodNames(BasePerformanceTestSuite):
         return [1, 2, 3, 4, 5]
 
     # Tests
-    def test_iter_method_names_speed(self, test_object: "TestMethodNames.TestClass") -> None:
+    def test_iter_method_names_speed(self, test_object: "TestMethodNames.UnitTestClass") -> None:
         """Test the performance of iter_method_names.
 
         This test compares the speed of iter_method_names with a standard implementation.
@@ -189,7 +189,7 @@ class TestMethodNames(BasePerformanceTestSuite):
         print(f"\nNew (iter_method_names): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
         assert percent < self.speed_tolerance
 
-    def test_iter_public_method_names_speed(self, test_object: "TestMethodNames.TestClass") -> None:
+    def test_iter_public_method_names_speed(self, test_object: "TestMethodNames.UnitTestClass") -> None:
         """Test the performance of iter_public_method_names.
 
         This test compares the speed of iter_public_method_names with a standard implementation.
@@ -217,7 +217,7 @@ class TestMethodNames(BasePerformanceTestSuite):
         print(f"\nNew (iter_public_method_names): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
         assert percent < self.speed_tolerance
 
-    def test_get_method_names_speed(self, test_object: "TestMethodNames.TestClass") -> None:
+    def test_get_method_names_speed(self, test_object: "TestMethodNames.UnitTestClass") -> None:
         """Test the performance of get_method_names.
 
         This test compares the speed of get_method_names with a standard implementation.
@@ -245,7 +245,7 @@ class TestMethodNames(BasePerformanceTestSuite):
         print(f"\nNew (get_method_names): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)")
         assert percent < self.speed_tolerance
 
-    def test_get_public_method_names_speed(self, test_object: "TestMethodNames.TestClass") -> None:
+    def test_get_public_method_names_speed(self, test_object: "TestMethodNames.UnitTestClass") -> None:
         """Test the performance of get_public_method_names.
 
         This test compares the speed of get_public_method_names with a standard implementation.

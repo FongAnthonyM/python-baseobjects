@@ -19,3 +19,6 @@ __version__ = "1.12.0"
 # Imports
 # Local Packages #
 from .initmeta import InitMeta
+
+# Main #
+__all__ = ["InitMeta"]

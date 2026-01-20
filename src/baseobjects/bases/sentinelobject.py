@@ -51,15 +51,15 @@ class SentinelObject(BaseReducible):
 
     # Class Attributes #
     __slots__ = ("identity",)
-    sentinel_registry: ClassVar[dict[str | bytes | int, "SentinelObject"]] = {}
+    sentinel_registry: ClassVar[dict[str | bytes | int, SentinelObject]] = {}
 
     # Attributes #
     identity: str | bytes | int
 
     # Magic Methods #
     # Construction/Destruction
-    def __new__(cls, id_: str | bytes | int) -> "SentinelObject":
-        """Create a new sentinel object or return an existing one with the same ID.
+    def __new__(cls, id_: str | bytes | int) -> SentinelObject:
+        """Creates a new sentinel object or return an existing one with the same ID.
 
         This method implements the singleton pattern by checking if a sentinel object with the given ID already exists
         in the registry. If it does, that object is returned; otherwise, a new object is created, added to the registry,
@@ -77,19 +77,16 @@ class SentinelObject(BaseReducible):
         return sentinel
 
     def __init__(self, id_: str | bytes | int) -> None:
-        """Initialize the sentinel object with the given ID.
-
-        This method is called after __new__, but since __new__ may return an existing instance, this method may be
-        called multiple times on the same instance. This is harmless because it simply sets the identity attribute to
-        the same value it already has.
+        """Initializes the sentinel object with the given ID.
 
         Args:
             id_: A unique identifier for the sentinel object.
         """
+        super().__init__()
         self.identity = id_
 
     def copy(self) -> Any:
-        """Return this object rather than creating a copy, preserving the singleton pattern.
+        """Returns this object rather than creating a copy, preserving the singleton pattern.
 
         This method overrides the copy method from BaseObject to ensure that sentinel objects maintain their singleton
         nature when copied. Instead of creating a new object, it simply returns the original object.
@@ -99,8 +96,8 @@ class SentinelObject(BaseReducible):
         """
         return self
 
-    def deepcopy(self, memo: dict | None = None) -> Any:
-        """Return this object rather than creating a deep copy, preserving the singleton pattern.
+    def deepcopy(self, memo: Any | None = None) -> Any:
+        """Returns this object rather than creating a deep copy, preserving the singleton pattern.
 
         This method overrides the deepcopy method from BaseObject to ensure that sentinel objects maintain their
         singleton nature when deep copied. Instead of creating a new object, it simply returns the original object,

@@ -13,6 +13,7 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 import pickle
+from typing import cast
 
 # Source Packages #
 from baseobjects.bases import BaseObject
@@ -54,7 +55,7 @@ class ValueComponent(BaseComponent):
         Returns:
             The current value of the composite.
         """
-        return self.composite.value
+        return cast(int, self.composite.value)
 
 
 class NameComponent(BaseComponent):
@@ -74,7 +75,7 @@ class NameComponent(BaseComponent):
         Returns:
             The current name of the composite.
         """
-        return self.composite.name
+        return cast(str, self.composite.name)
 
     def get_formatted_name(self) -> str:
         """Gets a formatted version of the composite's name.

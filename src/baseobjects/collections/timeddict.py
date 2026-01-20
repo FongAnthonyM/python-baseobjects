@@ -15,7 +15,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from collections.abc import Hashable
+from collections.abc import Hashable, Iterator
 from contextlib import contextmanager
 from time import perf_counter
 from typing import Any
@@ -63,10 +63,14 @@ class TimedDict(BaseDict):
         self.verify()
         return self._data
 
+    @data.setter
+    def data(self, value: dict[Hashable, Any]) -> None:
+        self._data = value
+
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, dict_: dict[Hashable, Any] | None = None, /, **kwargs: Any) -> None:
-        """Initialize a timed dictionary.
+        """Initializes this object with the given arguments.
 
         Args:
             dict_: Optional initial mapping to populate the dictionary.
@@ -80,6 +84,18 @@ class TimedDict(BaseDict):
             self.update(dict_)
         if kwargs:
             self.update(kwargs)
+
+    def __copy__(self) -> TimedDict:
+        """Creates a shallow copy of this object.
+
+        Returns:
+            A shallow copy of the object.
+        """
+        inst = self.__class__.__new__(self.__class__)
+        inst.__dict__.update(self.__dict__)
+        # Create a copy and avoid triggering descriptors
+        inst.__dict__["_data"] = self.__dict__["_data"].copy()
+        return inst
 
     # Instance Methods #
     # Mapping
@@ -95,23 +111,24 @@ class TimedDict(BaseDict):
             self.expiration = perf_counter() + self.lifetime
 
     @contextmanager
-    def pause_timer(self) -> None:
+    def pause_timer(self) -> Iterator[None]:
         """A context manager that will stop clearing the dictionary until it is returned.
 
         Yields:
             None: Yields None while the automatic clearing is paused.
         """
-        left_over = 0.0
+        left_over = None
         if self.expiration is not None:
             left_over = self.expiration - perf_counter()
             self.expiration = None
         self.is_timed = False
         yield None
-        self.expiration = perf_counter() + left_over
+        if left_over is not None:
+            self.expiration = perf_counter() + left_over
         self.is_timed = True
 
     @contextmanager
-    def pause_reset_timer(self) -> None:
+    def pause_reset_timer(self) -> Iterator[None]:
         """A context manager that will stop clearing the dictionary until it is returned, resting the expiration.
 
         Yields:
@@ -132,7 +149,7 @@ class TimedDict(BaseDict):
         Returns:
             bool: Determines if the cache should be cleared.
         """
-        return self.is_timed and self._lifetime is not None and perf_counter() >= self.expiration
+        return self.is_timed and self.expiration is not None and perf_counter() >= self.expiration
 
     def verify(self) -> None:
         """Verifies if the dictionary should be cleared and then clears it."""

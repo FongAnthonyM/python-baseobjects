@@ -12,7 +12,6 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 from collections import ChainMap
-from typing import Any
 
 # Source Packages #
 from baseobjects.collections import DeepChainMap
@@ -163,10 +162,33 @@ def configuration_example() -> None:
     }
 
     # User configuration (overrides some defaults)
-    user_config = {"database": {"host": "db.example.com", "password": "user_password"}, "logging": {"level": "DEBUG"}}
+    # Note: DeepChainMap does not perform recursive merging of nested dictionaries for lookup.
+    # To see the full configuration, we must provide complete dictionaries for nested sections
+    # or manually chain them. For this example, we provide the full database config.
+    user_config = {
+        "database": {
+            "host": "db.example.com",
+            "port": 5432,
+            "name": "app_db",
+            "user": "app_user",
+            "password": "user_password",
+        },
+        "logging": {
+            "level": "DEBUG",
+            "file": "app.log",
+        },
+    }
 
     # Environment-specific overrides
-    env_overrides = {"api": {"url": "https://staging-api.example.com"}}
+    # Note: As with user_config, we must provide complete dictionaries for nested sections
+    # to avoid missing keys when using DeepChainMap.
+    env_overrides = {
+        "api": {
+            "url": "https://staging-api.example.com",
+            "timeout": 30,
+            "retry_attempts": 3,
+        }
+    }
 
     # Create configuration using DeepChainMap
     config = DeepChainMap(env_overrides, user_config, system_defaults)

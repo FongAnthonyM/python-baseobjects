@@ -14,6 +14,7 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
+from typing import Any
 
 # Source Packages #
 from baseobjects.operations import parse_parentheses
@@ -175,7 +176,7 @@ def different_input_types_example() -> None:
     bytes_expression = b"function(arg1, arg2)"
     bytes_result = parse_parentheses(bytes_expression)
 
-    print(f"\nBytes expression: {bytes_expression}")
+    print(f"\nBytes expression: {bytes_expression!r}")
     print(f"Parsed result: {bytes_result}")
     print("Expected: [b'function', [b'arg1', b'arg2']]")
 
@@ -263,44 +264,56 @@ def practical_example() -> None:
         # Evaluate the parsed expression
         return float(evaluate_parsed(parsed))
 
-    def evaluate_parsed(parsed: object) -> float:
+    def evaluate_parsed(parsed: Any) -> float:
         if not parsed:
-            return 0
+            return 0.0
 
-        # If the first element is an operator, apply it to the rest
-        if parsed[0] == "+":
-            return sum(evaluate_parsed(item) for item in parsed[1:])
-        elif parsed[0] == "*":
-            result = 1
-            for item in parsed[1:]:
-                result *= evaluate_parsed(item)
-            return result
-        elif parsed[0] == "-":
-            if len(parsed) == 2:
-                return -evaluate_parsed(parsed[1])
-            else:
-                return evaluate_parsed(parsed[1]) - sum(evaluate_parsed(item) for item in parsed[2:])
-        elif parsed[0] == "/":
-            if len(parsed) < 3:
-                return 1
-            result = evaluate_parsed(parsed[1])
-            for item in parsed[2:]:
-                result /= evaluate_parsed(item)
-            return result
-
-        # If it's a list, evaluate it recursively
         if isinstance(parsed, list):
-            if len(parsed) == 1:
-                return evaluate_parsed(parsed[0])
-            else:
-                # Assume the first element is the operator
-                return evaluate_parsed(parsed)
+            if not parsed:
+                return 0.0
 
-        # If it's a number (as a string), convert it
+            # If it's a list, evaluate it recursively
+            if len(parsed) == 1 and isinstance(parsed[0], (int, float, str)):
+                # Single value in list
+                return evaluate_parsed(parsed[0])
+
+            # Operator handling
+            op = parsed[0]
+            if op == "+":
+                return float(sum(evaluate_parsed(item) for item in parsed[1:]))
+            elif op == "*":
+                result: float = 1.0
+                for item in parsed[1:]:
+                    result *= evaluate_parsed(item)
+                return result
+            elif op == "-":
+                if len(parsed) == 2:
+                    return -evaluate_parsed(parsed[1])
+                elif len(parsed) > 2:
+                    return evaluate_parsed(parsed[1]) - float(sum(evaluate_parsed(item) for item in parsed[2:]))
+                else:
+                    return 0.0
+            elif op == "/":
+                if len(parsed) < 3:
+                    return 1.0
+                div_result: float = evaluate_parsed(parsed[1])
+                for item in parsed[2:]:
+                    val = evaluate_parsed(item)
+                    if val != 0:
+                        div_result /= val
+                return div_result
+
+            # If the first element is a list, evaluate it
+            if isinstance(op, list):
+                return evaluate_parsed(op)
+
+        # If it's a number (as a string or number), convert it
         try:
             return float(parsed)
         except (ValueError, TypeError):
-            return 0
+            pass
+
+        return 0.0
 
     # Test the evaluator with some expressions
     expressions = [
@@ -318,6 +331,7 @@ def practical_example() -> None:
         print(f"Evaluated result: {result}")
 
         # Calculate expected result for verification
+        expected: float | str
         if expr == "(+ 1 2 3)":
             expected = 1 + 2 + 3
         elif expr == "(* 2 3 4)":

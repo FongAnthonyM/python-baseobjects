@@ -15,13 +15,13 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-import copy
-import pickle
-from abc import abstractmethod
-from typing import Any
+from typing import Any, ClassVar
+
+# Third-Party Packages #
+import pytest
 
 # Local Packages #
-from ...composition import BaseDispatchingComposite
+from ...composition.basedispatchingcomposite import BaseDispatchingComposite
 from .basecompositetestsuite import BaseCompositeTestSuite
 
 
@@ -31,135 +31,95 @@ class BaseDispatchingCompositeTestSuite(BaseCompositeTestSuite):
     """Base test suite for children of BaseDispatchingComposite.
 
     This class provides common test functionality for child classes of BaseDispatchingComposite, including tests for
-    component type dispatching. Subclasses should set the TestClass attribute and may override or extend the test
+    component type dispatching. Subclasses should set the UnitTestClass attribute and may override or extend the test
     methods.
 
     Attributes:
-        TestClass: The class that the test suite is testing.
+        UnitTestClass: The class that the test suite is testing.
     """
 
-    # Attributes #
-    TestClass: type[BaseDispatchingComposite]
+    UnitTestClass: ClassVar[type[BaseDispatchingComposite]]
 
-    # Instance Methods #
-    # Tests
-    @abstractmethod
-    def test_copy(self, test_object: Any) -> None:
-        """Test the copy behavior of the object.
+    # Fixtures #
+    @pytest.fixture
+    def dispatch_args(self) -> tuple[tuple[Any, ...], dict[str, Any]]:
+        """Returns args/kwargs that trigger a specific dispatch.
 
-        This test verifies that copy creates a new object with the same attributes.
-
-        Args:
-            test_object: A fixture providing a test object instance.
+        Override this fixture in subclasses to provide arguments that cause a known dispatch.
         """
-        # Copy Object
-        obj_copy = copy.copy(test_object)
+        return (), {}
 
-        # Validate
-        assert obj_copy is not test_object
+    @pytest.fixture
+    def expected_dispatch(self) -> tuple[str, type]:
+        """Returns (component_name, component_type) expected from dispatch_args.
 
-    @abstractmethod
-    def test_copy_method(self, test_object: Any) -> None:
-        """Test the copy method behavior of the object.
-
-        This test verifies that copy creates a new object with the same attributes.
-
-        Args:
-            test_object: A fixture providing a test object instance.
+        Override this fixture in subclasses to provide the expected result of the dispatch.
         """
-        # Copy Object
-        obj_copy = test_object.copy()
+        return "", type(None)
 
-        # Validate
-        assert obj_copy is not test_object
+    # Tests #
+    def test_dispatch_component_types(
+        self,
+        dispatch_args: tuple[tuple[Any, ...], dict[str, Any]],
+        expected_dispatch: tuple[str, type],
+    ) -> None:
+        """Tests the dispatch_component_types method via construction.
 
-    @abstractmethod
-    def test_deepcopy(self, test_object: Any, memo: dict | None = None) -> None:
-        """Test the deep copy behavior of the object.
-
-        This test verifies that deepcopy creates a new object with new mutable attributes but the same immutable
-        attributes.
-
-        Args:
-            test_object: A fixture providing a test object instance.
-            memo: A memo dictionary to pass to deepcopy.
+        This test verifies that the object correctly dispatches component types based on the given arguments.
         """
-        # Deep Copy Object
-        if memo is None:
-            memo = {}
-        obj_deepcopy = copy.deepcopy(test_object, memo=memo)
+        args, kwargs = dispatch_args
+        name, expected_type = expected_dispatch
 
-        # Validate
-        assert obj_deepcopy is not test_object
+        if expected_type is type(None):
+            pytest.skip("Dispatch args/expectation not implemented.")
 
-    @abstractmethod
-    def test_deepcopy_method(self, test_object: Any, memo: dict | None = None) -> None:
-        """Test the deepcopy method behavior of the object.
-
-        This test verifies that deepcopy creates a new object with new mutable attributes but the same immutable
-        attributes.
-
-        Args:
-            test_object: A fixture providing a test object instance.
-            memo: A memo dictionary to pass to deepcopy.
-        """
-        # Deep Copy Object
-        if memo is None:
-            memo = {}
-        obj_deepcopy = test_object.deepcopy(memo=memo)
-
-        # Validate
-        assert obj_deepcopy is not test_object
-
-    @abstractmethod
-    def test_pickling(self, test_object: Any) -> None:
-        """Test pickling and unpickling of the object.
-
-        This test verifies that the object can be pickled and unpickled correctly.
-
-        Args:
-            test_object: A fixture providing a test object instance.
-        """
-        # Pickle and Unpickle Object
-        pickled = pickle.dumps(test_object)
-        unpickled = pickle.loads(pickled)
-
-        # Validate
-        assert unpickled is not test_object
-
-    @abstractmethod
-    def test_construct_components_defaults(self, component_kwargs: dict[str, dict[str, Any]] | None = None) -> None:
-        """Test the construct_components successfully builds components with default values.
-
-        This test verifies that the defualt components were built correctly.
-
-        Args:
-            component_kwargs: A dictionary mapping component names to a dictionary of keyword arguments to pass to
-                component constructor.
-        """
         # Create Composite
-        # composite = self.TestClass(component_kwargs=component_kwargs)
+        composite = self.UnitTestClass(*args, **kwargs)
 
         # Validate
-        # assert isinstance(test_object.components["component_name"], ComponentType)
-        # assert isinstance(test_object.components["other_component_name", ComponentType2]
+        assert name in composite.components
+        assert isinstance(composite.components[name], expected_type)
 
-    @abstractmethod
-    def test_dispatch_component_types(self, *args: Any, **kwargs: Any) -> None:
-        """Test the dispatch_component_types method.
+    def test_dispatch_override_types(
+        self,
+        dispatch_args: tuple[tuple[Any, ...], dict[str, Any]],
+        expected_dispatch: tuple[str, type],
+    ) -> None:
+        """Tests that explicit component_types override dispatched types."""
+        args, kwargs = dispatch_args
+        name, _ = expected_dispatch
 
-        This test verifies that the dispatch_component_types method correctly dispatches component types based on the
-        given arguments.
+        if name == "":
+            pytest.skip("Dispatch expectation not implemented.")
 
-        Args:
-            *args: Positional arguments to pass to the dispatch_component_types method.
-            **kwargs: Keyword arguments to pass to the dispatch_component_types method.
-        """
-        # Create Composite
-        # composite = self.TestClass()
+        # Override with UnitTestComponent (defined in BaseCompositeTestSuite)
+        override_type = self.UnitTestComponent
+        component_types: dict[str, tuple[type, dict[str, Any]]] = {name: (override_type, {})}
 
-        # Dispatch Components
-        # dispatched_component_types = composite.dispatch_component_types(*args, **kwargs)
+        # Create Composite with override
+        composite = self.UnitTestClass(*args, component_types=component_types, **kwargs)  # type: ignore[misc]
 
         # Validate
-        # assert dispatched_component_types["name"][0] is ComponentType
+        assert isinstance(composite.components[name], override_type)
+
+    def test_dispatch_override_instances(
+        self,
+        dispatch_args: tuple[tuple[Any, ...], dict[str, Any]],
+        expected_dispatch: tuple[str, type],
+    ) -> None:
+        """Tests that explicit components override dispatched types."""
+        args, kwargs = dispatch_args
+        name, _ = expected_dispatch
+
+        if name == "":
+            pytest.skip("Dispatch expectation not implemented.")
+
+        # Override with UnitTestComponent instance
+        override_instance = self.UnitTestComponent()
+        components = {name: override_instance}
+
+        # Create Composite with override
+        composite = self.UnitTestClass(*args, components=components, **kwargs)  # type: ignore[misc]
+
+        # Validate
+        assert composite.components[name] is override_instance

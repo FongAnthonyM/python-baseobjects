@@ -24,15 +24,15 @@ import copy
 import pickle
 from collections.abc import Callable
 from functools import partial
-from typing import Any, Type
+from typing import Any, ClassVar
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.functions import BaseDecorator
-from src.baseobjects.testsuite.bases import example_coroutine, example_function
-from src.baseobjects.testsuite.functions import BaseDecoratorTestSuite
+from baseobjects.functions import BaseDecorator
+from baseobjects.testsuite.bases import concrete_function
+from baseobjects.testsuite.functions import BaseDecoratorTestSuite
 
 
 # Definitions #
@@ -40,7 +40,13 @@ from src.baseobjects.testsuite.functions import BaseDecoratorTestSuite
 class ConcreteDecorator(BaseDecorator):
     """A concrete implementation of BaseDecorator for testing purposes."""
 
-    def __init__(self, func: Callable | None = None, prefix: str = "Decorated: ", *args: Any, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        func: Callable[..., Any] | None = None,
+        prefix: str = "Decorated: ",
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         """Initialize the decorator with a prefix.
 
         Args:
@@ -61,7 +67,13 @@ class ConcreteDecorator(BaseDecorator):
 
         Returns:
             The result of the wrapped function, with a prefix added if it's a string.
+
+        Raises:
+            ValueError: If the wrapped function is None.
         """
+        if self.__wrapped__ is None:
+            msg = "Wrapped function is None"
+            raise ValueError(msg)
         result = self.__wrapped__(*args, **kwargs)
         if isinstance(result, str):
             return f"{self.prefix}{result}"
@@ -72,15 +84,42 @@ class ConcreteDecorator(BaseDecorator):
 class TestBaseDecorator(BaseDecoratorTestSuite):
     """Test the BaseDecorator class.
 
-    This class tests the functionality of the BaseDecorator class, which extends BaseFunction to create
-    decorator-like callable objects.
+    This class tests the functionality of the BaseDecorator class, which extends BaseFunction to create decorator-like
+    callable objects.
     """
 
     # Attributes #
-    TestClass: type[BaseDecorator] = BaseDecorator
+    UnitTestClass: ClassVar[type[BaseDecorator]] = BaseDecorator
 
     # Instance Methods #
     # Tests
+    def test_init_false(self) -> None:
+        """Test initialization with init=False."""
+        obj = self.UnitTestClass(init=False, _return_partial=False)
+        obj.construct()
+        assert obj.__func__ is None
+
+    def test_init_false_pickling(self) -> None:
+        """Test pickling of an object initialized with init=False."""
+        obj = self.UnitTestClass(init=False, _return_partial=False)
+        dump = pickle.dumps(obj)
+        loaded = pickle.loads(dump)
+        assert loaded.__wrapped__ is None
+
+    def test_is_coroutine(self) -> None:
+        """Test the is_coroutine property."""
+        # Test with standard function
+        obj = self.create_function_object()
+        assert not obj.is_coroutine
+
+        # Test with coroutine function
+        coro_obj = self.create_coroutine_object()
+        assert coro_obj.is_coroutine
+
+        # Test marker is None check
+        obj_none = self.UnitTestClass(_return_partial=False)
+        assert obj_none._is_coroutine_marker is None
+
     def test_instance_creation(self, *args: Any, **kwargs: Any) -> None:
         """Test that instances of the class can be created.
 
@@ -89,160 +128,35 @@ class TestBaseDecorator(BaseDecoratorTestSuite):
             **kwargs: Keyword arguments to pass to the class constructor.
         """
         # Create an instance with a test function
-        instance = self.TestClass(example_function)
+        instance = self.UnitTestClass(concrete_function)
 
         # Verify it's an instance of the correct class
-        assert isinstance(instance, self.TestClass)
+        assert isinstance(instance, self.UnitTestClass)
 
         # Verify it has the correct wrapped function
-        assert instance.__func__ is example_function
+        assert instance.__func__ is concrete_function
 
-    def test_call(self, test_function_object: BaseDecorator) -> None:
-        """Test that the callable object can be called and correctly delegates to the wrapped function.
+    @pytest.mark.parametrize(
+        "decorator_factory",
+        [
+            lambda cls: cls,
+            lambda cls: cls(),
+        ],
+    )
+    def test_decorator_usage(self, decorator_factory: Callable[[type[BaseDecorator]], Any]) -> None:
+        """Tests using the decorator in the standard Python way.
 
-        Args:
-            test_function_object: A fixture providing a BaseDecorator instance that wraps a function.
-        """
-        # Call the callable object
-        result = test_function_object(3)
-
-        # Verify it returns the expected result
-        assert result == 5  # 3 + 2 (default y)
-
-        # Call with different arguments
-        result = test_function_object(3, 4)
-
-        # Verify it returns the expected result
-        assert result == 7  # 3 + 4
-
-    def test_as_function(self, test_function_object: BaseDecorator) -> None:
-        """Test that the callable object can be converted to a standard Python function.
-
-        Args:
-            test_function_object: A fixture providing a BaseDecorator instance that wraps a function.
-        """
-        # Convert to a standard Python function
-        func = test_function_object.as_function()
-
-        # Verify it's a function
-        assert callable(func)
-
-        # Verify it returns the expected result
-        assert func(3) == 5  # 3 + 2 (default y)
-        assert func(3, 4) == 7  # 3 + 4
-
-        # Verify it has the correct attributes
-        assert func.__name__ == test_function_object.__name__
-        assert func.__doc__ == test_function_object.__doc__
-        assert func.__wrapped__ is test_function_object
-
-    def test_call_wrapped(self, test_function_object: BaseDecorator) -> None:
-        """Test that the wrapped function can be called directly.
-
-        Args:
-            test_function_object: A fixture providing a BaseDecorator instance that wraps a function.
-        """
-        # Call the wrapped function directly
-        result = test_function_object.call_wrapped(3)
-
-        # Verify it returns the expected result
-        assert result == 5  # 3 + 2 (default y)
-
-        # Call with different arguments
-        result = test_function_object.call_wrapped(3, 4)
-
-        # Verify it returns the expected result
-        assert result == 7  # 3 + 4
-
-    def test_coroutine(self, test_coroutine_object: BaseDecorator) -> None:
-        """Test that the callable object correctly handles coroutine functions.
-
-        Args:
-            test_coroutine_object: A fixture providing a BaseDecorator instance that wraps a coroutine function.
-        """
-        # Call the coroutine
-        coro = test_coroutine_object(3)
-
-        # Verify it's a coroutine
-        assert asyncio.iscoroutine(coro)
-
-        # Run the coroutine and verify the result
-        result = asyncio.run(coro)
-        assert result == 5  # 3 + 2 (default y)
-
-        # Call with different arguments
-        coro = test_coroutine_object(3, 4)
-        result = asyncio.run(coro)
-
-        # Verify it returns the expected result
-        assert result == 7  # 3 + 4
-
-    def test_as_function_coroutine(self, test_coroutine_object: BaseDecorator) -> None:
-        """Test that the callable object wrapping a coroutine can be converted to a coroutine function.
-
-        Args:
-            test_coroutine_object: A fixture providing a BaseDecorator instance that wraps a coroutine function.
-        """
-        # Convert to a standard Python function
-        func = test_coroutine_object.as_function()
-
-        # Verify it's a function
-        assert callable(func)
-
-        # Call the function and verify it returns a coroutine
-        coro = func(3)
-        assert asyncio.iscoroutine(coro)
-
-        # Run the coroutine and verify the result
-        result = asyncio.run(coro)
-        assert result == 5  # 3 + 2 (default y)
-
-        # Call with different arguments
-        coro = func(3, 4)
-        result = asyncio.run(coro)
-
-        # Verify it returns the expected result
-        assert result == 7  # 3 + 4
-
-    def test_decorator_usage(self) -> None:
-        """Test using the decorator in the standard Python way.
-
-        This test verifies that the decorator can be used in the standard Python way.
+        This test verifies that the decorator can be used in the standard Python way,
+        both as @Decorator and @Decorator().
         """
 
         # Define a function to be decorated
-        @self.TestClass
+        @decorator_factory(self.UnitTestClass)  # type: ignore[untyped-decorator]
         def test_func(x: int, y: int = 2) -> int:
             return x + y
 
         # Verify the decorated function is an instance of the decorator class
-        assert isinstance(test_func, self.TestClass)
-
-        # Verify the decorated function can be called
-        result = test_func(3)
-        assert result == 5  # 3 + 2 (default y)
-
-        # Verify the decorated function can be called with different arguments
-        result = test_func(3, 4)
-        assert result == 7  # 3 + 4
-
-    def test_decorator_with_args(self, *args: Any, **kwargs: Any) -> None:
-        """Test using the decorator with arguments.
-
-        This test verifies that the decorator can be used with arguments.
-
-        Args:
-            *args: Positional arguments to pass to the decorator.
-            **kwargs: Keyword arguments to pass to the decorator.
-        """
-
-        # Define a function to be decorated with arguments
-        @self.TestClass(*args, **kwargs)
-        def test_func(x: int, y: int = 2) -> int:
-            return x + y
-
-        # Verify the decorated function is an instance of the decorator class
-        assert isinstance(test_func, self.TestClass)
+        assert isinstance(test_func, self.UnitTestClass)
 
         # Verify the decorated function can be called
         result = test_func(3)
@@ -253,7 +167,7 @@ class TestBaseDecorator(BaseDecoratorTestSuite):
         assert result == 7  # 3 + 4
 
     def test_concrete_decorator(self) -> None:
-        """Test a concrete implementation of BaseDecorator.
+        """Tests a concrete implementation of BaseDecorator.
 
         This test verifies that a concrete implementation of BaseDecorator works correctly.
         """
@@ -280,7 +194,7 @@ class TestBaseDecorator(BaseDecoratorTestSuite):
         assert custom_decorated() == "Custom: test"
 
     def test_concrete_decorator_usage(self) -> None:
-        """Test using a concrete decorator in the standard Python way.
+        """Tests using a concrete decorator in the standard Python way.
 
         This test verifies that a concrete decorator can be used in the standard Python way.
         """
@@ -302,7 +216,7 @@ class TestBaseDecorator(BaseDecoratorTestSuite):
         assert custom_func() == "Custom: custom"
 
     def test_pickle(self, test_function_object: BaseDecorator) -> None:
-        """Test that the decorator can be pickled and unpickled.
+        """Tests that the decorator can be pickled and unpickled.
 
         Args:
             test_function_object: A fixture providing a BaseDecorator instance that wraps a function.
@@ -314,17 +228,18 @@ class TestBaseDecorator(BaseDecoratorTestSuite):
         unpickled = pickle.loads(pickled)
 
         # Verify the unpickled decorator is an instance of the correct class
-        assert isinstance(unpickled, self.TestClass)
+        assert isinstance(unpickled, self.UnitTestClass)
 
         # Verify the unpickled decorator has the correct wrapped function
-        assert unpickled.__func__.__name__ == test_function_object.__func__.__name__
+        assert unpickled.__func__ is not None
+        assert unpickled.__func__.__name__ == test_function_object.__func__.__name__  # type: ignore[union-attr]
 
         # Verify the unpickled decorator can be called
         result = unpickled(3)
         assert result == 5  # 3 + 2 (default y)
 
     def test_copy(self, test_function_object: BaseDecorator) -> None:
-        """Test that the decorator can be copied.
+        """Tests that the decorator can be copied.
 
         Args:
             test_function_object: A fixture providing a BaseDecorator instance that wraps a function.
@@ -333,7 +248,7 @@ class TestBaseDecorator(BaseDecoratorTestSuite):
         copied = copy.copy(test_function_object)
 
         # Verify the copied decorator is an instance of the correct class
-        assert isinstance(copied, self.TestClass)
+        assert isinstance(copied, self.UnitTestClass)
 
         # Verify the copied decorator has the correct wrapped function
         assert copied.__func__ is test_function_object.__func__
@@ -343,7 +258,7 @@ class TestBaseDecorator(BaseDecoratorTestSuite):
         assert result == 5  # 3 + 2 (default y)
 
     def test_deepcopy(self, test_function_object: BaseDecorator) -> None:
-        """Test that the decorator can be deep copied.
+        """Tests that the decorator can be deep copied.
 
         Args:
             test_function_object: A fixture providing a BaseDecorator instance that wraps a function.
@@ -352,62 +267,52 @@ class TestBaseDecorator(BaseDecoratorTestSuite):
         deepcopied = copy.deepcopy(test_function_object)
 
         # Verify the deep copied decorator is an instance of the correct class
-        assert isinstance(deepcopied, self.TestClass)
+        assert isinstance(deepcopied, self.UnitTestClass)
 
         # Verify the deep copied decorator has the correct wrapped function
-        assert deepcopied.__func__.__name__ == test_function_object.__func__.__name__
+        assert deepcopied.__func__ is not None
+        assert deepcopied.__func__.__name__ == test_function_object.__func__.__name__  # type: ignore[union-attr]
 
         # Verify the deep copied decorator can be called
         result = deepcopied(3)
         assert result == 5  # 3 + 2 (default y)
 
-    def test_no_function(self) -> None:
-        """Test the edge case where no function is provided to the decorator."""
+    @pytest.mark.parametrize(
+        "kwargs",
+        [
+            {},
+            {"func": None},
+        ],
+    )
+    def test_no_function_variants(self, kwargs: dict[str, Any]) -> None:
+        """Tests the edge case where no or None function is provided to the decorator."""
         # Create a decorator without a function
-        decorator = self.TestClass()
+        decorator = self.UnitTestClass(**kwargs)
 
         # Verify it's a partial function
         assert isinstance(decorator, partial)
 
         # Apply the decorator to a function
-        decorated = decorator(example_function)
+        decorated = decorator(concrete_function)
 
         # Verify the decorated function is an instance of the decorator class
-        assert isinstance(decorated, self.TestClass)
-
-        # Verify the decorated function can be called
-        result = decorated(3)
-        assert result == 5  # 3 + 2 (default y)
-
-    def test_none_function(self) -> None:
-        """Test the edge case where None is provided as the function to the decorator."""
-        # Create a decorator with None as the function
-        decorator = self.TestClass(func=None)
-
-        # Verify it's a partial function
-        assert isinstance(decorator, partial)
-
-        # Apply the decorator to a function
-        decorated = decorator(example_function)
-
-        # Verify the decorated function is an instance of the decorator class
-        assert isinstance(decorated, self.TestClass)
+        assert isinstance(decorated, self.UnitTestClass)
 
         # Verify the decorated function can be called
         result = decorated(3)
         assert result == 5  # 3 + 2 (default y)
 
     def test_coroutine_decorator(self) -> None:
-        """Test the edge case where the decorator is applied to a coroutine function."""
+        """Tests the edge case where the decorator is applied to a coroutine function."""
 
         # Define a coroutine to be decorated
-        @self.TestClass
+        @self.UnitTestClass  # type: ignore[untyped-decorator]
         async def test_coro(x: int, y: int = 2) -> int:
             await asyncio.sleep(0.001)  # Simulate some async work
             return x + y
 
         # Verify the decorated coroutine is an instance of the decorator class
-        assert isinstance(test_coro, self.TestClass)
+        assert isinstance(test_coro, self.UnitTestClass)
 
         # Call the decorated coroutine
         coro = test_coro(3)

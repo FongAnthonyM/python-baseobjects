@@ -22,15 +22,39 @@ __version__ = "1.12.0"
 # Local Packages #
 from .basecallabletestsuite import (
     BaseCallableTestSuite,
-    ExampleBindTarget,
-    example_coroutine,
-    example_coroutine_method,
-    example_function,
-    example_method,
+    ConcreteBindTarget,
+    concrete_coroutine,
+    concrete_coroutine_method,
+    concrete_function,
+    concrete_method,
 )
 from .baseclasstestsuite import BaseClassTestSuite
+from .basedicttestsuite import BaseDictTestSuite
 from .basefunctiontestsuite import BaseFunctionTestSuite
+from .baselisttestsuite import BaseListTestSuite
 from .basemethodtestsuite import BaseMethodTestSuite
 from .baseobjecttestsuite import BaseObjectTestSuite
 from .baseperformancetestsuite import BasePerformanceTestSuite, StatsMicro
+from .basereducibletestsuite import BaseReducibleTestSuite
 from .basetestsuite import BaseTestSuite
+from .sentinelobjecttestsuite import SentinelObjectTestSuite
+
+__all__ = [
+    "BaseCallableTestSuite",
+    "BaseClassTestSuite",
+    "BaseDictTestSuite",
+    "BaseFunctionTestSuite",
+    "BaseListTestSuite",
+    "BaseMethodTestSuite",
+    "BaseObjectTestSuite",
+    "BasePerformanceTestSuite",
+    "BaseReducibleTestSuite",
+    "BaseTestSuite",
+    "ConcreteBindTarget",
+    "SentinelObjectTestSuite",
+    "StatsMicro",
+    "concrete_coroutine",
+    "concrete_coroutine_method",
+    "concrete_function",
+    "concrete_method",
+]

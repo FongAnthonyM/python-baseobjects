@@ -19,13 +19,14 @@ __version__ = "1.12.0"
 import timeit
 import zoneinfo
 from datetime import datetime, timedelta, timezone, tzinfo
+from typing import cast
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.operations.timezoneoffset import INIT_DATE, timezone_offset
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.operations.timezoneoffset import timezone_offset
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
@@ -39,7 +40,7 @@ def standard_timezone_offset(tz: tzinfo) -> timedelta:
     Returns:
         The time delta offset of the given timezone.
     """
-    return tz.utcoffset(datetime(1970, 1, 1))
+    return cast(timedelta, tz.utcoffset(datetime(1970, 1, 1, tzinfo=timezone.utc)))
 
 
 # Classes #
@@ -50,10 +51,12 @@ class CustomTimezone(tzinfo):
     """
 
     def __init__(self, hours: int = 1, complex_calculation: bool = False) -> None:
+        """Initialize the custom timezone."""
         self.hours = hours
         self.complex_calculation = complex_calculation
 
-    def utcoffset(self, dt):
+    def utcoffset(self, dt: datetime | None) -> timedelta | None:
+        """Return the offset from UTC."""
         if self.complex_calculation and dt:
             # Simulate a more complex calculation
             if dt.year == 1970 and dt.month == 1 and dt.day == 1:
@@ -64,10 +67,12 @@ class CustomTimezone(tzinfo):
                 return timedelta(hours=self.hours)
         return timedelta(hours=self.hours)
 
-    def dst(self, dt):
+    def dst(self, dt: datetime | None) -> timedelta | None:
+        """Return the daylight saving time adjustment."""
         return timedelta(0)
 
-    def tzname(self, dt) -> str:
+    def tzname(self, dt: datetime | None) -> str | None:
+        """Return the name of the timezone."""
         return f"CustomTZ({self.hours})"
 
 
@@ -137,7 +142,7 @@ class TestTimezoneOffset(BasePerformanceTestSuite):
         """
         try:
             return zoneinfo.ZoneInfo("America/New_York")
-        except (ImportError, zoneinfo.ZoneInfoNotFoundError):
+        except ImportError, zoneinfo.ZoneInfoNotFoundError:
             pytest.skip("zoneinfo module not available or timezone not found")
 
     # Tests
@@ -279,7 +284,8 @@ class TestTimezoneOffset(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNew (timezone_offset complex custom): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)",
+            f"\nNew (timezone_offset complex custom): {mean_new:.3f} μs ({percent:.3f}% "
+            f"of standard implementation time)",
         )
         assert percent < self.speed_tolerance
 

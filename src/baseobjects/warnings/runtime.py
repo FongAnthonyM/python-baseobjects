@@ -13,9 +13,6 @@ __license__ = "MIT"
 __version__ = "1.12.0"
 
 
-# Imports #
-
-
 # Definitions #
 # Classes #
 class NotImplementedWarning(RuntimeWarning):
@@ -24,7 +21,7 @@ class NotImplementedWarning(RuntimeWarning):
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, name: str = "A method or function") -> None:
-        """Initialize the warning for unimplemented callables.
+        """Initializes this object with the given arguments.
 
         Args:
             name: Descriptive name of the method or function that is not implemented.
@@ -39,7 +36,7 @@ class TimeoutWarning(Warning):
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, name: str = "A function") -> None:
-        """Initialize the timeout warning.
+        """Initializes this object with the given arguments.
 
         Args:
             name: Descriptive name of the function that timed out.

@@ -12,8 +12,6 @@ This example demonstrates:
 
 
 # Imports #
-# Standard Libraries #
-
 # Source Packages #
 from baseobjects.collections import CircularDoublyLinkedContainer
 from baseobjects.collections.circulardoublylinkedcontainer import LinkedNode
@@ -46,9 +44,11 @@ def basic_usage_example() -> None:
     # Access nodes
     print("\nAccessing nodes:")
     first_node = container.first_node
+    assert first_node is not None
     print(f"First node data: {first_node.data} == 'First Node'")
 
     last_node = container.last_node
+    assert last_node is not None
     print(f"Last node data: {last_node.data} == 'Third Node'")
 
     # Access by index
@@ -226,12 +226,20 @@ def custom_node_example() -> None:
     # Demonstrate that the nodes are properly linked
     print("\nNavigating through nodes directly:")
     current = container.first_node
+    assert current is not None
+    assert current.next is not None
+    assert current.next.next is not None
+    assert current.next.next.next is not None
+
     print(f"First node: {current.data}")
     print(f"Next node: {current.next.data}")
     print(f"Next node's next: {current.next.next.data}")
     print(f"Next node's next's next (circular): {current.next.next.next.data}")
 
     print("\nNavigating backwards:")
+    assert current.previous is not None
+    assert current.previous.previous is not None
+
     print(f"First node's previous (circular): {current.previous.data}")
     print(f"Previous node's previous: {current.previous.previous.data}")
 

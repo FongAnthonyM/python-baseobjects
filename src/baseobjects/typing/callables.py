@@ -20,7 +20,7 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 from collections.abc import Callable
-from typing import Any
+from typing import Any, Protocol, overload
 
 # Definitions #
 # Types #
@@ -28,8 +28,43 @@ from typing import Any
 AnyCallable = Callable[..., Any]
 AnyCallableType = Callable[..., type[Any]]
 
-# Objects
-GetObjectMethod = Callable[[Any, Any, type[Any] | None, ...], Any]
+
+# Methods
+class DescriptorGetMethod(Protocol):
+    """Protocol for a descriptor that implements ``__get__``."""
+
+    # Any Callable Protocol #
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        """Call the object."""
+        ...
+
+    # Descriptor Protocol #
+    @overload
+    def __get__(self, instance: None, owner: Any) -> DescriptorGetMethod: ...
+    @overload
+    def __get__(self, instance: Any, owner: Any) -> Callable[..., Any]: ...  # Returns bound method
+    def __get__(self, instance: Any, owner: Any) -> Callable[..., Any]:
+        """Returns the attribute value."""
+        ...
+
+
+class CallMethod(Protocol):
+    """Protocol for a callable that also implements ``__get__``."""
+
+    # Any Callable Protocol #
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        """Call the object."""
+        ...
+
+    # Descriptor Protocol #
+    @overload
+    def __get__(self, instance: None, owner: Any) -> DescriptorGetMethod: ...
+    @overload
+    def __get__(self, instance: Any, owner: Any) -> Callable[..., Any]: ...  # Returns bound method
+    def __get__(self, instance: Any, owner: Any) -> Callable[..., Any]:
+        """Returns the attribute value."""
+        ...
+
 
 # Getters, Setters, and Deletes
 GetterMethod = Callable[[Any], Any]
@@ -41,8 +76,9 @@ PropertyCallbacks = tuple[GetterMethod, SetterMethod, DeleteMethod]
 __all__ = [
     "AnyCallable",
     "AnyCallableType",
+    "CallMethod",
     "DeleteMethod",
-    "GetObjectMethod",
+    "DescriptorGetMethod",
     "GetterMethod",
     "PropertyCallbacks",
     "SetterMethod",

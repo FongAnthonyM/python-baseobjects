@@ -32,7 +32,7 @@ from typing import Any, ClassVar, get_type_hints
 # Local Packages #
 from ..bases import SEARCHSENTINEL, BaseObject
 from ..metaclasses import InitMeta
-from ..typing import AnyCallable, PropertyCallbacks
+from ..typing import PropertyCallbacks
 
 
 # Definitions #
@@ -65,11 +65,11 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
     """
 
     # Class Attributes #
-    __original_dir_set: ClassVar[str | None] = None
+    __original_dir_set: ClassVar[set[str] | None] = None
     _get_previous_wrapped: ClassVar[bool] = False
     _set_next_wrapped: ClassVar[bool] = True
 
-    _wrapped_map_: ClassVar[list[[str, type[Any]], ...]] = []
+    _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = []
     _exclude_attributes: ClassVar[set[str]] = {"__slotnames__"}
     _wrapped_attributes: ClassVar[dict[str, set[str]]] = {}
 
@@ -145,7 +145,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         return get_wrapped_attribute, set_wrapped_attribute, del_wrapped_attribute
 
     @classmethod
-    def _wrapped_method_factory(cls, store_name: str, method_name: str) -> AnyCallable:
+    def _wrapped_method_factory(cls, store_name: str, method_name: str) -> Any:
         """A factory for creating method functions for accessing a wrapped objects' methods.
 
         Args:
@@ -169,13 +169,14 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             cls._class_wrap()
 
     @classmethod
-    def _class_wrap(cls, wrapped: list[[str, type[Any]], ...] | None = None) -> None:
+    def _class_wrap(cls, wrapped: list[tuple[str, type[Any] | None]] | None = None) -> None:
         """Adds attributes from embedded objects as properties.
 
         Args:
             wrapped: A list of tuples containing the name of the attribute to wrap and the type of the object to wrap.
         """
-        remove_names = cls.__original_dir_set | cls._exclude_attributes
+        original = cls.__original_dir_set if cls.__original_dir_set is not None else set()
+        remove_names = original | cls._exclude_attributes
         if wrapped is None:
             wrapped = cls._wrapped_map_
 
@@ -205,12 +206,13 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         This method removes all property descriptors that were added to the class by the _class_wrap method. It restores
         the class to its original statebefore any wrapping was done.
         """
-        for name in set(dir(cls)) - cls.__original_dir_set:
+        original = cls.__original_dir_set if cls.__original_dir_set is not None else set()
+        for name in set(dir(cls)) - original:
             if isinstance(getattr(cls, name, None), property):
                 delattr(cls, name)
 
     @classmethod
-    def _class_rewrap(cls, wrapped: list[[str, type[Any]], ...] | None = None) -> None:
+    def _class_rewrap(cls, wrapped: list[tuple[str, type[Any] | None]] | None = None) -> None:
         """Removes all attributes added from other objects then adds attributes from the embedded objects.
 
         This method is a combination of _class_unwrap and _class_wrap. It first removes all property descriptors that
@@ -234,7 +236,8 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         This method should be called after the wrapped objects have been set on the instance. It may also need to be
         called again if the wrapped objects' attributes change.
         """
-        remove_names = self.__original_dir_set | self._exclude_attributes
+        original = self.__original_dir_set if self.__original_dir_set is not None else set()
+        remove_names = original | self._exclude_attributes
         cls = self.__class__
         for name, _ in self._wrapped_map_:
             # Create an attribute name to store the wrapped object
@@ -276,20 +279,20 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         """
         # Get wrapped attribute names
         wrapped_names = self._wrapped_attributes[name]
-        old_attributes = {}
+        old_attributes: dict[str, Any] = {}
 
         # Get the previous wrapped's attributes as temporary attributes
         if self._get_previous_wrapped:
-            previous_wrapped = getattr(self, name)
-            if value is None:
+            previous_wrapped = getattr(self, name, None)
+            if value is None and previous_wrapped is not None:
                 for attribute_name in wrapped_names:
                     if (attribute := getattr(previous_wrapped, attribute_name, SEARCHSENTINEL)) is not SEARCHSENTINEL:
                         setattr(self, f"__{name}_{attribute_name}_", attribute)
-            elif self._set_next_wrapped:
+            elif self._set_next_wrapped and previous_wrapped is not None:
                 old_attributes.update((a, getattr(previous_wrapped, a, SEARCHSENTINEL)) for a in wrapped_names)
 
         # Set new attributes
-        if self._set_next_wrapped:
+        if self._set_next_wrapped and value is not None:
             for attribute_name in wrapped_names:
                 temp_name = f"__{name}_{attribute_name}_"
                 temp_attribute = getattr(self, temp_name, SEARCHSENTINEL)
@@ -307,11 +310,12 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             name: The attribute name to delete the wrapped object from.
         """
         if self._get_previous_wrapped:
-            previous_wrapped = getattr(self, name)
-            wrapped_names = self._wrapped_attributes[name]
-            for attribute_name in wrapped_names:
-                if (attribute := getattr(previous_wrapped, attribute_name, SEARCHSENTINEL)) is not SEARCHSENTINEL:
-                    setattr(self, f"__{name}_{attribute_name}_", attribute)
+            previous_wrapped = getattr(self, name, None)
+            wrapped_names = self._wrapped_attributes.get(name, set())
+            if previous_wrapped is not None:
+                for attribute_name in wrapped_names:
+                    if (attribute := getattr(previous_wrapped, attribute_name, SEARCHSENTINEL)) is not SEARCHSENTINEL:
+                        setattr(self, f"__{name}_{attribute_name}_", attribute)
 
         delattr(self, name)
 
@@ -329,7 +333,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         Raises:
             AttributeError: If the attribute cannot be found.
         """
-        if (wrapped := getattr(self, wrapped_name, SEARCHSENTINEL)) is not SEARCHSENTINEL:
+        if (wrapped := getattr(self, wrapped_name, SEARCHSENTINEL)) is not SEARCHSENTINEL and wrapped is not None:
             return getattr(wrapped, attribute_name)
         else:
             try:
@@ -346,7 +350,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             wrapped_name: The attribute name of the wrapped object.
             attribute_name: The attribute name of the attribute to set from the wrapped object.
         """
-        if (wrapped := getattr(self, wrapped_name, SEARCHSENTINEL)) is not SEARCHSENTINEL:
+        if (wrapped := getattr(self, wrapped_name, SEARCHSENTINEL)) is not SEARCHSENTINEL and wrapped is not None:
             setattr(wrapped, attribute_name, value)
         else:
             setattr(self, f"__{wrapped_name}_{attribute_name}_", value)
@@ -357,13 +361,19 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         Args:
             wrapped_name: The attribute name of the wrapped object.
             attribute_name: The attribute name of the attribute to delete from the wrapped object.
+
+        Raises:
+            AttributeError: If the attribute cannot be found.
         """
-        if (wrapped := getattr(self, wrapped_name, SEARCHSENTINEL)) is not SEARCHSENTINEL:
+        if (wrapped := getattr(self, wrapped_name, SEARCHSENTINEL)) is not SEARCHSENTINEL and wrapped is not None:
             delattr(wrapped, attribute_name)
 
         temp_name = f"__{wrapped_name}_{attribute_name}_"
         if hasattr(self, temp_name):
             delattr(self, temp_name)
+        elif wrapped is None or wrapped is SEARCHSENTINEL:
+            msg = f"'{self.__class__.__name__}' object has no attribute '{attribute_name}'"
+            raise AttributeError(msg) from None
 
     # Wrapped Methods
     def _wrapped_method_call(self, wrapped_name: str, method_name: str, /, *args: Any, **kwargs: Any) -> Any:

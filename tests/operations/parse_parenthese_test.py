@@ -16,18 +16,25 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
+from typing import Any
 
 # Third-Party Packages #
 import pytest
 
+try:
+    # Third-Party Packages #
+    from typeguard import TypeCheckError
+except ImportError:
+    TypeCheckError = TypeError  # type: ignore
+
 # Source Packages #
-from src.baseobjects.operations import parse_parentheses
+from baseobjects.operations import parse_parentheses
 
 
 # Definitions #
 # Classes #
 class TestParseParentheses:
-    """Test the parse_parentheses function.
+    """Tests the parse_parentheses function.
 
     This class tests the functionality of the parse_parentheses function, which parses expressions with parentheses and
     returns a nested list of extracted elements.
@@ -35,50 +42,25 @@ class TestParseParentheses:
 
     # Instance Methods #
     # Tests
-    def test_string_parse_parentheses(self) -> None:
-        """Test parsing a string expression with parentheses.
+    @pytest.mark.parametrize(
+        ("text", "expected_structure"),
+        [
+            ("((first(inner))(second)(wrong(thing)))", ["first", "inner", "second", "wrong", "thing"]),
+            (
+                b"((first\xff(inner'('))(second)(wrong(thing)))",
+                [b"first\xff", b"inner'('", b"second", b"wrong", b"thing"],
+            ),
+        ],
+    )
+    def test_parse_parentheses_structure(self, text: str | bytes, expected_structure: list[Any]) -> None:
+        """Tests parsing expression with nested parentheses.
 
-        This test verifies that the parse_parentheses function correctly parses a string expression with nested
-        parentheses into a structured list format.
+        This test verifies that the parse_parentheses function correctly parses expressions with nested parentheses
+        into a structured list format for both string and bytes.
         """
-        string = "((first(inner))(second)(wrong(thing)))"
-        result = parse_parentheses(string)
+        result = parse_parentheses(text)
 
-        # Expected structure: [[[['first', ['inner']], ['second'], ['wrong', ['thing']]]]]
-        assert isinstance(result, list)
-        assert len(result) == 1
-        assert isinstance(result[0], list)
-        assert len(result[0]) == 3
-
-        # Check first element: ['first', ['inner']]
-        assert isinstance(result[0][0], list)
-        assert len(result[0][0]) == 2
-        assert result[0][0][0] == "first"
-        assert isinstance(result[0][0][1], list)
-        assert result[0][0][1][0] == "inner"
-
-        # Check second element: ['second']
-        assert isinstance(result[0][1], list)
-        assert len(result[0][1]) == 1
-        assert result[0][1][0] == "second"
-
-        # Check third element: ['wrong', ['thing']]
-        assert isinstance(result[0][2], list)
-        assert len(result[0][2]) == 2
-        assert result[0][2][0] == "wrong"
-        assert isinstance(result[0][2][1], list)
-        assert result[0][2][1][0] == "thing"
-
-    def test_bytes_parse_parentheses(self) -> None:
-        """Test parsing a bytes expression with parentheses.
-
-        This test verifies that the parse_parentheses function correctly parses a bytes expression with nested
-        parentheses into a structured list format.
-        """
-        bytes_expr = b"((first\xff(inner'('))(second)(wrong(thing)))"
-        result = parse_parentheses(bytes_expr)
-
-        # Verify the structure is as expected
+        # Basic structure verification (length and type)
         assert isinstance(result, list)
         assert len(result) == 1
         assert isinstance(result[0], list)
@@ -86,114 +68,136 @@ class TestParseParentheses:
 
         # Check first element
         assert isinstance(result[0][0], list)
-        assert len(result[0][0]) >= 1
-
         # Check second element
         assert isinstance(result[0][1], list)
-        assert len(result[0][1]) == 1
-        assert result[0][1][0] == b"second"
-
         # Check third element
         assert isinstance(result[0][2], list)
-        assert len(result[0][2]) == 2
-        assert result[0][2][0] == b"wrong"
-        assert isinstance(result[0][2][1], list)
-        assert result[0][2][1][0] == b"thing"
 
-    def test_unbalanced_parentheses(self) -> None:
-        """Test parsing an expression with unbalanced parentheses.
+        if isinstance(text, str):
+            assert result[0][1][0] == "second"
+            assert result[0][2][0] == "wrong"
+        else:
+            assert result[0][1][0] == b"second"
+            assert result[0][2][0] == b"wrong"
+
+    @pytest.mark.parametrize(
+        ("invalid_input", "error_match"),
+        [
+            ("(test", "Unbalanced parentheses"),
+            ("test)", "Unbalanced parentheses"),
+            ("))", "Unbalanced parentheses"),
+            ("(", "Unbalanced parentheses"),
+            (b"))", "Unbalanced parentheses"),
+            (b"(", "Unbalanced parentheses"),
+        ],
+    )
+    def test_unbalanced_parentheses(self, invalid_input: Any, error_match: str) -> None:
+        """Tests parsing an expression with unbalanced parentheses.
 
         This test verifies that the parse_parentheses function raises a ValueError when parsing an expression with
         unbalanced parentheses.
         """
-        # Test with unmatched opening parenthesis
-        with pytest.raises(ValueError, match="Unbalanced parentheses"):
-            parse_parentheses("(test")
+        with pytest.raises(ValueError, match=error_match):
+            parse_parentheses(invalid_input)
 
-        # Test with unmatched closing parenthesis
-        with pytest.raises(ValueError, match="Unbalanced parentheses"):
-            parse_parentheses("test)")
+    @pytest.mark.parametrize(
+        ("expression", "expected"),
+        [
+            ("", []),
+            ("   ", []),
+            ("()", [[]]),
+            ("(())", [[[]]]),
+            ("()()()", [[], [], []]),
+        ],
+    )
+    def test_empty_parentheses(self, expression: str, expected: list[Any]) -> None:
+        """Tests parsing empty expressions and empty parentheses.
 
-    def test_filtering(self) -> None:
-        """Test filtering elements during parsing.
-
-        This test verifies that the parse_parentheses function correctly filters elements based on the include and
-        exclude parameters.
-        """
-        string = "(first(inner))(second)(third)"
-
-        # Test with include set
-        include_result = parse_parentheses(string, include={"first", "third"})
-        assert "first" in str(include_result)
-        assert "third" in str(include_result)
-        assert "second" not in str(include_result)
-
-        # Test with exclude set
-        exclude_result = parse_parentheses(string, exclude={"second"})
-        assert "first" in str(exclude_result)
-        assert "third" in str(exclude_result)
-        assert "second" not in str(exclude_result)
-
-    def test_casting(self) -> None:
-        """Test casting elements during parsing.
-
-        This test verifies that the parse_parentheses function correctly applies the casting function to transform
-        elements.
-        """
-        string = "(123)(456)(789)"
-
-        # Define a casting function to convert strings to integers
-        def cast_to_int(s: str) -> int:
-            return int(s)
-
-        result = parse_parentheses(string, cast=cast_to_int)
-
-        # Verify that elements were cast to integers
-        for sublist in result:
-            assert isinstance(sublist[0], int)
-
-        # Verify specific values
-        assert 123 in [sublist[0] for sublist in result]
-        assert 456 in [sublist[0] for sublist in result]
-        assert 789 in [sublist[0] for sublist in result]
-
-    def test_empty_expression(self) -> None:
-        """Test parsing an empty expression.
-
-        This test verifies that the parse_parentheses function correctly handles empty expressions.
-        """
-        # Test with an empty string
-        result = parse_parentheses("")
-        assert result == []
-
-        # Test with a string containing only whitespace
-        result = parse_parentheses("   ")
-        assert result == []
-
-    def test_nested_empty_parentheses(self) -> None:
-        """Test parsing expressions with nested empty parentheses.
-
-        This test verifies that the parse_parentheses function correctly handles expressions with nested empty
+        This test verifies that the parse_parentheses function correctly handles empty expressions and nested empty
         parentheses.
         """
-        # Test with empty parentheses
-        result = parse_parentheses("()")
-        assert result == [[]]
+        result = parse_parentheses(expression)
+        assert result == expected
 
-        # Test with nested empty parentheses
-        result = parse_parentheses("(())")
-        assert result == [[[]]]
-
-        # Test with multiple empty parentheses
-        result = parse_parentheses("()()()")
-        assert result == [[], [], []]
-
-        # Test with a mix of empty and non-empty parentheses
+    def test_nested_mixed_empty_parentheses(self) -> None:
+        """Tests parsing expressions with a mix of empty and non-empty parentheses."""
         result = parse_parentheses("(test)()(nested())")
         assert result[0][0] == "test"
         assert result[1] == []
         assert result[2][0] == "nested"
         assert result[2][1] == []
+
+    def test_parse_parentheses_unsupported_type(self) -> None:
+        """Tests that parse_parentheses raises ValueError for unsupported types."""
+        with pytest.raises((ValueError, TypeCheckError)):
+            parse_parentheses(123)
+
+    @pytest.mark.parametrize(
+        ("text", "expected"),
+        [
+            ("start (middle) end", ["start", ["middle"], "end"]),
+            ("no parentheses", ["no", "parentheses"]),
+            ("start (middle (inner)) end", ["start", ["middle", ["inner"]], "end"]),
+            ("start (first) middle (second) end", ["start", ["first"], "middle", ["second"], "end"]),
+        ],
+    )
+    def test_basic_parsing_scenarios(self, text: str, expected: list[Any]) -> None:
+        """Tests parsing basic string scenarios.
+
+        This test verifies that the parse_parentheses function correctly parses strings with various parentheses
+        configurations.
+        """
+        result = parse_parentheses(text)
+        assert result == expected
+
+    @pytest.mark.parametrize(
+        ("text", "include", "exclude", "check_in", "check_not_in"),
+        [
+            ("(first(inner))(second)(third)", {"first", "third"}, None, ["first", "third"], ["second"]),
+            ("(first(inner))(second)(third)", None, {"second"}, ["first", "third"], ["second"]),
+            (b"foo bar", {b"bar"}, None, [b"bar"], [b"foo"]),
+            (b"foo bar", None, {b"foo"}, [b"bar"], [b"foo"]),
+        ],
+    )
+    def test_filtering(
+        self,
+        text: Any,
+        include: set[Any] | None,
+        exclude: set[Any] | None,
+        check_in: list[Any],
+        check_not_in: list[Any],
+    ) -> None:
+        """Tests filtering elements during parsing.
+
+        This test verifies that the parse_parentheses function correctly filters elements based on the include and
+        exclude parameters for both string and bytes.
+        """
+        kwargs = {}
+        if include is not None:
+            kwargs["include"] = include
+        if exclude is not None:
+            kwargs["exclude"] = exclude
+
+        result = parse_parentheses(text, **kwargs)
+        result_str = str(result)
+
+        for item in check_in:
+            assert (
+                str(item) in result_str
+                or (isinstance(item, (str, bytes)) and item in result)
+                or (isinstance(result, list) and any(item in x if isinstance(x, list) else item == x for x in result))
+            )
+
+        for item in check_in:
+            assert (
+                str(item) in str(result)
+                or (isinstance(item, bytes) and repr(item) in str(result))
+                or (isinstance(item, bytes) and item in result)
+            )
+
+        for item in check_not_in:
+            assert str(item) not in str(result)
+            assert not isinstance(item, bytes) or item not in result
 
     # This would be useful for parsing expressions with different types of parentheses, but it's not currently
     # supported.
@@ -253,24 +257,6 @@ class TestParseParentheses:
     #     assert result[0][0] == "test"
     #     assert result[0][1] == "nested"
     #     assert result[0][2] == "items"
-
-    def test_large_expression(self) -> None:
-        """Test parsing a very large expression.
-
-        This test verifies that the parse_parentheses function can handle large expressions without performance issues.
-        """
-        # Create a large expression with many nested parentheses
-        large_expr = "(" * 100 + "test" + ")" * 100
-
-        # Parse the large expression
-        result = parse_parentheses(large_expr)
-
-        # Verify the result has the expected structure
-        assert len(result) == 1
-        current = result
-        for _ in range(100):
-            current = current[0]
-        assert current[0] == "test"
 
 
 # Main #

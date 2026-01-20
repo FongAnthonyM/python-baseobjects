@@ -12,7 +12,7 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar
+from typing import Any, ClassVar, cast
 
 # Source Packages #
 from baseobjects.classregistration import NamespaceClassRegistry
@@ -171,23 +171,23 @@ class TextProcessor(BaseDispatchingComposite):
     # Constructors/Destructors
     def construct(
         self,
-        name: str | None = None,
-        namespace: str | None = None,
-        class_name: str | None = None,
         component_kwargs: dict[str, dict[str, Any]] | None = None,
         component_types: dict[str, tuple[type, dict[str, Any]]] | None = None,
         components: dict[str, Any] | None = None,
+        name: str | None = None,
+        namespace: str | None = None,
+        class_name: str | None = None,
         **kwargs: Any,
     ) -> None:
         """Construct this object.
 
         Args:
-            name: The name of the component to add.
-            namespace: The namespace of the component to add.
-            class_name: The class name of the component to add.
             component_kwargs: Keyword arguments for creating the components.
             component_types: Component classes and their keyword arguments to instantiate.
             components: Components to add.
+            name: The name of the component to add.
+            namespace: The namespace of the component to add.
+            class_name: The class name of the component to add.
             **kwargs: Additional keyword arguments.
         """
         if name is not None and namespace is not None and class_name is not None:
@@ -220,7 +220,14 @@ class TextProcessor(BaseDispatchingComposite):
         Returns:
             A dictionary of the names of the components, their types, and their keyword arguments.
         """
-        return {name: self.component_types_registry.get_class(namespace, class_name, *args, with_kwargs=True, **kwargs)}
+        # Ensure 'with_kwargs' is not in kwargs twice if passed
+        kwargs.pop("with_kwargs", None)
+        return {
+            name: cast(
+                tuple[type, dict[str, Any]],
+                self.component_types_registry.get_class(namespace, class_name, with_kwargs=True, **kwargs),
+            ),
+        }
 
     def process_text(self, text: str, component_name: str) -> str:
         """Process text using the specified component.
@@ -240,7 +247,7 @@ class TextProcessor(BaseDispatchingComposite):
             raise ValueError(msg)
 
         component = self.components[component_name]
-        return component.process(text)
+        return cast(str, component.process(text))
 
 
 # Register components in the registry

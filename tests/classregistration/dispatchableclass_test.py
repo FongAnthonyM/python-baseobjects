@@ -15,16 +15,14 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-import copy
-import pickle
-from typing import Any, ClassVar, Optional, Tuple, Type
+from typing import Any, ClassVar, Optional, cast
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.classregistration import BaseClassRegistry, DispatchableClass
-from src.baseobjects.testsuite.classregistration import DispatchableClassTestSuite
+from baseobjects.classregistration import BaseClassRegistry, DispatchableClass
+from baseobjects.testsuite.classregistration import DispatchableClassTestSuite
 
 
 # Definitions #
@@ -57,15 +55,15 @@ class ConcreteClassRegistry(BaseClassRegistry):
 
 
 class TestDispatchableClass(DispatchableClassTestSuite):
-    """Test the DispatchableClass class.
+    """Tests the DispatchableClass class.
 
-    This class tests the functionality of the DispatchableClass class, which is an abstract class
-    that dispatches to subclasses based on arguments. It creates test subclasses of
-    DispatchableClass to test with since DispatchableClass is abstract.
+    This class tests the functionality of the DispatchableClass class, which is an abstract class that dispatches to
+    subclasses based on arguments. It creates test subclasses of DispatchableClass to test with since DispatchableClass
+    is abstract.
     """
 
     # Class Definitions #
-    class ExampleDispatchableClass(DispatchableClass):
+    class ConcreteDispatchableClass(DispatchableClass):
         """A base test subclass of DispatchableClass for testing purposes."""
 
         # Class Attributes #
@@ -101,7 +99,7 @@ class TestDispatchableClass(DispatchableClassTestSuite):
                 cls.class_registry.register_class(cls)
 
         @classmethod
-        def get_registered_class(cls, name: str, default: Any = None) -> Optional["DispatchableClass"]:
+        def get_registered_class(cls, name: str, default: Any = None) -> Optional["DispatchableClass"]:  # type: ignore[override]
             """Gets a subclass from the registry.
 
             Args:
@@ -112,158 +110,126 @@ class TestDispatchableClass(DispatchableClassTestSuite):
                 The requested subclass or the default value.
             """
             if cls.class_registry is None:
-                return default
-            return cls.class_registry.get_class(name, default)
+                return cast("DispatchableClass | None", default)
+            return cast("DispatchableClass | None", cls.class_registry.get_class(name, default))
 
-    class TypeADispatchable(ExampleDispatchableClass):
-        """A subclass of ExampleDispatchableClass for testing dispatching to type A."""
+    class TypeADispatchable(ConcreteDispatchableClass):
+        """A subclass of ConcreteDispatchableClass for testing dispatching to type A."""
 
         class_registration = True
 
-    class TypeBDispatchable(ExampleDispatchableClass):
-        """A subclass of ExampleDispatchableClass for testing dispatching to type B."""
+    class TypeBDispatchable(ConcreteDispatchableClass):
+        """A subclass of ConcreteDispatchableClass for testing dispatching to type B."""
 
         class_registration = True
 
     # Attributes #
-    TestClass: type[ExampleDispatchableClass] = ExampleDispatchableClass
+    UnitTestClass: ClassVar[type[ConcreteDispatchableClass]] = ConcreteDispatchableClass
 
     # Instance Methods #
     # Tests
-    def test_copy(self, test_object: Any) -> None:
-        """Test the copy behavior of the object.
-
-        This test verifies that copy creates a new object with the same attributes.
-
-        Args:
-            test_object: A fixture providing a test object instance.
-        """
-        # Copy Object
-        obj_copy = copy.copy(test_object)
-
-        # Validate
-        assert obj_copy is not test_object
-        assert isinstance(obj_copy, self.TestClass)
-
-    def test_copy_method(self, test_object: Any) -> None:
-        """Test the copy method behavior of the object.
-
-        This test verifies that copy creates a new object with the same attributes.
-
-        Args:
-            test_object: A fixture providing a test object instance.
-        """
-        # Copy Object
-        obj_copy = test_object.copy()
-
-        # Validate
-        assert obj_copy is not test_object
-        assert isinstance(obj_copy, self.TestClass)
-
-    def test_deepcopy(self, test_object: Any, memo: dict | None = None) -> None:
-        """Test the deep copy behavior of the object.
-
-        This test verifies that deepcopy creates a new object with new mutable attributes but the same immutable
-        attributes.
-
-        Args:
-            test_object: A fixture providing a test object instance.
-            memo: A memo dictionary to pass to deepcopy.
-        """
-        # Deep Copy Object
-        if memo is None:
-            memo = {}
-        obj_deepcopy = copy.deepcopy(test_object, memo=memo)
-
-        # Validate
-        assert obj_deepcopy is not test_object
-        assert isinstance(obj_deepcopy, self.TestClass)
-
-    def test_deepcopy_method(self, test_object: Any, memo: dict | None = None) -> None:
-        """Test the deepcopy method behavior of the object.
-
-        This test verifies that deepcopy creates a new object with new mutable attributes but the same immutable
-        attributes.
-
-        Args:
-            test_object: A fixture providing a test object instance.
-            memo: A memo dictionary to pass to deepcopy.
-        """
-        # Deep Copy Object
-        if memo is None:
-            memo = {}
-        obj_deepcopy = test_object.deepcopy(memo=memo)
-
-        # Validate
-        assert obj_deepcopy is not test_object
-        assert isinstance(obj_deepcopy, self.TestClass)
-
-    def test_pickling(self, test_object: Any) -> None:
-        """Test pickling and unpickling of the object.
-
-        This test verifies that the object can be pickled and unpickled correctly.
-
-        Args:
-            test_object: A fixture providing a test object instance.
-        """
-        # Pickle and Unpickle Object
-        pickled = pickle.dumps(test_object)
-        unpickled = pickle.loads(pickled)
-
-        # Validate
-        assert unpickled is not test_object
-        assert isinstance(unpickled, self.TestClass)
-
-    def test_get_class_information(self, *args: Any, **kwargs: Any) -> None:
-        """Test the get_class_information method.
+    @pytest.mark.parametrize(
+        ("args", "kwargs", "expected"),
+        [
+            (("TypeADispatchable",), {}, ("TypeADispatchable",)),
+            ((), {"type": "TypeBDispatchable"}, ("TypeBDispatchable",)),
+            ((123,), {"irrelevant": "value"}, ("ConcreteDispatchableClass",)),
+        ],
+    )
+    def test_get_class_information(self, args: tuple[Any, ...], kwargs: dict[str, Any], expected: tuple[str]) -> None:
+        """Tests the get_class_information method.
 
         This test verifies that the get_class_information method correctly extracts class information from arguments.
 
         Args:
-            *args: Positional arguments to test the get_class_information method.
-            **kwargs: Keyword arguments to test the get_class_information method.
+            args: Positional arguments to test the get_class_information method.
+            kwargs: Keyword arguments to test the get_class_information method.
+            expected: The expected class information tuple.
         """
-        # Test with positional argument
-        info = self.TestClass.get_class_information("TypeADispatchable")
-        assert info == ("TypeADispatchable",)
+        info = self.UnitTestClass.get_class_information(*args, **kwargs)
+        assert info == expected
 
-        # Test with keyword argument
-        info = self.TestClass.get_class_information(type="TypeBDispatchable")
-        assert info == ("TypeBDispatchable",)
-
-        # Test with no relevant arguments
-        info = self.TestClass.get_class_information(123, irrelevant="value")
-        assert info == (self.TestClass.__name__,)
-
-    def test_class_dispatch(self, *args: Any, **kwargs: Any) -> None:
-        """Test class dispatching.
+    @pytest.mark.parametrize(
+        ("args", "kwargs", "expected_class_name", "strict_type"),
+        [
+            (("TypeADispatchable",), {}, "TypeADispatchable", False),
+            ((), {"type": "TypeBDispatchable"}, "TypeBDispatchable", False),
+            (("UnknownType",), {}, "ConcreteDispatchableClass", True),
+            ((), {}, "ConcreteDispatchableClass", True),
+        ],
+    )
+    def test_class_dispatch_variations(
+        self,
+        args: tuple[Any, ...],
+        kwargs: dict[str, Any],
+        expected_class_name: str,
+        strict_type: bool,
+    ) -> None:
+        """Tests class dispatching variations.
 
         Args:
-            *args: Positional arguments to test the class dispatching.
-            **kwargs: Keyword arguments to test the class dispatching.
+            args: Positional arguments to test the class dispatching.
+            kwargs: Keyword arguments to test the class dispatching.
+            expected_class_name: The name of the expected class of the instance.
+            strict_type: Whether to check strict type equality.
         """
-        # Test dispatching with positional argument
-        instance = self.TestClass("TypeADispatchable")
-        assert isinstance(instance, self.TypeADispatchable)
+        if expected_class_name == "ConcreteDispatchableClass":
+            expected_class = self.UnitTestClass
+        else:
+            expected_class = getattr(self, expected_class_name)
 
-        # Test dispatching with keyword argument
-        instance = self.TestClass(type="TypeBDispatchable")
-        assert isinstance(instance, self.TypeBDispatchable)
+        instance = self.UnitTestClass(*args, **kwargs)
+        assert isinstance(instance, expected_class)
+        if strict_type:
+            assert type(instance) is expected_class
 
-        # Test dispatching with unknown type
-        instance = self.TestClass("UnknownType")
-        assert isinstance(instance, self.TestClass)
-        assert type(instance) is self.TestClass
-
-        # Test that dispatching doesn't happen when called from a subclass
+    def test_class_dispatch_subclass(self) -> None:
+        """Tests that dispatching doesn't happen when called from a subclass."""
         instance = self.TypeADispatchable("TypeBDispatchable")
         assert isinstance(instance, self.TypeADispatchable)
         assert not isinstance(instance, self.TypeBDispatchable)
 
-        # Test that dispatching doesn't happen when no arguments are provided
-        instance = self.TestClass()
-        assert isinstance(instance, self.TestClass)
-        assert type(instance) is self.TestClass
+
+class DispatchMockRegistry(BaseClassRegistry):
+    """A mock registry for testing."""
+
+    def __init__(self, head_class: type | None = None, init: bool = True, **kwargs: Any) -> None:
+        """Initializes the mock registry."""
+        self.registered: list[type] = []
+        super().__init__(head_class=head_class, init=init, **kwargs)
+
+    def register_class(self, cls: type, *args: Any, **kwargs: Any) -> None:
+        """Registers a class."""
+        self.registered.append(cls)
+
+    def get_class(self, *args: Any, **kwargs: Any) -> Any:
+        """Gets a class.
+
+        Returns:
+            None.
+        """
+        return None
+
+
+class TestDispatchableClassCoverage:
+    """Tests coverage for DispatchableClass."""
+
+    def test_get_class_information_not_implemented(self) -> None:
+        """Tests that get_class_information raises NotImplementedError when not overridden."""
+
+        class Dispatcher(DispatchableClass):
+            class_registry_type = DispatchMockRegistry
+            class_registration = True
+
+            @classmethod
+            def get_registered_class(cls, *args: Any, **kwargs: Any) -> None:
+                """Gets registered class."""
+                return
+
+        # Dispatcher is head_class (created by class_registration=True)
+        # Instantiate with args to trigger dispatch logic
+        with pytest.raises(NotImplementedError, match=r"This method needs to be implemented to dispatch classes\."):
+            Dispatcher("arg")
 
 
 # Main #

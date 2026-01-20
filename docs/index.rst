@@ -28,7 +28,6 @@ Table of Contents
    concepts/registered-classes
    concepts/caching-tools
    concepts/collections
-   concepts/dataclasses
    concepts/functions
    concepts/metaclasses
    concepts/objects

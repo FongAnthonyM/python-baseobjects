@@ -1,9 +1,8 @@
 """__init__.py
-testsuite provides test suite classes.
+Test suites for the baseobjects package.
 
-This module serves as an initialization file for the testsuite package, which provides various test suite classes
-for testing baseobjects functionality. It imports and exposes classes from subpackages, making them available for
-direct import from the testsuite package.
+Contains test suites for the baseobjects package. It provides a structured testing framework to ensure the functionality
+and reliability of the baseobjects components and is a basis for creating tests for hierarchies of components.
 """
 
 # Header #
@@ -24,5 +23,26 @@ from .cachingtools import *
 from .classregistration import *
 from .functions import *
 from .objects import *
-from .versiontestsuite import VersionTestSuite
+from .versioning import VersionTestSuite
 from .wrappers import *
+
+__all__ = [
+    "BaseCallableTestSuite",
+    "BaseClassRegistryTestSuite",
+    "BaseClassTestSuite",
+    "BaseFunctionTestSuite",
+    "BaseMethodTestSuite",
+    "BaseObjectTestSuite",
+    "BasePerformanceTestSuite",
+    "BaseRegisteredClassTestSuite",
+    "BaseTestSuite",
+    "ConcreteBindTarget",
+    "DispatchableClassTestSuite",
+    "NamespaceRegisteredClassTestSuite",
+    "StatsMicro",
+    "VersionTestSuite",
+    "concrete_coroutine",
+    "concrete_coroutine_method",
+    "concrete_function",
+    "concrete_method",
+]

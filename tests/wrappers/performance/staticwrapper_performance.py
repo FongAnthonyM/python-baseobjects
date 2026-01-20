@@ -17,14 +17,14 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import timeit
-from typing import Any
+from typing import Any, ClassVar
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.testsuite import WrapperPerformanceTestSuite
-from src.baseobjects.wrappers import StaticWrapper
+from baseobjects.testsuite import WrapperPerformanceTestSuite
+from baseobjects.wrappers import StaticWrapper
 
 
 # Definitions #
@@ -32,12 +32,12 @@ from src.baseobjects.wrappers import StaticWrapper
 class StaticWrapperTestObject(StaticWrapper):
     """A test class that inherits from StaticWrapper.
 
-    This class uses StaticWrapper to wrap ExampleOne and ExampleTwo objects.
+    This class uses StaticWrapper to wrap ConcreteOne and ConcreteTwo objects.
     """
 
-    _wrapped_map_: list[[str, type[Any]], ...] = [
-        ("_first", WrapperPerformanceTestSuite.ExampleOne),
-        ("_second", WrapperPerformanceTestSuite.ExampleTwo),
+    _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = [
+        ("_first", WrapperPerformanceTestSuite.ConcreteOne),
+        ("_second", WrapperPerformanceTestSuite.ConcreteTwo),
     ]
 
     def __init__(self, first: Any = None, second: Any = None) -> None:
@@ -69,13 +69,13 @@ class TestStaticWrapperPerformance(WrapperPerformanceTestSuite):
     and compares them with direct operations on the wrapped objects.
 
     Attributes:
-        TestClass: The StaticWrapper test class to be assayed.
+        UnitTestClass: The StaticWrapper test class to be assayed.
         timeit_runs: The number of runs to use for timeit measurements.
         speed_tolerance: The maximum percentage of time a new implementation can take compared to the old one.
     """
 
     # Attributes #
-    TestClass = StaticWrapperTestObject
+    UnitTestClass = StaticWrapperTestObject
 
     # Instance Methods #
     # Fixtures
@@ -84,9 +84,9 @@ class TestStaticWrapperPerformance(WrapperPerformanceTestSuite):
         """Create a test object.
 
         Returns:
-            A StaticWrapperTestObject with ExampleOne and ExampleTwo objects.
+            A StaticWrapperTestObject with ConcreteOne and ConcreteTwo objects.
         """
-        return self.TestClass(self.ExampleOne(), self.ExampleTwo())
+        return self.UnitTestClass(self.ConcreteOne(), self.ConcreteTwo())
 
     # Tests
     def test_instance_creation_performance(self) -> None:
@@ -96,14 +96,14 @@ class TestStaticWrapperPerformance(WrapperPerformanceTestSuite):
         """
 
         def wrapper_creation() -> None:
-            _ = self.TestClass(self.ExampleOne(), self.ExampleTwo())
+            _ = self.UnitTestClass(self.ConcreteOne(), self.ConcreteTwo())
 
         # Calculate the mean time in microseconds for the wrapper creation
         new_time = timeit.timeit(wrapper_creation, number=self.timeit_runs // 10)  # Reduce runs for creation
         mean_new = new_time / (self.timeit_runs // 10) * 1000000
 
         # Print the performance comparison
-        print(f"\n{self.TestClass.__name__} creation: {mean_new:.3f} μ")
+        print(f"\n{self.UnitTestClass.__name__} creation: {mean_new:.3f} μ")
         # No assertion here, just measuring performance
 
     def test_wrap_method_performance(self, test_object: StaticWrapperTestObject) -> None:
@@ -123,7 +123,7 @@ class TestStaticWrapperPerformance(WrapperPerformanceTestSuite):
         mean = time / (self.timeit_runs // 10) * 1000000
 
         # Print the performance information
-        print(f"\n{self.TestClass.__name__} _wrap method: {mean:.3f} μs")
+        print(f"\n{self.UnitTestClass.__name__} _wrap method: {mean:.3f} μs")
         # No assertion here, just measuring performance
 
 

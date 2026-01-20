@@ -12,10 +12,3 @@ __copyright__ = "Copyright 2021, Anthony Fong"
 __license__ = "MIT"
 
 __version__ = "1.12.0"
-
-
-# Local Packages #
-from .dynamicwrapper_performance import TestDynamicWrapperPerformance
-
-# Imports #
-from .staticwrapper_performance import TestStaticWrapperPerformance

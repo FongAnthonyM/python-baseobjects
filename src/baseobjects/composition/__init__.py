@@ -23,3 +23,10 @@ from .basecomponent import BaseComponent
 from .basecomposite import BaseComposite
 from .basedispatchingcomposite import BaseDispatchingComposite
 from .dispatchablecomposite import DispatchableComposite
+
+__all__ = [
+    "BaseComponent",
+    "BaseComposite",
+    "BaseDispatchingComposite",
+    "DispatchableComposite",
+]

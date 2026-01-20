@@ -18,19 +18,19 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import timeit
 from collections.abc import Mapping
-from typing import Any, Dict
+from typing import Any
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.operations import update_recursive
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.operations import update_recursive
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
 # Functions #
-def standard_update_recursive(d: dict[str, Any], updates: Mapping) -> dict[str, Any]:
+def standard_update_recursive(d: dict[str, Any], updates: Mapping[str, Any]) -> dict[str, Any]:
     """Standard implementation of update_recursive using a recursive function.
 
     Args:
@@ -48,7 +48,7 @@ def standard_update_recursive(d: dict[str, Any], updates: Mapping) -> dict[str, 
     return d
 
 
-def standard_update_non_recursive(d: dict[str, Any], updates: Mapping) -> dict[str, Any]:
+def standard_update_non_recursive(d: dict[str, Any], updates: Mapping[str, Any]) -> dict[str, Any]:
     """Standard implementation of update_recursive using a non-recursive approach.
 
     This implementation only handles one level of nesting and is used for comparison.
@@ -179,7 +179,8 @@ class TestUpdateRecursive(BasePerformanceTestSuite):
     def test_update_recursive_overlapping_speed(self, overlapping_dicts: tuple[dict[str, Any], dict[str, Any]]) -> None:
         """Test the performance of update_recursive with dictionaries that have overlapping keys.
 
-        This test compares the speed of update_recursive with a standard implementation for dictionaries with overlapping keys.
+        This test compares the speed of update_recursive with a standard implementation for dictionaries with
+        overlapping keys.
 
         Args:
             overlapping_dicts: A fixture providing dictionaries with overlapping keys.
@@ -212,7 +213,8 @@ class TestUpdateRecursive(BasePerformanceTestSuite):
     def test_update_recursive_nested_speed(self, nested_dicts: tuple[dict[str, Any], dict[str, Any]]) -> None:
         """Test the performance of update_recursive with dictionaries that have nested dictionaries.
 
-        This test compares the speed of update_recursive with a standard implementation for dictionaries with nested dictionaries.
+        This test compares the speed of update_recursive with a standard implementation for dictionaries with nested
+        dictionaries.
 
         Args:
             nested_dicts: A fixture providing dictionaries with nested dictionaries.
@@ -246,7 +248,8 @@ class TestUpdateRecursive(BasePerformanceTestSuite):
     ) -> None:
         """Test the performance of update_recursive with dictionaries that have deeply nested dictionaries.
 
-        This test compares the speed of update_recursive with a standard implementation for dictionaries with deeply nested dictionaries.
+        This test compares the speed of update_recursive with a standard implementation for dictionaries with deeply
+        nested dictionaries.
 
         Args:
             deeply_nested_dicts: A fixture providing dictionaries with deeply nested dictionaries.
@@ -272,14 +275,16 @@ class TestUpdateRecursive(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNew (update_recursive deeply nested): {mean_new:.3f} μs ({percent:.3f}% of standard implementation time)",
+            f"\nNew (update_recursive deeply nested): {mean_new:.3f} μs ({percent:.3f}% "
+            f"of standard implementation time)",
         )
         assert percent < self.speed_tolerance
 
     def test_update_recursive_mixed_types_speed(self, mixed_type_dicts: tuple[dict[str, Any], dict[str, Any]]) -> None:
         """Test the performance of update_recursive with dictionaries that have mixed value types.
 
-        This test compares the speed of update_recursive with a standard implementation for dictionaries with mixed value types.
+        This test compares the speed of update_recursive with a standard implementation for dictionaries with mixed
+        value types.
 
         Args:
             mixed_type_dicts: A fixture providing dictionaries with mixed value types.
@@ -312,7 +317,8 @@ class TestUpdateRecursive(BasePerformanceTestSuite):
     def test_update_recursive_vs_non_recursive(self, nested_dicts: tuple[dict[str, Any], dict[str, Any]]) -> None:
         """Test the performance of update_recursive compared to a non-recursive update.
 
-        This test compares the speed of update_recursive with a non-recursive implementation to measure the overhead of recursion.
+        This test compares the speed of update_recursive with a non-recursive implementation to measure the overhead of
+        recursion.
 
         Args:
             nested_dicts: A fixture providing dictionaries with nested dictionaries.
@@ -376,7 +382,8 @@ class TestUpdateRecursive(BasePerformanceTestSuite):
     def test_update_recursive_iterable_speed(self, overlapping_dicts: tuple[dict[str, Any], dict[str, Any]]) -> None:
         """Test the performance of update_recursive with an iterable of key-value pairs.
 
-        This test compares the speed of update_recursive with a standard implementation when using an iterable of key-value pairs.
+        This test compares the speed of update_recursive with a standard implementation when using an iterable of
+        key-value pairs.
 
         Args:
             overlapping_dicts: A fixture providing dictionaries with overlapping keys.

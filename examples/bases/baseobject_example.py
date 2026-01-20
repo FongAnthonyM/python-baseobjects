@@ -34,7 +34,7 @@ class Person(BaseObject):
         super().__init__(*args, **kwargs)
         self.construct(name=name, age=age)
 
-    def construct(self, name: str, age: int, *args: Any, **kwargs: Any) -> None:
+    def construct(self, name: str | None = None, age: int | None = None, *args: Any, **kwargs: Any) -> None:
         """Construct the Person object.
 
         Args:
@@ -45,8 +45,8 @@ class Person(BaseObject):
         """
         self.name = name
         self.age = age
-        self.friends = []  # Mutable attribute to demonstrate deep vs shallow copy
-        self.preferences = {}  # Another mutable attribute
+        self.friends: list[str] = []  # Mutable attribute to demonstrate deep vs shallow copy
+        self.preferences: dict[str, Any] = {}  # Another mutable attribute
 
 
 class Employee(Person):
@@ -80,10 +80,10 @@ class Employee(Person):
 
     def construct(
         self,
-        name: str,
-        age: int,
-        employee_id: str = "",
-        department: str = "",
+        name: str | None = None,
+        age: int | None = None,
+        employee_id: str | None = None,
+        department: str | None = None,
         *args: Any,
         **kwargs: Any,
     ) -> None:
@@ -97,9 +97,9 @@ class Employee(Person):
             *args: Additional arguments for parent classes
             **kwargs: Additional keyword arguments for parent classes
         """
-        self.employee_id = employee_id
-        self.department = department
-        self.projects = []  # Mutable attribute to demonstrate deep vs shallow copy
+        self.employee_id = employee_id or ""
+        self.department = department or ""
+        self.projects: list[str] = []  # Mutable attribute to demonstrate deep vs shallow copy
 
         # Call parent's construct with remaining args/kwargs
         super().construct(name, age, *args, **kwargs)

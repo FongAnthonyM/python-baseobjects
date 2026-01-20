@@ -20,14 +20,14 @@ import re
 import timeit
 from collections import deque
 from collections.abc import Callable
-from typing import Any, List, Set, Union
+from typing import Any
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.operations import parse_parentheses
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.operations import parse_parentheses
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
@@ -36,7 +36,7 @@ def standard_parse_parentheses_str(
     expression: str,
     include: set[str] | None = None,
     exclude: set[str] | None = None,
-    cast: Callable = lambda x: x,
+    cast: Callable[[Any], Any] = lambda x: x,
 ) -> list[Any]:
     """Standard implementation of parse_parentheses for string input using a stack-based approach.
 
@@ -63,23 +63,23 @@ def standard_parse_parentheses_str(
     r_expression = r"|".join((r_parentheses, r_double_quote_group, r_single_quote_group, r_group_between_characters))
 
     # Stack to keep track of nested lists
-    stack = deque([[]])
+    stack: deque[list[Any]] = deque([[]])
 
     # Parse the expression
     for match in re.finditer(r_expression, expression.strip()):
         token = match[0]
-        if token == "(":
+        if token == "(":  # noqa: S105
             # Start a new nested list
-            new_list = []
+            new_list: list[Any] = []
             stack[-1].append(new_list)
             stack.append(new_list)
-        elif token == ")":
+        elif token == ")":  # noqa: S105
             # End the current nested list
             try:
                 stack.pop()
             except IndexError:
                 msg = "Unbalanced parentheses"
-                raise ValueError(msg)
+                raise ValueError(msg) from None
         elif (not include or token in include) and token not in exclude:
             # Add the token to the current list if it passes the filters
             stack[-1].append(cast(token.strip()))
@@ -96,7 +96,7 @@ def standard_parse_parentheses_bytes(
     expression: bytes | bytearray,
     include: set[bytes] | None = None,
     exclude: set[bytes] | None = None,
-    cast: Callable = lambda x: x,
+    cast: Callable[[Any], Any] = lambda x: x,
 ) -> list[Any]:
     """Standard implementation of parse_parentheses for bytes/bytearray input using a stack-based approach.
 
@@ -125,14 +125,14 @@ def standard_parse_parentheses_bytes(
     )
 
     # Stack to keep track of nested lists
-    stack = deque([[]])
+    stack: deque[list[Any]] = deque([[]])
 
     # Parse the expression
     for match in re.finditer(rb_expression, expression.strip()):
         token = match[0]
         if token == b"(":
             # Start a new nested list
-            new_list = []
+            new_list: list[Any] = []
             stack[-1].append(new_list)
             stack.append(new_list)
         elif token == b")":
@@ -141,7 +141,7 @@ def standard_parse_parentheses_bytes(
                 stack.pop()
             except IndexError:
                 msg = "Unbalanced parentheses"
-                raise ValueError(msg)
+                raise ValueError(msg) from None
         elif (not include or token in include) and token not in exclude:
             # Add the token to the current list if it passes the filters
             stack[-1].append(cast(token.strip()))
@@ -196,7 +196,7 @@ class TestParseParentheses(BasePerformanceTestSuite):
         return b"((first\xff(inner'('))(second)(wrong(thing)))"
 
     @pytest.fixture
-    def include_set(self) -> set:
+    def include_set(self) -> set[str]:
         """Create an include set for use in tests.
 
         Returns:
@@ -205,7 +205,7 @@ class TestParseParentheses(BasePerformanceTestSuite):
         return {"first", "second", "third"}
 
     @pytest.fixture
-    def exclude_set(self) -> set:
+    def exclude_set(self) -> set[str]:
         """Create an exclude set for use in tests.
 
         Returns:
@@ -214,14 +214,14 @@ class TestParseParentheses(BasePerformanceTestSuite):
         return {"wrong", "thing"}
 
     @pytest.fixture
-    def cast_function(self) -> Callable:
+    def cast_function(self) -> Callable[[Any], Any]:
         """Create a cast function for use in tests.
 
         Returns:
             Callable: A function to cast elements.
         """
 
-        def cast_to_upper(s: str) -> str:
+        def cast_to_upper(s: Any) -> Any:
             if isinstance(s, str):
                 return s.upper()
             return s
@@ -316,12 +316,13 @@ class TestParseParentheses(BasePerformanceTestSuite):
     def test_parse_parentheses_filtering_speed(
         self,
         simple_expression: str,
-        include_set: set,
-        exclude_set: set,
+        include_set: set[str],
+        exclude_set: set[str],
     ) -> None:
         """Test the performance of parse_parentheses with filtering.
 
-        This test compares the speed of parse_parentheses with a standard implementation when using include/exclude sets.
+        This test compares the speed of parse_parentheses with a standard implementation when using include/exclude
+        sets.
 
         Args:
             simple_expression: A fixture providing a simple expression.
@@ -364,7 +365,7 @@ class TestParseParentheses(BasePerformanceTestSuite):
         )
         assert percent < self.speed_tolerance
 
-    def test_parse_parentheses_casting_speed(self, simple_expression: str, cast_function: Callable) -> None:
+    def test_parse_parentheses_casting_speed(self, simple_expression: str, cast_function: Callable[[Any], Any]) -> None:
         """Test the performance of parse_parentheses with casting.
 
         This test compares the speed of parse_parentheses with a standard implementation when using a cast function.

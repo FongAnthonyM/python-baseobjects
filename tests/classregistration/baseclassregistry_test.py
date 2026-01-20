@@ -15,14 +15,14 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any, Type
+from typing import Any, ClassVar
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.classregistration import BaseClassRegistry
-from src.baseobjects.testsuite.classregistration import BaseClassRegistryTestSuite
+from baseobjects.classregistration import BaseClassRegistry
+from baseobjects.testsuite.classregistration import BaseClassRegistryTestSuite
 
 
 # Definitions #
@@ -62,7 +62,7 @@ class TestBaseClassRegistry(BaseClassRegistryTestSuite):
     """
 
     # Attributes #
-    TestClass: type[BaseClassRegistry] = ConcreteClassRegistry
+    UnitTestClass: ClassVar[type[BaseClassRegistry]] = ConcreteClassRegistry
 
 
 # Main #

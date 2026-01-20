@@ -26,28 +26,41 @@ from weakref import ReferenceType
 import pytest
 
 # Source Packages #
-from src.baseobjects.bases import BaseMethod
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.bases import BaseMethod
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
 # Functions #
-def simple_method(self, x: int) -> int:
-    """A simple function that doubles its input."""
+def simple_method(self: Any, x: int) -> tuple[int, Any]:
+    """A simple function that doubles its input.
+
+    Returns:
+        tuple[int, Any]: The result and self.
+    """
     return x * 2, self
 
 
 class NormalMethod:
     """A normal Python method-like object for comparison with BaseMethod."""
 
-    def __init__(self, func: Callable | None = None, instance: Any = None, owner: type | None = None) -> None:
+    def __init__(
+        self,
+        func: Callable[..., Any] | None = None,
+        instance: Any = None,
+        owner: type | None = None,
+    ) -> None:
         """Initialize with a function, instance, and owner."""
         self.func = func or simple_method
         self._self = None if instance is None else ReferenceType(instance)
         self.__owner__ = owner
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        """Call the wrapped function with the bound instance."""
+        """Call the wrapped function with the bound instance.
+
+        Returns:
+            Any: The result.
+        """
         if self._self is not None:
             instance = self._self()
             if instance is not None:
@@ -66,15 +79,24 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
     class TestMethod(BaseMethod):
         """A subclass of BaseMethod for testing purposes."""
 
-        def __init__(self, func: Callable | None = None, instance: Any = None, owner: type | None = None) -> None:
+        def __init__(
+            self,
+            func: Callable[..., Any] | None = None,
+            instance: Any = None,
+            owner: type | None = None,
+        ) -> None:
             """Initialize with a function, instance, and owner."""
             super().__init__(func or simple_method, instance, owner)
 
-    class ExampleClass:
+    class ConcreteClass:
         """A class to own methods for testing."""
 
         def normal_method(self, x: int) -> int:
-            """A normal method."""
+            """A normal method.
+
+            Returns:
+                int: The result.
+            """
             return x * 2
 
     # Attributes #
@@ -84,18 +106,18 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def example_instance(self) -> "TestBaseMethodPerformance.ExampleClass":
+    def example_instance(self) -> "TestBaseMethodPerformance.ConcreteClass":
         """Create an instance of the example class for testing.
 
         Returns:
-            ExampleClass: An instance of the example class.
+            ConcreteClass: An instance of the example class.
         """
-        return self.ExampleClass()
+        return self.ConcreteClass()
 
     @pytest.fixture
     def test_method(
         self,
-        example_instance: "TestBaseMethodPerformance.ExampleClass",
+        example_instance: "TestBaseMethodPerformance.ConcreteClass",
     ) -> "TestBaseMethodPerformance.TestMethod":
         """Create a test method instance for use in tests.
 
@@ -105,7 +127,7 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
         return self.TestMethod(instance=example_instance)
 
     @pytest.fixture
-    def test_normal_method(self, example_instance: "TestBaseMethodPerformance.ExampleClass") -> NormalMethod:
+    def test_normal_method(self, example_instance: "TestBaseMethodPerformance.ConcreteClass") -> NormalMethod:
         """Create a normal method instance for comparison.
 
         Returns:
@@ -163,7 +185,8 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal method call: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal method call: {mean_normal:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"BaseMethod.__call__: {mean_base:.3f} μs ({percent:.3f}% of normal method call time)")
         assert percent < self.speed_tolerance
@@ -171,7 +194,7 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
     def test_bind_self_performance(
         self,
         test_method: "TestBaseMethodPerformance.TestMethod",
-        example_instance: "TestBaseMethodPerformance.ExampleClass",
+        example_instance: "TestBaseMethodPerformance.ConcreteClass",
     ) -> None:
         """Test the performance of the bind_self method of BaseMethod.
 
@@ -199,7 +222,8 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard method binding: {mean_standard:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard method binding: {mean_standard:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"BaseMethod.bind_self: {mean_base:.3f} μs ({percent:.3f}% of standard method binding time)")
         assert percent < self.speed_tolerance * 2  # Allow more overhead for method creation
@@ -207,7 +231,7 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
     def test_bind_to_attribute_performance(
         self,
         test_method: "TestBaseMethodPerformance.TestMethod",
-        example_instance: "TestBaseMethodPerformance.ExampleClass",
+        example_instance: "TestBaseMethodPerformance.ConcreteClass",
     ) -> None:
         """Test the performance of the bind_to_attribute method of BaseMethod.
 
@@ -220,7 +244,7 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
 
         def bind_to_attribute() -> None:
             # Create a new instance each time to avoid attribute already existing
-            obj = self.ExampleClass()
+            obj = self.ConcreteClass()
             test_method.bind_to_attribute(obj, name="test_method")
 
         # Calculate the mean time in microseconds for BaseMethod.bind_to_attribute
@@ -235,7 +259,7 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
     def test_bound_method_call_performance(
         self,
         test_method: "TestBaseMethodPerformance.TestMethod",
-        example_instance: "TestBaseMethodPerformance.ExampleClass",
+        example_instance: "TestBaseMethodPerformance.ConcreteClass",
     ) -> None:
         """Test the performance of calling a bound BaseMethod.
 
@@ -265,7 +289,8 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal method call: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal method call: {mean_normal:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"Bound BaseMethod call: {mean_bound:.3f} μs ({percent:.3f}% of normal method call time)")
         assert percent < self.speed_tolerance * 1.5  # Allow some overhead for method call
@@ -282,11 +307,11 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
         class TestObject:
             pass
 
-        obj = TestObject()
+        obj: Any = TestObject()
         obj.method = test_method
 
         def get_descriptor() -> None:
-            obj.method  # This calls __get__
+            _ = obj.method  # This calls __get__
 
         # Calculate the mean time in microseconds for descriptor protocol
         descriptor_time = timeit.timeit(get_descriptor, number=self.timeit_runs)
@@ -300,7 +325,7 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
     def test_call_binding_performance(
         self,
         test_method: "TestBaseMethodPerformance.TestMethod",
-        example_instance: "TestBaseMethodPerformance.ExampleClass",
+        example_instance: "TestBaseMethodPerformance.ConcreteClass",
     ) -> None:
         """Test the performance of the call_binding method of BaseMethod.
 
@@ -330,7 +355,8 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal bound method call: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal bound method call: {mean_normal:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"BaseMethod.call_binding: {mean_binding:.3f} μs ({percent:.3f}% of normal bound method call time)")
         assert percent < self.speed_tolerance * 1.5  # Allow some overhead for binding call
@@ -338,7 +364,7 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
     def test_pickling_performance(
         self,
         test_method: "TestBaseMethodPerformance.TestMethod",
-        example_instance: "TestBaseMethodPerformance.ExampleClass",
+        example_instance: "TestBaseMethodPerformance.ConcreteClass",
     ) -> None:
         """Test the performance of pickling and unpickling BaseMethod objects.
 
@@ -385,7 +411,7 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
         non_binding_method = self.TestMethod()
         non_binding_method.is_binding = False
 
-        obj = self.ExampleClass()
+        obj = self.ConcreteClass()
 
         def bind_with_binding() -> None:
             binding_method.bind_self(obj)
@@ -404,7 +430,8 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nBinding with is_binding=False: {mean_non_binding:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nBinding with is_binding=False: {mean_non_binding:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"Binding with is_binding=True: {mean_binding:.3f} μs ({percent:.3f}% of non-binding time)")
         # The performance should be similar or binding might be slightly slower due to extra operations
@@ -413,7 +440,7 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
     def test_large_argument_list_performance(
         self,
         test_method: "TestBaseMethodPerformance.TestMethod",
-        example_instance: "TestBaseMethodPerformance.ExampleClass",
+        example_instance: "TestBaseMethodPerformance.ConcreteClass",
     ) -> None:
         """Test the performance of BaseMethod with large argument lists.
 
@@ -426,7 +453,7 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
         """
 
         # Create a function that accepts many arguments
-        def many_args_function(self, *args: Any, **kwargs: Any) -> int:
+        def many_args_function(self: Any, *args: Any, **kwargs: Any) -> int:
             return len(args) + len(kwargs)
 
         # Create a class with a normal method that accepts many arguments
@@ -459,15 +486,18 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal method with large args: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal method with large args: {mean_normal:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
-        print(f"BaseMethod with large args: {mean_base:.3f} μs ({percent:.3f}% of normal method with large args time)")
+        print(
+            f"BaseMethod with large args: {mean_base:.3f} μs ({percent:.3f}% of normal method with large args time)",
+        )
         assert percent < self.speed_tolerance * 2  # Allow more overhead for large argument processing
 
     def test_nested_method_calls_performance(
         self,
         test_method: "TestBaseMethodPerformance.TestMethod",
-        example_instance: "TestBaseMethodPerformance.ExampleClass",
+        example_instance: "TestBaseMethodPerformance.ConcreteClass",
     ) -> None:
         """Test the performance of BaseMethod with deeply nested method calls.
 
@@ -494,8 +524,8 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
         inner_method = self.TestMethod(NestedMethodsClass.inner_method, nested_instance)
 
         # Create a BaseMethod that will call the inner BaseMethod
-        def outer_function(self, x: int) -> int:
-            return inner_method(x)
+        def outer_function(self: Any, x: int) -> int:
+            return inner_method(x)  # type: ignore[no-any-return]
 
         outer_method = self.TestMethod(outer_function, nested_instance)
 
@@ -518,7 +548,8 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNested normal method calls: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNested normal method calls: {mean_normal:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"Nested BaseMethod calls: {mean_base:.3f} μs ({percent:.3f}% of nested normal method calls time)")
         assert percent < self.speed_tolerance * 1.5  # Allow some overhead for nested calls
@@ -533,9 +564,9 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
             test_method: A fixture providing a TestMethod instance.
         """
         # Create multiple instances for rebinding
-        instance1 = self.ExampleClass()
-        instance2 = self.ExampleClass()
-        instance3 = self.ExampleClass()
+        instance1 = self.ConcreteClass()
+        instance2 = self.ConcreteClass()
+        instance3 = self.ConcreteClass()
 
         # Bind initially to instance1
         bound_method = test_method.bind_self(instance1)
@@ -563,7 +594,8 @@ class TestBaseMethodPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nCreating new bindings: {mean_new_binding:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nCreating new bindings: {mean_new_binding:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"Rebinding existing method: {mean_rebind:.3f} μs ({percent:.3f}% of new binding creation time)")
         # Rebinding should be faster than creating new bindings

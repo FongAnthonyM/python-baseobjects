@@ -20,19 +20,22 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 from abc import get_cache_token
-from functools import _find_impl, partial, singledispatchmethod, update_wrapper
+from collections.abc import Callable
+from functools import _find_impl, partial, singledispatchmethod, update_wrapper  # type: ignore[attr-defined]
 from inspect import signature
 from types import NoneType, UnionType
-from typing import Any, Union, get_args, get_origin, get_type_hints
+from typing import Any, TypeVar, Union, get_args, get_origin, get_type_hints, overload
 from weakref import WeakKeyDictionary
 
 # Local Packages #
-from ..typing import AnyCallable, GetObjectMethod
+from ..typing import AnyCallable, CallMethod
 from .basedecorator import BaseDecorator
 from .callablemultiplexer import MethodMultiplexer
 
-
 # Definitions #
+FuncT = TypeVar("FuncT", bound=Callable[..., Any])
+
+
 # Functions #
 def _is_union_type(cls: Any) -> bool:
     return get_origin(cls) in {Union, UnionType}
@@ -43,7 +46,7 @@ def _is_valid_dispatch_type(cls: Any) -> bool:
 
 
 # Classes #
-class singlekwargdispatch(BaseDecorator, singledispatchmethod):
+class singlekwargdispatch(BaseDecorator, singledispatchmethod):  # type: ignore[type-arg] # noqa: N801
     """Extends singledispatch to allow kwargs to be used for dispatching.
 
     The normal single dispatching requires at least one arg for dispatching. This object retains this functionality, but
@@ -77,11 +80,11 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
     parse: MethodMultiplexer
     arg_position: int = 0
 
-    registry: dict[type[Any], AnyCallable]
-    dispatch_cache: WeakKeyDictionary[type[Any], AnyCallable]
+    registry: dict[type[Any], AnyCallable | classmethod]  # type: ignore[type-arg]
+    dispatch_cache: WeakKeyDictionary[type[Any], AnyCallable | classmethod]  # type: ignore[type-arg]
     cache_token: Any | None = None
 
-    dispatch_function: AnyCallable
+    dispatch_function: AnyCallable | classmethod  # type: ignore[type-arg]
 
     # Properties #
     @property
@@ -93,17 +96,38 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
     def kwarg(self, value: str | None) -> None:
         self.set_kwarg(kwarg=value)
 
+    @property
+    def dispatcher(self) -> AnyCallable | classmethod:  # type: ignore[override, type-arg]
+        """The dispatcher function."""
+        return self.dispatch_function
+
     # Magic Methods #
     # Construction/Destruction
+    def __get__(self, instance: Any, owner: type[Any] | None = None) -> AnyCallable:
+        """Gets the dispatch method for the instance.
+
+        Args:
+            instance: The instance to bind to.
+            owner: The owner class.
+
+        Returns:
+            The bound dispatch method.
+        """
+        if instance is None:
+            if owner is not None and isinstance(self.func, (classmethod, staticmethod)):
+                return self.bind_method_dispatcher(owner, owner)
+            return self
+        return self.bind_method_dispatcher(instance, owner)
+
     def __init__(
         self,
-        func: AnyCallable | None = None,
+        func: AnyCallable | classmethod | None = None,  # type: ignore[type-arg]
         kwarg: str | None = None,
         *args: Any,
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        """Initialize a single-kwarg dispatch decorator.
+        """Initializes this object with the given arguments.
 
         Args:
             func: Optional function to wrap.
@@ -123,6 +147,33 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         # Object Creation #
         if init:
             self.construct(func, kwarg, *args, **kwargs)
+
+    def __getstate__(self) -> dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]] | None:
+        """Gets the object's state for pickling.
+
+        This method is called by the pickle module when serializing the object. It extracts the object's state from both
+        __dict__ (if present) and __slots__ (if present), and returns it in a format that can be properly restored by
+        __setstate__ during unpickling.
+
+        The method handles four different cases:
+        1. Neither __dict__ nor __slots__ are present: Returns None
+        2. Only __dict__ is present: Returns a copy of the __dict__
+        3. Only __slots__ is present: Returns a tuple of (None, slots_dict)
+        4. Both __dict__ and __slots__ are present: Returns a tuple of (dict_copy, slots_dict)
+
+        Returns:
+            The state returned will be either of the following types based on the presence of __dict__ and __slots__:
+                None: Neither __dict__ nor __slots__ are present.
+                dict: __dict__ is present and __slots__ is not present.
+                tuple[None, dict]: __dict__ is not present and __slots__ is present.
+                tuple[dict, dict]: __dict__ is present and __slots__ is present.
+        """
+        state = super().__getstate__()
+        state_d = state if isinstance(state, dict) else state[0] if isinstance(state, tuple) else None
+        if state_d is not None:
+            state_d.pop("dispatch_cache", None)
+            state_d.pop("dispatch_function", None)
+        return state
 
     def __setstate__(self, state: Any) -> None:
         """Sets the object's state from a pickled state.
@@ -152,19 +203,21 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
                 returned by __getstate__.
         """
         super().__setstate__(state)
-        self.create_dispatcher_function()
+        self.dispatch_cache = WeakKeyDictionary()
+        if hasattr(self, "func"):
+            self.create_dispatcher_function()
 
     # Instance Methods #
     # Constructors
     def construct(
         self,
-        func: AnyCallable | None = None,
+        func: AnyCallable | classmethod | None = None,  # type: ignore[type-arg]
         kwarg: AnyCallable | str | None = None,
         *args: Any,
         wrapper_method: str | None = None,
         **kwargs: Any,
     ) -> None:
-        """The constructor for this object.
+        """Constructs this object with the given arguments.
 
         Args:
             func: The function to wrap.
@@ -173,37 +226,52 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
             wrapper_method: The name of the method which will act as the wrapper for this decorator.
             **kwargs: Keyword arguments for inheritance.
         """
-        if kwarg is not None:
+        if kwarg is not None and isinstance(kwarg, str):
             self.kwarg = kwarg
 
         if func is not None:
+            self.func = func  # type: ignore[assignment]
             self.registry[object] = func
             self.create_dispatcher_function()
             if self.kwarg is not None:
-                parameters = signature(func).parameters
+                if isinstance(func, (classmethod, staticmethod)):
+                    target = func.__func__
+                else:
+                    target = func
+                parameters = signature(target).parameters
                 self._default_parse = parameters[self.kwarg].default.__class__
                 self.arg_position = list(parameters).index(self.kwarg)
 
-        super().construct(func, *args, **kwargs)
+        # Unwrap for BaseCallable
+        callable_func = func
+        if isinstance(func, (classmethod, staticmethod)):
+            callable_func = func.__func__
 
-    def create_dispatcher_function(self) -> AnyCallable:
-        """Creates the dispatcher function for this object."""
-        if isinstance(self.__wrapped__, classmethod):
+        super().construct(callable_func, *args, **kwargs)  # type: ignore[arg-type]
 
-            def dispatch_function(self_: Any, *args: Any, **kwargs: Any) -> Any:
-                return self.dispatch(self.parse(args, kwargs)).__get__(None, self_)(*args, **kwargs)
+    def create_dispatcher_function(self) -> AnyCallable | classmethod:  # type: ignore[type-arg]
+        """Creates the dispatcher function for this object.
+
+        Returns:
+            The dispatcher function.
+        """
+        if isinstance(self.func, classmethod):
+
+            def dispatch_function(self_: Any, *args: Any, **kwargs: Any) -> Any:  # type: ignore[unreachable]
+                return self.dispatch(self.parse(args, kwargs, is_method=True)).__get__(None, self_)(*args, **kwargs)
 
         else:
 
             def dispatch_function(self_: Any, *args: Any, **kwargs: Any) -> Any:
                 return self.dispatch(self.parse(args, kwargs, is_method=True)).__get__(self_)(*args, **kwargs)
 
-        dispatch_function.__isabstractmethod__ = getattr(self.__wrapped__, "__isabstractmethod__", False)
-        dispatch_function.registry = self.registry
-        update_wrapper(dispatch_function, self.__wrapped__)
-        if isinstance(self.__wrapped__, classmethod):
-            dispatch_function = classmethod(dispatch_function)
+        dispatch_function.__isabstractmethod__ = getattr(self.func, "__isabstractmethod__", False)  # type: ignore[attr-defined]
+        dispatch_function.registry = self.registry  # type: ignore[attr-defined]
+        update_wrapper(dispatch_function, self.func)
+        if isinstance(self.func, classmethod):
+            dispatch_function = classmethod(dispatch_function)  # type: ignore[unreachable]
         self.dispatch_function = dispatch_function
+        return dispatch_function
 
     # Setters
     def set_kwarg(self, kwarg: str | None) -> None:
@@ -216,7 +284,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         self._kwarg = kwarg
 
     # Parameter Parsers
-    def parse_first(self, args: tuple[Any, ...], kwargs: dict[str, Any], is_method: bool = False) -> type[Any]:
+    def parse_first(self, args: tuple[Any, ...], kwargs: dict[str, Any], is_method: bool = False) -> Any:
         """Parses input for the first arg or the first kwarg's class to be used for dispatching.
 
         Args:
@@ -239,7 +307,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
                 msg = "No args or kwargs given to dispatch."
                 raise TypeError(msg) from None
 
-    def parse_kwarg(self, args: tuple[Any, ...], kwargs: dict[str, Any], is_method: bool = False) -> type[Any]:
+    def parse_kwarg(self, args: tuple[Any, ...], kwargs: dict[str, Any], is_method: bool = False) -> Any:
         """Parses input for the first arg or a specific kwarg's class to be used for dispatching.
 
         Args:
@@ -251,7 +319,7 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
             The class to be used for dispatching.
         """
         try:
-            return kwargs[self._kwarg].__class__
+            return kwargs[self._kwarg].__class__  # type: ignore[index]
         except KeyError:
             index = self.arg_position - 1 if is_method else self.arg_position
             try:
@@ -260,18 +328,30 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
                 return self._default_parse
 
     # Registering
-    def register(self, cls: type[Any], func: AnyCallable | None = None) -> AnyCallable:
+    @overload
+    def register(self, cls: type[Any] | UnionType, method: None = None) -> Callable[[FuncT], FuncT]: ...
+
+    @overload
+    def register(self, cls: FuncT, method: None = None) -> FuncT: ...
+
+    @overload
+    def register(self, cls: type[Any] | UnionType, method: FuncT) -> FuncT: ...
+
+    def register(self, cls: Any, method: AnyCallable | classmethod | None = None) -> AnyCallable | classmethod:  # type: ignore[type-arg]
         """Registers a function for a type or union of types.
 
         Raises:
             TypeError: If the provided dispatch key or function annotation is not a
                 class or a union of classes, or if the decorator is used incorrectly.
+
+        Returns:
+            The registered method.
         """
         if _is_valid_dispatch_type(cls):
-            if func is None:
+            if method is None:
                 return partial(self._register, cls=cls)
         else:
-            if func is not None:
+            if method is not None:
                 msg = f"Invalid first argument to `registry()`. {cls!r} is not a class or union type."
                 raise TypeError(msg)
             ann = getattr(cls, "__annotations__", {})
@@ -284,13 +364,13 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
                 raise TypeError(
                     msg,
                 )
-            func = cls
+            method = cls
 
             # only import typing if annotation parsing is necessary
             if self._kwarg is None:
-                argname, cls = next(iter(get_type_hints(func).items()))
+                argname, cls = next(iter(get_type_hints(method).items()))
             else:
-                cls = get_type_hints(func)[self._kwarg]
+                cls = get_type_hints(method)[self._kwarg]
                 argname = self._kwarg
             if not _is_valid_dispatch_type(cls):
                 if _is_union_type(cls):
@@ -301,25 +381,28 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
 
         if _is_union_type(cls):
             for arg in get_args(cls):
-                self.registry[arg] = func
+                self.registry[arg] = method
         else:
-            self.registry[cls] = func
+            self.registry[cls] = method
         if self.cache_token is None and hasattr(cls, "__abstractmethods__"):
             self.cache_token = get_cache_token()
         self.dispatch_cache.clear()
-        return func
+        return method
 
-    def _register(self, func: AnyCallable, cls: type[Any]) -> AnyCallable:
+    def _register(self, func: AnyCallable | classmethod, cls: type[Any] | UnionType) -> AnyCallable | classmethod:  # type: ignore[type-arg]
         """Alias for register, where the first argument is the function.
 
         Args:
             func: The function to register.
             cls: The class to register the function for.
+
+        Returns:
+            The registered function.
         """
-        return self.register(cls, func)
+        return self.register(cls, func)  # type: ignore[type-var]
 
     # Dispatching
-    def dispatch(self, cls: type[Any]) -> AnyCallable:
+    def dispatch(self, cls: type[Any]) -> AnyCallable | classmethod:  # type: ignore[type-arg]
         """Returns the function registered for the given class."""
         if self.cache_token is not None and self.cache_token != (current_token := get_cache_token()):
             self.dispatch_cache.clear()
@@ -358,9 +441,8 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):
         Returns:
             The return of the found method.
         """
-        return self.dispatch(self.parse(args, kwargs))(*args, **kwargs)
+        return self.dispatch(self.parse(args, kwargs))(*args, **kwargs)  # type: ignore[operator]
 
     # Method Overrides #
     # Special method overriding which leads to less overhead.
-    __get__: GetObjectMethod = bind_method_dispatcher
-    __call__: AnyCallable = dispatch_call
+    __call__: CallMethod = dispatch_call

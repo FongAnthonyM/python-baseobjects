@@ -28,7 +28,7 @@ from ..baseobject import BaseObject
 
 # Definitions #
 # Classes #
-class BaseList(BaseObject, UserList):
+class BaseList(BaseObject, UserList[Any]):
     """An abstract class that combines UserList and BaseObject functionality.
 
     Attributes:
@@ -39,7 +39,7 @@ class BaseList(BaseObject, UserList):
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, initlist: Any = None, *args: Any, **kwargs: Any) -> None:
-        """Initialize a new BaseList instance.
+        """Initializes a new BaseList instance.
 
         This constructor initializes both the BaseObject and UserList parent classes. It accepts an optional iterable
         object to initialize the contents, as well as arbitrary positional and keyword arguments that are passed to the

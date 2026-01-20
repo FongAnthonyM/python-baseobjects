@@ -12,7 +12,6 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-import copy
 from typing import Any, ClassVar
 
 # Source Packages #
@@ -25,14 +24,18 @@ class ExampleMeta(BaseMeta):
 
     registry: ClassVar[dict[str, type]] = {}
 
-    def __new__(mcs, name: str, bases: tuple, namespace: dict) -> type:
+    def __new__(mcs, name: str, bases: tuple[type, ...], namespace: dict[str, Any]) -> type:
         """Create a new class and register it in the registry."""
         cls = super().__new__(mcs, name, bases, namespace)
         mcs.registry[name] = cls
         return cls
 
     def get_registered_classes(self) -> list[str]:
-        """Get a list of all registered class names."""
+        """Get a list of all registered class names.
+
+        Returns:
+            A list of registered class names.
+        """
         return list(self.registry.keys())
 
 

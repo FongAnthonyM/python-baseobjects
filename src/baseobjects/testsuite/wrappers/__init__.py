@@ -15,5 +15,14 @@ __version__ = "1.12.0"
 
 # Imports #
 # Local Packages #
+from .dynamicwrappertestsuite import DynamicWrapperTestSuite
+from .staticwrappertestsuite import StaticWrapperTestSuite
 from .wrapperperformancetestsuite import WrapperPerformanceTestSuite
 from .wrappertestsuite import WrapperTestSuite
+
+__all__ = [
+    "DynamicWrapperTestSuite",
+    "StaticWrapperTestSuite",
+    "WrapperPerformanceTestSuite",
+    "WrapperTestSuite",
+]

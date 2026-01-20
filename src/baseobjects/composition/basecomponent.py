@@ -48,10 +48,9 @@ class BaseComponent(BaseReducible):
     @property
     def composite(self) -> Any:
         """The composite object which this object is a component of."""
-        try:
-            return self._composite()
-        except TypeError:
+        if self._composite is None:
             return None
+        return self._composite()
 
     @composite.setter
     def composite(self, value: Any) -> None:
@@ -65,7 +64,7 @@ class BaseComponent(BaseReducible):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        """Initialize a component.
+        """Initializes this object with the given arguments.
 
         Args:
             composite: Optional composite that owns this component.
@@ -81,7 +80,7 @@ class BaseComponent(BaseReducible):
 
     # Pickling
     def __getstate__(self) -> dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]] | None:
-        """Gets the object's state for pickling.
+        """Gets the state of this object for pickling.
 
         Returns:
             The state returned will be either of the following types based on the presence of __dict__ and __slots__:
@@ -91,8 +90,21 @@ class BaseComponent(BaseReducible):
                 tuple[dict, dict]: __dict__ is present and __slots__ is present.
         """
         state = super().__getstate__()
-        state["_composite"] = self.composite  # Make a strong reference for pickle
-        return state
+        composite = self.composite
+
+        if state is None:
+            return {"_composite": composite}
+        elif isinstance(state, dict):
+            state["_composite"] = composite
+            return state
+        elif isinstance(state, tuple):
+            d, s = state
+            if d is None:
+                d = {}
+            d["_composite"] = composite
+            return d, s
+        else:
+            return None  # type: ignore[unreachable]
 
     def __setstate__(self, state: Any) -> None:
         """Sets the object's state from a pickled state.
@@ -108,7 +120,11 @@ class BaseComponent(BaseReducible):
             state: An object which can be used to set the state of this object.
         """
         # Remove strong reference
-        composite = state.pop("_composite", None)
+        composite = None
+        if isinstance(state, dict):
+            composite = state.pop("_composite", None)
+        elif isinstance(state, tuple) and state[0] is not None:
+            composite = state[0].pop("_composite", None)
 
         # Set State
         super().__setstate__(state)
@@ -119,7 +135,7 @@ class BaseComponent(BaseReducible):
     # Instance Methods #
     # Constructors/Destructors
     def construct(self, composite: Any = None, **kwargs: Any) -> None:
-        """Constructs this object.
+        """Constructs this object with the given arguments.
 
         Args:
             composite: The object which this object is a component of.

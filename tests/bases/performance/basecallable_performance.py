@@ -18,28 +18,35 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import timeit
 from collections.abc import Callable
-from types import MethodType
 from typing import Any
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.bases import BaseCallable
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.bases import BaseCallable
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
 # Functions #
 def simple_function(x: int) -> int:
-    """A simple function that doubles its input."""
+    """A simple function that doubles its input.
+
+    Returns:
+        int: The result.
+    """
     return x * 2
 
 
-def simple_coroutine_function(x: int) -> int:
-    """A simple coroutine function that doubles its input."""
+def simple_coroutine_function(x: int) -> Any:
+    """A simple coroutine function that doubles its input.
 
-    async def inner():
+    Returns:
+        Any: The result.
+    """
+
+    async def inner() -> int:  # noqa: RUF029
         return x * 2
 
     return inner()
@@ -48,12 +55,16 @@ def simple_coroutine_function(x: int) -> int:
 class NormalCallable:
     """A normal Python callable object for comparison with BaseCallable."""
 
-    def __init__(self, func: Callable | None = None) -> None:
+    def __init__(self, func: Callable[..., Any] | None = None) -> None:
         """Initialize with a function."""
         self.func = func or simple_function
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        """Call the wrapped function."""
+        """Call the wrapped function.
+
+        Returns:
+            Any: The result.
+        """
         return self.func(*args, **kwargs)
 
 
@@ -68,7 +79,7 @@ class TestBaseCallablePerformance(BasePerformanceTestSuite):
     class TestCallable(BaseCallable):
         """A subclass of BaseCallable for testing purposes."""
 
-        def __init__(self, func: Callable | None = None) -> None:
+        def __init__(self, func: Callable[..., Any] | None = None) -> None:
             """Initialize with a function."""
             super().__init__(func or simple_function)
 
@@ -220,7 +231,7 @@ class TestBaseCallablePerformance(BasePerformanceTestSuite):
             test_callable.bind_builtin(obj)
 
         def bind_standard() -> None:
-            obj.example_method
+            _ = obj.example_method
 
         # Calculate the mean time in microseconds for BaseCallable.bind_builtin
         base_time = timeit.timeit(bind_base, number=self.timeit_runs)

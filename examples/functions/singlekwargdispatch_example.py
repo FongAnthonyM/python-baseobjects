@@ -13,7 +13,7 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any, Union
+from typing import Any
 
 # Source Packages #
 from baseobjects.functions import singlekwargdispatch
@@ -77,7 +77,7 @@ def _(value: str) -> str:
 
 @convert_value.register(tuple)
 @convert_value.register(list)
-def _(value) -> str:
+def _(value: list[Any] | tuple[Any, ...]) -> str:
     """Convert a list to a string representation.
 
     Args:
@@ -86,7 +86,8 @@ def _(value) -> str:
     Returns:
         The string representation of the list.
     """
-    return f"List: {value} (length: {len(value)}, sum: {sum(value) if all(isinstance(x, (int, float)) for x in value) else 'N/A'})"
+    total = sum(value) if all(isinstance(x, (int, float)) for x in value) else "N/A"
+    return f"List: {value} (length: {len(value)}, sum: {total})"
 
 
 @singlekwargdispatch(kwarg="format_as")
@@ -106,7 +107,7 @@ def format_data(data: Any, format_as: Any = None, precision: int = 2) -> str:
     return f"Data: {data} (default format, precision: {precision})"
 
 
-@format_data.register
+@format_data.register  # type: ignore[untyped-decorator]
 def _(data: Any, format_as: str, precision: int = 2) -> str:
     """Format data as a string with specified formatting.
 
@@ -138,7 +139,7 @@ def _(data: Any, format_as: str, precision: int = 2) -> str:
         return f"String format: {data!s}"
 
 
-@format_data.register
+@format_data.register  # type: ignore[untyped-decorator]
 def _(data: Any, format_as: int, precision: int = 2) -> str:
     """Format data with integer formatting options.
 
@@ -186,6 +187,7 @@ class Circle(Shape):
         self.radius = radius
 
     def __str__(self) -> str:
+        """Return the string representation."""
         return f"Circle(radius={self.radius})"
 
 
@@ -203,6 +205,7 @@ class Rectangle(Shape):
         self.height = height
 
     def __str__(self) -> str:
+        """Return the string representation."""
         return f"Rectangle(width={self.width}, height={self.height})"
 
 
@@ -220,6 +223,7 @@ class Triangle(Shape):
         self.height = height
 
     def __str__(self) -> str:
+        """Return the string representation."""
         return f"Triangle(base={self.base}, height={self.height})"
 
 
@@ -299,7 +303,7 @@ class DataProcessor:
         """
         return f"{prefix}: {data!s}"
 
-    @process.register
+    @process.register  # type: ignore[untyped-decorator]
     def _(self, prefix: str, data: int) -> str:
         """Process integer data.
 
@@ -312,7 +316,7 @@ class DataProcessor:
         """
         return f"{prefix}: Integer {data} (squared = {data**2})"
 
-    @process.register
+    @process.register  # type: ignore[untyped-decorator]
     def _(self, prefix: str, data: float) -> str:
         """Process float data.
 
@@ -325,7 +329,7 @@ class DataProcessor:
         """
         return f"{prefix}: Float {data:.2f} (doubled = {data * 2:.2f})"
 
-    @process.register
+    @process.register  # type: ignore[untyped-decorator]
     def _(self, prefix: str, data: str) -> str:
         """Process string data.
 
@@ -338,8 +342,8 @@ class DataProcessor:
         """
         return f"{prefix}: String '{data}' (length = {len(data)})"
 
-    @process.register
-    def _(self, prefix: str, data: list) -> str:
+    @process.register  # type: ignore[untyped-decorator]
+    def _(self, prefix: str, data: list[Any]) -> str:
         """Process list data.
 
         Args:
@@ -351,8 +355,8 @@ class DataProcessor:
         """
         return f"{prefix}: List {data} (length = {len(data)})"
 
-    @process.register
-    def _(self, prefix: str, data: dict) -> str:
+    @process.register  # type: ignore[untyped-decorator]
+    def _(self, prefix: str, data: dict[str, Any]) -> str:
         """Process dictionary data.
 
         Args:
@@ -384,7 +388,7 @@ class MultiParameterProcessor:
         """
         return f"{description}: {value} (default format)"
 
-    @format_data.register
+    @format_data.register  # type: ignore[untyped-decorator]
     def _(self, value: Any, description: str, format_type: str) -> str:
         """Format data with a string format type.
 
@@ -403,7 +407,7 @@ class MultiParameterProcessor:
         else:
             return f"{description}: {value} (unknown string format: {format_type})"
 
-    @format_data.register
+    @format_data.register  # type: ignore[untyped-decorator]
     def _(self, value: Any, description: str, format_type: int) -> str:
         """Format data with an integer format type.
 
@@ -417,7 +421,7 @@ class MultiParameterProcessor:
         """
         return f"{description.ljust(format_type)}: {value}"
 
-    @format_data.register
+    @format_data.register  # type: ignore[untyped-decorator]
     def _(self, value: Any, description: str, format_type: bool) -> str:
         """Format data with a boolean format type.
 
@@ -545,30 +549,30 @@ def method_singlekwargdispatch_example() -> None:
 
     # Create processor
 
-    processor = DataProcessor()
+    data_processor = DataProcessor()
 
     # Integer
-    result = processor.process(prefix="Result", data=42)
+    result = data_processor.process(prefix="Result", data=42)
     print(result)
 
     # Float
-    result = processor.process(prefix="Result", data=3.14159)
+    result = data_processor.process(prefix="Result", data=3.14159)
     print(result)
 
     # String
-    result = processor.process(prefix="Result", data="Hello, world!")
+    result = data_processor.process(prefix="Result", data="Hello, world!")
     print(result)
 
     # List
-    result = processor.process(prefix="Result", data=[1, 2, 3, 4, 5])
+    result = data_processor.process(prefix="Result", data=[1, 2, 3, 4, 5])
     print(result)
 
     # Dictionary
-    result = processor.process(prefix="Result", data={"name": "John", "age": 30})
+    result = data_processor.process(prefix="Result", data={"name": "John", "age": 30})
     print(result)
 
     # Default case (tuple)
-    result = processor.process(prefix="Result", data=(1, 2, 3))
+    result = data_processor.process(prefix="Result", data=(1, 2, 3))
     print(result)
 
     print()

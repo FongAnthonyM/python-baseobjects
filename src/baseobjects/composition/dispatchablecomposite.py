@@ -19,6 +19,10 @@ __version__ = "1.12.0"
 
 
 # Imports #
+# Standard Libraries #
+from abc import abstractmethod
+from typing import Any
+
 # Local Packages #
 from ..classregistration import DispatchableClass
 from .basedispatchingcomposite import BaseDispatchingComposite
@@ -46,3 +50,27 @@ class DispatchableComposite(BaseDispatchingComposite, DispatchableClass):
         *args: Positional arguments used for class dispatching and component construction.
         **kwargs: Keyword arguments used for class dispatching and component construction.
     """
+
+    @classmethod
+    @abstractmethod
+    def get_registered_class(cls, *args: Any, **kwargs: Any) -> type[DispatchableClass] | None:
+        """Gets a subclass from the registry.
+
+        Args:
+            *args: Positional arguments to implement.
+            **kwargs: Keyword arguments to implement.
+
+        Returns:
+            The requested subclass, or None if not found.
+        """
+        msg = "This method needs to be set to get the registered class."
+        raise NotImplementedError(msg)
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Initializes this object with the given arguments.
+
+        Args:
+            *args: Positional arguments used for class dispatching (ignored here).
+            **kwargs: Keyword arguments used for initialization.
+        """
+        super().__init__(**kwargs)

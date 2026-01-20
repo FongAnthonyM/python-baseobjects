@@ -13,7 +13,7 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 from collections.abc import Callable
-from typing import Any, Optional
+from typing import Any
 
 # Source Packages #
 from baseobjects.functions import FunctionRegistry, MethodRegistry
@@ -158,12 +158,14 @@ class OperationsContainer:
 
         # Add methods to the registry
         # The methods will be bound to self.math_ops when accessed through self.methods
-        self.methods["add"] = self.math_ops.add
-        self.methods["subtract"] = self.math_ops.subtract
-        self.methods["multiply"] = self.math_ops.multiply
-        self.methods["divide"] = self.math_ops.divide
+        # We wrap them to handle the double binding
+        # (MethodRegistry binds to instance, and math_ops methods are already bound)
+        self.methods["add"] = lambda obj, *args, **kwargs: self.math_ops.add(*args, **kwargs)
+        self.methods["subtract"] = lambda obj, *args, **kwargs: self.math_ops.subtract(*args, **kwargs)
+        self.methods["multiply"] = lambda obj, *args, **kwargs: self.math_ops.multiply(*args, **kwargs)
+        self.methods["divide"] = lambda obj, *args, **kwargs: self.math_ops.divide(*args, **kwargs)
 
-    def add_method(self, name: str, method: Callable) -> None:
+    def add_method(self, name: str, method: Callable[..., Any]) -> None:
         """Add a method to the registry.
 
         Args:
@@ -228,17 +230,17 @@ class MultiOperationsContainer:
 
         # Add methods to the math registry
         # The methods will be bound to self.math_ops when accessed through self.math_methods
-        self.math_methods["add"] = self.math_ops.add
-        self.math_methods["subtract"] = self.math_ops.subtract
-        self.math_methods["multiply"] = self.math_ops.multiply
-        self.math_methods["divide"] = self.math_ops.divide
+        self.math_methods["add"] = lambda obj, *args, **kwargs: self.math_ops.add(*args, **kwargs)
+        self.math_methods["subtract"] = lambda obj, *args, **kwargs: self.math_ops.subtract(*args, **kwargs)
+        self.math_methods["multiply"] = lambda obj, *args, **kwargs: self.math_ops.multiply(*args, **kwargs)
+        self.math_methods["divide"] = lambda obj, *args, **kwargs: self.math_ops.divide(*args, **kwargs)
 
         # Add methods to the string registry
         # The methods will be bound to self.string_ops when accessed through self.string_methods
-        self.string_methods["uppercase"] = self.string_ops.uppercase
-        self.string_methods["lowercase"] = self.string_ops.lowercase
-        self.string_methods["capitalize"] = self.string_ops.capitalize
-        self.string_methods["reverse"] = self.string_ops.reverse
+        self.string_methods["uppercase"] = lambda obj, *args, **kwargs: self.string_ops.uppercase(*args, **kwargs)
+        self.string_methods["lowercase"] = lambda obj, *args, **kwargs: self.string_ops.lowercase(*args, **kwargs)
+        self.string_methods["capitalize"] = lambda obj, *args, **kwargs: self.string_ops.capitalize(*args, **kwargs)
+        self.string_methods["reverse"] = lambda obj, *args, **kwargs: self.string_ops.reverse(*args, **kwargs)
 
     def execute_math_method(self, method_name: str, *args: Any, **kwargs: Any) -> Any:
         """Execute a math method from the registry.
@@ -310,6 +312,7 @@ def basic_method_registry() -> None:
         methods = MethodRegistry()
 
         def __init__(self, name: str) -> None:
+            """Initialize."""
             self.name = name
 
     # Create instances of the class
@@ -329,8 +332,10 @@ def basic_method_registry() -> None:
     math_ops = MathOperations()
 
     # Add methods to the class registry
-    Example.methods["add"] = math_ops.add
-    Example.methods["subtract"] = math_ops.subtract
+    # Since MethodRegistry binds the method to the instance, we need to wrap the
+    # already-bound methods to accept the instance (self) as the first argument
+    Example.methods["add"] = lambda self, *args, **kwargs: math_ops.add(*args, **kwargs)
+    Example.methods["subtract"] = lambda self, *args, **kwargs: math_ops.subtract(*args, **kwargs)
 
     # Check the methods in each instance
     print(f"Methods in instance1: {list(instance1.methods.keys())}")
@@ -360,6 +365,7 @@ def method_registry_vs_function_registry() -> None:
         function_registry = FunctionRegistry()
 
         def __init__(self, name: str) -> None:
+            """Initialize."""
             self.name = name
 
     # Create instances of the class
@@ -371,8 +377,9 @@ def method_registry_vs_function_registry() -> None:
     string_ops = StringOperations()
 
     # Add methods to both registries
-    Example.method_registry["add"] = math_ops.add
-    Example.method_registry["uppercase"] = string_ops.uppercase
+    # For MethodRegistry, we wrap to handle the bound instance
+    Example.method_registry["add"] = lambda self, *args, **kwargs: math_ops.add(*args, **kwargs)
+    Example.method_registry["uppercase"] = lambda self, *args, **kwargs: string_ops.uppercase(*args, **kwargs)
 
     Example.function_registry["add"] = math_ops.add
     Example.function_registry["uppercase"] = string_ops.uppercase
@@ -424,14 +431,20 @@ def method_registry_vs_function_registry() -> None:
     print("\nUsing static methods and functions with function_registry:")
 
     # Define static methods
-    @staticmethod
     def static_add(a: float, b: float) -> float:
-        """Add two numbers without requiring an instance."""
+        """Add two numbers without requiring an instance.
+
+        Returns:
+            The sum.
+        """
         return a + b
 
-    @staticmethod
     def static_uppercase(text: str) -> str:
-        """Uppercase text without requiring an instance."""
+        """Uppercase text without requiring an instance.
+
+        Returns:
+            The uppercase text.
+        """
         return text.upper()
 
     # Add the static methods to the function_registry
@@ -479,15 +492,20 @@ def operations_container_example() -> None:
     print(f"\nAdding a custom method to {container2.name}...")
 
     # Define a method for the math_ops instance
-    def power_method(self, a: float, b: float) -> float:
-        """Raise a to the power of b."""
-        return a**b
+    def power_method(self: Any, a: float, b: float) -> float:
+        """Raise a to the power of b.
+
+        Returns:
+            The result of the power operation.
+        """
+        return float(a**b)
 
     # Add the method to the math_ops instance
-    container2.math_ops.power = power_method.__get__(container2.math_ops, MathOperations)
+    container2.math_ops.power = power_method.__get__(container2.math_ops, MathOperations)  # type: ignore[attr-defined]
 
     # Add the bound method to the registry
-    container2.add_method("power", container2.math_ops.power)
+    # We need to wrap it to handle the double binding
+    container2.add_method("power", lambda obj, *args: container2.math_ops.power(*args))  # type: ignore[attr-defined]
 
     # Show the updated methods
     print(f"Methods in {container2.name}: {container2.list_methods()}")
@@ -551,6 +569,7 @@ def method_binding_example() -> None:
     # Create a class with instance methods
     class Example:
         def __init__(self, name: str, value: Any) -> None:
+            """Initialize."""
             self.name = name
             self.value = value
 

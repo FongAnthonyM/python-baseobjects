@@ -23,10 +23,10 @@ from typing import TypeVar
 
 # Definitions #
 # Types #
-KeyType = TypeVar("_KT")  # Key type.
-ValueType = TypeVar("_VT")
-KT_co = TypeVar("_KT_co", covariant=True)
-VT_co = TypeVar("_VT_co", covariant=True)
+KeyType = TypeVar("KeyType", bound=object)  # Key type.
+ValueType = TypeVar("ValueType")
+KT_co = TypeVar("KT_co", covariant=True)
+VT_co = TypeVar("VT_co", covariant=True)
 
 # Available Types
 __all__ = [

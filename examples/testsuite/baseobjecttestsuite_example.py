@@ -14,7 +14,7 @@ This example demonstrates:
 # Standard Libraries #
 import copy
 import pickle
-from typing import Any, Optional
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -43,7 +43,7 @@ class Person(BaseObject):
         self.name = name
         self.age = age
         self.email = email
-        self.friends = []  # Mutable attribute for testing deep copy
+        self.friends: list[Person] = []  # Mutable attribute for testing deep copy
         self.id = id(self)  # Immutable attribute for testing deep copy
 
     def add_friend(self, friend: "Person") -> None:
@@ -120,7 +120,7 @@ class PersonTestSuite(BaseObjectTestSuite):
     """Test suite for the Person class and its subclasses."""
 
     # Class Attributes #
-    TestClass = Person
+    UnitTestClass = Person
 
     # Instance Methods #
     # Fixtures
@@ -164,114 +164,126 @@ class PersonTestSuite(BaseObjectTestSuite):
             args = ("Test Person", 30, "test@example.com")
 
         # Create instance
-        instance = self.TestClass(*args, **kwargs)
+        instance = self.UnitTestClass(*args, **kwargs)
 
         # Verify instance
-        assert isinstance(instance, self.TestClass)
+        assert isinstance(instance, self.UnitTestClass)
         assert instance.name == args[0]
         assert instance.age == args[1]
         if len(args) > 2:
             assert instance.email == args[2]
 
-    def test_copy(self, test_object: Person) -> None:
+    def test_copy(self, test_object: Any) -> None:
         """Test the copy behavior of the Person class.
 
         Args:
             test_object: A fixture providing a test Person instance.
         """
+        # Cast to Person for type checking
+        person: Person = test_object
+
         # Add a friend to test mutable attribute copying
         friend = Person("Friend", 25)
-        test_object.add_friend(friend)
+        person.add_friend(friend)
 
         # Copy object
-        obj_copy = copy.copy(test_object)
+        obj_copy = copy.copy(person)
 
         # Verify copy
-        assert obj_copy is not test_object
-        assert obj_copy.name == test_object.name
-        assert obj_copy.age == test_object.age
-        assert obj_copy.email == test_object.email
-        assert obj_copy.friends is test_object.friends  # Shallow copy, same object
-        assert id(obj_copy) != id(test_object)  # Different objects
-        assert obj_copy.id == test_object.id  # Same id value (copied)
+        assert obj_copy is not person
+        assert obj_copy.name == person.name
+        assert obj_copy.age == person.age
+        assert obj_copy.email == person.email
+        assert obj_copy.friends is person.friends  # Shallow copy, same object
+        assert id(obj_copy) != id(person)  # Different objects
+        assert obj_copy.id == person.id  # Same id value (copied)
 
-    def test_copy_method(self, test_object: Person) -> None:
+    def test_copy_method(self, test_object: Any) -> None:
         """Test the copy method of the Person class.
 
         Args:
             test_object: A fixture providing a test Person instance.
         """
+        # Cast to Person for type checking
+        person: Person = test_object
+
         # Add a friend to test mutable attribute copying
         friend = Person("Friend", 25)
-        test_object.add_friend(friend)
+        person.add_friend(friend)
 
         # Copy object using method
-        obj_copy = test_object.copy()
+        obj_copy = person.copy()
 
         # Verify copy
-        assert obj_copy is not test_object
-        assert obj_copy.name == test_object.name
-        assert obj_copy.age == test_object.age
-        assert obj_copy.email == test_object.email
-        assert obj_copy.friends is test_object.friends  # Shallow copy, same object
-        assert id(obj_copy) != id(test_object)  # Different objects
-        assert obj_copy.id == test_object.id  # Same id value (copied)
+        assert obj_copy is not person
+        assert obj_copy.name == person.name
+        assert obj_copy.age == person.age
+        assert obj_copy.email == person.email
+        assert obj_copy.friends is person.friends  # Shallow copy, same object
+        assert id(obj_copy) != id(person)  # Different objects
+        assert obj_copy.id == person.id  # Same id value (copied)
 
-    def test_deepcopy(self, test_object: Person, memo: dict | None = None) -> None:
+    def test_deepcopy(self, test_object: Any, memo: dict[Any, Any] | None = None) -> None:
         """Test the deep copy behavior of the Person class.
 
         Args:
             test_object: A fixture providing a test Person instance.
             memo: A memo dictionary for deepcopy.
         """
+        # Cast to Person for type checking
+        person: Person = test_object
+
         # Add a friend to test mutable attribute copying
         friend = Person("Friend", 25)
-        test_object.add_friend(friend)
+        person.add_friend(friend)
 
         # Deep copy object
         if memo is None:
             memo = {}
-        obj_deepcopy = copy.deepcopy(test_object, memo=memo)
+        obj_deepcopy = copy.deepcopy(person, memo=memo)
 
         # Verify deep copy
-        assert obj_deepcopy is not test_object
-        assert obj_deepcopy.name == test_object.name
-        assert obj_deepcopy.age == test_object.age
-        assert obj_deepcopy.email == test_object.email
-        assert obj_deepcopy.friends is not test_object.friends  # Deep copy, different object
-        assert len(obj_deepcopy.friends) == len(test_object.friends)  # Same number of friends
-        assert obj_deepcopy.friends[0] is not test_object.friends[0]  # Deep copy of friend objects
-        assert obj_deepcopy.friends[0].name == test_object.friends[0].name  # Same friend data
-        assert id(obj_deepcopy) != id(test_object)  # Different objects
-        assert obj_deepcopy.id == test_object.id  # Same id value (copied)
+        assert obj_deepcopy is not person
+        assert obj_deepcopy.name == person.name
+        assert obj_deepcopy.age == person.age
+        assert obj_deepcopy.email == person.email
+        assert obj_deepcopy.friends is not person.friends  # Deep copy, different object
+        assert len(obj_deepcopy.friends) == len(person.friends)  # Same number of friends
+        assert obj_deepcopy.friends[0] is not person.friends[0]  # Deep copy of friend objects
+        assert obj_deepcopy.friends[0].name == person.friends[0].name  # Same friend data
+        assert id(obj_deepcopy) != id(person)  # Different objects
+        assert obj_deepcopy.id == person.id  # Same id value (copied)
 
-    def test_deepcopy_method(self, test_object: Person, memo: dict | None = None) -> None:
+    def test_deepcopy_method(self, test_object: Any, memo: dict[Any, Any] | None = None) -> None:
         """Test the deepcopy method of the Person class.
 
         Args:
             test_object: A fixture providing a test Person instance.
             memo: A memo dictionary for deepcopy.
         """
+        # Cast to Person for type checking
+        person: Person = test_object
+
         # Add a friend to test mutable attribute copying
         friend = Person("Friend", 25)
-        test_object.add_friend(friend)
+        person.add_friend(friend)
 
         # Deep copy object using method
         if memo is None:
             memo = {}
-        obj_deepcopy = test_object.deepcopy(memo=memo)
+        obj_deepcopy = person.deepcopy(memo=memo)
 
         # Verify deep copy
-        assert obj_deepcopy is not test_object
-        assert obj_deepcopy.name == test_object.name
-        assert obj_deepcopy.age == test_object.age
-        assert obj_deepcopy.email == test_object.email
-        assert obj_deepcopy.friends is not test_object.friends  # Deep copy, different object
-        assert len(obj_deepcopy.friends) == len(test_object.friends)  # Same number of friends
-        assert obj_deepcopy.friends[0] is not test_object.friends[0]  # Deep copy of friend objects
-        assert obj_deepcopy.friends[0].name == test_object.friends[0].name  # Same friend data
-        assert id(obj_deepcopy) != id(test_object)  # Different objects
-        assert obj_deepcopy.id == test_object.id  # Same id value (copied)
+        assert obj_deepcopy is not person
+        assert obj_deepcopy.name == person.name
+        assert obj_deepcopy.age == person.age
+        assert obj_deepcopy.email == person.email
+        assert obj_deepcopy.friends is not person.friends  # Deep copy, different object
+        assert len(obj_deepcopy.friends) == len(person.friends)  # Same number of friends
+        assert obj_deepcopy.friends[0] is not person.friends[0]  # Deep copy of friend objects
+        assert obj_deepcopy.friends[0].name == person.friends[0].name  # Same friend data
+        assert id(obj_deepcopy) != id(person)  # Different objects
+        assert obj_deepcopy.id == person.id  # Same id value (copied)
 
     def test_pickling(self, test_object: Person) -> None:
         """Test pickling and unpickling of the Person class.
@@ -356,7 +368,7 @@ def test_suite_overview() -> None:
     test_suite = PersonTestSuite()
 
     # Show test class
-    print(f"Test class: {test_suite.TestClass.__name__}")
+    print(f"Test class: {test_suite.UnitTestClass.__name__}")
 
     # List available test methods
     print("\nAvailable test methods:")
@@ -466,46 +478,56 @@ def running_tests_manually() -> None:
     test_suite = PersonTestSuite()
 
     # Create test objects
-    person = Person("Test Person", 30, "test@example.com")
+    def create_person() -> Person:
+        return Person("Test Person", 30, "test@example.com")
+
+    person = create_person()
     employee = Employee("Test Employee", 35, "employee@example.com", "E12345", "Engineering", 75000.0)
     friend = Person("Test Friend", 28, "friend@example.com")
 
     # Run tests manually
     print("Running test_instance_creation...")
     test_suite.test_instance_creation("Manual Test", 40, "manual@example.com")
-    print("✓ test_instance_creation passed")
+    print("[PASS] test_instance_creation passed")
 
     print("\nRunning test_copy...")
+    person = create_person()
     test_suite.test_copy(person)
-    print("✓ test_copy passed")
+    print("[PASS] test_copy passed")
 
     print("\nRunning test_copy_method...")
+    person = create_person()
     test_suite.test_copy_method(person)
-    print("✓ test_copy_method passed")
+    print("[PASS] test_copy_method passed")
 
     print("\nRunning test_deepcopy...")
+    person = create_person()
     test_suite.test_deepcopy(person)
-    print("✓ test_deepcopy passed")
+    print("[PASS] test_deepcopy passed")
 
     print("\nRunning test_deepcopy_method...")
+    person = create_person()
     test_suite.test_deepcopy_method(person)
-    print("✓ test_deepcopy_method passed")
+    print("[PASS] test_deepcopy_method passed")
 
     print("\nRunning test_pickling...")
+    person = create_person()
     test_suite.test_pickling(person)
-    print("✓ test_pickling passed")
+    print("[PASS] test_pickling passed")
 
     print("\nRunning test_get_info...")
+    person = create_person()
     test_suite.test_get_info(person)
-    print("✓ test_get_info passed")
+    print("[PASS] test_get_info passed")
 
     print("\nRunning test_add_friend...")
+    person = create_person()
     test_suite.test_add_friend(person, friend)
-    print("✓ test_add_friend passed")
+    print("[PASS] test_add_friend passed")
 
     print("\nRunning test_employee_get_info...")
     test_suite.test_employee_get_info(employee)
-    print("✓ test_employee_get_info passed")
+    print("[PASS] test_employee_get_info passed")
 
     print("\nNote: In a real test environment, these tests would be run using pytest,")
     print("which provides better test discovery, reporting, and fixtures management.")
@@ -580,13 +602,13 @@ def extending_test_suite() -> None:
     print("\nRunning extended tests...")
     print("Running test_age_update...")
     extended_test_suite.test_age_update(person)
-    print("✓ test_age_update passed")
+    print("[PASS] test_age_update passed")
 
     print("\nRunning test_multiple_friends...")
     # Reset person for this test
     person = Person("Extended Test Person", 45, "extended@example.com")
     extended_test_suite.test_multiple_friends(person)
-    print("✓ test_multiple_friends passed")
+    print("[PASS] test_multiple_friends passed")
 
     print("\nNote: The extended test suite inherits all test methods from the base test suite,")
     print("while adding new test methods specific to the extended functionality.")

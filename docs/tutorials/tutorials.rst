@@ -13,6 +13,19 @@ Repository Tutorials
 - Jupyter notebooks: see the ``tutorials/`` directory.
 - Code examples: see the ``examples/`` directory.
 
+Available example categories in ``examples/``:
+
+- ``bases``: Examples of base classes and primitives.
+- ``classregistration``: Examples of class registries and dispatching.
+- ``collections``: Examples of specialized collection types.
+- ``composition``: Examples of component-based systems.
+- ``functions``: Examples of dynamic functions and decorators.
+- ``objects``: Examples of object helpers and properties.
+- ``operations``: Examples of general-purpose operations.
+- ``testsuite``: Examples related to testing foundations.
+- ``versioning``: Examples of version handling.
+- ``wrappers``: Examples of object wrappers.
+
 To run the notebooks locally, install the optional dependencies and launch Jupyter:
 
 .. code-block:: bash

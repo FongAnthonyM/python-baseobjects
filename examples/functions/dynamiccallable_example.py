@@ -41,6 +41,7 @@ class WrappingDynamicCallable(DynamicCallable):
 
         # Create a new callable that adds a prefix
         def prefixed_callable(*args: Any, **kwargs: Any) -> Any:
+            assert self.__wrapped__ is not None
             result = self.__wrapped__(instance, *args, **kwargs)
             if isinstance(result, str):
                 return f"[Prefixed] {result}"
@@ -58,6 +59,7 @@ class WrappingDynamicCallable(DynamicCallable):
         Returns:
             The result of the wrapped function.
         """
+        assert self.__wrapped__ is not None
         print(f"Calling {self.__wrapped__.__name__} with args: {args}, kwargs: {kwargs}")
         result = self.__wrapped__(*args, **kwargs)
         print(f"Result: {result}")
@@ -87,6 +89,7 @@ class WrappingDynamicCallable(DynamicCallable):
                 msg = f"None value for {key} is not allowed"
                 raise ValueError(msg)
 
+        assert self.__wrapped__ is not None
         return self.__wrapped__(*args, **kwargs)
 
 
@@ -97,7 +100,7 @@ class NonWrappingDynamicCallable(DynamicCallable):
     its own functionality directly through custom methods registered with the call_multiplexer.
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initialize the NonWrappingDynamicCallable.
 
         This constructor initializes the object without requiring a wrapped function. It registers custom methods with
@@ -171,11 +174,16 @@ class NonWrappingDynamicCallable(DynamicCallable):
 class ExampleClass:
     """A class to demonstrate using DynamicCallable as a descriptor."""
 
-    def __init__(self, name) -> None:
+    def __init__(self, name: str) -> None:
+        """Initialize the object."""
         self.name = name
 
-    def greet(self, name) -> str:
-        """A static method that greets a person."""
+    def greet(self, name: str) -> str:
+        """A static method that greets a person.
+
+        Returns:
+            The greeting string.
+        """
         return f"Hello, {name}! I'm {self.name}!"
 
     # Create a DynamicCallable as a class attribute
@@ -186,8 +194,12 @@ class ExampleClass:
 
 
 # Functions #
-def example_function(a, b):
-    """A simple function that adds two numbers."""
+def example_function(a: float, b: float) -> float:
+    """A simple function that adds two numbers.
+
+    Returns:
+        The sum of the two numbers.
+    """
     return a + b
 
 
@@ -259,7 +271,7 @@ def dynamiccallable_as_descriptor() -> None:
     """Demonstrates using DynamicCallable as a descriptor."""
     print("DynamicCallable as Descriptor:\n")
 
-    # Create an instance of ExampleClass
+    # Create an instance of ConcreteClass
     example = ExampleClass("John")
 
     # Use the DynamicCallable descriptor
@@ -301,8 +313,13 @@ def multiplexer_exploration() -> None:
     print(f"Available methods: {list(dynamic_callable.call_multiplexer.registry.keys())}")
 
     # Add a custom method to the call multiplexer
-    def call_with_double(self, *args, **kwargs):
-        """Double the result of the wrapped function."""
+    def call_with_double(self: Any, *args: Any, **kwargs: Any) -> Any:
+        """Double the result of the wrapped function.
+
+        Returns:
+            The doubled result.
+        """
+        assert dynamic_callable.__wrapped__ is not None
         result = dynamic_callable.__wrapped__(*args, **kwargs)
         return result * 2
 

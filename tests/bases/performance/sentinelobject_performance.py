@@ -19,14 +19,14 @@ __version__ = "1.12.0"
 import copy
 import pickle
 import timeit
-from typing import Any, ClassVar, Dict
+from typing import Any, ClassVar
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.bases import BaseReducible, SentinelObject
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.bases import SentinelObject
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
@@ -41,7 +41,11 @@ class NormalSentinel:
     identity: str
 
     def __new__(cls, id_: str) -> "NormalSentinel":
-        """Create a new sentinel object or return an existing one with the same ID."""
+        """Create a new sentinel object or return an existing one with the same ID.
+
+        Returns:
+            NormalSentinel: The sentinel.
+        """
         if (sentinel := cls.registry.get(id_, None)) is None:
             cls.registry[id_] = sentinel = super().__new__(cls)
         return sentinel
@@ -51,7 +55,11 @@ class NormalSentinel:
         self.identity = id_
 
     def __reduce__(self) -> tuple[Any, tuple[Any]]:
-        """Reduce the sentinel object for pickling."""
+        """Reduce the sentinel object for pickling.
+
+        Returns:
+            tuple[Any, tuple[Any]]: The pickling state.
+        """
         return self.__class__, (self.identity,)
 
 
@@ -91,7 +99,8 @@ class TestSentinelObjectPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal sentinel creation: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal sentinel creation: {mean_normal:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"SentinelObject creation: {mean_sentinel:.3f} μs ({percent:.3f}% of normal sentinel creation time)")
         assert percent < self.speed_tolerance * 1.5  # Allow some overhead for SentinelObject creation
@@ -124,7 +133,8 @@ class TestSentinelObjectPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal sentinel lookup: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal sentinel lookup: {mean_normal:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"SentinelObject lookup: {mean_sentinel:.3f} μs ({percent:.3f}% of normal sentinel lookup time)")
         assert percent < self.speed_tolerance  # Should be very similar to normal sentinel lookup
@@ -155,7 +165,8 @@ class TestSentinelObjectPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal sentinel copy: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal sentinel copy: {mean_normal:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"SentinelObject.copy: {mean_sentinel:.3f} μs ({percent:.3f}% of normal sentinel copy time)")
         assert percent < self.speed_tolerance  # Should be very fast since it just returns self
@@ -186,7 +197,8 @@ class TestSentinelObjectPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal sentinel deepcopy: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal sentinel deepcopy: {mean_normal:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"SentinelObject.deepcopy: {mean_sentinel:.3f} μs ({percent:.3f}% of normal sentinel deepcopy time)")
         assert percent < self.speed_tolerance  # Should be very fast since it just returns self
@@ -217,7 +229,8 @@ class TestSentinelObjectPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal sentinel pickling: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal sentinel pickling: {mean_normal:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"SentinelObject pickling: {mean_sentinel:.3f} μs ({percent:.3f}% of normal sentinel pickling time)")
         assert percent < self.speed_tolerance * 2  # Allow more overhead for pickling operations
@@ -249,7 +262,8 @@ class TestSentinelObjectPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal sentinel unpickling: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal sentinel unpickling: {mean_normal:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"SentinelObject unpickling: {mean_sentinel:.3f} μs ({percent:.3f}% of normal sentinel unpickling time)")
         assert percent < self.speed_tolerance * 2  # Allow more overhead for unpickling operations
@@ -267,10 +281,10 @@ class TestSentinelObjectPerformance(BasePerformanceTestSuite):
         normal2 = NormalSentinel("compare_test")
 
         def compare_sentinel_objects() -> None:
-            sentinel1 is sentinel2
+            _ = sentinel1 is sentinel2
 
         def compare_normal_sentinels() -> None:
-            normal1 is normal2
+            _ = normal1 is normal2
 
         # Calculate the mean time in microseconds for SentinelObject identity comparison
         sentinel_time = timeit.timeit(compare_sentinel_objects, number=self.timeit_runs)
@@ -283,10 +297,12 @@ class TestSentinelObjectPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal sentinel identity comparison: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal sentinel identity comparison: {mean_normal:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(
-            f"SentinelObject identity comparison: {mean_sentinel:.3f} μs ({percent:.3f}% of normal sentinel identity comparison time)",
+            f"SentinelObject identity comparison: {mean_sentinel:.3f} μs "
+            f"({percent:.3f}% of normal sentinel identity comparison time)",
         )
         assert percent < self.speed_tolerance  # Should be very similar to normal identity comparison
 
@@ -322,10 +338,12 @@ class TestSentinelObjectPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nMultiple normal sentinel creation: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nMultiple normal sentinel creation: {mean_normal:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(
-            f"Multiple SentinelObject creation: {mean_sentinel:.3f} μs ({percent:.3f}% of multiple normal sentinel creation time)",
+            f"Multiple SentinelObject creation: {mean_sentinel:.3f} μs "
+            f"({percent:.3f}% of multiple normal sentinel creation time)",
         )
         assert percent < self.speed_tolerance * 2  # Allow more overhead for multiple creations
 

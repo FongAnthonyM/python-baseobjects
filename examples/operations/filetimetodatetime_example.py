@@ -95,7 +95,7 @@ def timezone_example() -> None:
     print(f"  Timezone: {dt_utc.tzinfo}")
 
     # Convert to datetime with local timezone
-    local_tz = datetime.datetime.now().astimezone().tzinfo
+    local_tz = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
     dt_local = filetime_to_datetime(filetime, tzinfo=local_tz)
 
     print("\nWith local timezone:")
@@ -130,7 +130,7 @@ def current_filetime_example() -> None:
     print("\nCurrent Filetime Example:")
 
     # Get current UTC time
-    now_utc = datetime.datetime.now()
+    now_utc = datetime.datetime.now(datetime.timezone.utc)
     print(f"Current UTC time: {now_utc}")
 
     # Convert to Windows filetime
@@ -143,7 +143,7 @@ def current_filetime_example() -> None:
     print(f"Converted to filetime: {filetime}")
 
     # Convert back to datetime
-    dt = filetime_to_datetime(filetime)
+    dt = filetime_to_datetime(filetime, datetime.timezone.utc)
 
     print(f"Converted back to datetime: {dt}")
 

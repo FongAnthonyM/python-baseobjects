@@ -10,7 +10,7 @@ Key class
 - BaseMeta: A robust metaclass that integrates with copying/deepcopying and supports coordinated class construction phases.
 
 Example: coordinating class initialization
------------------------------------------
+------------------------------------------
 .. code-block:: python
 
    from baseobjects.bases import BaseObject, BaseMeta

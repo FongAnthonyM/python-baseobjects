@@ -18,30 +18,30 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Type
+from typing import ClassVar
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.bases import BaseMeta
-from src.baseobjects.testsuite.bases import BaseClassTestSuite
+from baseobjects.bases import BaseMeta
+from baseobjects.testsuite.bases import BaseClassTestSuite
 
 
 # Classes #
-class BaseTestMeta(BaseMeta):
+class BaseMetaSubclass(BaseMeta):
     """A subclass of BaseMeta for testing purposes."""
 
 
-class BaseTestClass(metaclass=BaseTestMeta):
-    """A class that uses BaseTestMeta as its metaclass."""
+class ConcreteClass(metaclass=BaseMetaSubclass):
+    """A class that uses BaseMetaSubclass as its metaclass."""
 
     def __init__(self) -> None:
         """Initialize with some attributes."""
         self.value = 42
 
 
-# Tests#
+# Tests #
 class TestBaseMeta(BaseClassTestSuite):
     """Test the BaseMeta class.
 
@@ -50,19 +50,19 @@ class TestBaseMeta(BaseClassTestSuite):
     """
 
     # Attributes #
-    TestClass: type[BaseMeta] = BaseTestMeta
-    TestBaseClass: type[BaseTestClass] = BaseTestClass
+    UnitTestClass: ClassVar[type[BaseMeta]] = BaseMetaSubclass
+    ConcreteUnitTestClass: type[ConcreteClass] = ConcreteClass
 
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_class(self) -> type:
+    def test_class(self) -> type[ConcreteClass]:
         """Create a test class with the test metaclass.
 
         Returns:
             Type: A class that uses the test metaclass.
         """
-        return self.TestBaseClass
+        return self.ConcreteUnitTestClass
 
     # Tests
     def test_instance_creation(self) -> None:
@@ -72,13 +72,14 @@ class TestBaseMeta(BaseClassTestSuite):
         """
 
         # Create a class with the metaclass
-        class TestClass(metaclass=self.TestClass):
+        class UnitTestClass(metaclass=BaseMetaSubclass):
             pass
 
         # Validate
-        assert TestClass.__class__ is self.TestClass
+        cls_type = type(UnitTestClass)
+        assert cls_type is BaseMetaSubclass
 
-    def test_class_instance_creation(self, test_class: type) -> None:
+    def test_class_instance_creation(self, test_class: type[ConcreteClass]) -> None:
         """Test that instances of classes with the metaclass can be created.
 
         Args:

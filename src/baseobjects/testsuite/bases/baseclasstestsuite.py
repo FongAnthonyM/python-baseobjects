@@ -16,7 +16,7 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 from abc import abstractmethod
-from typing import Any
+from typing import Any, ClassVar
 
 # Local Packages #
 from .basetestsuite import BaseTestSuite
@@ -28,20 +28,19 @@ class BaseClassTestSuite(BaseTestSuite):
     """Base class for test suites which test a class.
 
     This class provides common functionality for test suites, including fixtures and utility methods. Subclasses should
-    implement the test_instance_creation method and set the TestClass attribute.
+    implement the test_instance_creation method and set the UnitTestClass attribute.
 
     Attributes:
-        TestClass: The class that the test suite is testing.
+        UnitTestClass: The class that the test suite is testing.
     """
 
-    # Attributes #
-    TestClass: type[Any]
+    UnitTestClass: ClassVar[type[Any] | None] = None
 
-    # Instance Methods #
-    # Tests
+    # Tests #
+    # Instantiation #
     @abstractmethod
     def test_instance_creation(self, *args: Any, **kwargs: Any) -> None:
-        """Test that instances of the class can be created.
+        """Tests that instances of the class can be created.
 
         This is an abstract method that must be implemented by subclasses.
 

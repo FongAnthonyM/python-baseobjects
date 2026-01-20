@@ -46,7 +46,7 @@ class BaseClassRegistry(BaseDict):
     # Magic Methods #
     # Construction/Destruction
     def __init__(self, head_class: type | None = None, *args: Any, init: bool = True, **kwargs: Any) -> None:
-        """Initialize the class registry.
+        """Initializes this object with the given arguments.
 
         Args:
             head_class: Optional head class that registered classes must derive from.
@@ -64,7 +64,7 @@ class BaseClassRegistry(BaseDict):
     # Instance Methods #
     # Constructors/Destructors
     def construct(self, head_class: type | None = None, **kwargs: Any) -> None:
-        """Constructs this object.
+        """Constructs this object with the given arguments.
 
         Args:
             head_class: The head class of the registry.
@@ -77,12 +77,7 @@ class BaseClassRegistry(BaseDict):
 
     # Registry
     @abstractmethod
-    def register_class(
-        self,
-        cls: type,
-        *args: Any,
-        **kwargs: Any,
-    ) -> None:
+    def register_class(self, cls: type, *args: Any, **kwargs: Any) -> None:
         """Registers a class with the given namespace and name.
 
         Args:

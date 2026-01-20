@@ -21,7 +21,7 @@ from typing import Any
 
 # Definitions #
 # Functions #
-def iter_method_names(obj: Any) -> Generator[str, None, None]:
+def iter_method_names(obj: Any) -> Generator[str]:
     """Creates an iterator which iterates over the method names of an object.
 
     Args:
@@ -33,7 +33,7 @@ def iter_method_names(obj: Any) -> Generator[str, None, None]:
     return (name for name in dir(obj) if callable(getattr(obj, name, None)))
 
 
-def iter_public_method_names(obj: Any) -> Generator[str, None, None]:
+def iter_public_method_names(obj: Any) -> Generator[str]:
     """Creates an iterator which iterates over the public method names of an object.
 
     Args:

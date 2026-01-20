@@ -1,9 +1,6 @@
-"""dynamicdecoractor.py
+"""dynamicdecorator.py
 An abstract class which implements a dynamic decorator with multiplexed callback.
 """
-
-# Futures Imports #
-from __future__ import annotations
 
 # Header #
 __package_name__ = "baseobjects"
@@ -34,9 +31,5 @@ class DynamicDecorator(BaseDecorator, DynamicFunction):
 
     Also, if either binding or callback is desired to be static (multiplexing is not required), then override the
     __get__ or __call__ methods of this class. If both binding and callback are static then consider using
-    BaseDecorator. Example:
-    >>> # Method Overrides #
-    >>> # Special method overriding which leads to less overhead.
-    >>> __get__: GetObjectMethod = BaseDecorator.bind_builtin  # Assigns __get__ to a previously defined method.
-    >>> __call__: AnyCallable = BaseDecorator.call_binding  # Assigns __call__ to a previously defined method.
+    BaseDecorator.
     """

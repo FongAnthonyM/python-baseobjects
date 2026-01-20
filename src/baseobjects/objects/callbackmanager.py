@@ -25,15 +25,17 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from asyncio import Task, create_task, gather, shield, wait_for
+import asyncio
+from asyncio import Task, create_task, gather, shield
 from collections import deque
-from collections.abc import Callable, Iterable
+from collections.abc import Iterable
 from functools import partial
 from typing import Any, ClassVar, NamedTuple
 
 # Local Packages #
 from ..bases import BaseObject, BaseReducible
 from ..functions import MethodMultiplexer
+from ..typing import AnyCallable
 
 
 # Definitions #
@@ -44,15 +46,11 @@ class ConditionalCallbackEntry(NamedTuple):
     This named tuple represents a callback entry with its associated condition and caller functions. It is used by the
     CallbackManager to store and manage callback functions along with their execution conditions and caller methods.
 
-    Attributes:
-        callback: The callback function to be executed.
-        condition: The condition function that determines if the callback should be executed.
-        caller: The function responsible for calling the callback when the condition is met.
     """
 
-    callback: Callable
-    condition: Callable
-    caller: Callable
+    callback: AnyCallable
+    condition: AnyCallable
+    caller: AnyCallable
 
 
 class CallbackScheduler(BaseObject):
@@ -73,20 +71,20 @@ class CallbackScheduler(BaseObject):
     default_schedule_async: ClassVar[str] = "schedule_singleton_async_callbacks_async"
 
     # Attributes #
-    callback_map: list[tuple[Callable, deque], ...]
+    callback_map: list[tuple[AnyCallable, deque[Any]]]
 
     # Magic Methods #
     # Construction/Destruction
     def __init__(
         self,
-        callback_map: Iterable[tuple[Callable, deque]] | None = None,
-        schedule: Callable | str | None = None,
-        schedule_async: Callable | str | None = None,
+        callback_map: Iterable[tuple[AnyCallable, deque[Any]]] | None = None,
+        schedule: AnyCallable | str | None = None,
+        schedule_async: AnyCallable | str | None = None,
         *args: Any,
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        """Initializes a new CallbackScheduler instance.
+        """Initializes this object with the given arguments.
 
         Args:
             callback_map: An iterable of tuples containing callback functions and their associated task queues.
@@ -113,13 +111,13 @@ class CallbackScheduler(BaseObject):
     # Constructors/Destructors
     def construct(
         self,
-        callback_map: list[tuple[Callable, deque]] | None = None,
-        schedule: Callable | str | None = None,
-        schedule_async: Callable | str | None = None,
+        callback_map: Iterable[tuple[AnyCallable, deque[Any]]] | None = None,
+        schedule: AnyCallable | str | None = None,
+        schedule_async: AnyCallable | str | None = None,
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        """Constructs and initializes this CallbackScheduler object.
+        """Constructs this object with the given arguments.
 
         This method sets up the callback map and configures the scheduling functions. It's called during initialization
         if init=True, or can be called manually to reinitialize the object.
@@ -147,7 +145,7 @@ class CallbackScheduler(BaseObject):
         super().construct(*args, **kwargs)
 
     # Scheduling
-    def add_schedule_function(self, name: str, func: Callable) -> None:
+    def add_schedule_function(self, name: str, func: AnyCallable) -> None:
         """Adds a synchronous scheduling function to the scheduler.
 
         Args:
@@ -156,7 +154,7 @@ class CallbackScheduler(BaseObject):
         """
         self.schedule.add_function(name, func)
 
-    def add_schedule_async_function(self, name: str, func: Callable) -> None:
+    def add_schedule_async_function(self, name: str, func: AnyCallable) -> None:
         """Adds an asynchronous scheduling function to the scheduler.
 
         Args:
@@ -242,37 +240,37 @@ class CallbackManager(BaseReducible):
     default_condition: str = "true_condition"
     default_caller: str = "call_conditional"
 
-    callbacks: dict[str, Callable]
-    callbacks_async: dict[str, Callable]
-    conditional_callbacks: dict[str, Callable]
-    conditional_callbacks_async: dict[str, Callable]
+    callbacks: dict[str, AnyCallable]
+    callbacks_async: dict[str, AnyCallable]
+    conditional_callbacks: dict[str, AnyCallable]
+    conditional_callbacks_async: dict[str, AnyCallable]
 
     scheduler_type: type = CallbackScheduler
     schedulers: dict[str, CallbackScheduler]
 
     max_callback_tasks: int = 1
-    tasks: dict[str, deque[Task]]
+    tasks: dict[str, deque[Task[Any]]]
 
     # Magic Methods #
     # Construction/Destruction
     def __init__(
         self,
-        callbacks: dict[str, ConditionalCallbackEntry] | None = None,
-        callbacks_async: dict[str, ConditionalCallbackEntry] | None = None,
+        callbacks: dict[str, AnyCallable] | None = None,
+        callbacks_async: dict[str, AnyCallable] | None = None,
         *args: Any,
         default_condition: str | None = None,
         default_caller: str | None = None,
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        """Initializes the callback manager.
+        """Initializes this object with the given arguments.
 
         Initializes internal registries and optionally constructs the instance using
         provided callback entries and defaults.
 
         Args:
-            callbacks: Mapping of names to synchronous ConditionalCallbackEntry objects to register.
-            callbacks_async: Mapping of names to asynchronous ConditionalCallbackEntry objects to register.
+            callbacks: Mapping of names to synchronous callback functions to register.
+            callbacks_async: Mapping of names to asynchronous callback functions to register.
             *args: Additional positional arguments forwarded to construct for subclass initialization.
             default_condition: Default condition name used when registering callbacks.
                 If provided, overrides the class default.
@@ -306,8 +304,8 @@ class CallbackManager(BaseReducible):
             )
 
     # Pickling
-    def __getstate__(self) -> dict[str, Any]:
-        """Gets the object's state for pickling.
+    def __getstate__(self) -> dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]] | None:
+        """Gets the state of this object for pickling.
 
         Returns:
             The state returned will be either of the following types based on the presence of __dict__ and __slots__:
@@ -317,11 +315,15 @@ class CallbackManager(BaseReducible):
                 tuple[dict, dict]: __dict__ is present and __slots__ is present.
         """
         state = super().__getstate__()
+        names = ("callbacks", "callbacks_async", "scheduler_tasks", "caller_tasks", "callback_tasks", "tasks")
 
-        for name in ("callbacks", "callbacks_async", "scheduler_tasks", "caller_tasks", "callback_tasks", "tasks"):
-            if name in state:
-                del state[name]
-
+        match state:
+            case dict():
+                for name in names:
+                    state.pop(name, None)
+            case (dict() as state_dict, _):
+                for name in names:
+                    state_dict.pop(name, None)
         return state
 
     def __setstate__(self, state: Any) -> None:
@@ -346,18 +348,18 @@ class CallbackManager(BaseReducible):
     # Constructors/Destructors
     def construct(
         self,
-        callbacks: dict[str, ConditionalCallbackEntry] | None = None,
-        callbacks_async: dict[str, ConditionalCallbackEntry] | None = None,
+        callbacks: dict[str, AnyCallable] | None = None,
+        callbacks_async: dict[str, AnyCallable] | None = None,
         *args: Any,
         default_condition: str | None = None,
         default_caller: str | None = None,
         **kwargs: Any,
     ) -> None:
-        """Constructs this object.
+        """Constructs this object with the given arguments.
 
         Args:
-            callbacks: The CallbackEntries to add to the registry.
-            callbacks_async: The async CallbackEntries to add to the registry.
+            callbacks: The callback functions to add to the registry.
+            callbacks_async: The async callback functions to add to the registry.
             *args: Positional arguments which may be used for inheritance.
             default_condition: The default condition to use when registering callbacks.
             default_caller: The default caller to use when registering callbacks.
@@ -380,9 +382,9 @@ class CallbackManager(BaseReducible):
     # Callback Creation
     def format_conditional_callback(
         self,
-        callback: Callable,
-        condition: Callable | str | None = None,
-        caller: Callable | str | None = None,
+        callback: AnyCallable,
+        condition: AnyCallable | str | None = None,
+        caller: AnyCallable | str | None = None,
         *args: Any,
         callback_kwargs: dict[str, Any] | None = None,
         condition_kwargs: dict[str, Any] | None = None,
@@ -418,20 +420,20 @@ class CallbackManager(BaseReducible):
             callback = partial(callback, **callback_kwargs)
 
         if condition_kwargs is not None:
-            condition = partial(condition, **condition_kwargs)
+            condition = partial(condition, **condition_kwargs)  # type: ignore[arg-type, operator, misc]
 
         if caller_kwargs is not None:
-            caller = partial(caller, **caller_kwargs)
+            caller = partial(caller, **caller_kwargs)  # type: ignore[arg-type, operator, misc]
 
-        return ConditionalCallbackEntry(callback, condition, caller)
+        return ConditionalCallbackEntry(callback, condition, caller)  # type: ignore[arg-type]
 
     def create_conditional_callback(
         self,
-        callback: Callable,
-        condition: Callable,
-        caller: Callable,
+        callback: AnyCallable,
+        condition: AnyCallable,
+        caller: AnyCallable,
         task_name: str | None = None,
-    ) -> Callable:
+    ) -> AnyCallable:
         """Creates a conditional callback function.
 
         This method creates a partial function that combines a callback, condition, and caller.
@@ -503,7 +505,7 @@ class CallbackManager(BaseReducible):
         if type_ is None:
             type_ = self.scheduler_type
 
-        callback_map = deque()
+        callback_map: deque[tuple[AnyCallable, deque[Any]]] = deque()
         for name in condition_names:
             callback = self.conditional_callbacks_async[name]
             task_name = f"{name}_conditional_caller"
@@ -514,7 +516,7 @@ class CallbackManager(BaseReducible):
         return type_(callback_map, *args, **kwargs)
 
     # Callback Registration
-    def register_callback(self, name: str, callback: Callable, is_async: bool = False) -> None:
+    def register_callback(self, name: str, callback: AnyCallable, is_async: bool = False) -> None:
         """Registers a callback function with the manager.
 
         This method adds a callback function to either the synchronous or asynchronous callback registry, depending on
@@ -534,8 +536,8 @@ class CallbackManager(BaseReducible):
 
     def register_callbacks(
         self,
-        callbacks: dict[str, Callable] | Iterable[tuple[str, Callable]] | None = None,
-        callbacks_async: dict[str, Callable] | Iterable[tuple[str, Callable]] | None = None,
+        callbacks: dict[str, AnyCallable] | Iterable[tuple[str, AnyCallable]] | None = None,
+        callbacks_async: dict[str, AnyCallable] | Iterable[tuple[str, AnyCallable]] | None = None,
     ) -> None:
         """Registers synchronous and asynchronous callbacks.
 
@@ -552,9 +554,9 @@ class CallbackManager(BaseReducible):
     def register_conditional_callback(
         self,
         name: str,
-        callback: Callable,
-        condition: Callable | str | None = None,
-        caller: Callable | str | None = None,
+        callback: AnyCallable,
+        condition: AnyCallable | str | None = None,
+        caller: AnyCallable | str | None = None,
         *args: Any,
         callback_kwargs: dict[str, Any] | None = None,
         condition_kwargs: dict[str, Any] | None = None,
@@ -706,7 +708,8 @@ class CallbackManager(BaseReducible):
         """
         task_name = f"{name}_scheduler"
         if (tasks := self.tasks.get(task_name, None)) is None:
-            self.tasks[name] = tasks = deque()
+            if (tasks := self.tasks.get(name, None)) is None:
+                self.tasks[name] = tasks = deque()
 
         if isinstance(scheduler, str):
             scheduler = self.schedulers[scheduler]
@@ -725,7 +728,7 @@ class CallbackManager(BaseReducible):
             name: The name of the scheduler to map the callbacks to.
             condition_names: An iterable of names of conditional callbacks to map to the scheduler.
         """
-        callback_map = deque()
+        callback_map: deque[tuple[AnyCallable, deque[Any]]] = deque()
         for c_name in condition_names:
             callback = self.conditional_callbacks_async[c_name]
             task_name = f"{c_name}_conditional_caller"
@@ -762,6 +765,9 @@ class CallbackManager(BaseReducible):
             name: The name of the callback to execute.
             *args: The positional arguments to pass to the callback function.
             **kwargs: Keyword arguments to pass to the callback function.
+
+        Returns:
+            The result of the callback function.
         """
         return self.callbacks[name](*args, **kwargs)
 
@@ -772,10 +778,13 @@ class CallbackManager(BaseReducible):
             name: The name of the callback to execute.
             *args: The positional arguments to pass to the callback function.
             **kwargs: Keyword arguments to pass to the callback function.
+
+        Returns:
+            The result of the callback function.
         """
         return await self.callbacks_async[name](*args, **kwargs)
 
-    def call(self, callback: Callable) -> Any:
+    def call(self, callback: AnyCallable) -> Any:
         """Executes a callback function synchronously.
 
         This is a simple wrapper method that calls the provided callback function and returns its result.
@@ -788,7 +797,7 @@ class CallbackManager(BaseReducible):
         """
         return callback()
 
-    async def call_async(self, callback: Callable) -> Any:
+    async def call_async(self, callback: AnyCallable) -> Any:
         """Executes a callback function asynchronously.
 
         This is an async wrapper method that awaits the provided callback function and returns its result.
@@ -804,8 +813,8 @@ class CallbackManager(BaseReducible):
     # Conditional Callback Calling
     def call_conditional(
         self,
-        condition: Callable,
-        callback: Callable,
+        condition: AnyCallable,
+        callback: AnyCallable,
         *args: Any,
         **kwargs: Any,
     ) -> None:
@@ -822,8 +831,8 @@ class CallbackManager(BaseReducible):
 
     async def call_conditional_async(
         self,
-        condition_async: Callable,
-        callback_async: Callable,
+        condition_async: AnyCallable,
+        callback_async: AnyCallable,
         *args: Any,
         **kwargs: Any,
     ) -> None:
@@ -838,7 +847,13 @@ class CallbackManager(BaseReducible):
         if await condition_async():
             await callback_async(*args, **kwargs)
 
-    def call_while_condition(self, condition: Callable, callback: Callable, *args: Any, **kwargs: Any) -> None:
+    def call_while_condition(
+        self,
+        condition: AnyCallable,
+        callback: AnyCallable,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         """Evaluates the callback function while the callback condition is met.
 
         Args:
@@ -852,9 +867,9 @@ class CallbackManager(BaseReducible):
 
     async def call_while_condition_async(
         self,
-        condition_async: Callable,
-        callback_async: Callable,
-        tasks: deque | None = None,
+        condition_async: AnyCallable,
+        callback_async: AnyCallable,
+        tasks: deque[Any] | None = None,
         *args: Any,
         **kwargs: Any,
     ) -> None:
@@ -887,9 +902,9 @@ class CallbackManager(BaseReducible):
 
     async def call_while_condition_task_async(
         self,
-        condition_async: Callable,
-        callback_async: Callable,
-        tasks: deque,
+        condition_async: AnyCallable,
+        callback_async: AnyCallable,
+        tasks: deque[Any] | None = None,
         *args: Any,
         **kwargs: Any,
     ) -> None:
@@ -922,9 +937,9 @@ class CallbackManager(BaseReducible):
 
     async def enqueue_call_while_condition_async(
         self,
-        condition_async: Callable,
-        callback_async: Callable,
-        tasks: deque | None = None,
+        condition_async: AnyCallable,
+        callback_async: AnyCallable,
+        tasks: deque[Any] | None = None,
         *args: Any,
         **kwargs: Any,
     ) -> None:
@@ -958,9 +973,9 @@ class CallbackManager(BaseReducible):
 
     async def enqueue_call_while_condition_task_async(
         self,
-        condition_async: Callable,
-        callback_async: Callable,
-        tasks: deque,
+        condition_async: AnyCallable,
+        callback_async: AnyCallable,
+        tasks: deque[Any] | None = None,
         *args: Any,
         **kwargs: Any,
     ) -> None:
@@ -996,7 +1011,7 @@ class CallbackManager(BaseReducible):
                 await next(iter(tasks))
 
     # Callback Scheduling
-    def start_scheduler(self, scheduler: CallbackScheduler, tasks: deque, *args: Any, **kwargs: Any) -> None:
+    def start_scheduler(self, scheduler: CallbackScheduler, tasks: deque[Any], *args: Any, **kwargs: Any) -> None:
         """Starts the scheduler for callback execution and management.
 
         This method initiates and starts a scheduler if it's not already running. Specifically, it ensures that the
@@ -1013,7 +1028,7 @@ class CallbackManager(BaseReducible):
     async def start_scheduler_async(
         self,
         scheduler: CallbackScheduler,
-        tasks: deque,
+        tasks: deque[Any],
         *args: Any,
         **kwargs: Any,
     ) -> None:
@@ -1047,15 +1062,13 @@ class CallbackManager(BaseReducible):
             timeout: Optional timeout in seconds. If provided, the method will raise
                 asyncio.TimeoutError if the tasks don't complete within this time.
         """
-        all_tasks = deque()
+        all_tasks: deque[Any] = deque()
         for tasks in self.tasks.values():
             for task in tasks:
                 all_tasks.append(shield(task))
 
-        if timeout is None:
+        async with asyncio.timeout(timeout):
             await gather(*all_tasks)
-        else:
-            await wait_for(gather(*all_tasks), timeout=timeout)
 
     def cancel_tasks(self) -> None:
         """Cancels all currently scheduled tasks.

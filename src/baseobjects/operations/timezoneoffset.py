@@ -23,13 +23,13 @@ INIT_DATE = datetime(1970, 1, 1, tzinfo=UTC)
 
 
 # Functions #
-def timezone_offset(tz: tzinfo) -> timedelta:
+def timezone_offset(tz: tzinfo) -> timedelta | None:
     """Gets the offset of the given timezone.
 
     Args:
         tz: The timezone to get the offset from.
 
     Returns:
-        The time delta offset of the given timezone.
+        The time delta offset of the given timezone or None if the timezone is not fixed.
     """
     return tz.utcoffset(INIT_DATE)

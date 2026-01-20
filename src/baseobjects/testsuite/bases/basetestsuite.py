@@ -26,10 +26,14 @@ from click.testing import CliRunner
 # Fixtures #
 @pytest.fixture
 def runner() -> CliRunner:
-    """Fixture for invoking command-line interfaces."""
+    """A Fixture for invoking command-line interfaces.
+
+    Returns:
+        The CliRunner fixture.
+    """
     return CliRunner()
 
 
 # Classes #
 class BaseTestSuite(ABC):
-    """Base class for test suites."""
+    """A Base class for test suites."""

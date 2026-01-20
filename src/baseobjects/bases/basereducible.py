@@ -66,23 +66,34 @@ class BaseReducible(BaseObject):
                 tuple[dict, dict]: __dict__ is present and __slots__ is present.
         """
         # Get dict
-        if _dict_ := getattr(self, "__dict__", None):
+        _dict_: dict[str, Any] | None = getattr(self, "__dict__", None)
+        if _dict_:
             _dict_ = _dict_.copy()
+        else:
+            _dict_ = None
 
         # Get slots
-        if _slots_ := getattr(self, "__slots__", None):
-            _slots_ = {s: getattr(self, s) for s in _slots_}
+        _slots_ = getattr(self, "__slots__", None)
+        if _slots_:
+            temp_slots = {}
+            for s in _slots_:
+                try:
+                    temp_slots[s] = getattr(self, s)
+                except AttributeError:
+                    pass
+            _slots_ = temp_slots
+        else:
+            _slots_ = None
 
         # Return the correct state
-        match _dict_, _slots_:
-            case None, None:
-                return None
-            case dict(), None | ():
-                return _dict_
-            case None, dict():
-                return None, _slots_
-            case dict(), dict():
-                return _dict_, _slots_
+        if _dict_ is not None and _slots_ is not None:
+            return _dict_, _slots_
+        elif _slots_ is not None:
+            return None, _slots_
+        elif _dict_ is not None:
+            return _dict_
+        else:
+            return None
 
     def __setstate__(self, state: Any) -> None:
         """Sets the object's state from a pickled state.
@@ -114,16 +125,15 @@ class BaseReducible(BaseObject):
         Raises:
             TypeError: If the state is not None, dict, or tuple.
         """
-        match state:
-            case dict():
-                self.__dict__.update(state)
-            case tuple():
-                if state[0] is not None:
-                    self.__dict__.update(state[0])
-                for slot_name, value in state[1].items():
-                    setattr(self, slot_name, value)
-            case None:
-                return
-            case _:
-                msg = f"State must be None, dict, or tuple, not {type(state)}"
-                raise TypeError(msg)
+        if isinstance(state, dict):
+            self.__dict__.update(state)
+        elif isinstance(state, tuple):
+            if state[0] is not None:
+                self.__dict__.update(state[0])
+            for slot_name, value in state[1].items():
+                setattr(self, slot_name, value)
+        elif state is None:
+            return
+        else:
+            msg = f"State must be None, dict, or tuple, not {type(state)}"
+            raise TypeError(msg)

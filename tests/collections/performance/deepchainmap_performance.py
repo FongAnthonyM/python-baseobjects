@@ -16,18 +16,16 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-import copy
-import pickle
 import timeit
 from collections import ChainMap
-from typing import Any, ClassVar, Dict, List
+from typing import Any
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.collections import DeepChainMap
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.collections import DeepChainMap
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
@@ -35,8 +33,8 @@ from src.baseobjects.testsuite import BasePerformanceTestSuite
 class TestDeepChainMapPerformance(BasePerformanceTestSuite):
     """Test suite for assaying the performance of the DeepChainMap class.
 
-    This test suite measures the performance of various operations on DeepChainMap objects
-    and compares them with standard Python ChainMap implementations.
+    This test suite measures the performance of various operations on DeepChainMap objects and compares them with
+    standard Python ChainMap implementations.
     """
 
     # Attributes #
@@ -78,7 +76,7 @@ class TestDeepChainMapPerformance(BasePerformanceTestSuite):
         return DeepChainMap(map1, map2, map3)
 
     @pytest.fixture
-    def normal_map(self) -> ChainMap:
+    def normal_map(self) -> ChainMap[Any, Any]:
         """Create a normal ChainMap for comparison.
 
         Returns:
@@ -87,7 +85,7 @@ class TestDeepChainMapPerformance(BasePerformanceTestSuite):
         return ChainMap({})
 
     @pytest.fixture
-    def populated_normal_map(self) -> ChainMap:
+    def populated_normal_map(self) -> ChainMap[Any, Any]:
         """Create a populated normal ChainMap for comparison.
 
         Returns:
@@ -98,7 +96,7 @@ class TestDeepChainMapPerformance(BasePerformanceTestSuite):
         return ChainMap(map1, map2)
 
     @pytest.fixture
-    def nested_normal_map(self) -> ChainMap:
+    def nested_normal_map(self) -> ChainMap[Any, Any]:
         """Create a nested normal ChainMap for comparison.
 
         Returns:
@@ -133,9 +131,13 @@ class TestDeepChainMapPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard ChainMap creation: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard ChainMap creation: {mean_normal:.3f} μs ({self.call_speed:.3f} "
+            f"is the speed of a simple function call)",
         )
-        print(f"DeepChainMap creation: {mean_deep:.3f} μs ({percent:.3f}% of standard ChainMap creation time)")
+        print(
+            f"DeepChainMap creation: {mean_deep:.3f} μs "
+            f"({percent:.3f}% of standard ChainMap creation time)",
+        )
         assert percent < self.speed_tolerance
 
     def test_creation_speed_populated_performance(self) -> None:
@@ -163,14 +165,20 @@ class TestDeepChainMapPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard ChainMap populated creation: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard ChainMap populated creation: {mean_normal:.3f} μs ({self.call_speed:.3f} "
+            f"is the speed of a simple function call)",
         )
         print(
-            f"DeepChainMap populated creation: {mean_deep:.3f} μs ({percent:.3f}% of standard ChainMap populated creation time)",
+            f"DeepChainMap populated creation: {mean_deep:.3f} μs "
+            f"({percent:.3f}% of standard ChainMap populated creation time)",
         )
         assert percent < self.speed_tolerance
 
-    def test_get_item_speed_performance(self, populated_test_map: DeepChainMap, populated_normal_map: ChainMap) -> None:
+    def test_get_item_speed_performance(
+        self,
+        populated_test_map: DeepChainMap,
+        populated_normal_map: ChainMap[Any, Any],
+    ) -> None:
         """Test the performance of getting an item from a DeepChainMap.
 
         This test compares the speed of getting an item from a DeepChainMap with a normal ChainMap.
@@ -198,12 +206,20 @@ class TestDeepChainMapPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard ChainMap get item: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard ChainMap get item: {mean_normal:.3f} μs ({self.call_speed:.3f} "
+            f"is the speed of a simple function call)",
         )
-        print(f"DeepChainMap get item: {mean_deep:.3f} μs ({percent:.3f}% of standard ChainMap get item time)")
+        print(
+            f"DeepChainMap get item: {mean_deep:.3f} μs "
+            f"({percent:.3f}% of standard ChainMap get item time)",
+        )
         assert percent < self.speed_tolerance
 
-    def test_set_item_speed_new_performance(self, test_map: DeepChainMap, normal_map: ChainMap) -> None:
+    def test_set_item_speed_new_performance(
+        self,
+        test_map: DeepChainMap,
+        normal_map: ChainMap[Any, Any],
+    ) -> None:
         """Test the performance of setting a new item in a DeepChainMap.
 
         This test compares the speed of setting a new item in a DeepChainMap with a normal ChainMap.
@@ -232,20 +248,24 @@ class TestDeepChainMapPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard ChainMap set new item: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard ChainMap set new item: {mean_normal:.3f} μs ({self.call_speed:.3f} "
+            f"is the speed of a simple function call)",
         )
-        print(f"DeepChainMap set new item: {mean_deep:.3f} μs ({percent:.3f}% of standard ChainMap set new item time)")
+        print(
+            f"DeepChainMap set new item: {mean_deep:.3f} μs "
+            f"({percent:.3f}% of standard ChainMap set new item time)",
+        )
         assert percent < self.speed_tolerance
 
     def test_set_item_speed_existing_performance(
         self,
         nested_test_map: DeepChainMap,
-        nested_normal_map: ChainMap,
+        nested_normal_map: ChainMap[Any, Any],
     ) -> None:
         """Test the performance of updating an existing item in a DeepChainMap.
 
-        This test compares the speed of updating an existing item in a DeepChainMap with a normal ChainMap.
-        The key exists in a nested map, not the first map.
+        This test compares the speed of updating an existing item in a DeepChainMap with a normal ChainMap. The key
+        exists in a nested map, not the first map.
 
         Args:
             nested_test_map: A fixture providing a nested DeepChainMap instance.
@@ -275,14 +295,20 @@ class TestDeepChainMapPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard ChainMap set existing item: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard ChainMap set existing item: {mean_normal:.3f} μs ({self.call_speed:.3f} "
+            f"is the speed of a simple function call)",
         )
         print(
-            f"DeepChainMap set existing item: {mean_deep:.3f} μs ({percent:.3f}% of standard ChainMap set existing item time)",
+            f"DeepChainMap set existing item: {mean_deep:.3f} μs "
+            f"({percent:.3f}% of standard ChainMap set existing item time)",
         )
         assert percent < self.speed_tolerance
 
-    def test_del_item_speed_performance(self, nested_test_map: DeepChainMap, nested_normal_map: ChainMap) -> None:
+    def test_del_item_speed_performance(
+        self,
+        nested_test_map: DeepChainMap,
+        nested_normal_map: ChainMap[Any, Any],
+    ) -> None:
         """Test the performance of deleting an item from a DeepChainMap.
 
         This test compares the speed of deleting an item from a DeepChainMap with a normal ChainMap.
@@ -330,9 +356,13 @@ class TestDeepChainMapPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard ChainMap delete item: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard ChainMap delete item: {mean_normal:.3f} μs ({self.call_speed:.3f} "
+            f"is the speed of a simple function call)",
         )
-        print(f"DeepChainMap delete item: {mean_deep:.3f} μs ({percent:.3f}% of standard ChainMap delete item time)")
+        print(
+            f"DeepChainMap delete item: {mean_deep:.3f} μs "
+            f"({percent:.3f}% of standard ChainMap delete item time)",
+        )
         assert percent < self.speed_tolerance
 
 

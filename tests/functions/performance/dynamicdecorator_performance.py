@@ -18,15 +18,15 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import timeit
 from collections.abc import Callable
-from typing import Any, Type
+from typing import Any
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.functions.basedecorator import BaseDecorator
-from src.baseobjects.functions.dynamicdecoractor import DynamicDecorator
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.functions.basedecorator import BaseDecorator
+from baseobjects.functions.dynamicdecorator import DynamicDecorator
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
@@ -34,13 +34,13 @@ from src.baseobjects.testsuite import BasePerformanceTestSuite
 class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
     """Test suite for assaying the performance of the DynamicDecorator class.
 
-    This test suite measures the performance of various operations on DynamicDecorator objects
-    and compares them with standard Python implementations and BaseDecorator.
+    This test suite measures the performance of various operations on DynamicDecorator objects and compares them with
+    standard Python implementations and BaseDecorator.
 
     Attributes:
         timeit_runs: The number of times to run the timeit function.
         speed_tolerance: The maximum speed tolerance in microseconds.
-        TestClass: The class being tested.
+        UnitTestClass: The class being tested.
     """
 
     # Class Definitions #
@@ -53,8 +53,21 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
             super().__init__(lambda x: x * 2)
 
         def call(self, *args: Any, **kwargs: Any) -> Any:
-            """The call implementation."""
-            return self.func(*args, **kwargs)
+            """The call implementation.
+
+            Returns:
+                Any: The result.
+            """
+            return self.call_wrapped(*args, **kwargs)
+
+        def construct_call(self, func: Callable[..., Any] | None = None, *args: Any, **kwargs: Any) -> Any:
+            """Construct the call.
+
+            Returns:
+                Any: The result.
+            """
+            self.construct(func, *args, **kwargs)
+            return self
 
     class TestBaseDecorator(BaseDecorator):
         """A subclass of BaseDecorator for testing purposes."""
@@ -65,14 +78,27 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
             super().__init__(lambda x: x * 2)
 
         def call(self, *args: Any, **kwargs: Any) -> Any:
-            """The call implementation."""
-            return self.func(*args, **kwargs)
+            """The call implementation.
+
+            Returns:
+                Any: The result.
+            """
+            return self.call_wrapped(*args, **kwargs)
+
+        def construct_call(self, func: Callable[..., Any] | None = None, *args: Any, **kwargs: Any) -> Any:
+            """Construct the call.
+
+            Returns:
+                Any: The result.
+            """
+            self.construct(func, *args, **kwargs)
+            return self
 
     # Attributes #
     timeit_runs: int = 1000000
     speed_tolerance: int = 400
 
-    TestClass: type[TestDynamicDecorator] = TestDynamicDecorator
+    UnitTestClass: type[TestDynamicDecorator] = TestDynamicDecorator
 
     # Instance Methods #
     # Fixtures
@@ -83,7 +109,7 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
         Returns:
             TestDynamicDecorator: An instance of the test class.
         """
-        return self.TestClass()
+        return self.UnitTestClass()
 
     @pytest.fixture
     def test_base_decorator(self) -> "TestDynamicDecoratorPerformance.TestBaseDecorator":
@@ -98,13 +124,13 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
     def test_instance_creation(self) -> None:
         """Test that instances of DynamicDecorator can be created efficiently.
 
-        This test compares the speed of creating DynamicDecorator instances with creating
-        BaseDecorator instances and standard Python functions.
+        This test compares the speed of creating DynamicDecorator instances with creating BaseDecorator instances and
+        standard Python functions.
         """
 
         # Define the performance test functions
         def create_dynamic_decorator() -> None:
-            self.TestClass()
+            self.UnitTestClass()
 
         def create_base_decorator() -> None:
             self.TestBaseDecorator()
@@ -130,13 +156,17 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal function creation: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal function creation: {mean_normal:.3f} μs ({self.call_speed:.3f} "
+            f"is the speed of a simple function call)",
         )
         print(
-            f"BaseDecorator creation: {mean_base:.3f} μs ({(mean_base / mean_normal):.3f}% of normal function creation time)",
+            f"BaseDecorator creation: {mean_base:.3f} μs "
+            f"({(mean_base / mean_normal):.3f}% of normal function creation time)",
         )
         print(
-            f"DynamicDecorator creation: {mean_dynamic:.3f} μs ({dynamic_to_normal_percent:.3f}% of normal function creation time, {dynamic_to_base_percent:.3f}% of BaseDecorator creation time)",
+            f"DynamicDecorator creation: {mean_dynamic:.3f} μs "
+            f"({dynamic_to_normal_percent:.3f}% of normal function creation time, "
+            f"{dynamic_to_base_percent:.3f}% of BaseDecorator creation time)",
         )
 
         # Assert that the performance is within acceptable limits
@@ -150,8 +180,8 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
     ) -> None:
         """Test the performance of the __call__ method of DynamicDecorator.
 
-        This test compares the speed of DynamicDecorator.__call__() with BaseDecorator.__call__()
-        and a normal function call.
+        This test compares the speed of DynamicDecorator.__call__() with BaseDecorator.__call__() and a normal function
+        call.
 
         Args:
             test_dynamic_decorator: A fixture providing a TestDynamicDecorator instance.
@@ -192,11 +222,14 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal function call: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal function call: {mean_normal:.3f} μs ({self.call_speed:.3f} "
+            f"is the speed of a simple function call)",
         )
         print(f"BaseDecorator call: {mean_base:.3f} μs ({(mean_base / mean_normal):.3f}% of normal function call time)")
         print(
-            f"DynamicDecorator call: {mean_dynamic:.3f} μs ({dynamic_to_normal_percent:.3f}% of normal function call time, {dynamic_to_base_percent:.3f}% of BaseDecorator call time)",
+            f"DynamicDecorator call: {mean_dynamic:.3f} μs "
+            f"({dynamic_to_normal_percent:.3f}% of normal function call time, "
+            f"{dynamic_to_base_percent:.3f}% of BaseDecorator call time)",
         )
 
         # Assert that the performance is within acceptable limits
@@ -206,23 +239,23 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
     def test_construct_call_speed(self) -> None:
         """Test the performance of the construct_call method of DynamicDecorator.
 
-        This test compares the speed of DynamicDecorator.construct_call() with
-        BaseDecorator.construct_call() and a normal decorator.
+        This test compares the speed of DynamicDecorator.construct_call() with BaseDecorator.construct_call() and a
+        normal decorator.
         """
 
         # Create a normal decorator to compare against
-        def normal_decorator(func):
-            def wrapper(*args, **kwargs):
+        def normal_decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+            def wrapper(*args: Any, **kwargs: Any) -> Any:
                 return func(*args, **kwargs)
 
             return wrapper
 
-        def test_func(x):
+        def test_func(x: int) -> int:
             return x * 2
 
         # Define the performance test functions
         def construct_dynamic_decorator() -> None:
-            decorator = self.TestClass()
+            decorator = self.UnitTestClass()
             decorator.construct_call(test_func)
 
         def construct_base_decorator() -> None:
@@ -250,13 +283,17 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal decorator construction: {mean_normal:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal decorator construction: {mean_normal:.3f} μs ({self.call_speed:.3f} "
+            f"is the speed of a simple function call)",
         )
         print(
-            f"BaseDecorator.construct_call: {mean_base:.3f} μs ({(mean_base / mean_normal):.3f}% of normal decorator construction time)",
+            f"BaseDecorator.construct_call: {mean_base:.3f} μs ({(mean_base / mean_normal):.3f}% "
+            f"of normal decorator construction time)",
         )
         print(
-            f"DynamicDecorator.construct_call: {mean_dynamic:.3f} μs ({dynamic_to_normal_percent:.3f}% of normal decorator construction time, {dynamic_to_base_percent:.3f}% of BaseDecorator construction time)",
+            f"DynamicDecorator.construct_call: {mean_dynamic:.3f} μs "
+            f"({dynamic_to_normal_percent:.3f}% of normal decorator construction time, "
+            f"{dynamic_to_base_percent:.3f}% of BaseDecorator construction time)",
         )
 
         # Assert that the performance is within acceptable limits
@@ -266,42 +303,42 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
     def test_multiplexed_callback(self) -> None:
         """Test the performance of switching between different callback functions.
 
-        This test measures the performance of the DynamicDecorator when switching between
-        different callback functions, which is its main advantage over BaseDecorator.
+        This test measures the performance of the DynamicDecorator when switching between different callback functions,
+        which is its main advantage over BaseDecorator.
         """
         # Create a dynamic decorator with multiple callback functions
-        decorator = self.TestClass()
+        decorator = self.UnitTestClass()
 
         # Define different callback functions
-        def callback1(func: Callable) -> Callable:
-            def wrapper(*args, **kwargs):
+        def callback1(func: Callable[..., Any]) -> Callable[..., Any]:
+            def wrapper(*args: Any, **kwargs: Any) -> Any:
                 # Add 1 to the result
                 return func(*args, **kwargs) + 1
 
             return wrapper
 
-        def callback2(func: Callable) -> Callable:
-            def wrapper(*args, **kwargs):
+        def callback2(func: Callable[..., Any]) -> Callable[..., Any]:
+            def wrapper(*args: Any, **kwargs: Any) -> Any:
                 # Multiply the result by 2
                 return func(*args, **kwargs) * 2
 
             return wrapper
 
         # Add the callbacks to the decorator
-        decorator.add_callback = callback1
-        decorator.multiply_callback = callback2
+        decorator.add_callback = callback1  # type: ignore[attr-defined]
+        decorator.multiply_callback = callback2  # type: ignore[attr-defined]
 
         # Define a test function
-        def test_func(x):
+        def test_func(x: int) -> int:
             return x
 
         # Define the performance test functions
         def switch_callbacks() -> None:
-            decorator.call = callback1
+            decorator.call = callback1  # type: ignore[method-assign]
             decorated1 = decorator.construct_call(test_func)
             result1 = decorated1(5)  # Should be 6 (5 + 1)
 
-            decorator.call = callback2
+            decorator.call = callback2  # type: ignore[method-assign]
             decorated2 = decorator.construct_call(test_func)
             result2 = decorated2(5)  # Should be 10 (5 * 2)
 
@@ -320,20 +357,20 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
     def test_edge_case_complex_decorator(self) -> None:
         """Test the performance with an edge case of a complex decorator.
 
-        This test measures the performance overhead when using a more complex decorator
-        with multiple layers of wrapping.
+        This test measures the performance overhead when using a more complex decorator with multiple layers of
+        wrapping.
         """
 
         # Create a more complex decorator function
-        def complex_decorator(func):
-            def outer_wrapper(*args, **kwargs):
+        def complex_decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+            def outer_wrapper(*args: Any, **kwargs: Any) -> Any:
                 # Do some pre-processing
-                args = list(args)
-                if args:
-                    args[0] += 1
+                args_list = list(args)
+                if args_list:
+                    args_list[0] += 1
 
                 # Call the function
-                result = func(*args, **kwargs)
+                result = func(*args_list, **kwargs)
 
                 # Do some post-processing
                 return result * 2
@@ -345,53 +382,81 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
             def __init__(self) -> None:
                 super().__init__(lambda x: x)
 
-            def call(self, *args, **kwargs):
+            def call(self, *args: Any, **kwargs: Any) -> Any:
+                """The call implementation.
+
+                Returns:
+                    Any: The result.
+                """
                 # Do some pre-processing
-                args = list(args)
-                if args:
-                    args[0] += 1
+                args_list = list(args)
+                if args_list:
+                    args_list[0] += 1
 
                 # Call the function
-                result = self.func(*args, **kwargs)
+                result = self.call_wrapped(*args_list, **kwargs)
 
                 # Do some post-processing
                 return result * 2
+
+            def construct_call(self, func: Callable[..., Any] | None = None, *args: Any, **kwargs: Any) -> Any:
+                """Construct the call.
+
+                Returns:
+                    Any: The result.
+                """
+                self.construct(func, *args, **kwargs)
+                return self
 
         # Create a base decorator with similar functionality
         class ComplexBaseDecorator(BaseDecorator):
             def __init__(self) -> None:
                 super().__init__(lambda x: x)
 
-            def call(self, *args, **kwargs):
+            def call(self, *args: Any, **kwargs: Any) -> Any:
+                """The call implementation.
+
+                Returns:
+                    Any: The result.
+                """
                 # Do some pre-processing
-                args = list(args)
-                if args:
-                    args[0] += 1
+                args_list = list(args)
+                if args_list:
+                    args_list[0] += 1
 
                 # Call the function
-                result = self.func(*args, **kwargs)
+                result = self.call_wrapped(*args_list, **kwargs)
 
                 # Do some post-processing
                 return result * 2
+
+            def construct_call(self, func: Callable[..., Any] | None = None, *args: Any, **kwargs: Any) -> Any:
+                """Construct the call.
+
+                Returns:
+                    Any: The result.
+                """
+                self.construct(func, *args, **kwargs)
+                return self
 
         # Create instances
         dynamic_decorator = ComplexDynamicDecorator()
         base_decorator = ComplexBaseDecorator()
 
         # Define a test function
-        def test_func(x):
+        def test_func(x: int) -> int:
             return x
 
         # Define the performance test functions
-        def use_dynamic_decorator():
+        def use_dynamic_decorator() -> Any:
             decorated = dynamic_decorator.construct_call(test_func)
             return decorated(5)
 
-        def use_base_decorator():
+        def use_base_decorator() -> Any:
             decorated = base_decorator.construct_call(test_func)
             return decorated(5)
 
-        def use_normal_decorator():
+        def use_normal_decorator() -> Any:
             decorated = complex_decorator(test_func)
             return decorated(5)
 
@@ -411,9 +476,14 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(f"\nComplex normal decorator: {mean_normal:.3f} μs")
-        print(f"Complex BaseDecorator: {mean_base:.3f} μs ({(mean_base / mean_normal):.3f}% of normal decorator time)")
         print(
-            f"Complex DynamicDecorator: {mean_dynamic:.3f} μs ({dynamic_to_normal_percent:.3f}% of normal decorator time, {dynamic_to_base_percent:.3f}% of BaseDecorator time)",
+            f"Complex BaseDecorator: {mean_base:.3f} μs "
+            f"({(mean_base / mean_normal):.3f}% of normal decorator time)",
+        )
+        print(
+            f"Complex DynamicDecorator: {mean_dynamic:.3f} μs "
+            f"({dynamic_to_normal_percent:.3f}% of normal decorator time, "
+            f"{dynamic_to_base_percent:.3f}% of BaseDecorator time)",
         )
 
         # Assert that the performance is within acceptable limits

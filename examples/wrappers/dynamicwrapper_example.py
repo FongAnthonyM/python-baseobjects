@@ -14,6 +14,7 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 import time
+from typing import ClassVar
 
 # Source Packages #
 from baseobjects.wrappers import DynamicWrapper
@@ -24,11 +25,16 @@ class SimpleObject:
     """A simple object to be wrapped."""
 
     def __init__(self, value: int = 0) -> None:
+        """Initialize the object."""
         self.value = value
         self.name = "SimpleObject"
 
     def get_value(self) -> int:
-        """Get the value."""
+        """Get the value.
+
+        Returns:
+            The value.
+        """
         return self.value
 
     def set_value(self, value: int) -> None:
@@ -36,6 +42,7 @@ class SimpleObject:
         self.value = value
 
     def __str__(self) -> str:
+        """Return the string representation."""
         return f"{self.name}(value={self.value})"
 
 
@@ -43,6 +50,7 @@ class ComplexObject:
     """A more complex object to be wrapped."""
 
     def __init__(self, items: list[int] | None = None) -> None:
+        """Initialize the object."""
         self.items = items or []
         self.name = "ComplexObject"
 
@@ -51,7 +59,11 @@ class ComplexObject:
         self.items.append(item)
 
     def get_items(self) -> list[int]:
-        """Get all items."""
+        """Get all items.
+
+        Returns:
+            The list of items.
+        """
         return self.items
 
     def clear_items(self) -> None:
@@ -59,6 +71,7 @@ class ComplexObject:
         self.items = []
 
     def __str__(self) -> str:
+        """Return the string representation."""
         return f"{self.name}(items={self.items})"
 
 
@@ -66,20 +79,24 @@ class CustomDynamicWrapper(DynamicWrapper):
     """A custom DynamicWrapper that wraps both simple and complex objects."""
 
     # Define which attributes contain objects to wrap
-    _wrapped_map_ = ["simple", "complex"]
+    _wrapped_map_: ClassVar[list[str]] = ["simple", "complex"]
 
     # Define the wrapped object attributes
     _simple = None
     _complex = None
 
-    def __init__(self, simple_obj: SimpleObject = None, complex_obj: ComplexObject = None) -> None:
+    def __init__(self, simple_obj: SimpleObject | None = None, complex_obj: ComplexObject | None = None) -> None:
         """Initialize the wrapper with simple and complex objects."""
         super().__init__()
         self.simple = simple_obj or SimpleObject()
         self.complex = complex_obj or ComplexObject()
 
     def get_combined_str(self) -> str:
-        """Get a string representation of both wrapped objects."""
+        """Get a string representation of both wrapped objects.
+
+        Returns:
+            The combined string.
+        """
         return f"Combined: {self.simple}, {self.complex}"
 
 
@@ -90,21 +107,21 @@ def basic_usage_example() -> None:
 
     # Create objects to wrap
     simple = SimpleObject(10)
-    complex = ComplexObject([1, 2, 3])
+    complex_obj = ComplexObject([1, 2, 3])
 
     # Create a DynamicWrapper subclass
     class MyWrapper(DynamicWrapper):
         # Define which attributes contain objects to wrap
-        _wrapped_map_ = ["obj1", "obj2"]
+        _wrapped_map_: ClassVar[list[str]] = ["obj1", "obj2"]
 
     # Create an instance of the wrapper
     wrapper = MyWrapper()
     wrapper.obj1 = simple
-    wrapper.obj2 = complex
+    wrapper.obj2 = complex_obj
 
     print("Created wrapper with two objects:")
     print(f"  simple: {simple}")
-    print(f"  complex: {complex}")
+    print(f"  complex: {complex_obj}")
 
     # Access wrapped object attributes
     print("\nAccessing wrapped object attributes:")
@@ -121,7 +138,7 @@ def basic_usage_example() -> None:
 
     wrapper.add_item(4)
     print(f"  After wrapper.add_item(4), wrapper.items: {wrapper.items} == [1, 2, 3, 4]")
-    print(f"  complex.items: {complex.items} == [1, 2, 3, 4]")
+    print(f"  complex.items: {complex_obj.items} == [1, 2, 3, 4]")
 
 
 def custom_wrapper_example() -> None:
@@ -155,23 +172,23 @@ def attribute_resolution_example() -> None:
 
     # Create objects with overlapping attribute names
     obj1 = SimpleObject(10)
-    obj1.shared_attr = "from obj1"
+    obj1.shared_attr = "from obj1"  # type: ignore
 
     obj2 = ComplexObject([1, 2, 3])
-    obj2.shared_attr = "from obj2"
-    obj2.unique_attr = "only in obj2"
+    obj2.shared_attr = "from obj2"  # type: ignore
+    obj2.unique_attr = "only in obj2"  # type: ignore
 
     # Create a wrapper
     class AttributeWrapper(DynamicWrapper):
-        _wrapped_map_ = ["first", "second"]
+        _wrapped_map_: ClassVar[list[str]] = ["first", "second"]
 
     wrapper = AttributeWrapper()
     wrapper.first = obj1
     wrapper.second = obj2
 
     print("Created wrapper with objects having overlapping attributes:")
-    print(f"  obj1.shared_attr: {obj1.shared_attr}")
-    print(f"  obj2.shared_attr: {obj2.shared_attr}")
+    print(f"  obj1.shared_attr: {obj1.shared_attr}")  # type: ignore
+    print(f"  obj2.shared_attr: {obj2.shared_attr}")  # type: ignore
 
     # Access attributes - first wrapped object takes precedence
     print("\nAccessing attributes (first wrapped object takes precedence):")
@@ -193,7 +210,7 @@ def dynamic_attribute_example() -> None:
 
     # Create a wrapper
     class DynamicAttrWrapper(DynamicWrapper):
-        _wrapped_map_ = ["obj"]
+        _wrapped_map_: ClassVar[list[str]] = ["obj"]
 
     wrapper = DynamicAttrWrapper()
     wrapper.obj = SimpleObject(10)
@@ -234,7 +251,7 @@ def performance_comparison_example() -> None:
 
     # Create a wrapper
     class PerfWrapper(DynamicWrapper):
-        _wrapped_map_ = ["obj"]
+        _wrapped_map_: ClassVar[list[str]] = ["obj"]
 
     wrapper = PerfWrapper()
     wrapper.obj = simple
@@ -275,7 +292,7 @@ def error_handling_example() -> None:
 
     # Create a wrapper
     class ErrorWrapper(DynamicWrapper):
-        _wrapped_map_ = ["obj"]
+        _wrapped_map_: ClassVar[list[str]] = ["obj"]
 
     wrapper = ErrorWrapper()
     wrapper.obj = simple
@@ -290,7 +307,7 @@ def error_handling_example() -> None:
 
     # Add the attribute to the wrapped object
     print("\nAdding the attribute to the wrapped object:")
-    simple.non_existent_attr = "Now it exists"
+    simple.non_existent_attr = "Now it exists"  # type: ignore
 
     # Try again
     try:

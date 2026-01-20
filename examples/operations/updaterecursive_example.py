@@ -13,6 +13,7 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 from collections import defaultdict
+from typing import Any
 
 # Source Packages #
 from baseobjects.operations import update_recursive
@@ -123,7 +124,7 @@ def different_mapping_types_example() -> None:
     print("\nDifferent Mapping Types Example:")
 
     # Create a defaultdict
-    original = defaultdict(dict)
+    original: defaultdict[str, Any] = defaultdict(dict)
     original["user"]["name"] = "John"
     original["user"]["age"] = 30
     original["settings"]["theme"] = "dark"
@@ -178,7 +179,7 @@ def practical_example() -> None:
     env_config = {"database": {"port": 6432, "credentials": {"username": "prod_user"}}}
 
     # Create working configuration by applying updates
-    config = default_config.copy()
+    config: dict[str, Any] = default_config.copy()
     print("Starting with default configuration:")
     print(f"  {config}")
 

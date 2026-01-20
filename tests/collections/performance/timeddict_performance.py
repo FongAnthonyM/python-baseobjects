@@ -16,17 +16,16 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-import copy
-import pickle
 import timeit
-from typing import Any, ClassVar, Dict, List
+from collections.abc import Hashable
+from typing import Any
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.collections import TimedDict
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.collections import TimedDict
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
@@ -34,12 +33,12 @@ from src.baseobjects.testsuite import BasePerformanceTestSuite
 class TestTimedDictPerformance(BasePerformanceTestSuite):
     """Test suite for assaying the performance of the TimedDict class.
 
-    This test suite measures the performance of various operations on TimedDict objects
-    and compares them with standard Python dictionary implementations.
+    This test suite measures the performance of various operations on TimedDict objects and compares them with standard
+    Python dictionary implementations.
     """
 
     # Class Definitions #
-    class NormalDict(dict):
+    class NormalDict(dict[Any, Any]):
         """A normal Python dictionary for comparison with TimedDict."""
 
     # Attributes #
@@ -64,13 +63,13 @@ class TestTimedDictPerformance(BasePerformanceTestSuite):
         Returns:
             TimedDict: A populated instance of TimedDict.
         """
-        result = TimedDict()
+        result: TimedDict = TimedDict()
         for i in range(100):
             result[f"key{i}"] = f"value{i}"
         return result
 
     @pytest.fixture
-    def normal_dict(self) -> dict:
+    def normal_dict(self) -> dict[Any, Any]:
         """Create a normal dictionary for comparison.
 
         Returns:
@@ -79,13 +78,13 @@ class TestTimedDictPerformance(BasePerformanceTestSuite):
         return {}
 
     @pytest.fixture
-    def populated_normal_dict(self) -> dict:
+    def populated_normal_dict(self) -> dict[Any, Any]:
         """Create a populated normal dictionary for comparison.
 
         Returns:
             dict: A populated standard Python dictionary.
         """
-        result = {}
+        result: dict[Any, Any] = {}
         for i in range(100):
             result[f"key{i}"] = f"value{i}"
         return result
@@ -101,7 +100,7 @@ class TestTimedDictPerformance(BasePerformanceTestSuite):
             TimedDict()
 
         def create_normal() -> None:
-            {}
+            _ = {}
 
         # Calculate the mean time in microseconds for the TimedDict implementation
         timed_time = timeit.timeit(create_timed, number=self.timeit_runs)
@@ -114,9 +113,13 @@ class TestTimedDictPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard dict creation: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard dict creation: {mean_dict:.3f} μs ({self.call_speed:.3f} "
+            f"is the speed of a simple function call)",
         )
-        print(f"TimedDict creation: {mean_timed:.3f} μs ({percent:.3f}% of standard dict creation time)")
+        print(
+            f"TimedDict creation: {mean_timed:.3f} μs "
+            f"({percent:.3f}% of standard dict creation time)",
+        )
         assert percent < self.speed_tolerance
 
     def test_creation_speed_populated_performance(self) -> None:
@@ -124,7 +127,7 @@ class TestTimedDictPerformance(BasePerformanceTestSuite):
 
         This test compares the speed of creating a populated TimedDict with a normal dict.
         """
-        test_data = {f"key{i}": f"value{i}" for i in range(100)}
+        test_data: dict[Hashable, Any] = {f"key{i}": f"value{i}" for i in range(100)}
 
         def create_timed() -> None:
             TimedDict(test_data)
@@ -143,14 +146,20 @@ class TestTimedDictPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard dict populated creation: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard dict populated creation: {mean_dict:.3f} μs ({self.call_speed:.3f} "
+            f"is the speed of a simple function call)",
         )
         print(
-            f"TimedDict populated creation: {mean_timed:.3f} μs ({percent:.3f}% of standard dict populated creation time)",
+            f"TimedDict populated creation: {mean_timed:.3f} μs "
+            f"({percent:.3f}% of standard dict populated creation time)",
         )
         assert percent < self.speed_tolerance
 
-    def test_get_item_speed_performance(self, populated_test_dict: TimedDict, populated_normal_dict: dict) -> None:
+    def test_get_item_speed_performance(
+        self,
+        populated_test_dict: TimedDict,
+        populated_normal_dict: dict[Any, Any],
+    ) -> None:
         """Test the performance of getting an item from a TimedDict.
 
         This test compares the speed of getting an item from a TimedDict with a normal dict.
@@ -178,12 +187,16 @@ class TestTimedDictPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard dict get item: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard dict get item: {mean_dict:.3f} μs ({self.call_speed:.3f} "
+            f"is the speed of a simple function call)",
         )
-        print(f"TimedDict get item: {mean_timed:.3f} μs ({percent:.3f}% of standard dict get item time)")
+        print(
+            f"TimedDict get item: {mean_timed:.3f} μs "
+            f"({percent:.3f}% of standard dict get item time)",
+        )
         assert percent < self.speed_tolerance
 
-    def test_set_item_speed_performance(self, test_dict: TimedDict, normal_dict: dict) -> None:
+    def test_set_item_speed_performance(self, test_dict: TimedDict, normal_dict: dict[Any, Any]) -> None:
         """Test the performance of setting an item in a TimedDict.
 
         This test compares the speed of setting an item in a TimedDict with a normal dict.
@@ -212,12 +225,20 @@ class TestTimedDictPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard dict set item: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard dict set item: {mean_dict:.3f} μs ({self.call_speed:.3f} "
+            f"is the speed of a simple function call)",
         )
-        print(f"TimedDict set item: {mean_timed:.3f} μs ({percent:.3f}% of standard dict set item time)")
+        print(
+            f"TimedDict set item: {mean_timed:.3f} μs "
+            f"({percent:.3f}% of standard dict set item time)",
+        )
         assert percent < self.speed_tolerance
 
-    def test_clear_speed_performance(self, populated_test_dict: TimedDict, populated_normal_dict: dict) -> None:
+    def test_clear_speed_performance(
+        self,
+        populated_test_dict: TimedDict,
+        populated_normal_dict: dict[Any, Any],
+    ) -> None:
         """Test the performance of clearing a TimedDict.
 
         This test compares the speed of clearing a TimedDict with a normal dict.
@@ -244,9 +265,13 @@ class TestTimedDictPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard dict clear: {mean_dict:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard dict clear: {mean_dict:.3f} μs ({self.call_speed:.3f} "
+            f"is the speed of a simple function call)",
         )
-        print(f"TimedDict clear: {mean_timed:.3f} μs ({percent:.3f}% of standard dict clear time)")
+        print(
+            f"TimedDict clear: {mean_timed:.3f} μs "
+            f"({percent:.3f}% of standard dict clear time)",
+        )
         assert percent < self.speed_tolerance
 
     def test_reset_expiration_speed_performance(self, test_dict: TimedDict) -> None:
@@ -268,7 +293,10 @@ class TestTimedDictPerformance(BasePerformanceTestSuite):
         mean_time = time_taken / self.timeit_runs * 1000000
 
         # Print the performance measurement
-        print(f"\nReset expiration: {mean_time:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nReset expiration: {mean_time:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
+        )
         # No comparison here, just measuring the absolute time
 
     def test_verify_speed_performance(self, test_dict: TimedDict) -> None:
@@ -291,7 +319,10 @@ class TestTimedDictPerformance(BasePerformanceTestSuite):
         mean_time = time_taken / self.timeit_runs * 1000000
 
         # Print the performance measurement
-        print(f"\nVerify: {mean_time:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nVerify: {mean_time:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
+        )
         # No comparison here, just measuring the absolute time
 
 

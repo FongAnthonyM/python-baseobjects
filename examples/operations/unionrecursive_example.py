@@ -13,6 +13,7 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 from copy import deepcopy
+from typing import Any
 
 # Source Packages #
 from baseobjects.operations import union_recursive, update_recursive
@@ -50,13 +51,13 @@ def nested_dictionary_example() -> None:
     print("\nNested Dictionary Example:")
 
     # Create a nested dictionary
-    dict1 = {
+    dict1: dict[str, Any] = {
         "user": {"name": "John", "age": 30, "address": {"city": "New York", "zip": "10001"}},
         "settings": {"theme": "dark", "notifications": True},
     }
 
     # Create another nested dictionary
-    dict2 = {
+    dict2: dict[str, Any] = {
         "user": {"age": 31, "address": {"state": "NY"}},  # Different value  # New nested value
         "settings": {"language": "en"},  # New value
     }
@@ -145,7 +146,7 @@ def deep_copy_example() -> None:
     print("\nDeep Copy Example:")
 
     # Create a dictionary with a nested list
-    dict1 = {"name": "John", "scores": [85, 90, 95]}
+    dict1: dict[str, Any] = {"name": "John", "scores": [85, 90, 95]}
 
     # Create another dictionary
     dict2 = {"age": 30}
@@ -174,7 +175,7 @@ def practical_example() -> None:
     print("\nPractical Example - Template System:")
 
     # Base template
-    base_template = {
+    base_template: dict[str, Any] = {
         "header": {"title": "Default Title", "logo": "default_logo.png", "menu": ["Home", "About", "Contact"]},
         "content": {"main": "Default content", "sidebar": "Default sidebar"},
         "footer": {"copyright_": "© 2023 Company", "links": ["Privacy", "Terms"]},

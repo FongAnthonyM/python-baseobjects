@@ -1,9 +1,9 @@
 """filetimetodatetime.py
 A function to convert a filetime to a datetime.
 
-This module provides functions for converting Windows FILETIME values to Python datetime objects. It supports
-multiple input formats including integers, floats, strings, and byte arrays. The module handles timezone
-conversions and maintains the precision of the original FILETIME value.
+This module provides functions for converting Windows FILETIME values to Python datetime objects. It supports multiple
+input formats including integers, floats, strings, and byte arrays. The module handles timezone conversions and
+maintains the precision of the original FILETIME value.
 """
 
 # Header #
@@ -19,7 +19,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from datetime import UTC, datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from datetime import tzinfo as TZInfo
 from typing import Literal
 
@@ -35,7 +35,7 @@ FILETIME_INIT_DATE = datetime(1601, 1, 1, tzinfo=UTC)  # The initial date of Fil
 @singlekwargdispatch
 def filetime_to_datetime(
     timestamp: int | float | str | bytes,
-    tzinfo: TZInfo | None = timezone.utc,
+    tzinfo: TZInfo | None = UTC,
     byteorder: Literal["little", "big"] = "little",
 ) -> datetime:
     """Converts a filetime to a datetime object.
@@ -45,7 +45,7 @@ def filetime_to_datetime(
         tzinfo: The timezone of the datetime.
         byteorder: The byte order of bytes to use for the conversion, either 'little' or 'big' if the input is bytes.
 
-    Returns:
+    Returns:  # noqa: DOC202
         The datetime of the filetime.
 
     Raises:
@@ -55,8 +55,8 @@ def filetime_to_datetime(
     raise TypeError(msg)
 
 
-@filetime_to_datetime.register
-def _filetime_to_datetime(timestamp: int, tzinfo: TZInfo | None = None) -> datetime:
+@filetime_to_datetime.register(int)
+def _filetime_to_datetime_int(timestamp: int, tzinfo: TZInfo | None = None) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:
@@ -67,14 +67,14 @@ def _filetime_to_datetime(timestamp: int, tzinfo: TZInfo | None = None) -> datet
         The datetime of the filetime.
     """
     if tzinfo is None:
-        return FILETIME_INIT_DATE.replace(tzinfo=tzinfo) + timedelta(microseconds=timestamp)
+        return FILETIME_INIT_DATE.replace(tzinfo=tzinfo) + timedelta(microseconds=timestamp / 10)
     else:
-        return (FILETIME_INIT_DATE + timedelta(microseconds=timestamp)).astimezone(tz=tzinfo)
+        return (FILETIME_INIT_DATE + timedelta(microseconds=timestamp / 10)).astimezone(tz=tzinfo)
 
 
 @filetime_to_datetime.register(float)
 @filetime_to_datetime.register(str)
-def _filetime_to_datetime(timestamp: float | str, tzinfo: TZInfo | None = None) -> datetime:
+def _filetime_to_datetime_float_str(timestamp: float | str, tzinfo: TZInfo | None = None) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:
@@ -92,7 +92,7 @@ def _filetime_to_datetime(timestamp: float | str, tzinfo: TZInfo | None = None) 
 
 @filetime_to_datetime.register(bytes)
 @filetime_to_datetime.register(bytearray)
-def _filetime_to_datetime(
+def _filetime_to_datetime_bytes(
     timestamp: bytes | bytearray,
     tzinfo: TZInfo | None = None,
     byteorder: Literal["little", "big"] = "little",

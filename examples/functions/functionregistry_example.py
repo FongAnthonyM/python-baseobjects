@@ -13,7 +13,7 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 from collections.abc import Callable
-from typing import Any, Optional
+from typing import Any
 
 # Source Packages #
 from baseobjects.functions import FunctionRegistry
@@ -96,7 +96,7 @@ class MathOperations:
         Returns:
             The result of raising a to the power of b.
         """
-        return a**b
+        return float(a**b)
 
 
 class StringOperations:
@@ -174,7 +174,7 @@ class Calculator:
             },
         )
 
-    def register_operation(self, name: str, operation: Callable) -> None:
+    def register_operation(self, name: str, operation: Callable[..., Any]) -> None:
         """Register a new operation.
 
         Args:

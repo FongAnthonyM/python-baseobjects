@@ -27,7 +27,7 @@ class CustomDynamicFunction(DynamicFunction):
     This class demonstrates how to extend DynamicFunction with custom calling methods.
     """
 
-    def call_with_logging(self, *args, **kwargs):
+    def call_with_logging(self, *args: Any, **kwargs: Any) -> Any:
         """A custom calling method that logs the call.
 
         Args:
@@ -37,12 +37,13 @@ class CustomDynamicFunction(DynamicFunction):
         Returns:
             The result of the wrapped function.
         """
+        assert self.__wrapped__ is not None
         print(f"Calling {self.__wrapped__.__name__} with args: {args}, kwargs: {kwargs}")
         result = self.__wrapped__(*args, **kwargs)
         print(f"Result: {result}")
         return result
 
-    def call_with_validation(self, *args, **kwargs):
+    def call_with_validation(self, *args: Any, **kwargs: Any) -> Any:
         """A custom calling method that validates the arguments.
 
         Args:
@@ -66,6 +67,7 @@ class CustomDynamicFunction(DynamicFunction):
                 msg = f"None value for {key} is not allowed"
                 raise ValueError(msg)
 
+        assert self.__wrapped__ is not None
         return self.__wrapped__(*args, **kwargs)
 
 
@@ -76,7 +78,7 @@ class NonWrappingDynamicFunction(DynamicFunction):
     its own functionality directly through custom methods registered with the call_multiplexer.
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initialize the NonWrappingDynamicFunction.
 
         This constructor initializes the object without requiring a wrapped function. It registers custom methods with
@@ -92,7 +94,7 @@ class NonWrappingDynamicFunction(DynamicFunction):
         # Set the default call method
         self.call_method = "add"
 
-    def add(self, a, b):
+    def add(self, a: float, b: float) -> float:
         """Add two numbers.
 
         Args:
@@ -104,7 +106,7 @@ class NonWrappingDynamicFunction(DynamicFunction):
         """
         return a + b
 
-    def subtract(self, a, b):
+    def subtract(self, a: float, b: float) -> float:
         """Subtract b from a.
 
         Args:
@@ -116,7 +118,7 @@ class NonWrappingDynamicFunction(DynamicFunction):
         """
         return a - b
 
-    def multiply(self, a, b):
+    def multiply(self, a: float, b: float) -> float:
         """Multiply two numbers.
 
         Args:
@@ -128,7 +130,7 @@ class NonWrappingDynamicFunction(DynamicFunction):
         """
         return a * b
 
-    def divide(self, a, b):
+    def divide(self, a: float, b: float) -> float:
         """Divide a by b.
 
         Args:
@@ -150,11 +152,16 @@ class NonWrappingDynamicFunction(DynamicFunction):
 class ExampleClass:
     """A class to demonstrate using DynamicFunction as a descriptor."""
 
-    def __init__(self, name) -> None:
+    def __init__(self, name: str) -> None:
+        """Initialize the object."""
         self.name = name
 
-    def greet(self, name) -> str:
-        """A method that greets a person."""
+    def greet(self, name: str) -> str:
+        """A method that greets a person.
+
+        Returns:
+            The greeting string.
+        """
         return f"Hello, {name}! I'm {self.name}!"
 
     # Create a DynamicFunction as a class attribute
@@ -165,8 +172,12 @@ class ExampleClass:
 
 
 # Functions #
-def example_function(a, b):
-    """A simple function that adds two numbers."""
+def example_function(a: float, b: float) -> float:
+    """A simple function that adds two numbers.
+
+    Returns:
+        The sum of the two numbers.
+    """
     return a + b
 
 
@@ -227,7 +238,7 @@ def dynamicfunction_vs_dynamiccallable() -> None:
     print("\nMethod type:")
     print(f"DynamicFunction.method_type = {DynamicFunction.method_type}")
 
-    # Create an instance of ExampleClass
+    # Create an instance of ConcreteClass
     example = ExampleClass("John")
 
     # Use both as descriptors
@@ -273,7 +284,7 @@ def dynamicfunction_as_descriptor() -> None:
     """Demonstrates using DynamicFunction as a descriptor."""
     print("DynamicFunction as Descriptor:\n")
 
-    # Create an instance of ExampleClass
+    # Create an instance of ConcreteClass
     example = ExampleClass("John")
 
     # Use the DynamicFunction descriptor
@@ -342,10 +353,10 @@ def function_method_conversion() -> None:
 
     # Create a class with a method
     class MethodContainer:
-        def instance_method(self, x, y):
+        def instance_method(self, x: float, y: float) -> float:
             return x * y + self.value
 
-        def __init__(self, value) -> None:
+        def __init__(self, value: float) -> None:
             self.value = value
 
     # Create an instance of the class
@@ -363,19 +374,27 @@ def function_method_conversion() -> None:
         print(f"Error when calling method as function: {e}")
 
     # Create a function that can handle 'self' parameter
-    def adaptable_function(self_or_x, y=None, z=None):
+    def adaptable_function(self_or_x: Any, y: float | None = None, z: float | None = None) -> float:
         """A function that can work both as a function and as a method.
 
         When called as a function: adaptable_function(x, y)
         When called as a method: instance.adaptable_function(y, z)
+
+        Returns:
+            The calculated value.
         """
         if z is None:
             # Called as a function: adaptable_function(x, y)
             x = self_or_x
-            return x + y
+            assert isinstance(x, (int, float))
+            assert isinstance(y, (int, float))
+            return float(x + y)
         else:
             # Called as a method: instance.adaptable_function(y, z)
-            return y + z + self_or_x.value
+            assert isinstance(self_or_x, MethodContainer)
+            assert isinstance(y, (int, float))
+            assert isinstance(z, (int, float))
+            return float(y + z + self_or_x.value)
 
     # Create a DynamicFunction from the adaptable function
     dynamic_func = DynamicFunction(adaptable_function)

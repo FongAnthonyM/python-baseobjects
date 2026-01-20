@@ -12,7 +12,7 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar, Optional
+from typing import Any, ClassVar, cast
 
 # Source Packages #
 from baseobjects.classregistration import BaseClassRegistry, BaseRegisteredClass
@@ -49,7 +49,7 @@ class SimpleClassRegistry(BaseClassRegistry):
         Returns:
             The requested class, or the default value if not found.
         """
-        return self.get(name, default)
+        return cast(type, self.get(name, default))
 
 
 class Shape(BaseRegisteredClass):
@@ -74,6 +74,7 @@ class Shape(BaseRegisteredClass):
         if cls.class_registry is None:
             cls.create_class_registry()
 
+        assert cls.class_registry is not None
         if name is None:
             name = cls.__name__
 
@@ -92,7 +93,7 @@ class Shape(BaseRegisteredClass):
         if cls.class_registry is None:
             return None
 
-        return cls.class_registry.get_class(name)
+        return cast(type["Shape"] | None, cls.class_registry.get_class(name))
 
     # Instance Attributes #
     name: str
@@ -318,10 +319,14 @@ def creating_instances_from_registry() -> None:
 
     # Get classes from the registry
     print("Getting classes from the registry...")
-    circle_class = Shape.get_registered_class("Circle")
-    rectangle_class = Shape.get_registered_class("Rectangle")
-    square_class = Shape.get_registered_class("Square")
-    triangle_class = Shape.get_registered_class("Triangle")
+    circle_class = cast(Any, Shape.get_registered_class("Circle"))
+    assert circle_class is not None
+    rectangle_class = cast(Any, Shape.get_registered_class("Rectangle"))
+    assert rectangle_class is not None
+    square_class = cast(Any, Shape.get_registered_class("Square"))
+    assert square_class is not None
+    triangle_class = cast(Any, Shape.get_registered_class("Triangle"))
+    assert triangle_class is not None
 
     # Create instances
     print("Creating instances...")
@@ -409,11 +414,12 @@ def manual_class_registration() -> None:
 
     # Check if Hexagon is now registered
     print("Checking if Hexagon is now registered...")
-    hexagon_class = Shape.get_registered_class("Hexagon")
+    hexagon_class = cast(Any, Shape.get_registered_class("Hexagon"))
     print(f"Hexagon in registry: {hexagon_class is not None} == True")
 
     # Create and use a Hexagon instance
     print("\nCreating and using a Hexagon instance...")
+    assert hexagon_class is not None
     hexagon = hexagon_class("My Hexagon", 4.0)
     print(f"Description: {hexagon.describe()}")
     print(f"Area: {hexagon.area():.2f}")
@@ -440,11 +446,11 @@ def shape_factory() -> None:
         Raises:
             ValueError: If the shape type is not found in the registry.
         """
-        shape_class = Shape.get_registered_class(shape_type)
+        shape_class = cast(Any, Shape.get_registered_class(shape_type))
         if shape_class is None:
             msg = f"Unknown shape type: {shape_type}"
             raise ValueError(msg)
-        return shape_class(name, **kwargs)
+        return cast(Shape, shape_class(name, **kwargs))
 
     # Use the factory to create shapes
     print("Using the factory to create shapes...")

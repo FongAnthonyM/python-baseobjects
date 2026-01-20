@@ -111,7 +111,8 @@ def timezone_aware_datetime_example() -> None:
     # Calculate the time difference
     time_diff = utc_now - eastern_now
     print(f"\nTime difference between UTC and Eastern: {time_diff}")
-    print(f"Expected difference: {abs(eastern_offset)} (ignoring microseconds)")
+    if eastern_offset is not None:
+        print(f"Expected difference: {abs(eastern_offset)} (ignoring microseconds)")
 
     # Convert from one timezone to another
     eastern_to_utc = eastern_now.astimezone(utc)
@@ -127,10 +128,10 @@ def practical_example() -> None:
     # Define timezones for participants
     try:
         # Using zoneinfo for named timezones (Python 3.9+)
-        new_york_tz = zoneinfo.ZoneInfo("America/New_York")
-        london_tz = zoneinfo.ZoneInfo("Europe/London")
-        tokyo_tz = zoneinfo.ZoneInfo("Asia/Tokyo")
-        sydney_tz = zoneinfo.ZoneInfo("Australia/Sydney")
+        new_york_tz: datetime.tzinfo = zoneinfo.ZoneInfo("America/New_York")
+        london_tz: datetime.tzinfo = zoneinfo.ZoneInfo("Europe/London")
+        tokyo_tz: datetime.tzinfo = zoneinfo.ZoneInfo("Asia/Tokyo")
+        sydney_tz: datetime.tzinfo = zoneinfo.ZoneInfo("Australia/Sydney")
 
         # Get the offsets
         ny_offset = timezone_offset(new_york_tz)
@@ -162,7 +163,7 @@ def practical_example() -> None:
         print(f"  Sydney: {meeting_time_sydney.strftime('%Y-%m-%d %H:%M')}")
 
         # Check if the meeting is during working hours (9 AM to 5 PM) for each participant
-        def is_working_hours(dt):
+        def is_working_hours(dt: datetime.datetime) -> bool:
             return 9 <= dt.hour < 17
 
         print("\nIs the meeting during working hours (9 AM - 5 PM)?")

@@ -19,14 +19,14 @@ __version__ = "1.12.0"
 import copy
 import timeit
 from collections import UserDict
-from typing import Any, Dict, List
+from typing import Any
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.bases.collections import BaseDict
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.bases.collections import BaseDict
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
@@ -58,7 +58,7 @@ class TestBaseDictPerformance(BasePerformanceTestSuite):
         return self.TestDict({f"key_{i}": f"value_{i}" for i in range(self.dict_size)})
 
     @pytest.fixture
-    def test_user_dict(self) -> UserDict:
+    def test_user_dict(self) -> UserDict[Any, Any]:
         """Create a UserDict instance for comparison.
 
         Returns:
@@ -109,11 +109,13 @@ class TestBaseDictPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard dict creation: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard dict creation: {mean_std:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"UserDict creation: {mean_user:.3f} μs ({mean_user / mean_std:.3f}x standard dict)")
         print(
-            f"BaseDict creation: {mean_base:.3f} μs ({percent_user:.3f}% of UserDict creation time, {percent_std:.3f}% of standard dict creation time)",
+            f"BaseDict creation: {mean_base:.3f} μs ({percent_user:.3f}% of UserDict creation time, "
+            f"{percent_std:.3f}% of standard dict creation time)",
         )
         assert percent_user < self.speed_tolerance * 2  # Allow more overhead compared to UserDict
         assert percent_std < self.speed_tolerance * 3  # Allow more overhead compared to standard dict
@@ -121,7 +123,7 @@ class TestBaseDictPerformance(BasePerformanceTestSuite):
     def test_get_item_performance(
         self,
         test_dict: "TestBaseDictPerformance.TestDict",
-        test_user_dict: UserDict,
+        test_user_dict: UserDict[Any, Any],
         test_std_dict: dict[str, str],
     ) -> None:
         """Test the performance of getting items from dictionaries.
@@ -162,11 +164,13 @@ class TestBaseDictPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard dict item access: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard dict item access: {mean_std:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"UserDict item access: {mean_user:.3f} μs ({mean_user / mean_std:.3f}x standard dict)")
         print(
-            f"BaseDict item access: {mean_base:.3f} μs ({percent_user:.3f}% of UserDict item access time, {percent_std:.3f}% of standard dict item access time)",
+            f"BaseDict item access: {mean_base:.3f} μs ({percent_user:.3f}% of UserDict item access time, "
+            f"{percent_std:.3f}% of standard dict item access time)",
         )
         assert percent_user < self.speed_tolerance * 1.5  # Allow some overhead compared to UserDict
         assert percent_std < self.speed_tolerance * 2  # Allow more overhead compared to standard dict
@@ -174,7 +178,7 @@ class TestBaseDictPerformance(BasePerformanceTestSuite):
     def test_set_item_performance(
         self,
         test_dict: "TestBaseDictPerformance.TestDict",
-        test_user_dict: UserDict,
+        test_user_dict: UserDict[Any, Any],
         test_std_dict: dict[str, str],
     ) -> None:
         """Test the performance of setting items in dictionaries.
@@ -216,11 +220,13 @@ class TestBaseDictPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard dict item setting: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard dict item setting: {mean_std:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"UserDict item setting: {mean_user:.3f} μs ({mean_user / mean_std:.3f}x standard dict)")
         print(
-            f"BaseDict item setting: {mean_base:.3f} μs ({percent_user:.3f}% of UserDict item setting time, {percent_std:.3f}% of standard dict item setting time)",
+            f"BaseDict item setting: {mean_base:.3f} μs ({percent_user:.3f}% of UserDict item setting time, "
+            f"{percent_std:.3f}% of standard dict item setting time)",
         )
         assert percent_user < self.speed_tolerance * 1.5  # Allow some overhead compared to UserDict
         assert percent_std < self.speed_tolerance * 2  # Allow more overhead compared to standard dict
@@ -228,7 +234,7 @@ class TestBaseDictPerformance(BasePerformanceTestSuite):
     def test_delete_item_performance(
         self,
         test_dict: "TestBaseDictPerformance.TestDict",
-        test_user_dict: UserDict,
+        test_user_dict: UserDict[Any, Any],
         test_std_dict: dict[str, str],
     ) -> None:
         """Test the performance of deleting items from dictionaries.
@@ -281,11 +287,13 @@ class TestBaseDictPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard dict item deletion: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard dict item deletion: {mean_std:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"UserDict item deletion: {mean_user:.3f} μs ({mean_user / mean_std:.3f}x standard dict)")
         print(
-            f"BaseDict item deletion: {mean_base:.3f} μs ({percent_user:.3f}% of UserDict item deletion time, {percent_std:.3f}% of standard dict item deletion time)",
+            f"BaseDict item deletion: {mean_base:.3f} μs ({percent_user:.3f}% of UserDict item deletion time, "
+            f"{percent_std:.3f}% of standard dict item deletion time)",
         )
         assert percent_user < self.speed_tolerance * 1.5  # Allow some overhead compared to UserDict
         assert percent_std < self.speed_tolerance * 2  # Allow more overhead compared to standard dict
@@ -293,7 +301,7 @@ class TestBaseDictPerformance(BasePerformanceTestSuite):
     def test_iteration_performance(
         self,
         test_dict: "TestBaseDictPerformance.TestDict",
-        test_user_dict: UserDict,
+        test_user_dict: UserDict[Any, Any],
         test_std_dict: dict[str, str],
     ) -> None:
         """Test the performance of iterating over dictionaries.
@@ -335,11 +343,13 @@ class TestBaseDictPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard dict iteration: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard dict iteration: {mean_std:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"UserDict iteration: {mean_user:.3f} μs ({mean_user / mean_std:.3f}x standard dict)")
         print(
-            f"BaseDict iteration: {mean_base:.3f} μs ({percent_user:.3f}% of UserDict iteration time, {percent_std:.3f}% of standard dict iteration time)",
+            f"BaseDict iteration: {mean_base:.3f} μs ({percent_user:.3f}% of UserDict iteration time, "
+            f"{percent_std:.3f}% of standard dict iteration time)",
         )
         assert percent_user < self.speed_tolerance * 1.5  # Allow some overhead compared to UserDict
         assert percent_std < self.speed_tolerance * 2  # Allow more overhead compared to standard dict
@@ -347,7 +357,7 @@ class TestBaseDictPerformance(BasePerformanceTestSuite):
     def test_copy_performance(
         self,
         test_dict: "TestBaseDictPerformance.TestDict",
-        test_user_dict: UserDict,
+        test_user_dict: UserDict[Any, Any],
         test_std_dict: dict[str, str],
     ) -> None:
         """Test the performance of copying dictionaries.
@@ -385,10 +395,13 @@ class TestBaseDictPerformance(BasePerformanceTestSuite):
         percent_std = (mean_base / mean_std) * 100
 
         # Print the performance comparison
-        print(f"\nStandard dict copy: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nStandard dict copy: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+        )
         print(f"UserDict copy: {mean_user:.3f} μs ({mean_user / mean_std:.3f}x standard dict)")
         print(
-            f"BaseDict copy: {mean_base:.3f} μs ({percent_user:.3f}% of UserDict copy time, {percent_std:.3f}% of standard dict copy time)",
+            f"BaseDict copy: {mean_base:.3f} μs ({percent_user:.3f}% of UserDict copy time, "
+            f"{percent_std:.3f}% of standard dict copy time)",
         )
         assert percent_user < self.speed_tolerance * 2  # Allow more overhead compared to UserDict
         assert percent_std < self.speed_tolerance * 3  # Allow more overhead compared to standard dict
@@ -396,7 +409,7 @@ class TestBaseDictPerformance(BasePerformanceTestSuite):
     def test_deepcopy_performance(
         self,
         test_dict: "TestBaseDictPerformance.TestDict",
-        test_user_dict: UserDict,
+        test_user_dict: UserDict[Any, Any],
         test_std_dict: dict[str, str],
     ) -> None:
         """Test the performance of deep copying dictionaries.
@@ -435,11 +448,13 @@ class TestBaseDictPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard dict deepcopy: {mean_std:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard dict deepcopy: {mean_std:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"UserDict deepcopy: {mean_user:.3f} μs ({mean_user / mean_std:.3f}x standard dict)")
         print(
-            f"BaseDict deepcopy: {mean_base:.3f} μs ({percent_user:.3f}% of UserDict deepcopy time, {percent_std:.3f}% of standard dict deepcopy time)",
+            f"BaseDict deepcopy: {mean_base:.3f} μs ({percent_user:.3f}% of UserDict deepcopy time, "
+            f"{percent_std:.3f}% of standard dict deepcopy time)",
         )
         assert percent_user < self.speed_tolerance * 2  # Allow more overhead compared to UserDict
         assert percent_std < self.speed_tolerance * 3  # Allow more overhead compared to standard dict

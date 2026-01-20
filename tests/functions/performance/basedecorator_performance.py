@@ -17,14 +17,15 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import timeit
-from typing import Any, Type
+from collections.abc import Callable
+from typing import Any
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.functions.basedecorator import BaseDecorator
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.functions.basedecorator import BaseDecorator
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
@@ -32,13 +33,13 @@ from src.baseobjects.testsuite import BasePerformanceTestSuite
 class TestBaseDecoratorPerformance(BasePerformanceTestSuite):
     """Test suite for assaying the performance of the BaseDecorator class.
 
-    This test suite measures the performance of various operations on BaseDecorator objects
-    and compares them with standard Python implementations.
+    This test suite measures the performance of various operations on BaseDecorator objects and compares them with
+    standard Python implementations.
 
     Attributes:
         timeit_runs: The number of times to run the timeit function.
         speed_tolerance: The maximum speed tolerance in microseconds.
-        TestClass: The class being tested.
+        UnitTestClass: The class being tested.
     """
 
     # Class Definitions #
@@ -54,7 +55,7 @@ class TestBaseDecoratorPerformance(BasePerformanceTestSuite):
     timeit_runs: int = 1000000
     speed_tolerance: int = 400
 
-    TestClass: type[BaseTestDecorator] = BaseTestDecorator
+    UnitTestClass: type[BaseTestDecorator] = BaseTestDecorator
 
     # Instance Methods #
     # Fixtures
@@ -65,25 +66,24 @@ class TestBaseDecoratorPerformance(BasePerformanceTestSuite):
         Returns:
             BaseTestDecorator: An instance of the test class.
         """
-        return self.TestClass()
+        return self.UnitTestClass()
 
     # Tests
     def test_instance_creation(self) -> None:
         """Test that instances of BaseTestDecorator can be created efficiently.
 
-        This test compares the speed of creating BaseDecorator instances with creating
-        standard Python functions.
+        This test compares the speed of creating BaseDecorator instances with creating standard Python functions.
         """
 
-        def normal_decorator(func):
-            def wrapper(*args, **kwargs):
+        def normal_decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+            def wrapper(*args: Any, **kwargs: Any) -> Any:
                 return func(*args, **kwargs)
 
             return wrapper
 
         # Define the performance test functions
         def create_base_decorator() -> None:
-            self.TestClass()
+            self.UnitTestClass()
 
         def create_normal_function() -> None:
             normal_decorator(lambda x: x * 2)
@@ -99,7 +99,8 @@ class TestBaseDecoratorPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal function creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal function creation: {mean_old:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"BaseDecorator creation: {mean_new:.3f} μs ({percent:.3f}% of normal function creation time)")
         assert percent < self.speed_tolerance
@@ -117,7 +118,7 @@ class TestBaseDecoratorPerformance(BasePerformanceTestSuite):
         def normal(x: int) -> int:
             return x * 2
 
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             return normal(*args, **kwargs)
 
         arg = 5
@@ -140,7 +141,8 @@ class TestBaseDecoratorPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal function call: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal function call: {mean_old:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"BaseDecorator call: {mean_new:.3f} μs ({percent:.3f}% of normal function call time)")
         assert percent < self.speed_tolerance
@@ -152,18 +154,18 @@ class TestBaseDecoratorPerformance(BasePerformanceTestSuite):
         """
 
         # Create a normal decorator to compare against
-        def normal_decorator(func):
-            def wrapper(*args, **kwargs):
+        def normal_decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+            def wrapper(*args: Any, **kwargs: Any) -> Any:
                 return func(*args, **kwargs)
 
             return wrapper
 
-        def test_func(x):
+        def test_func(x: int) -> int:
             return x * 2
 
         # Define the performance test functions
         def construct_base_decorator() -> None:
-            self.TestClass()
+            self.UnitTestClass()
 
         def construct_normal_decorator() -> None:
             normal_decorator(test_func)
@@ -179,7 +181,8 @@ class TestBaseDecoratorPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal decorator wrap: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal decorator wrap: {mean_old:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"BaseDecorator wrap: {mean_new:.3f} μs ({percent:.3f}% of normal decorator construction time)")
         assert percent < self.speed_tolerance

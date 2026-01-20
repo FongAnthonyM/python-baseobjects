@@ -13,8 +13,6 @@ This example demonstrates:
 
 
 # Imports #
-# Standard Libraries #
-
 # Source Packages #
 from baseobjects.functions import CallableMultiplexer, FunctionMultiplexer, FunctionRegistry, MethodMultiplexer
 
@@ -313,7 +311,7 @@ def dynamic_method_selection() -> None:
 
         def process(self) -> int:
             # Call the currently selected method
-            return self.multiplexer()
+            return int(self.multiplexer())
 
     # Create an instance
     processor = DynamicProcessor("Dynamic Processor")

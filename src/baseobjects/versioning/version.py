@@ -3,15 +3,6 @@ Abstract base class for version objects.
 
 This module provides the Version abstract base class that defines the interface for all version implementations. It
 includes abstract methods for comparison, construction, and type conversion that must be implemented by subclasses.
-
-Typical usage example:
-
-  class CustomVersion(Version):
-      # Implement abstract methods
-      ...
-
-  version = CustomVersion("1.0")
-  print(f"Version: {version}")
 """
 
 # Header #
@@ -27,6 +18,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
+import builtins
 from abc import abstractmethod
 from typing import Any
 
@@ -37,13 +29,7 @@ from ..bases import BaseObject
 # Definitions #
 # Classes #
 class Version(BaseObject):
-    """An abstract class for creating versions which stores and handles a versioning.
-
-    Args:
-        version: An object to derive a version from.
-        init: Determines if this object will construct.
-        **kwargs: Keyword arguments for constructing this object
-    """
+    """An abstract class for creating versions which stores and handles a versioning."""
 
     # Class Methods #
     @classmethod
@@ -74,11 +60,7 @@ class Version(BaseObject):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        """Initialize a Version base instance.
-
-        Subclasses should call super().__init__ and provide inputs necessary for
-        construction. If init is True, construct will be called with the provided
-        arguments.
+        """Initializes this object with the given arguments.
 
         Args:
             version: An object to derive a version from; interpretation is subclass-defined.
@@ -157,7 +139,7 @@ class Version(BaseObject):
         if isinstance(other, Version):
             return self.tuple() < other.tuple()
         else:
-            msg = f"'>' not supported between instances of '{self!s}' and '{other!s}'"
+            msg = f"'<' not supported between instances of '{self!s}' and '{other!s}'"
             raise TypeError(msg)
 
     @abstractmethod
@@ -227,7 +209,7 @@ class Version(BaseObject):
     # Constructors/Destructors #
     @abstractmethod
     def construct(self, version: Any = None, **kwargs: Any) -> None:
-        """Constructs the version object based on inputs.
+        """Constructs this object with the given arguments.
 
         Args:
             version: An object to derive a version from.
@@ -236,7 +218,7 @@ class Version(BaseObject):
 
     # Type Conversion #
     @abstractmethod
-    def list(self) -> list[Any]:
+    def list(self) -> builtins.list[Any]:
         """Returns the list representation of the version.
 
         Returns:
@@ -244,7 +226,7 @@ class Version(BaseObject):
         """
 
     @abstractmethod
-    def tuple(self) -> tuple[Any]:
+    def tuple(self) -> builtins.tuple[Any, ...]:
         """Returns the tuple representation of the version.
 
         Returns:
@@ -252,7 +234,7 @@ class Version(BaseObject):
         """
 
     @abstractmethod
-    def str(self) -> str:
+    def str(self) -> builtins.str:
         """Returns the str representation of the version.
 
         Returns:

@@ -12,7 +12,7 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar
+from typing import Any, ClassVar, cast
 
 # Source Packages #
 from baseobjects.classregistration import BaseClassRegistry, DispatchableClass
@@ -50,7 +50,7 @@ class SimpleClassRegistry(BaseClassRegistry):
         Returns:
             The requested class, or the default value if not found.
         """
-        return self.get(name, default)
+        return cast(type, self.get(name, default))
 
 
 class FileHandler(DispatchableClass):
@@ -75,6 +75,7 @@ class FileHandler(DispatchableClass):
         if cls.class_registry is None:
             cls.create_class_registry()
 
+        assert cls.class_registry is not None
         if name is None:
             name = cls.__name__
 
@@ -93,7 +94,7 @@ class FileHandler(DispatchableClass):
         if cls.class_registry is None:
             return None
 
-        return cls.class_registry.get_class(name)
+        return cast(type["FileHandler"] | None, cls.class_registry.get_class(name))
 
     @classmethod
     def get_class_information(cls, filename: str, *args: Any, **kwargs: Any) -> tuple[str]:
@@ -324,9 +325,10 @@ def manual_handler_selection() -> None:
     # Get handler classes from the registry
     print("Getting handler classes from the registry...")
 
-    txt_handler_class = FileHandler.class_registry.get_class("txt")
-    csv_handler_class = FileHandler.class_registry.get_class("csv")
-    json_handler_class = FileHandler.class_registry.get_class("json")
+    assert FileHandler.class_registry is not None
+    txt_handler_class = cast(type, FileHandler.class_registry.get_class("txt"))
+    csv_handler_class = cast(type, FileHandler.class_registry.get_class("csv"))
+    json_handler_class = cast(type, FileHandler.class_registry.get_class("json"))
 
     # Create instances manually
     print("Creating instances manually...")
@@ -429,7 +431,7 @@ def file_processor_application() -> None:
 
         def __init__(self) -> None:
             """Initialize a file processor."""
-            self.results = {}
+            self.results: dict[str, str] = {}
 
         def process_file(self, filename: str, content: str | None = None) -> str:
             """Process a file by reading or writing.

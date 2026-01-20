@@ -20,7 +20,7 @@ from typing import Any
 
 # Local Packages #
 from ..bases import BaseCallable, BaseMethod
-from ..typing import AnyCallable, GetObjectMethod
+from ..typing import AnyCallable
 from .functionregistry import FunctionRegistry
 
 
@@ -38,7 +38,6 @@ class CallableMultiplexer(BaseMethod):
         registry: The function registry to use for selecting a function/method.
         _selected: The name of the function/method to select for use.
         _is_binding_wrapper: Determines if this callable will bind the selected function to the contained instance.
-        is_coroutine: Checks if this callable is a coroutine.
 
     Args:
         registry: The function registry to use for selecting a function/method.
@@ -53,9 +52,9 @@ class CallableMultiplexer(BaseMethod):
     """
 
     # Attributes #
-    registry: FunctionRegistry | None = None
+    registry: FunctionRegistry
     _selected: str | None = None
-    _selected_bind_method: Any = None
+    _selected_bind_method: AnyCallable
 
     _is_binding_wrapper: bool = False
 
@@ -69,8 +68,8 @@ class CallableMultiplexer(BaseMethod):
     def is_binding_wrapper(self, value: bool) -> None:
         self._is_binding_wrapper = value
         if not value:
-            self._selected_bind_method = None
-        elif self.__wrapped__ is not None:
+            del self._selected_bind_method
+        elif self.__wrapped__ is not None and hasattr(self.__wrapped__, "__get__"):
             self._selected_bind_method = self.__wrapped__.__get__
 
     @property
@@ -86,26 +85,28 @@ class CallableMultiplexer(BaseMethod):
     # Construction/Destruction
     def __init__(
         self,
-        registry: FunctionRegistry | None = None,
+        func: FunctionRegistry | AnyCallable | None = None,
         instance: Any = None,
         owner: type[Any] | None = None,
         select: str | None = None,
         binding: bool = False,
         *args: Any,
         is_binding: bool = True,
+        registry: FunctionRegistry | None = None,
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        """Initialize a callable multiplexer.
+        """Initializes this object with the given arguments.
 
         Args:
-            registry: Optional registry of functions/methods to multiplex.
+            func: Optional callable to wrap.
             instance: Optional instance for method binding.
             owner: Optional owner class for method resolution.
             select: Name of the function/method to initially select.
             binding: When True, wrap the selected callable as a binding descriptor.
             *args: Positional arguments forwarded to BaseMethod.
             is_binding: Determines if this callable will bind to another object.
+            registry: Optional registry of functions/methods to multiplex.
             init: When True, construct the instance immediately.
             **kwargs: Additional keyword arguments forwarded to BaseMethod.
         """
@@ -114,11 +115,21 @@ class CallableMultiplexer(BaseMethod):
 
         # Object Construction #
         if init:
-            self.construct(registry, instance, owner, select, binding, *args, is_binding=is_binding, **kwargs)
+            self.construct(
+                func,
+                instance,
+                owner,
+                select,
+                binding,
+                *args,
+                is_binding=is_binding,
+                registry=registry,
+                **kwargs,
+            )
 
     # Pickling
     def __getstate__(self) -> dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]] | None:
-        """Gets the object's state for pickling.
+        """Gets the state of this object for pickling.
 
         This method prepares the object for pickling by converting the weak reference to the bound instance into a
         strong reference. This is necessary because weak references cannot be pickled directly. The method first gets
@@ -132,7 +143,11 @@ class CallableMultiplexer(BaseMethod):
                 tuple[dict, dict]: __dict__ is present and __slots__ is present.
         """
         state = super().__getstate__()
-        state.pop("_selected_bind_method", None)
+        match state:
+            case dict():
+                state.pop("_selected_bind_method", None)
+            case tuple() if state[0] is not None:
+                state[0].pop("_selected_bind_method", None)
         return state
 
     def __setstate__(self, state: Any) -> None:
@@ -168,44 +183,55 @@ class CallableMultiplexer(BaseMethod):
             The output of the wrapped function.
         """
         if self.is_binding_wrapper:
-            return self._selected_bind_method(self._self_(), self.__owner__)(*args, **kwargs)
+            return self._selected_bind_method(self.__self__, self.__owner__)(*args, **kwargs)
         else:
-            return self.__wrapped__(*args, **kwargs)
+            func = self.__wrapped__
+            return func(*args, **kwargs)  # type:ignore[misc]
 
     # Instance Methods #
     # Constructors/Destructors
     def construct(
         self,
-        registry: AnyCallable | None = None,
+        func: FunctionRegistry | AnyCallable | None = None,
         instance: Any = None,
         owner: type[Any] | None = None,
         select: str | None = None,
         binding: bool | None = None,
         *args: Any,
         is_binding: bool = True,
+        registry: FunctionRegistry | None = None,
         **kwargs: Any,
     ) -> None:
-        """The constructor for this object.
+        """Constructs this object with the given arguments.
 
         Args:
-            registry: The function registry to use for selecting a function/method.
+            func: Optional callable to wrap.
             instance: An object to wrap which will be used to find functions/methods.
             owner: The class of the object used for finding functions/methods.
             select: The name of the function/method to select for use.
             binding: Determines if this object will bind the selected function as a method.
             *args: Arguments for inheritance.
             is_binding: Determines if this callable will bind to another object. Default is True.
+            registry: The function registry to use for selecting a function/method.
             **kwargs: Keyword arguments for inheritance.
         """
+        # Resolve func
+        if isinstance(func, FunctionRegistry):
+            if registry is None:
+                registry = func
+            func = None
+
         if registry is not None:
             self.registry = registry
         else:
             self.build_registry()
 
-        super().construct(*args, instance=instance, owner=owner, is_binding=is_binding, **kwargs)
+        super().construct(func, instance, owner, *args, is_binding=is_binding, **kwargs)
 
         if select is not None:
             self.select(select)
+        elif self.__wrapped__ is not None and hasattr(self.__wrapped__, "__get__"):
+            self._selected_bind_method = self.__wrapped__.__get__
 
         if binding is not None:
             self._is_binding_wrapper = binding
@@ -215,7 +241,7 @@ class CallableMultiplexer(BaseMethod):
         self.registry = FunctionRegistry()
 
     # Registry
-    def add_function(self, name: str, func: BaseCallable) -> None:
+    def add_function(self, name: str, func: AnyCallable) -> None:
         """Adds a function to the registry.
 
         Args:
@@ -224,14 +250,17 @@ class CallableMultiplexer(BaseMethod):
         """
         self.registry[name] = func
 
-    def add_method(self, name: str, method: BaseCallable) -> None:
+    def add_method(self, name: str, method: AnyCallable) -> None:
         """Adds a method to the registry.
 
         Args:
             name: The name of the method being added.
             method: The method to add to the registry.
         """
-        self.registry[name] = method.__func__
+        if hasattr(method, "__func__"):
+            self.registry[name] = method.__func__
+        else:
+            self.registry[name] = method
 
     def bind_selected(self, instance: Any = None, owner: type[Any] | None = None) -> BaseCallable | MethodType:
         """Creates a method of the selected function using python's method binding.
@@ -243,7 +272,7 @@ class CallableMultiplexer(BaseMethod):
         Returns:
             The bound method of this function.
         """
-        return self if instance is None else self.__wrapped__.__get__(instance, owner)
+        return self if instance is None else self.__wrapped__.__get__(instance, owner)  # type:ignore[union-attr]
 
     # Callable Selection
     def select(self, name: str | None) -> None:
@@ -259,11 +288,20 @@ class CallableMultiplexer(BaseMethod):
         elif self._self_ is not None:
             func = getattr(self._self_(), name).__func__
             self._is_binding_wrapper = True
+        else:
+            func = None
+
         self.__func__ = func
-        self._selected_bind_method = func.__get__
+
+        if func is not None:
+            if hasattr(func, "__get__"):
+                self._selected_bind_method = func.__get__
+        elif hasattr(self, "_selected_bind_method"):
+            del self._selected_bind_method
+
         self._selected = name
 
-    def add_select_function(self, name: str, func: BaseCallable) -> None:
+    def add_select_function(self, name: str, func: AnyCallable) -> None:
         """Adds a function to the registry and selects it.
 
         Args:
@@ -274,19 +312,19 @@ class CallableMultiplexer(BaseMethod):
         self._selected_bind_method = func.__get__
         self._selected = name
 
-    def add_select_method(self, name: str, method: BaseCallable) -> None:
+    def add_select_method(self, name: str, method: AnyCallable) -> None:
         """Adds a method to the registry and selects it.
 
         Args:
             name: The name of the method being added.
             method: The method to add to the registry.
         """
-        self.registry[name] = self.__func__ = method.__func__
-        self._selected_bind_method = self.__wrapped__.__get__
+        self.registry[name] = self.__func__ = method.__func__  # type: ignore[attr-defined]
+        self._selected_bind_method = self.__wrapped__.__get__  # type:ignore[union-attr]
         self._selected = name
 
     # Binding
-    def bind_self(self, instance: Any = None, owner: type[Any] | None = None) -> "BaseMethod":
+    def bind_self(self, instance: Any = None, owner: Any = None) -> Any:
         """Binds this method to an instance and/or owner class.
 
         Args:
@@ -307,7 +345,9 @@ class CallableMultiplexer(BaseMethod):
 
     # Method Overrides #
     # Special method overriding which leads to less overhead.
-    __get__: GetObjectMethod = bind_self
+    def __get__(self, instance: Any = None, owner: type[Any] | None = None) -> Any:
+        """Returns the bound method."""
+        return self.bind_self(instance, owner)
 
 
 class MethodMultiplexer(CallableMultiplexer):
@@ -331,7 +371,7 @@ class MethodMultiplexer(CallableMultiplexer):
         Returns:
             The output of the wrapped function.
         """
-        return self._selected_bind_method(self._self_(), self.__owner__)(*args, **kwargs)
+        return self._selected_bind_method(self.__self__, self.__owner__)(*args, **kwargs)
 
 
 class FunctionMultiplexer(CallableMultiplexer):
@@ -355,4 +395,4 @@ class FunctionMultiplexer(CallableMultiplexer):
         Returns:
             The output of the wrapped function.
         """
-        return self.__wrapped__(*args, **kwargs)
+        return self.__wrapped__(*args, **kwargs)  # type:ignore[misc]

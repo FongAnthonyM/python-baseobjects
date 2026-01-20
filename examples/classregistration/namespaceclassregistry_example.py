@@ -12,7 +12,7 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any
+from typing import Any, cast
 
 # Source Packages #
 from baseobjects.bases import SEARCHSENTINEL
@@ -96,7 +96,7 @@ class NumberProcessor(DataProcessor):
 class ListProcessor(DataProcessor):
     """A processor for list data."""
 
-    def process(self, data: list) -> list:
+    def process(self, data: list[Any]) -> list[Any]:
         """Process list data.
 
         Args:
@@ -115,7 +115,7 @@ class ListProcessor(DataProcessor):
 class DictionaryProcessor(DataProcessor):
     """A processor for dictionary data."""
 
-    def process(self, data: dict) -> dict:
+    def process(self, data: dict[Any, Any]) -> dict[Any, Any]:
         """Process dictionary data.
 
         Args:
@@ -288,9 +288,9 @@ def class_kwargs_and_instantiation() -> None:
 
     # Create instances directly using get_new
     print("\nCreating instances directly using get_new...")
-    direct_double = registry.get_new("numeric", "DoubleProcessor", name="Direct Double")
-    direct_triple = registry.get_new("numeric", "TripleProcessor", name="Direct Triple")
-    direct_half = registry.get_new("numeric", "HalfProcessor", name="Direct Half")
+    direct_double = registry.get_new("numeric", "DoubleProcessor", class_kwargs={"name": "Direct Double"})
+    direct_triple = registry.get_new("numeric", "TripleProcessor", class_kwargs={"name": "Direct Triple"})
+    direct_half = registry.get_new("numeric", "HalfProcessor", class_kwargs={"name": "Direct Half"})
 
     # Use the directly created instances
     print("\nProcessing data with directly created processors:")
@@ -303,8 +303,7 @@ def class_kwargs_and_instantiation() -> None:
     custom_double = registry.get_new(
         "numeric",
         "DoubleProcessor",
-        name="Custom Double",
-        class_kwargs={"multiplier": 4.0},
+        class_kwargs={"name": "Custom Double", "multiplier": 4.0},
     )
 
     # Use the instance with overridden kwargs
@@ -352,7 +351,7 @@ def multiple_registration_methods() -> None:
 
     # Method 4: Update classes from another registry
     print("\nMethod 4: Update classes from another registry...")
-    registry.update_classes(new_registry)
+    registry.update_classes(new_registry.data)
 
     print("\nUpdated registry structure:")
     for namespace, classes in registry.items():
@@ -382,7 +381,7 @@ def module_import_feature() -> None:
     def simulate_import(namespace: str, name: str, module: str) -> type:
         print(f"Simulating import of module '{module}'...")
         registry.register_class(NumberProcessor, namespace=namespace, name=name)
-        return registry.get_class(namespace, name)
+        return cast(type, registry.get_class(namespace, name))
 
     # First attempt (would normally fail and try to import)
     number_processor_class = registry.get_class("numeric", "NumberProcessor", default=None)
@@ -425,12 +424,12 @@ def processor_factory() -> None:
         Returns:
             An instance of the requested processor type.
         """
-        return registry.get_new(data_type, processor_name, **kwargs)
+        return cast(DataProcessor, registry.get_new(data_type, processor_name, class_kwargs=kwargs))
 
     # Use the factory to create processors
     print("Using the factory to create processors...")
 
-    processors = [
+    processors: list[tuple[str, str, dict[str, Any]]] = [
         ("text", "TextProcessor", {"name": "Text Processor"}),
         ("numeric", "NumberProcessor", {"name": "Number Processor", "multiplier": 2.5}),
         ("collections", "ListProcessor", {"name": "List Processor"}),

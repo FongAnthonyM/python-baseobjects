@@ -12,6 +12,7 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
+from collections.abc import Callable
 from typing import Any, ClassVar, NoReturn
 
 # Source Packages #
@@ -24,7 +25,16 @@ class Person(AutomaticProperties):
     """A simple person class with automatic properties."""
 
     # Class Attributes #
-    properties = {"name": "_name", "age": "_age", "email": "_email"}
+    properties: ClassVar[dict[str, str | tuple[Callable[..., Any] | str, str, dict[str, Any]]]] = {
+        "name": "_name",
+        "age": "_age",
+        "email": "_email",
+    }
+
+    # Type Hints #
+    name: str
+    age: int
+    email: str
 
     def __init__(self, name: str = "", age: int = 0, email: str = "") -> None:
         """Initialize a person with name, age, and email.
@@ -43,7 +53,16 @@ class ValidatedPerson(AutomaticProperties):
     """A person class with validated properties."""
 
     # Class Attributes #
-    properties = {"name": "_name", "age": "_age", "email": "_email"}
+    properties: ClassVar[dict[str, str | tuple[Callable[..., Any] | str, str, dict[str, Any]]]] = {
+        "name": "_name",
+        "age": "_age",
+        "email": "_email",
+    }
+
+    # Type Hints #
+    name: str
+    age: int
+    email: str
 
     def __init__(self, name: str = "", age: int = 0, email: str = "") -> None:
         """Initialize a person with name, age, and email.
@@ -64,6 +83,9 @@ class ValidatedPerson(AutomaticProperties):
         Args:
             value: The value to set
             name: The name of the property
+
+        Raises:
+            ValueError: If age is negative or email is invalid.
         """
         if name == "_age" and value < 0:
             msg = "Age cannot be negative"
@@ -79,11 +101,16 @@ class CustomPropertyPerson(AutomaticProperties):
     """A person class with custom property factory methods."""
 
     # Class Attributes #
-    properties = {
+    properties: ClassVar[dict[str, str | tuple[Callable[..., Any] | str, str, dict[str, Any]]]] = {
         "name": ("custom_property_factory", "_name", {}),
         "age": ("custom_property_factory", "_age", {}),
         "email": ("custom_property_factory", "_email", {}),
     }
+
+    # Type Hints #
+    name: str
+    age: int
+    email: str
 
     def __init__(self, name: str = "", age: int = 0, email: str = "") -> None:
         """Initialize a person with name, age, and email.
@@ -96,7 +123,7 @@ class CustomPropertyPerson(AutomaticProperties):
         self._name = name
         self._age = age
         self._email = email
-        self._access_count = {}
+        self._access_count: dict[str, int] = {}
 
     @classmethod
     def custom_property_factory(cls, info: str) -> PropertyCallbacks:
@@ -110,17 +137,17 @@ class CustomPropertyPerson(AutomaticProperties):
         """
         name = info
 
-        def _get(self):
+        def _get(self: "CustomPropertyPerson") -> Any:
             # Track access count
             if name not in self._access_count:
                 self._access_count[name] = 0
             self._access_count[name] += 1
             return getattr(self, name)
 
-        def _set(self, value) -> None:
+        def _set(self: "CustomPropertyPerson", value: Any) -> None:
             setattr(self, name, value)
 
-        def _del(self) -> None:
+        def _del(self: "CustomPropertyPerson") -> None:
             delattr(self, name)
 
         return _get, _set, _del
@@ -130,11 +157,16 @@ class ReadOnlyPerson(AutomaticProperties):
     """A person class with read-only properties."""
 
     # Class Attributes #
-    properties = {
+    properties: ClassVar[dict[str, str | tuple[Callable[..., Any] | str, str, dict[str, Any]]]] = {
         "name": ("readonly_property_factory", "_name", {}),
         "age": ("readonly_property_factory", "_age", {}),
         "email": ("readonly_property_factory", "_email", {}),
     }
+
+    # Type Hints #
+    name: str
+    age: int
+    email: str
 
     def __init__(self, name: str = "", age: int = 0, email: str = "") -> None:
         """Initialize a person with name, age, and email.
@@ -160,14 +192,14 @@ class ReadOnlyPerson(AutomaticProperties):
         """
         name = info
 
-        def _get(self):
+        def _get(self: Any) -> Any:
             return getattr(self, name)
 
-        def _set(self, value) -> NoReturn:
+        def _set(self: Any, value: Any) -> NoReturn:
             msg = f"Property '{name[1:]}' is read-only"
             raise AttributeError(msg)
 
-        def _del(self) -> NoReturn:
+        def _del(self: Any) -> NoReturn:
             msg = f"Property '{name[1:]}' is read-only"
             raise AttributeError(msg)
 

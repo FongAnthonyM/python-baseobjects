@@ -15,7 +15,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from collections.abc import Callable, Iterable
+from collections.abc import Callable
 from functools import partial
 from typing import Any, ClassVar
 
@@ -36,8 +36,8 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
     """
 
     # Class Attributes #
-    default_property_function_factory: ClassVar[str | Callable] = "property_method_factory"
-    properties: ClassVar[dict[str, str | Iterable[Callable, str, dict]]] = {}
+    default_property_function_factory: ClassVar[str | Callable[..., Any]] = "property_method_factory"
+    properties: ClassVar[dict[str, str | tuple[Callable[..., Any] | str, str, dict[str, Any]]]] = {}
 
     # Class Methods #
     # Class Construction
@@ -59,7 +59,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
     # Property Methods
     @classmethod
-    def property_class_get(cls, self: "AutomaticProperties", name: str) -> Any:
+    def property_class_get(cls, self: AutomaticProperties, name: str) -> Any:
         """A generic class method get for properties which can be implemented in a subclass.
 
         Args:
@@ -72,7 +72,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         return getattr(self, name)
 
     @classmethod
-    def property_class_set(cls, self: "AutomaticProperties", value: Any, name: str) -> None:
+    def property_class_set(cls, self: AutomaticProperties, value: Any, name: str) -> None:
         """A generic class method set for properties which can be implemented in a subclass.
 
         Args:
@@ -83,7 +83,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
         setattr(self, name, value)
 
     @classmethod
-    def property_class_del(cls, self: "AutomaticProperties", name: str) -> None:
+    def property_class_del(cls, self: AutomaticProperties, name: str) -> None:
         """A generic class method delete for properties which can be implemented in a subclass.
 
         Args:
@@ -101,9 +101,9 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
             info: An object that can be used to create the get, set, and delete functions
 
         Returns:
-            get_: The get function for a property object.
-            set_: The wet function for a property object.
-            del_: The del function for a property object.
+            ``get_``: The get function for a property object.
+            ``set_``: The set function for a property object.
+            ``del_``: The del function for a property object.
         """
         name = info
 
@@ -121,9 +121,9 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
             info: An object that can be used to create the get, set, and delete functions
 
         Returns:
-            get_: The get function for a property object.
-            set_: The wet function for a property object.
-            del_: The del function for a property object.
+            ``get_``: The get function for a property object.
+            ``set_``: The set function for a property object.
+            ``del_``: The del function for a property object.
         """
         name = info
 
@@ -135,7 +135,10 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
 
     # Properties Constructor
     @classmethod
-    def _construct_properties_(cls, property_map: dict[str, str | Iterable[Callable, str, dict]] | None = None) -> None:
+    def _construct_properties_(
+        cls,
+        property_map: dict[str, str | tuple[Callable[..., Any] | str, str, dict[str, Any]]] | None = None,
+    ) -> None:
         """Constructs all properties from a list which maps the properties and their functionality.
 
         Args:
@@ -149,7 +152,7 @@ class AutomaticProperties(BaseObject, metaclass=InitMeta):
                 case str():
                     factory = cls.default_property_function_factory
                     attribute = info
-                    factory_kwargs = {}
+                    factory_kwargs: dict[str, Any] = {}
                 case _:
                     factory, attribute, factory_kwargs = info
 

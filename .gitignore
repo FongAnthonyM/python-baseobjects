@@ -51,6 +51,7 @@ htmlcov
 .idea
 .junie
 .vscode
+.agent
 *.iml
 *.komodoproject
 

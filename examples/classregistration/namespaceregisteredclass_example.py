@@ -12,7 +12,7 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar
+from typing import Any, ClassVar, cast
 
 # Source Packages #
 from baseobjects.classregistration import NamespaceRegisteredClass
@@ -270,11 +270,16 @@ def creating_instances_from_registry() -> None:
 
     # Get classes from the registry
     print("Getting classes from the registry by namespace and name...")
-    car_class = Vehicle.get_registered_class("land", "Car")
-    motorcycle_class = Vehicle.get_registered_class("land", "Bike")
-    boat_class = Vehicle.get_registered_class("water", "Boat")
-    airplane_class = Vehicle.get_registered_class("air", "Airplane")
-    helicopter_class = Vehicle.get_registered_class("air", "Helicopter")
+    car_class = cast(Any, Vehicle.get_registered_class("land", "Car"))
+    assert car_class is not None
+    motorcycle_class = cast(Any, Vehicle.get_registered_class("land", "Bike"))
+    assert motorcycle_class is not None
+    boat_class = cast(Any, Vehicle.get_registered_class("water", "Boat"))
+    assert boat_class is not None
+    airplane_class = cast(Any, Vehicle.get_registered_class("air", "Airplane"))
+    assert airplane_class is not None
+    helicopter_class = cast(Any, Vehicle.get_registered_class("air", "Helicopter"))
+    assert helicopter_class is not None
 
     # Create instances
     print("Creating instances...")
@@ -341,7 +346,7 @@ def custom_namespace_and_name() -> None:
 
     # Verify the submarine is registered
     print("\nVerifying submarine registration...")
-    submarine_class = Vehicle.get_registered_class("underwater", "Sub")
+    submarine_class = cast(Any, Vehicle.get_registered_class("underwater", "Sub"))
     assert submarine_class == Submarine
     print("Submarine is correctly registered as 'Sub' in the 'underwater' namespace.")
 
@@ -394,6 +399,7 @@ def module_based_namespace() -> None:
 
     # Print all namespaces to find the spaceship
     print("\nAll namespaces in registry:")
+    assert Vehicle.class_registry is not None
     for namespace, classes in Vehicle.class_registry.items():
         print(f"Namespace: {namespace}")
         for name, (cls, _kwargs) in classes.items():
@@ -439,16 +445,20 @@ def vehicle_factory() -> None:
         Raises:
             ValueError: If the vehicle type is not found in the registry.
         """
-        vehicle_class = Vehicle.get_registered_class(namespace, vehicle_type)
+        try:
+            vehicle_class = cast(Any, Vehicle.get_registered_class(namespace, vehicle_type))
+        except KeyError:
+            vehicle_class = None
+
         if vehicle_class is None:
             msg = f"Unknown vehicle type: {vehicle_type} in namespace {namespace}"
             raise ValueError(msg)
-        return vehicle_class(name, **kwargs)
+        return cast(Vehicle, vehicle_class(name, **kwargs))
 
     # Use the factory to create vehicles
     print("Using the factory to create vehicles...")
 
-    vehicles = [
+    vehicles: list[tuple[str, str, str, dict[str, Any]]] = [
         ("Car", "land", "Luxury Sedan", {"doors": 2}),
         ("Bike", "land", "Sport Bike", {"has_sidecar": False}),
         ("Boat", "water", "Yacht", {"length": 20.0}),

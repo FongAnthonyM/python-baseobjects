@@ -22,6 +22,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
+from collections.abc import Callable
 from typing import Any
 
 # Definitions #
@@ -31,7 +32,7 @@ little_array = (8, 4, 2, 1, 128, 64, 32, 16)
 
 
 # Functions #
-def bytes_to_bin(bytes_: bytes, byteorder: str = "big", out_type: type = int) -> tuple[Any]:
+def bytes_to_bin(bytes_: bytes, byteorder: str = "big", out_type: type | Callable[[Any], Any] = int) -> tuple[Any, ...]:
     """Converts bytes to a tuple of binary values.
 
     Args:

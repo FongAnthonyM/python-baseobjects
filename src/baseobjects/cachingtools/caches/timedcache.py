@@ -36,7 +36,7 @@ class TimedCacheCallable(BaseTimedCacheCallable):
     """A periodically clearing multiple item cache wrapper object for a function.
 
     Class Attributes:
-        priority_queue_type = The type of priority queue to hold cache item priorities.
+        priority_queue_type: The type of priority queue to hold cache item priorities.
 
     Attributes:
         _maxsize: The number of results the cache will hold before replacing results.
@@ -63,12 +63,12 @@ class TimedCacheCallable(BaseTimedCacheCallable):
 
     # Properties #
     @property
-    def maxsize(self) -> int:
+    def maxsize(self) -> int | None:
         """The cache's max size and when updated it changes the cache to its optimal handle function."""
         return self._maxsize
 
     @maxsize.setter
-    def maxsize(self, value: int) -> None:
+    def maxsize(self, value: int | None) -> None:
         self.set_maxsize(value)
 
     # Magic Methods #
@@ -85,7 +85,7 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        """Initialize a TimedCacheCallable instance.
+        """Initializes this object with the given arguments.
 
         Args:
             func: The function to wrap. If None, a function should be provided later via construct.
@@ -105,7 +105,7 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         super().__init__(*args, init=False, **kwargs)
 
         # Overriden Attributes #
-        self.cache_container: dict = {}
+        self.cache_container: dict[Any, Any] = {}
 
         # Object Construction #
         if init:
@@ -131,18 +131,18 @@ class TimedCacheCallable(BaseTimedCacheCallable):
 
     # Instance Methods #
     # Constructors
-    def construct(
+    def construct(  # type: ignore[override]
         self,
         func: AnyCallable | None = None,
         maxsize: int | None = None,
-        typed: bool = False,
+        typed: bool | None = None,
         lifetime: int | float | None = None,
         call_method: str | None = None,
-        instanced: bool = True,
+        instanced: bool | None = None,
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        """The constructor for this object.
+        """Constructs this object with the given arguments.
 
         Args:
             func: The function to wrap.
@@ -158,13 +158,11 @@ class TimedCacheCallable(BaseTimedCacheCallable):
             self.maxsize = maxsize
 
         super().construct(
-            func,
-            maxsize,
-            typed,
-            lifetime,
-            call_method,
-            instanced,
-            *args,
+            func=func,
+            typed=typed,
+            lifetime=lifetime,
+            call_method=call_method,
+            instanced=instanced,
             **kwargs,
         )
 
@@ -185,7 +183,7 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         if cache_item is not SEARCHSENTINEL:
             return cache_item.result
         else:
-            result = self.__func__(*args, **kwargs)
+            result = self.__func__(*args, **kwargs)  # type:ignore[misc]
             self.cache_container[key] = self.cache_item_type(key=key, result=result)
             return result
 
@@ -205,8 +203,8 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         if cache_item is not SEARCHSENTINEL:
             return cache_item.result
         else:
-            result = self.__func__(*args, **kwargs)
-            if self.cache_container.__len__() <= self._maxsize:
+            result = self.__func__(*args, **kwargs)  # type:ignore[misc]
+            if self._maxsize is not None and self.cache_container.__len__() < self._maxsize:
                 self.cache_container[key] = self.cache_item_type(result=result)
             return result
 
@@ -218,7 +216,7 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         if self.lifetime is not None:
             self.expiration = perf_counter() + self.lifetime
 
-    def set_maxsize(self, value: int) -> None:
+    def set_maxsize(self, value: int | None) -> None:
         """Change the cache's max size to a new value and updates the cache to its optimal handle function.
 
         Args:
@@ -234,12 +232,12 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         self._maxsize = value
 
     def poll(self) -> bool:
-        """Check if there is room in the cache.
+        """Checks if there is room in the cache.
 
         Returns:
             bool: True if the cache has space for more items; otherwise, False.
         """
-        return len(self.cache_container) <= self._maxsize
+        return self._maxsize is not None and len(self.cache_container) < self._maxsize
 
     def get_length(self) -> int:
         """Gets the length of the cache.
@@ -250,7 +248,7 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         return len(self.cache_container)
 
 
-class TimedCacheMethod(TimedCacheCallable, BaseTimedCacheMethod):
+class TimedCacheMethod(TimedCacheCallable, BaseTimedCacheMethod):  # type: ignore[misc]
     """A method class for TimedCache."""
 
 
@@ -258,7 +256,7 @@ class TimedCache(TimedCacheCallable, BaseTimedCache):
     """A function class for TimedCache."""
 
     # Attributes #
-    method_type: type[BaseTimedCacheMethod] = TimedCacheMethod
+    method_type: type[TimedCacheMethod] = TimedCacheMethod
 
     # Instance Methods #
     # Binding
@@ -273,7 +271,7 @@ class TimedCache(TimedCacheCallable, BaseTimedCache):
             The bound method of this function.
         """
         return self.method_type(
-            func=self,
+            func=self.__func__,
             instance=instance,
             owner=owner,
             typed=self.typed,
@@ -288,7 +286,7 @@ class TimedCache(TimedCacheCallable, BaseTimedCache):
         instance: Any = None,
         owner: type[Any] | None = None,
         name: str | None = None,
-    ) -> TimedCacheMethod:
+    ) -> TimedCacheMethod | TimedCache:
         """Creates a method of this function which is bound to another object and sets the method as an attribute.
 
         Args:
@@ -300,10 +298,13 @@ class TimedCache(TimedCacheCallable, BaseTimedCache):
             The bound method of this function.
         """
         if name is None:
-            name = self.__func__.__name__
+            name = self.__func__.__name__  # type:ignore[union-attr]
+
+        if instance is None:
+            return self
 
         method = self.method_type(
-            func=self,
+            func=self.__func__,
             instance=instance,
             owner=owner,
             typed=self.typed,

@@ -13,6 +13,7 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 import datetime
+from typing import cast
 
 # Source Packages #
 from baseobjects.operations import excel_date_to_datetime
@@ -75,7 +76,7 @@ def different_types_example() -> None:
     excel_date_bytes = b"44927.25"  # January 1, 2023 at 6:00 AM
     dt_from_bytes = excel_date_to_datetime(excel_date_bytes)
 
-    print(f"\nFrom bytes ({excel_date_bytes}):")
+    print(f"\nFrom bytes ({excel_date_bytes!r}):")
     print(f"  {dt_from_bytes}")
     print("  Expected: 2023-01-01 06:00:00+00:00")
 
@@ -228,8 +229,8 @@ def practical_example() -> None:
     print("\nCalculated information:")
     for row in processed_data:
         name = row["Name"]
-        dob = row["DOB"]
-        start_date = row["StartDate"]
+        dob = cast(datetime.datetime, row["DOB"])
+        start_date = cast(datetime.datetime, row["StartDate"])
 
         # Calculate age
         age_days = (today - dob).days

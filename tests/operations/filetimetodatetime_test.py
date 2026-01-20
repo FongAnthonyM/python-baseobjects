@@ -5,14 +5,6 @@ Tests for the filetime_to_datetime function in the baseobjects package.
 This module contains tests for the filetime_to_datetime function, which converts Windows FILETIME values to Python
 datetime objects. It tests various input types (int, float, str, bytes, bytearray) and timezone handling, as well as
 error cases for invalid inputs.
-
-Typical usage example:
-
-  # Run all tests in this module
-  pytest tests/operations/filetimetodatetime_test.py
-
-  # Run a specific test
-  pytest tests/operations/filetimetodatetime_test.py::TestFiletimeToDatetime::test_filetime_to_datetime_int
 """
 
 # Header #
@@ -29,18 +21,25 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 from datetime import timedelta, timezone
+from typing import Any
 
 # Third-Party Packages #
 import pytest
 
+try:
+    # Third-Party Packages #
+    from typeguard import TypeCheckError
+except ImportError:
+    TypeCheckError = TypeError  # type: ignore
+
 # Source Packages #
-from src.baseobjects.operations.filetimetodatetime import FILETIME_INIT_DATE, filetime_to_datetime
+from baseobjects.operations.filetimetodatetime import FILETIME_INIT_DATE, filetime_to_datetime
 
 
 # Definitions #
 # Classes #
 class TestFiletimeToDatetime:
-    """Test the filetime_to_datetime function.
+    """Tests the filetime_to_datetime function.
 
     This class tests the functionality of the filetime_to_datetime function, which converts a Windows filetime to a
     datetime object.
@@ -48,146 +47,102 @@ class TestFiletimeToDatetime:
 
     # Instance Methods #
     # Tests
-    def test_filetime_to_datetime_int(self) -> None:
-        """Test converting an integer filetime to a datetime.
+    @pytest.mark.parametrize(
+        ("filetime_input", "microseconds_offset", "byte_order"),
+        [
+            (1000000, 100000.0, None),
+            (0, 0.0, None),
+            (10000000000, 1000000000.0, None),
+            (10000.0, 1000.0, None),
+            (100000000.0, 10000000.0, None),
+            ("10000", 1000.0, None),
+            ("100000000", 10000000.0, None),
+            (b"\x10\x27\x00\x00\x00\x00\x00\x00", 1000.0, "little"),
+            (b"\x40\x42\x0f\x00\x00\x00\x00\x00", 100000.0, "little"),
+            (bytearray(b"\x10\x27\x00\x00\x00\x00\x00\x00"), 1000.0, "little"),
+            (bytearray(b"\x40\x42\x0f\x00\x00\x00\x00\x00"), 100000.0, "little"),
+            (b"\x00\x00\x00\x00\x00\x0f\x42\x40", 100000.0, "big"),
+        ],
+    )
+    def test_filetime_to_datetime_types(
+        self,
+        filetime_input: Any,
+        microseconds_offset: float,
+        byte_order: str | None,
+    ) -> None:
+        """Tests converting various types of filetime to datetime.
 
-        This test verifies that the filetime_to_datetime function correctly converts an integer filetime to a datetime
-        object.
+        This test verifies that the filetime_to_datetime function correctly converts integer, float, string, bytes, and
+        bytearray representations of filetime to datetime objects.
         """
-        # Test with a simple integer
-        result = filetime_to_datetime(1000000, None)
-        expected = FILETIME_INIT_DATE.replace(tzinfo=None) + timedelta(microseconds=1000000)
+        kwargs = {}
+        if byte_order:
+            kwargs["byteorder"] = byte_order
+
+        result = filetime_to_datetime(filetime_input, None, **kwargs)
+        expected = FILETIME_INIT_DATE.replace(tzinfo=None) + timedelta(microseconds=microseconds_offset)
         assert result == expected
         assert result.tzinfo is None
 
-        # Test with zero (should be the FILETIME_INIT_DATE)
-        result = filetime_to_datetime(0, None)
-        expected = FILETIME_INIT_DATE.replace(tzinfo=None)
-        assert result == expected
+    @pytest.mark.parametrize(
+        ("input_val", "tz", "expected_tz"),
+        [
+            (1000000, None, None),
+            (1000000, timezone.utc, timezone.utc),
+            (1000000, timezone(timedelta(hours=-5)), timezone(timedelta(hours=-5))),
+            (1000000.0, timezone(timedelta(hours=-5)), timezone(timedelta(hours=-5))),
+            ("1000000", timezone(timedelta(hours=-5)), timezone(timedelta(hours=-5))),
+            (b"\x40\x42\x0f\x00\x00\x00\x00\x00", timezone(timedelta(hours=-5)), timezone(timedelta(hours=-5))),
+        ],
+    )
+    def test_filetime_to_datetime_timezone(self, input_val: Any, tz: Any, expected_tz: Any) -> None:
+        """Tests converting a filetime with different timezones.
 
-        # Test with a larger integer
-        result = filetime_to_datetime(10000000000, None)
-        expected = FILETIME_INIT_DATE.replace(tzinfo=None) + timedelta(microseconds=10000000000)
-        assert result == expected
-
-    def test_filetime_to_datetime_float(self) -> None:
-        """Test converting a float filetime to a datetime.
-
-        This test verifies that the filetime_to_datetime function correctly converts a float filetime to a datetime
-        object, including division by 10.
+        This test verifies that the filetime_to_datetime function correctly handles different timezone specifications
+        and various input types.
         """
-        # Test with a simple float
-        result = filetime_to_datetime(10000.0, None)
-        expected = FILETIME_INIT_DATE.replace(tzinfo=None) + timedelta(microseconds=1000.0)
-        assert result == expected
+        result = filetime_to_datetime(input_val, tz)
+        assert result.tzinfo == expected_tz
+        base_expected = FILETIME_INIT_DATE.replace(tzinfo=None) + timedelta(microseconds=100000.0)
 
-        # Test with a larger float
-        result = filetime_to_datetime(100000000.0, None)
-        expected = FILETIME_INIT_DATE.replace(tzinfo=None) + timedelta(microseconds=10000000.0)
-        assert result == expected
+        if expected_tz is None:
+            assert result == base_expected
+        else:
+            expected = base_expected.replace(tzinfo=timezone.utc).astimezone(expected_tz)
+            assert result == expected
 
-    def test_filetime_to_datetime_str(self) -> None:
-        """Test converting a string filetime to a datetime.
+    @pytest.mark.parametrize(
+        ("invalid_input", "error_type"),
+        [
+            ([1, 2, 3], TypeError),
+            ({"value": 1}, TypeError),
+            (None, TypeError),
+            ("not a number", ValueError),
+            ("123abc", ValueError),
+        ],
+    )
+    def test_filetime_to_datetime_invalid(self, invalid_input: Any, error_type: type[Exception]) -> None:
+        """Tests converting invalid inputs to datetime.
 
-        This test verifies that the filetime_to_datetime function correctly converts a string representation of a
-        filetime to a datetime object.
+        This test verifies that the filetime_to_datetime function raises the appropriate exceptions for invalid
+        inputs.
         """
-        # Test with a simple string
-        result = filetime_to_datetime("10000", None)
-        expected = FILETIME_INIT_DATE.replace(tzinfo=None) + timedelta(microseconds=1000.0)
-        assert result == expected
+        exceptions: type[Exception] | tuple[type[Exception], ...]
+        if error_type is TypeError:
+            exceptions = (error_type, TypeCheckError)
+        else:
+            exceptions = error_type
 
-        # Test with a larger string
-        result = filetime_to_datetime("100000000", None)
-        expected = FILETIME_INIT_DATE.replace(tzinfo=None) + timedelta(microseconds=10000000.0)
-        assert result == expected
+        with pytest.raises(exceptions):
+            filetime_to_datetime(invalid_input)
 
-    def test_filetime_to_datetime_bytes(self) -> None:
-        """Test converting a bytes filetime to a datetime.
-
-        This test verifies that the filetime_to_datetime function correctly converts a bytes representation of a
-        filetime to a datetime object.
-        """
-        # Test with a simple bytes (10000 in little-endian)
-        result = filetime_to_datetime(b"\x10\x27\x00\x00\x00\x00\x00\x00", None)
-        # 0x2710 = 10000, divided by 10 = 1000 microseconds
-        expected = FILETIME_INIT_DATE.replace(tzinfo=None) + timedelta(microseconds=1000.0)
-        assert result == expected
-
-        # Test with a different bytes value
-        result = filetime_to_datetime(b"\x40\x42\x0f\x00\x00\x00\x00\x00", None)
-        # 0x0f4240 = 1000000, divided by 10 = 100000 microseconds
-        expected = FILETIME_INIT_DATE.replace(tzinfo=None) + timedelta(microseconds=100000.0)
-        assert result == expected
-
-    def test_filetime_to_datetime_bytearray(self) -> None:
-        """Test converting a bytearray filetime to a datetime.
-
-        This test verifies that the filetime_to_datetime function correctly converts a bytearray representation of a
-        filetime to a datetime object.
-        """
-        # Test with a simple bytearray (10000 in little-endian)
-        result = filetime_to_datetime(bytearray(b"\x10\x27\x00\x00\x00\x00\x00\x00"), None)
-        # 0x2710 = 10000, divided by 10 = 1000 microseconds
-        expected = FILETIME_INIT_DATE.replace(tzinfo=None) + timedelta(microseconds=1000.0)
-        assert result == expected
-
-        # Test with a different bytearray value
-        result = filetime_to_datetime(bytearray(b"\x40\x42\x0f\x00\x00\x00\x00\x00"), None)
-        # 0x0f4240 = 1000000, divided by 10 = 100000 microseconds
-        expected = FILETIME_INIT_DATE.replace(tzinfo=None) + timedelta(microseconds=100000.0)
-        assert result == expected
-
-    def test_filetime_to_datetime_timezone(self) -> None:
-        """Test converting a filetime with different timezones.
-
-        This test verifies that the filetime_to_datetime function correctly handles different timezone specifications.
-        """
-        # Test with None timezone (default)
-        result = filetime_to_datetime(1000000)
-        assert result.tzinfo is None
-
-        # Test with UTC timezone
-        result = filetime_to_datetime(1000000, timezone.utc)
-        assert result.tzinfo == timezone.utc
-
-        # Test with a specific timezone
-        est = timezone(timedelta(hours=-5))
-        result = filetime_to_datetime(1000000, est)
-        assert result.tzinfo == est
-        assert result.utcoffset() == timedelta(hours=-5)
-
-    def test_filetime_to_datetime_invalid_type(self) -> None:
-        """Test converting an invalid type to a datetime.
-
-        This test verifies that the filetime_to_datetime function raises a TypeError when an unsupported type is
-        provided.
-        """
-        # Test with a list (unsupported type)
-        with pytest.raises(TypeError):
-            filetime_to_datetime([1, 2, 3])
-
-        # Test with a dict (unsupported type)
-        with pytest.raises(TypeError):
-            filetime_to_datetime({"value": 1})
-
-        # Test with None (unsupported type)
-        with pytest.raises(TypeError):
-            filetime_to_datetime(None)
-
-    def test_filetime_to_datetime_invalid_string(self) -> None:
-        """Test converting an invalid string to a datetime.
-
-        This test verifies that the filetime_to_datetime function raises a ValueError when an invalid string that cannot
-        be converted to an integer is provided.
-        """
-        # Test with a non-numeric string
-        with pytest.raises(ValueError):
-            filetime_to_datetime("not a number")
-
-        # Test with a partially numeric string
-        with pytest.raises(ValueError):
-            filetime_to_datetime("123abc")
+    def test_timezone_conversion(self) -> None:
+        """Tests timezone conversion consistency."""
+        ft = 116444736000000000  # 116444736000000000 is 1970-01-01 00:00:00 UTC
+        dt_utc = filetime_to_datetime(ft)
+        assert dt_utc.year == 1970
+        assert dt_utc.month == 1
+        assert dt_utc.day == 1
 
 
 # Main #

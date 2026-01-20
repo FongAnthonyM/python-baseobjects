@@ -15,7 +15,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from datetime import UTC, datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from datetime import tzinfo as TZInfo
 
 # Local Packages #
@@ -28,14 +28,14 @@ EXCEL_INIT_DATE = datetime(1899, 12, 30, tzinfo=UTC)  # The initial date of File
 
 # Functions #
 @singlekwargdispatch
-def excel_date_to_datetime(timestamp: int | float | str | bytes, tzinfo: TZInfo | None = timezone.utc) -> datetime:
+def excel_date_to_datetime(timestamp: int | float | str | bytes, tzinfo: TZInfo | None = UTC) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:
         timestamp: The filetime to convert to a datetime.
         tzinfo: The timezone of the datetime.
 
-    Returns:
+    Returns:  # noqa: DOC202
         The datetime of the filetime.
 
     Raises:
@@ -47,7 +47,7 @@ def excel_date_to_datetime(timestamp: int | float | str | bytes, tzinfo: TZInfo 
 
 @excel_date_to_datetime.register(float)
 @excel_date_to_datetime.register(int)
-def _excel_date_to_datetime(timestamp: float | int, tzinfo: TZInfo | None = timezone.utc) -> datetime:
+def _excel_date_to_datetime_numeric(timestamp: float | int, tzinfo: TZInfo | None = UTC) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:
@@ -62,7 +62,7 @@ def _excel_date_to_datetime(timestamp: float | int, tzinfo: TZInfo | None = time
 
 @excel_date_to_datetime.register(str)
 @excel_date_to_datetime.register(bytes)
-def _excel_date_to_datetime(timestamp: str | bytes, tzinfo: TZInfo | None = timezone.utc) -> datetime:
+def _excel_date_to_datetime_string(timestamp: str | bytes, tzinfo: TZInfo | None = UTC) -> datetime:
     """Converts a filetime to a datetime object.
 
     Args:

@@ -21,4 +21,17 @@ __version__ = "1.12.0"
 # Imports #
 # Local Packages #
 from .basetimedcachecallabletestsuite import BaseTimedCacheCallableTestSuite
+from .cachingobjecttestsuite import CachingObjectTestSuite
 from .cachingtoolstestsuite import TimedCacheTestSuite
+from .timedkeylesscachetestsuite import TimedKeylessCacheTestSuite
+from .timedlrucachetestsuite import TimedLRUCacheTestSuite
+from .timedsinglecachetestsuite import TimedSingleCacheTestSuite
+
+__all__ = [
+    "BaseTimedCacheCallableTestSuite",
+    "CachingObjectTestSuite",
+    "TimedCacheTestSuite",
+    "TimedKeylessCacheTestSuite",
+    "TimedLRUCacheTestSuite",
+    "TimedSingleCacheTestSuite",
+]

@@ -76,7 +76,11 @@ class CustomMethod(BaseMethod):
         super().__init__(lambda self, name: f"Hello, {name}! Your value is {self.value}.", instance)
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        """Call the underlying method."""
+        """Call the underlying method.
+
+        Returns:
+            The result of the call.
+        """
         return self.call_binding(*args, **kwargs)
 
 
@@ -178,7 +182,7 @@ def binding_example() -> None:
 
     reset_func = BaseFunction(reset)
     reset_func.bind_to_attribute(calc, name="reset")
-    result = calc.reset(10)
+    result = calc.reset(10)  # type: ignore
     print(f"Reset to 10: {result} == 10")
     print(f"Calculator value: {calc.value} == 10")
 

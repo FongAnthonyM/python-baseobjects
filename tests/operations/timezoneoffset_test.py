@@ -17,103 +17,77 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import zoneinfo
-from datetime import timedelta, timezone, tzinfo
+from datetime import datetime, timedelta, timezone, tzinfo
 
 # Third-Party Packages #
 import pytest
 
+try:
+    # Third-Party Packages #
+    from typeguard import TypeCheckError
+except ImportError:
+    TypeCheckError = TypeError  # type: ignore
+
 # Source Packages #
-from src.baseobjects.operations.timezoneoffset import INIT_DATE, timezone_offset
+from baseobjects.operations.timezoneoffset import timezone_offset
 
 
 # Definitions #
 # Classes #
 class TestTimezoneOffset:
-    """Test the timezone_offset function.
+    """Tests the timezone_offset function.
 
     This class tests the functionality of the timezone_offset function, which gets the offset of a given timezone.
     """
 
     # Instance Methods #
     # Tests
-    def test_timezone_offset_utc(self) -> None:
-        """Test getting the offset of UTC timezone.
+    @pytest.mark.parametrize(
+        ("offset", "expected"),
+        [
+            (timedelta(0), timedelta(0)),
+            (timedelta(hours=5), timedelta(hours=5)),
+            (timedelta(hours=9, minutes=30), timedelta(hours=9, minutes=30)),
+            (timedelta(hours=-5), timedelta(hours=-5)),
+            (timedelta(hours=-3, minutes=-30), timedelta(hours=-3, minutes=-30)),
+        ],
+    )
+    def test_timezone_offset_fixed(self, offset: timedelta, expected: timedelta) -> None:
+        """Tests getting the offset of fixed timezones.
 
-        This test verifies that the timezone_offset function correctly returns a zero timedelta for the UTC timezone.
+        This test verifies that the timezone_offset function correctly returns the expected timedelta for fixed
+        timezones.
         """
-        # Test with UTC timezone
-        result = timezone_offset(timezone.utc)
-        expected = timedelta(0)
-        assert result == expected
-
-    def test_timezone_offset_positive(self) -> None:
-        """Test getting the offset of a positive timezone.
-
-        This test verifies that the timezone_offset function correctly returns a positive timedelta for a timezone east
-        of UTC.
-        """
-        # Test with a positive timezone offset (UTC+5)
-        tz = timezone(timedelta(hours=5))
+        tz = timezone(offset)
         result = timezone_offset(tz)
-        expected = timedelta(hours=5)
         assert result == expected
 
-        # Test with another positive timezone offset (UTC+9:30)
-        tz = timezone(timedelta(hours=9, minutes=30))
-        result = timezone_offset(tz)
-        expected = timedelta(hours=9, minutes=30)
-        assert result == expected
-
-    def test_timezone_offset_negative(self) -> None:
-        """Test getting the offset of a negative timezone.
-
-        This test verifies that the timezone_offset function correctly returns a negative timedelta for a timezone west
-        of UTC.
-        """
-        # Test with a negative timezone offset (UTC-5)
-        tz = timezone(timedelta(hours=-5))
-        result = timezone_offset(tz)
-        expected = timedelta(hours=-5)
-        assert result == expected
-
-        # Test with another negative timezone offset (UTC-3:30)
-        tz = timezone(timedelta(hours=-3, minutes=-30))
-        result = timezone_offset(tz)
-        expected = timedelta(hours=-3, minutes=-30)
-        assert result == expected
-
-    def test_timezone_offset_zoneinfo(self) -> None:
-        """Test getting the offset of zoneinfo timezones.
+    @pytest.mark.parametrize(
+        ("zone_name", "expected_hours"),
+        [
+            ("America/New_York", -5),
+            ("Asia/Tokyo", 9),
+        ],
+    )
+    def test_timezone_offset_zoneinfo(self, zone_name: str, expected_hours: int) -> None:
+        """Tests getting the offset of zoneinfo timezones.
 
         This test verifies that the timezone_offset function correctly returns the expected timedelta for zoneinfo
         timezones.
         """
+        # Test with timezone
         try:
-            tz = zoneinfo.ZoneInfo("America/New_York")
+            tz = zoneinfo.ZoneInfo(zone_name)
         except zoneinfo.ZoneInfoNotFoundError:
-            try:
-                # Third-Party Packages #
-                import tzdata
-            except ImportError:
-                # Skip if zoneinfo is not available
-                pytest.skip("Time Zone Info and tzdata not available")
-
-        # Test with America/New_York timezone
-        tz = zoneinfo.ZoneInfo("America/New_York")
-        result = timezone_offset(tz)
-        # The offset depends on whether DST is in effect at INIT_DATE
-        # January 1, 1970 is not in DST, so it should be UTC-5
-        expected = timedelta(hours=-5)
-        assert result == expected
-
-        # Test with Asia/Tokyo timezone
-        tz = zoneinfo.ZoneInfo("Asia/Tokyo")
-        result = timezone_offset(tz)
-        expected = timedelta(hours=9)
-        assert result == expected
+            # Skip if zoneinfo is not available
+            pytest.skip("Time Zone Info not available [Windows must have 'tzdata' installed for zoneinfo]")
+        else:
+            result = timezone_offset(tz)
+            expected = timedelta(hours=expected_hours)
+            assert result == expected
 
     def test_timezone_offset_init_date(self) -> None:
-        """Test that the timezone_offset function uses the correct reference date.
+        """Tests that the timezone_offset function uses the correct reference date.
 
         This test verifies that the timezone_offset function uses the INIT_DATE constant as the reference date for
         calculating the offset.
@@ -121,15 +95,15 @@ class TestTimezoneOffset:
 
         # Create a custom timezone class that returns different offsets for different dates
         class CustomTimezone(tzinfo):
-            def utcoffset(self, dt):
+            def utcoffset(self, dt: datetime | None) -> timedelta | None:
                 if dt and dt.year == 1970 and dt.month == 1 and dt.day == 1:
                     return timedelta(hours=2)
                 return timedelta(hours=1)
 
-            def dst(self, dt):
+            def dst(self, dt: datetime | None) -> timedelta | None:
                 return timedelta(0)
 
-            def tzname(self, dt) -> str:
+            def tzname(self, dt: datetime | None) -> str:
                 return "CustomTZ"
 
         # Test with the custom timezone
@@ -140,14 +114,14 @@ class TestTimezoneOffset:
         assert result == expected
 
     def test_timezone_offset_none(self) -> None:
-        """Test getting the offset of None timezone.
+        """Tests getting the offset of None timezone.
 
         This test verifies that the timezone_offset function raises an AttributeError when None is provided as the
         timezone.
         """
         # Test with None timezone
-        with pytest.raises(AttributeError):
-            timezone_offset(None)
+        with pytest.raises((AttributeError, TypeCheckError)):
+            timezone_offset(None)  # type: ignore[arg-type]
 
 
 # Main #

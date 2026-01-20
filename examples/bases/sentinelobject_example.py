@@ -26,7 +26,7 @@ class CacheManager:
 
     def __init__(self) -> None:
         """Initialize the cache manager with an empty cache."""
-        self.cache = {}
+        self.cache: dict[str, Any] = {}
         self.NOT_FOUND = SentinelObject("NOT_FOUND")
         self.EXPIRED = SentinelObject("EXPIRED")
         self.COMPUTING = SentinelObject("COMPUTING")
@@ -85,7 +85,7 @@ class ConfigManager:
 
     def __init__(self) -> None:
         """Initialize the configuration manager with default settings."""
-        self.settings = {}
+        self.settings: dict[str, Any] = {}
         self.UNSET = SentinelObject("UNSET")
 
     def get_setting(self, name: str, default: Any = None) -> Any:

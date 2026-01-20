@@ -43,5 +43,19 @@ from .basecallable import BaseCallable, BaseFunction, BaseMethod
 from .basemeta import BaseMeta
 from .baseobject import BaseObject
 from .basereducible import BaseReducible
-from .collections import *
+from .collections import BaseDict, BaseList
 from .sentinelobject import DEFAULTSENTINEL, SEARCHSENTINEL, SentinelObject
+
+__all__ = [
+    "DEFAULTSENTINEL",
+    "SEARCHSENTINEL",
+    "BaseCallable",
+    "BaseDict",
+    "BaseFunction",
+    "BaseList",
+    "BaseMeta",
+    "BaseMethod",
+    "BaseObject",
+    "BaseReducible",
+    "SentinelObject",
+]

@@ -6,9 +6,6 @@ enables the creation of both simple decorators and decorators that accept argume
 coroutine functions.
 """
 
-# Futures Imports #
-from __future__ import annotations
-
 # Header #
 __package_name__ = "baseobjects"
 
@@ -22,16 +19,17 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
+from collections.abc import Callable
 from functools import partial
-from typing import Any
+from typing import Any, TypeVar
 
 # Local Packages #
 from ..bases import BaseFunction
-from ..typing import AnyCallable
-from .dynamiccallable import DynamicFunction
-
 
 # Definitions #
+D = TypeVar("D", bound="BaseDecorator")
+
+
 # Classes #
 class BaseDecorator(BaseFunction):
     """An abstract class which implements the basic structure for creating decorators.
@@ -44,11 +42,11 @@ class BaseDecorator(BaseFunction):
     # Static Methods #
     @staticmethod
     def create_decorator(
-        cls: type[BaseDecorator],
-        func: AnyCallable,
-        args: tuple,
+        cls: type[D],
+        func: Any,
+        args: tuple[Any, ...],
         kwargs: dict[str, Any],
-    ) -> BaseDecorator:
+    ) -> D:
         """A static method for creating a decorator instance.
 
         This method is used internally by the decorator factory mechanism to create decorator instances when the
@@ -68,13 +66,13 @@ class BaseDecorator(BaseFunction):
 
     # Magic Methods #
     # Construction/Destruction
-    def __new__(
-        cls,
+    def __new__(  # type: ignore[misc]
+        cls: type[D],
         *args: Any,
-        func: AnyCallable | None = None,
+        func: Any | None = None,
         _return_partial: bool = True,
         **kwargs: Any,
-    ) -> BaseDecorator | partial:
+    ) -> D | Callable[..., D]:
         """Creates either a decorator instance or a factory for creating decorator instances.
 
         This method implements the dual-mode behavior of decorators:
@@ -97,14 +95,18 @@ class BaseDecorator(BaseFunction):
             Either a BaseDecorator instance wrapping the provided function, or a partial functionthat will create such
             an instance when called with a function.
         """
-        if func is None and (not args or not callable(args[0])) and _return_partial:
+        if (
+            func is None
+            and (not args or not (callable(args[0]) or isinstance(args[0], (classmethod, staticmethod))))
+            and _return_partial
+        ):
             return partial(cls.create_decorator, cls, args=args, kwargs=kwargs)
         else:
             return super().__new__(cls)
 
     # Reduction/Pickling
-    def __reduce__(self) -> tuple[Any, tuple[Any], Any]:
-        """Reduce the decorator to be picklable.
+    def __reduce__(self) -> tuple[Any, tuple[Any, ...], Any]:
+        """Reduces the decorator to be picklable.
 
         This method enables decorator instances to be properly pickled and unpickled.
 

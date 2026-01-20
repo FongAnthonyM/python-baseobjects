@@ -15,13 +15,12 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from types import FunctionType, MethodType
 from typing import Any
 
 # Local Packages #
 from ..bases import BaseCallable, BaseFunction, BaseMethod
 from ..typing import AnyCallable
-from .callablemultiplexer import CallableMultiplexer, MethodMultiplexer
+from .callablemultiplexer import MethodMultiplexer
 
 
 # Definitions #
@@ -43,7 +42,7 @@ class DynamicCallable(BaseCallable):
     """
 
     # Attributes #
-    _cast_excluded: set = BaseCallable._cast_excluded | {"bind_multiplexer", "call_multiplexer"}
+    _cast_excluded: set[str] = BaseCallable._cast_excluded | {"bind_multiplexer", "call_multiplexer"}
 
     default_bind_method: str = "bind_builtin"
     bind_multiplexer: MethodMultiplexer
@@ -53,7 +52,7 @@ class DynamicCallable(BaseCallable):
 
     # Pickling
     def __getstate__(self) -> dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]] | None:
-        """Gets the object's state for pickling.
+        """Gets the state of this object for pickling.
 
         This method is called by the pickle module when serializing the object. It extracts the object's state from both
         __dict__ (if present) and __slots__ (if present), and returns it in a format that can be properly restored by
@@ -130,6 +129,9 @@ class DynamicCallable(BaseCallable):
                 if state[0] is not None:
                     saved_bind = state[0].pop("_bind_method", None)
                     saved_call = state[0].pop("_call_method", None)
+                else:
+                    saved_bind = None
+                    saved_call = None
             case _:
                 saved_bind = None
                 saved_call = None
@@ -151,7 +153,7 @@ class DynamicCallable(BaseCallable):
     @property
     def bind_method(self) -> str | None:
         """The name of the method used when binding this object."""
-        return self.bind_multiplexer.selected
+        return self.bind_multiplexer.selected  # type: ignore[no-any-return]
 
     @bind_method.setter
     def bind_method(self, value: str) -> None:
@@ -161,7 +163,7 @@ class DynamicCallable(BaseCallable):
     @property
     def call_method(self) -> str | None:
         """The name of the method used when this object is called."""
-        return self.call_multiplexer.selected
+        return self.call_multiplexer.selected  # type: ignore[no-any-return]
 
     @call_method.setter
     def call_method(self, value: str) -> None:
@@ -179,7 +181,7 @@ class DynamicCallable(BaseCallable):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        """Initialize a dynamic callable with bind and call multiplexers.
+        """Initializes this object with the given arguments.
 
         Args:
             func: Optional callable to wrap.
@@ -236,7 +238,7 @@ class DynamicCallable(BaseCallable):
         call_method: str | None = None,
         **kwargs: Any,
     ) -> None:
-        """The constructor for this object.
+        """Constructs this object with the given arguments.
 
         Args:
             func: The function to wrap.
@@ -272,7 +274,12 @@ class DynamicMethod(DynamicCallable, BaseMethod):
         Returns:
             The output of the wrapped function.
         """
-        return self.call_multiplexer(self._self_(), *args, **kwargs)
+        try:
+            if self._self_ is not None:
+                return self.call_multiplexer(self._self_(), *args, **kwargs)
+        except AttributeError:
+            pass
+        return self.call_multiplexer(*args, **kwargs)
 
 
 class DynamicFunction(DynamicCallable, BaseFunction):

@@ -54,10 +54,10 @@ def _no_cast(obj: Any) -> Any:
 @singlekwargdispatch
 def parse_parentheses(
     expression: str | bytes | bytearray,
-    include: set | None = None,
-    exclude: set | None = None,
-    cast: Callable = _no_cast,
-) -> list[...]:
+    include: set[Any] | None = None,
+    exclude: set[Any] | None = None,
+    cast: Callable[..., Any] = _no_cast,
+) -> list[Any]:
     """Parses expressions with parentheses and returns a nested list of extracted elements.
 
     This function uses a single-dispatch mechanism to handle parsing for various data types. If the type of the provided
@@ -71,24 +71,24 @@ def parse_parentheses(
         exclude: A set of elements to exclude from the output. Defaults to None.
         cast: A function to apply to each extracted element for custom transformations. Defaults to `_no_cast`.
 
-    Returns:
+    Returns:  # noqa: DOC202
         A nest list of parsed and optionally filtered and transformed elements.
 
     Raises:
         ValueError: If the type of the input expression is unsupported.
     """
     # Catch the general case for any unregistered types
-    msg = f"parse_parentheses does not parse {expression} type."
+    msg = f"parse_parentheses does not parse {expression!r} type."
     raise ValueError(msg)
 
 
 @parse_parentheses.register(str)
 def _parse_parentheses(
     expression: str,
-    include: set | None = None,
-    exclude: set | None = None,
-    cast: Callable = _no_cast,
-) -> list[...]:
+    include: set[Any] | None = None,
+    exclude: set[Any] | None = None,
+    cast: Callable[..., Any] = _no_cast,
+) -> list[Any]:
     """Parses string expressions with parentheses and returns a nested list of extracted elements.
 
     This function is used to parse expressions with parentheses into a structured list format. Each open parenthesis '('
@@ -111,11 +111,11 @@ def _parse_parentheses(
     """
     if exclude is None:
         exclude = set()
-    list_bank = deque([[]])
+    list_bank: deque[list[Any]] = deque([[]])
     for match_object in re.finditer(r_expression, expression.strip()):
         match token := match_object[0]:
             case "(":
-                new_list = []
+                new_list: list[Any] = []
                 list_bank[-1].append(new_list)
                 list_bank.append(new_list)
             case ")":
@@ -134,12 +134,12 @@ def _parse_parentheses(
 
 @parse_parentheses.register(bytes)
 @parse_parentheses.register(bytearray)
-def _parse_parentheses(
+def _parse_parentheses_bytes(
     expression: bytes | bytearray,
-    include: set | None = None,
-    exclude: set | None = None,
-    cast: Callable = _no_cast,
-) -> list[...]:
+    include: set[Any] | None = None,
+    exclude: set[Any] | None = None,
+    cast: Callable[..., Any] = _no_cast,
+) -> list[Any]:
     """Parses bytes or bytesarray expressions with parentheses and returns a nested list of extracted elements.
 
     This function is used to parse expressions with parentheses into a structured list format. Each open parenthesis '('
@@ -162,11 +162,11 @@ def _parse_parentheses(
     """
     if exclude is None:
         exclude = set()
-    list_bank = deque([[]])
+    list_bank: deque[list[Any]] = deque([[]])
     for match_object in re.finditer(rb_expression, expression.strip()):
         match token := match_object[0]:
             case b"(":
-                new_list = []
+                new_list: list[Any] = []
                 list_bank[-1].append(new_list)
                 list_bank.append(new_list)
             case b")":

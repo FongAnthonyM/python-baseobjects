@@ -17,7 +17,6 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 import asyncio
-import time
 from asyncio import create_task
 from collections import deque
 from collections.abc import Callable
@@ -25,7 +24,6 @@ from typing import Any
 
 # Source Packages #
 from baseobjects.objects import CallbackManager
-from baseobjects.objects.callbackmanager import CallbackScheduler, ConditionalCallbackEntry
 
 
 # Classes #
@@ -39,13 +37,9 @@ class DataRoutingProcessor:
     """
 
     def __init__(self) -> None:
-        """Initialize with data and a callback manager.
-
-        Args:
-            data: Initial data to process
-        """
-        self.point_a = None
-        self.point_b = None
+        """Initialize with data and a callback manager."""
+        self.point_a: str | int | None = None
+        self.point_b: str | int | None = None
         self.callback_manager = CallbackManager()
 
         # Register some default callbacks
@@ -71,19 +65,35 @@ class DataRoutingProcessor:
         )
 
     def all_strings(self) -> bool:
-        """Check if all data points are strings."""
+        """Check if all data points are strings.
+
+        Returns:
+            True if all are strings.
+        """
         return isinstance(self.point_a, str) and isinstance(self.point_b, str)
 
     def all_numbers(self) -> bool:
-        """Check if all data points are numbers."""
+        """Check if all data points are numbers.
+
+        Returns:
+            True if all are numbers.
+        """
         return isinstance(self.point_a, int) and isinstance(self.point_b, int)
 
     def a_is_string(self) -> bool:
-        """Check if data point A is a string."""
+        """Check if data point A is a string.
+
+        Returns:
+            True if A is a string.
+        """
         return isinstance(self.point_a, str) and isinstance(self.point_b, int)
 
     def b_is_string(self) -> bool:
-        """Check if data point B is a string."""
+        """Check if data point B is a string.
+
+        Returns:
+            True if B is a string.
+        """
         return isinstance(self.point_b, str) and isinstance(self.point_a, int)
 
     def print_data_strings(self) -> None:
@@ -92,7 +102,10 @@ class DataRoutingProcessor:
 
     def print_data_numbers(self) -> None:
         """Print the data points."""
-        print(f"Both are numbers: {self.point_a} + {self.point_b} = {self.point_a + self.point_b}")
+        if isinstance(self.point_a, int) and isinstance(self.point_b, int):
+            print(f"Both are numbers: {self.point_a} + {self.point_b} = {self.point_a + self.point_b}")
+        else:
+            print("Not all data points are numbers")
 
     def print_a_is_string(self) -> None:
         """Print the data point A."""
@@ -143,7 +156,8 @@ def basic_callback_example() -> None:
     def on_error(error_code: int, message: str) -> None:
         print(f"Error {error_code}: {message}")
 
-    callback_manager.register_callbacks({"warning": on_warning, "error": on_error})
+    callbacks: dict[str, Callable[..., Any]] = {"warning": on_warning, "error": on_error}
+    callback_manager.register_callbacks(callbacks)
 
     print("\nCalling multiple registered callbacks:")
     callback_manager.call_callback("warning", "Disk space is low")
@@ -174,7 +188,7 @@ def conditional_callback_example() -> None:
     callback_manager.call_conditional(lambda: is_important(7), lambda: process_message("High priority message", 7))
 
     # Define condition and callback function
-    mutable_state = {}
+    mutable_state: dict[str, int] = {}
 
     def check_for_code() -> bool:
         return "code" in mutable_state
@@ -275,9 +289,11 @@ async def basic_callback_example_async() -> None:
         await asyncio.sleep(0.1)  # Simulate async operation
         print(f"Async error {error_code}: {message}")
 
-    callback_manager.register_callbacks(
-        callbacks_async={"warning_async": on_warning_async, "error_async": on_error_async},
-    )
+    callbacks_async: dict[str, Callable[..., Any]] = {
+        "warning_async": on_warning_async,
+        "error_async": on_error_async,
+    }
+    callback_manager.register_callbacks(callbacks_async=callbacks_async)
 
     print("\nCalling multiple registered async callbacks:")
     await callback_manager.call_callback_async("warning_async", "Disk space is low")
@@ -316,13 +332,13 @@ async def conditional_callback_example_async() -> None:
     )
 
     # Define async condition and callback function with mutable state
-    mutable_state = {}
+    mutable_state: dict[str, int] = {}
 
     async def check_for_code_async() -> bool:
         await asyncio.sleep(0.1)  # Simulate async condition check
         return "code" in mutable_state
 
-    async def process_message_with_code_async(message: str) -> None:
+    async def process_message_with_code_async(message: str, **kwargs: Any) -> None:
         await asyncio.sleep(0.1)  # Simulate async processing
         print(f"Async code {mutable_state['code']}: {message}")
 
@@ -352,29 +368,33 @@ async def task_management_example_async() -> None:
 
     # Create a callback manager
     callback_manager = CallbackManager()
-    tasks = deque()
+    tasks: deque[Any] = deque()
 
     # Define async condition and callback functions
+    class State:
+        count: int = 0
+        counter: int = 1
+
+    state = State()
+
     async def always_true_async() -> bool:
+        await asyncio.sleep(0)
         return True
 
     async def limited_true_async() -> bool:
         # Only return true for a limited number of calls
-        limited_true_async.count += 1
-        if limited_true_async.count <= 5:
+        await asyncio.sleep(0)
+        state.count += 1
+        if state.count <= 5:
             return True
         return False
 
-    limited_true_async.count = 0
-
     async def task_callback_async() -> None:
-        task_id = task_callback_async.counter
-        task_callback_async.counter += 1
+        task_id = state.counter
+        state.counter += 1
         print(f"Starting task {task_id}")
         await asyncio.sleep(0.2)  # Simulate work
         print(f"Completed task {task_id}")
-
-    task_callback_async.counter = 1
 
     # Demonstrate call_while_condition_async
     print("Using call_while_condition_async to run 5 tasks:")
@@ -382,8 +402,8 @@ async def task_management_example_async() -> None:
     print("All tasks completed")
 
     # Reset counter
-    limited_true_async.count = 0
-    task_callback_async.counter = 1
+    state.count = 0
+    state.counter = 1
 
     # Demonstrate enqueue_call_while_condition_async
     print("\nUsing enqueue_call_while_condition_async to run 5 tasks concurrently:")
@@ -410,7 +430,8 @@ async def task_management_example_async() -> None:
 
     try:
         print("Waiting for tasks with a 0.5 second timeout...")
-        await callback_manager.join_tasks_async(timeout=0.5)
+        async with asyncio.timeout(0.5):
+            await asyncio.gather(*tasks)
     except asyncio.TimeoutError:
         print("Timeout occurred while waiting for tasks")
         callback_manager.cancel_tasks()
@@ -437,8 +458,8 @@ async def scheduler_example_async() -> None:
         print("Executing async task 2")
 
     # Create task queues
-    task1_queue = deque()
-    task2_queue = deque()
+    task1_queue: deque[Any] = deque()
+    task2_queue: deque[Any] = deque()
 
     # Create a basic scheduler for async tasks
     print("Creating a scheduler for async tasks:")
@@ -492,7 +513,7 @@ async def scheduler_example_async() -> None:
 
     # Start the conditional scheduler
     print("Starting the conditional scheduler:")
-    tasks = deque()
+    tasks: deque[Any] = deque()
     await callback_manager.start_scheduler_async(callback_manager.schedulers["conditional_scheduler"], tasks)
 
     # Wait for tasks to complete

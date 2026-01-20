@@ -17,7 +17,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import timeit
 from abc import abstractmethod
-from typing import Any
+from typing import Any, ClassVar
 
 # Third-Party Packages #
 import pytest
@@ -34,17 +34,14 @@ class WrapperPerformanceTestSuite(BasePerformanceTestSuite):
     This is a base test suite that concrete subclasses should implement abstract methods and assign attributes.
 
     Attributes:
-        ExampleOne: A class which the wrapper class will wrap.
-        ExampleTwo: A another class which the wrapper class will wrap.
         _base_time: The time it takes to run a simple function call for a baseline of 10 million iterations.
         call_speed: The baseline speed of a simple function call in microseconds.
         timeit_runs: The number of runs to use for timeit measurements.
         speed_tolerance: The maximum percentage of time a new implementation can take compared to the old one.
-        TestClass: The main wrapper class to be assayed.
+        UnitTestClass: The main wrapper class to be assayed.
     """
 
-    # Class Definitions #
-    class ExampleOne:
+    class ConcreteOne:
         """An example class for testing wrappers.
 
         This class has attributes and methods that can be wrapped by wrapper classes.
@@ -56,17 +53,24 @@ class WrapperPerformanceTestSuite(BasePerformanceTestSuite):
         common: str = "example_one"
 
         def __init__(self) -> None:
-            """Initialize with attributes."""
+            """Initializes with attributes."""
             self.one = "one"
             self.two = "one"
             self.common = "example_one"
 
         def __eq__(self, other: Any) -> bool:
-            """Always return True for equality comparison."""
+            """Checks equality with another object.
+
+            Args:
+                other: The object to compare with.
+
+            Returns:
+                Always True.
+            """
             return True
 
         def method(self) -> str:
-            """Return a string identifying this class.
+            """Returns a string identifying this class.
 
             Returns:
                 A string identifying this class.
@@ -74,13 +78,13 @@ class WrapperPerformanceTestSuite(BasePerformanceTestSuite):
             return "one"
 
         def __str__(self) -> str:
-            """Return a string representation of this class."""
-            return "ExampleOne"
+            """Returns a string representation of this class."""
+            return "ConcreteOne"
 
-    class ExampleTwo:
+    class ConcreteTwo:
         """Another example class for testing wrappers.
 
-        This class has different attributes and methods than ExampleOne.
+        This class has different attributes and methods than ConcreteOne.
         """
 
         # Attributes #
@@ -89,13 +93,13 @@ class WrapperPerformanceTestSuite(BasePerformanceTestSuite):
         common: str
 
         def __init__(self) -> None:
-            """Initialize with attributes."""
+            """Initializes with attributes."""
             self.one = "two"
             self.three = "two"
             self.common = "example_two"
 
         def function(self) -> str:
-            """Return a string identifying this class.
+            """Returns a string identifying this class.
 
             Returns:
                 A string identifying this class.
@@ -103,58 +107,53 @@ class WrapperPerformanceTestSuite(BasePerformanceTestSuite):
             return "two"
 
         def __str__(self) -> str:
-            """Return a string representation of this class."""
-            return "ExampleTwo"
+            """Returns a string representation of this class."""
+            return "ConcreteTwo"
 
-    # Attributes #
     timeit_runs: int = 100000
+
     speed_tolerance: int = 150
 
-    TestClass: type[Any]
+    UnitTestClass: ClassVar[type[Any]]
 
-    # Instance Methods #
-    # Fixtures
+    # Fixtures #
     @abstractmethod
     @pytest.fixture
     def test_object(self, *args: Any, **kwargs: Any) -> Any:
-        """Create a test object.
+        """Creates a test object.
 
         Returns:
-            A wrapper object with ExampleOne and ExampleTwo objects.
+            A wrapper object with ConcreteOne and ConcreteTwo objects.
         """
-        # This is abstract because each subclass needs to create a specific instance
-        # of the wrapper class being tested, which requires knowledge of that specific class.
 
     @pytest.fixture
-    def test_example_one(self) -> "ExampleOne":
-        """Create a test ExampleOne object.
+    def test_example_one(self) -> ConcreteOne:
+        """Creates a test ConcreteOne object.
 
         Returns:
-            An ExampleOne object.
+            An ConcreteOne object.
         """
-        return self.ExampleOne()
+        return self.ConcreteOne()
 
     @pytest.fixture
-    def test_example_two(self) -> "ExampleTwo":
-        """Create a test ExampleTwo object.
+    def test_example_two(self) -> ConcreteTwo:
+        """Creates a test ConcreteTwo object.
 
         Returns:
-            An ExampleTwo object.
+            An ConcreteTwo object.
         """
-        return self.ExampleTwo()
+        return self.ConcreteTwo()
 
-    # Tests
+    # Tests #
     @abstractmethod
     def test_instance_creation_performance(self) -> None:
-        """Test the performance of creating instances of the wrapper class.
+        """Tests the performance of creating instances of the wrapper class.
 
         This is an abstract method that must be implemented by subclasses.
         """
-        # This is abstract because different wrapper classes have different constructor
-        # signatures and initialization requirements.
 
     def test_attribute_access_performance(self, test_object: Any) -> None:
-        """Test the performance of attribute access through the wrapper.
+        """Tests the performance of attribute access through the wrapper.
 
         This test compares the speed of accessing attributes through the wrapper with direct attribute access.
 
@@ -182,11 +181,13 @@ class WrapperPerformanceTestSuite(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\n{self.TestClass.__name__} attribute access: {mean_new:.3f} μs ({percent:.3f}% of direct access time)")
+        print(f"""
+            \n{self.UnitTestClass.__name__} attribute access: {mean_new:.3f} μs ({percent:.3f}% of direct access time)
+        """)
         assert percent < self.speed_tolerance
 
     def test_attribute_set_performance(self, test_object: Any) -> None:
-        """Test the performance of attribute setting through the wrapper.
+        """Tests the performance of attribute setting through the wrapper.
 
         This test compares the speed of setting attributes through the wrapper with direct attribute setting.
 
@@ -214,11 +215,11 @@ class WrapperPerformanceTestSuite(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\n{self.TestClass.__name__} attribute set: {mean_new:.3f} μs ({percent:.3f}% of direct set time)")
+        print(f"\n{self.UnitTestClass.__name__} attribute set: {mean_new:.3f} μs ({percent:.3f}% of direct set time)")
         assert percent < self.speed_tolerance
 
     def test_method_call_performance(self, test_object: Any) -> None:
-        """Test the performance of method calls through the wrapper.
+        """Tests the performance of method calls through the wrapper.
 
         This test compares the speed of calling methods through the wrapper with direct method calls.
 
@@ -242,5 +243,5 @@ class WrapperPerformanceTestSuite(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\n{self.TestClass.__name__} method call: {mean_new:.3f} μs ({percent:.3f}% of direct call time)")
+        print(f"\n{self.UnitTestClass.__name__} method call: {mean_new:.3f} μs ({percent:.3f}% of direct call time)")
         assert percent < self.speed_tolerance

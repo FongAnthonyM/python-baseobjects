@@ -15,8 +15,9 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from collections.abc import Mapping
+from collections.abc import MutableMapping
 from copy import deepcopy
+from typing import Any
 
 # Local Packages #
 from .updaterecursive import update_recursive
@@ -24,7 +25,7 @@ from .updaterecursive import update_recursive
 
 # Definitions #
 # Functions #
-def union_recursive(d: Mapping, other: Mapping) -> Mapping:
+def union_recursive(d: MutableMapping[Any, Any], other: MutableMapping[Any, Any]) -> MutableMapping[Any, Any]:
     """Unions a mapping object and its contained mappings within another mapping.
 
     Args:

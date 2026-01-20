@@ -15,12 +15,13 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from collections.abc import Iterable, Mapping
+from collections.abc import Iterable, Mapping, MutableMapping
+from typing import Any
 
 
 # Definitions #
 # Functions #
-def _update_recursive(d: Mapping, updates: Iterable) -> Mapping:
+def _update_recursive(d: MutableMapping[Any, Any], updates: Iterable[tuple[Any, Any]]) -> MutableMapping[Any, Any]:
     """Updates a mapping object and its contained mappings based on another mapping.
 
     Args:
@@ -32,7 +33,7 @@ def _update_recursive(d: Mapping, updates: Iterable) -> Mapping:
     """
     for key, value in updates:
         #  Get the existing value, defaulting to empty dict if not present
-        if isinstance(value, Mapping) and isinstance((existing := d.get(key, None)), Mapping):
+        if isinstance(value, Mapping) and isinstance((existing := d.get(key, None)), MutableMapping):
             d[key] = _update_recursive(existing, value.items())
         else:
             # For non-Mapping values, simply update
@@ -40,7 +41,10 @@ def _update_recursive(d: Mapping, updates: Iterable) -> Mapping:
     return d
 
 
-def update_recursive(d: Mapping, updates: Iterable | Mapping) -> Mapping:
+def update_recursive(
+    d: MutableMapping[Any, Any],
+    updates: Iterable[tuple[Any, Any]] | Mapping[Any, Any],
+) -> MutableMapping[Any, Any]:
     """Updates a mapping object and its contained mappings based on another mapping.
 
     Args:

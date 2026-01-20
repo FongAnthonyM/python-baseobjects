@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """dynamiccallable_performance.py
-Performance tests for the DynamicCallable, DynamicMethod, and DynamicFunction classes in the baseobjects.functions package.
+Performance tests for the DynamicCallable, DynamicMethod, and DynamicFunction classes in the baseobjects.functions
+package.
 """
 
 # Header #
@@ -17,14 +18,14 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import timeit
-from typing import Any, Type
+from typing import Any
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.functions.dynamiccallable import DynamicCallable, DynamicFunction, DynamicMethod
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.functions.dynamiccallable import DynamicCallable, DynamicFunction, DynamicMethod
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
@@ -32,13 +33,13 @@ from src.baseobjects.testsuite import BasePerformanceTestSuite
 class TestDynamicCallablePerformance(BasePerformanceTestSuite):
     """Test suite for assaying the performance of the DynamicCallable class.
 
-    This test suite measures the performance of various operations on DynamicCallable objects
-    and compares them with standard Python implementations.
+    This test suite measures the performance of various operations on DynamicCallable objects and compares them with
+    standard Python implementations.
 
     Attributes:
         timeit_runs: The number of times to run the timeit function.
         speed_tolerance: The maximum speed tolerance in microseconds.
-        TestClass: The class being tested.
+        UnitTestClass: The class being tested.
     """
 
     # Class Definitions #
@@ -51,14 +52,18 @@ class TestDynamicCallablePerformance(BasePerformanceTestSuite):
             super().__init__(lambda x: x * 2)
 
         def call(self, *args: Any, **kwargs: Any) -> Any:
-            """The call implementation."""
-            return self.func(*args, **kwargs)
+            """The call implementation.
+
+            Returns:
+                Any: The result.
+            """
+            return self.call_wrapped(*args, **kwargs)
 
     # Attributes #
     timeit_runs: int = 1000000
     speed_tolerance: int = 400
 
-    TestClass: type[TestDynamicCallable] = TestDynamicCallable
+    UnitTestClass: type[TestDynamicCallable] = TestDynamicCallable
 
     # Instance Methods #
     # Fixtures
@@ -69,19 +74,18 @@ class TestDynamicCallablePerformance(BasePerformanceTestSuite):
         Returns:
             TestDynamicCallable: An instance of the test class.
         """
-        return self.TestClass()
+        return self.UnitTestClass()
 
     # Tests
     def test_instance_creation(self) -> None:
         """Test that instances of TestDynamicCallable can be created efficiently.
 
-        This test compares the speed of creating DynamicCallable instances with creating
-        standard Python functions.
+        This test compares the speed of creating DynamicCallable instances with creating standard Python functions.
         """
 
         # Define the performance test functions
         def create_dynamic_callable() -> None:
-            self.TestClass()
+            self.UnitTestClass()
 
         def create_normal_function() -> None:
             lambda x: x * 2
@@ -97,7 +101,8 @@ class TestDynamicCallablePerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal function creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal function creation: {mean_old:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"DynamicCallable creation: {mean_new:.3f} μs ({percent:.3f}% of normal function creation time)")
         assert percent < self.speed_tolerance
@@ -135,7 +140,8 @@ class TestDynamicCallablePerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal function call: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal function call: {mean_old:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"DynamicCallable call: {mean_new:.3f} μs ({percent:.3f}% of normal function call time)")
         assert percent < self.speed_tolerance
@@ -147,7 +153,7 @@ class TestDynamicCallablePerformance(BasePerformanceTestSuite):
         """
 
         # Create a more complex function
-        def complex_func(x, y=1, z=2, *args, **kwargs):
+        def complex_func(x: Any, y: int = 1, z: int = 2, *args: Any, **kwargs: Any) -> Any:
             result = x * y + z
             for arg in args:
                 result += arg
@@ -157,7 +163,7 @@ class TestDynamicCallablePerformance(BasePerformanceTestSuite):
 
         # Create a dynamic callable with the complex function
         complex_callable = DynamicCallable(complex_func)
-        complex_callable.call = lambda *args, **kwargs: complex_callable.func(*args, **kwargs)
+        complex_callable.call = lambda *args, **kwargs: complex_callable.call_wrapped(*args, **kwargs)  # type: ignore[attr-defined]
 
         # Define the performance test functions
         def call_dynamic_callable() -> None:
@@ -186,21 +192,25 @@ class TestDynamicCallablePerformance(BasePerformanceTestSuite):
 class TestDynamicMethodPerformance(BasePerformanceTestSuite):
     """Test suite for assaying the performance of the DynamicMethod class.
 
-    This test suite measures the performance of various operations on DynamicMethod objects
-    and compares them with standard Python implementations.
+    This test suite measures the performance of various operations on DynamicMethod objects and compares them with
+    standard Python implementations.
 
     Attributes:
         timeit_runs: The number of times to run the timeit function.
         speed_tolerance: The maximum speed tolerance in microseconds.
-        TestClass: The class being tested.
+        UnitTestClass: The class being tested.
     """
 
     # Class Definitions #
-    class ExampleInstanceClass:
+    class ConcreteInstanceClass:
         """A class to test method binding."""
 
         def method1(self, x: int) -> int:
-            """Test method."""
+            """Test method.
+
+            Returns:
+                int: The result.
+            """
             return x * 2
 
     class TestDynamicMethod(DynamicMethod):
@@ -212,58 +222,64 @@ class TestDynamicMethodPerformance(BasePerformanceTestSuite):
             super().__init__(lambda self, x: x * 2, instance=instance)
 
         def call(self, *args: Any, **kwargs: Any) -> Any:
-            """The call implementation."""
-            return self.func(self.instance, *args, **kwargs)
+            """The call implementation.
+
+            Returns:
+                Any: The result.
+            """
+            # Use __func__ to get the unbound function and __self__ to get the instance
+            assert self.__func__ is not None
+            return self.__func__(self.__self__, *args, **kwargs)
 
     # Attributes #
     timeit_runs: int = 1000000
     speed_tolerance: int = 400
 
-    TestClass: type[TestDynamicMethod] = TestDynamicMethod
+    UnitTestClass: type[TestDynamicMethod] = TestDynamicMethod
 
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_class_instance(self) -> "TestDynamicMethodPerformance.ExampleInstanceClass":
+    def test_class_instance(self) -> "TestDynamicMethodPerformance.ConcreteInstanceClass":
         """Create a test class instance for use in tests.
 
         Returns:
-            TestClass: An instance of the test class.
+            UnitTestClass: An instance of the test class.
         """
-        return self.ExampleInstanceClass()
+        return self.ConcreteInstanceClass()
 
     @pytest.fixture
     def test_method(
         self,
-        test_class_instance: "TestDynamicMethodPerformance.ExampleInstanceClass",
+        test_class_instance: "TestDynamicMethodPerformance.ConcreteInstanceClass",
     ) -> "TestDynamicMethodPerformance.TestDynamicMethod":
         """Create a test method instance for use in tests.
 
         Args:
-            test_class_instance: A fixture providing a TestClass instance.
+            test_class_instance: A fixture providing a UnitTestClass instance.
 
         Returns:
             TestDynamicMethod: An instance of the test class.
         """
-        return self.TestClass(instance=test_class_instance)
+        return self.UnitTestClass(instance=test_class_instance)
 
     # Tests
-    def test_instance_creation(self, test_class_instance: "TestDynamicMethodPerformance.ExampleInstanceClass") -> None:
+    def test_instance_creation(self, test_class_instance: "TestDynamicMethodPerformance.ConcreteInstanceClass") -> None:
         """Test that instances of TestDynamicMethod can be created efficiently.
 
         This test compares the speed of creating DynamicMethod instances with accessing
         standard Python methods.
 
         Args:
-            test_class_instance: A fixture providing a TestClass instance.
+            test_class_instance: A fixture providing a UnitTestClass instance.
         """
 
         # Define the performance test functions
         def create_dynamic_method() -> None:
-            self.TestClass(instance=test_class_instance)
+            self.UnitTestClass(instance=test_class_instance)
 
         def create_normal_method() -> None:
-            test_class_instance.method1
+            _ = test_class_instance.method1
 
         # Calculate the mean time in microseconds for the dynamic method creation
         new_time = timeit.timeit(create_dynamic_method, number=self.timeit_runs)
@@ -276,7 +292,8 @@ class TestDynamicMethodPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal method access: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal method access: {mean_old:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"DynamicMethod creation: {mean_new:.3f} μs ({percent:.3f}% of normal method access time)")
         assert percent < self.speed_tolerance
@@ -284,7 +301,7 @@ class TestDynamicMethodPerformance(BasePerformanceTestSuite):
     def test_call_speed(
         self,
         test_method: "TestDynamicMethodPerformance.TestDynamicMethod",
-        test_class_instance: "TestDynamicMethodPerformance.ExampleInstanceClass",
+        test_class_instance: "TestDynamicMethodPerformance.ConcreteInstanceClass",
     ) -> None:
         """Test the performance of the __call__ method of DynamicMethod.
 
@@ -292,7 +309,7 @@ class TestDynamicMethodPerformance(BasePerformanceTestSuite):
 
         Args:
             test_method: A fixture providing a TestDynamicMethod instance.
-            test_class_instance: A fixture providing a TestClass instance.
+            test_class_instance: A fixture providing a UnitTestClass instance.
         """
         arg = 5
 
@@ -313,7 +330,10 @@ class TestDynamicMethodPerformance(BasePerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\nNormal method call: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nNormal method call: {mean_old:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
+        )
         print(f"DynamicMethod call: {mean_new:.3f} μs ({percent:.3f}% of normal method call time)")
         assert percent < self.speed_tolerance
 
@@ -326,13 +346,13 @@ class TestDynamicMethodPerformance(BasePerformanceTestSuite):
             test_method: A fixture providing a TestDynamicMethod instance.
         """
         # Create new instances
-        instance1 = self.TestClass()
-        instance2 = self.TestClass()
+        instance1 = self.ConcreteInstanceClass()
+        instance2 = self.ConcreteInstanceClass()
 
         # Define the performance test functions
         def change_instance() -> None:
-            test_method.instance = instance1
-            test_method.instance = instance2
+            test_method.bind_self(instance1)
+            test_method.bind_self(instance2)
 
         # Calculate the mean time in microseconds
         time = timeit.timeit(change_instance, number=self.timeit_runs // 10)
@@ -347,21 +367,25 @@ class TestDynamicMethodPerformance(BasePerformanceTestSuite):
 class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
     """Test suite for assaying the performance of the DynamicFunction class.
 
-    This test suite measures the performance of various operations on DynamicFunction objects
-    and compares them with standard Python implementations.
+    This test suite measures the performance of various operations on DynamicFunction objects and compares them with
+    standard Python implementations.
 
     Attributes:
         timeit_runs: The number of times to run the timeit function.
         speed_tolerance: The maximum speed tolerance in microseconds.
-        TestClass: The class being tested.
+        UnitTestClass: The class being tested.
     """
 
     # Class Definitions #
-    class TestClass:
+    class BindingTarget:
         """A class to test method binding."""
 
         def method1(self, x: int) -> int:
-            """Test method."""
+            """Test method.
+
+            Returns:
+                int: The result.
+            """
             return x * 2
 
     class TestDynamicFunction(DynamicFunction):
@@ -373,14 +397,18 @@ class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
             super().__init__(lambda x: x * 2)
 
         def call(self, *args: Any, **kwargs: Any) -> Any:
-            """The call implementation."""
-            return self.func(*args, **kwargs)
+            """The call implementation.
+
+            Returns:
+                Any: The result.
+            """
+            return self.call_wrapped(*args, **kwargs)
 
     # Attributes #
     timeit_runs: int = 1000000
     speed_tolerance: int = 400
 
-    TestClass: type[TestDynamicFunction] = TestDynamicFunction
+    UnitTestClass: type[TestDynamicFunction] = TestDynamicFunction
 
     # Instance Methods #
     # Fixtures
@@ -391,28 +419,27 @@ class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
         Returns:
             TestDynamicFunction: An instance of the test class.
         """
-        return self.TestClass()
+        return self.UnitTestClass()
 
     @pytest.fixture
-    def test_class_instance(self) -> "TestDynamicFunctionPerformance.TestClass":
+    def test_class_instance(self) -> "TestDynamicFunctionPerformance.BindingTarget":
         """Create a test class instance for use in tests.
 
         Returns:
-            TestClass: An instance of the test class.
+            BindingTarget: An instance of the test class.
         """
-        return self.TestClass()
+        return self.BindingTarget()
 
     # Tests
     def test_instance_creation(self) -> None:
         """Test that instances of TestDynamicFunction can be created efficiently.
 
-        This test compares the speed of creating DynamicFunction instances with creating
-        standard Python functions.
+        This test compares the speed of creating DynamicFunction instances with creating standard Python functions.
         """
 
         # Define the performance test functions
         def create_dynamic_function() -> None:
-            self.TestClass()
+            self.UnitTestClass()
 
         def create_normal_function() -> None:
             lambda x: x * 2
@@ -428,7 +455,8 @@ class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal function creation: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal function creation: {mean_old:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"DynamicFunction creation: {mean_new:.3f} μs ({percent:.3f}% of normal function creation time)")
         assert percent < self.speed_tolerance
@@ -466,7 +494,8 @@ class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal function call: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal function call: {mean_old:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"DynamicFunction call: {mean_new:.3f} μs ({percent:.3f}% of normal function call time)")
         assert percent < self.speed_tolerance
@@ -474,7 +503,7 @@ class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
     def test_get_descriptor_speed(
         self,
         test_function: "TestDynamicFunctionPerformance.TestDynamicFunction",
-        test_class_instance: "TestDynamicFunctionPerformance.TestClass",
+        test_class_instance: "TestDynamicFunctionPerformance.BindingTarget",
     ) -> None:
         """Test the performance of the __get__ method of DynamicFunction.
 
@@ -482,7 +511,7 @@ class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
 
         Args:
             test_function: A fixture providing a TestDynamicFunction instance.
-            test_class_instance: A fixture providing a TestClass instance.
+            test_class_instance: A fixture providing a UnitTestClass instance.
         """
 
         # Create a class with the dynamic function as a class attribute
@@ -490,16 +519,21 @@ class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
             dynamic_func = test_function
 
             def normal_method(self, x: int) -> int:
+                """A normal method.
+
+                Returns:
+                    int: The result.
+                """
                 return x * 2
 
         test_descriptor_instance = TestDescriptorClass()
 
         # Define the performance test functions
         def get_dynamic_function() -> None:
-            test_descriptor_instance.dynamic_func
+            _ = test_descriptor_instance.dynamic_func
 
         def get_normal_method() -> None:
-            test_descriptor_instance.normal_method
+            _ = test_descriptor_instance.normal_method
 
         # Calculate the mean time in microseconds for the dynamic function descriptor
         new_time = timeit.timeit(get_dynamic_function, number=self.timeit_runs)
@@ -512,7 +546,8 @@ class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nNormal method descriptor: {mean_old:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nNormal method descriptor: {mean_old:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
         print(f"DynamicFunction descriptor: {mean_new:.3f} μs ({percent:.3f}% of normal method descriptor time)")
         assert percent < self.speed_tolerance

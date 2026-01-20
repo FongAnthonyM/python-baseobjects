@@ -16,17 +16,15 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-import copy
-import pickle
 import timeit
-from typing import Any, ClassVar, Dict, List
+from typing import Any
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.collections import GroupedList
-from src.baseobjects.testsuite import BasePerformanceTestSuite
+from baseobjects.collections import GroupedList
+from baseobjects.testsuite import BasePerformanceTestSuite
 
 
 # Definitions #
@@ -95,7 +93,7 @@ class TestGroupedListPerformance(BasePerformanceTestSuite):
         return result
 
     @pytest.fixture
-    def normal_list(self) -> list:
+    def normal_list(self) -> list[Any]:
         """Create a normal list for comparison.
 
         Returns:
@@ -104,7 +102,7 @@ class TestGroupedListPerformance(BasePerformanceTestSuite):
         return []
 
     @pytest.fixture
-    def populated_normal_list(self) -> list:
+    def populated_normal_list(self) -> list[Any]:
         """Create a populated normal list for comparison.
 
         Returns:
@@ -113,24 +111,24 @@ class TestGroupedListPerformance(BasePerformanceTestSuite):
         return [f"value{i}" for i in range(100)]
 
     @pytest.fixture
-    def nested_normal_list(self) -> list:
+    def nested_normal_list(self) -> list[Any]:
         """Create a nested normal list for comparison.
 
         Returns:
             list: A nested standard Python list.
         """
-        result = []
+        result: list[Any] = []
         # Add some direct items
         for i in range(20):
             result.append(f"value{i}")
 
         # Add a sublist
-        sublist1 = []
+        sublist1: list[Any] = []
         for i in range(20, 40):
             sublist1.append(f"value{i}")
 
         # Add a nested sublist
-        sublist2 = []
+        sublist2: list[Any] = []
         for i in range(40, 60):
             sublist2.append(f"value{i}")
         sublist1.append(sublist2)
@@ -138,7 +136,7 @@ class TestGroupedListPerformance(BasePerformanceTestSuite):
         result.append(sublist1)
 
         # Add another sublist
-        sublist3 = []
+        sublist3: list[Any] = []
         for i in range(60, 80):
             sublist3.append(f"value{i}")
 
@@ -157,7 +155,7 @@ class TestGroupedListPerformance(BasePerformanceTestSuite):
             GroupedList()
 
         def create_list() -> None:
-            []
+            _ = []
 
         # Calculate the mean time in microseconds for the GroupedList implementation
         grouped_time = timeit.timeit(create_grouped, number=self.timeit_runs)
@@ -170,9 +168,13 @@ class TestGroupedListPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard list creation: {mean_list:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard list creation: {mean_list:.3f} μs ({self.call_speed:.3f} "
+            f"is the speed of a simple function call)",
         )
-        print(f"GroupedList creation: {mean_grouped:.3f} μs ({percent:.3f}% of standard list creation time)")
+        print(
+            f"GroupedList creation: {mean_grouped:.3f} μs "
+            f"({percent:.3f}% of standard list creation time)",
+        )
         assert percent < self.speed_tolerance
 
     def test_creation_speed_populated_performance(self) -> None:
@@ -199,14 +201,16 @@ class TestGroupedListPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard list populated creation: {mean_list:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard list populated creation: {mean_list:.3f} μs ({self.call_speed:.3f} "
+            f"is the speed of a simple function call)",
         )
         print(
-            f"GroupedList populated creation: {mean_grouped:.3f} μs ({percent:.3f}% of standard list populated creation time)",
+            f"GroupedList populated creation: {mean_grouped:.3f} μs "
+            f"({percent:.3f}% of standard list populated creation time)",
         )
         assert percent < self.speed_tolerance
 
-    def test_append_speed_performance(self, test_list: GroupedList, normal_list: list) -> None:
+    def test_append_speed_performance(self, test_list: GroupedList, normal_list: list[Any]) -> None:
         """Test the performance of appending an item to a GroupedList.
 
         This test compares the speed of appending an item to a GroupedList with a normal list.
@@ -234,12 +238,20 @@ class TestGroupedListPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard list append: {mean_list:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard list append: {mean_list:.3f} μs ({self.call_speed:.3f} "
+            f"is the speed of a simple function call)",
         )
-        print(f"GroupedList append: {mean_grouped:.3f} μs ({percent:.3f}% of standard list append time)")
+        print(
+            f"GroupedList append: {mean_grouped:.3f} μs "
+            f"({percent:.3f}% of standard list append time)",
+        )
         assert percent < self.speed_tolerance
 
-    def test_get_item_speed_performance(self, populated_test_list: GroupedList, populated_normal_list: list) -> None:
+    def test_get_item_speed_performance(
+        self,
+        populated_test_list: GroupedList,
+        populated_normal_list: list[Any],
+    ) -> None:
         """Test the performance of getting an item from a GroupedList.
 
         This test compares the speed of getting an item from a GroupedList with a normal list.
@@ -267,12 +279,20 @@ class TestGroupedListPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard list get item: {mean_list:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard list get item: {mean_list:.3f} μs ({self.call_speed:.3f} "
+            f"is the speed of a simple function call)",
         )
-        print(f"GroupedList get item: {mean_grouped:.3f} μs ({percent:.3f}% of standard list get item time)")
+        print(
+            f"GroupedList get item: {mean_grouped:.3f} μs "
+            f"({percent:.3f}% of standard list get item time)",
+        )
         assert percent < self.speed_tolerance
 
-    def test_set_item_speed_performance(self, populated_test_list: GroupedList, populated_normal_list: list) -> None:
+    def test_set_item_speed_performance(
+        self,
+        populated_test_list: GroupedList,
+        populated_normal_list: list[Any],
+    ) -> None:
         """Test the performance of setting an item in a GroupedList.
 
         This test compares the speed of setting an item in a GroupedList with a normal list.
@@ -301,9 +321,13 @@ class TestGroupedListPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nStandard list set item: {mean_list:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nStandard list set item: {mean_list:.3f} μs ({self.call_speed:.3f} "
+            f"is the speed of a simple function call)",
         )
-        print(f"GroupedList set item: {mean_grouped:.3f} μs ({percent:.3f}% of standard list set item time)")
+        print(
+            f"GroupedList set item: {mean_grouped:.3f} μs "
+            f"({percent:.3f}% of standard list set item time)",
+        )
         assert percent < self.speed_tolerance
 
     def test_iteration_speed_performance(self, nested_test_list: GroupedList) -> None:
@@ -336,9 +360,13 @@ class TestGroupedListPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nFlat list iteration: {mean_flat:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nFlat list iteration: {mean_flat:.3f} μs ({self.call_speed:.3f} "
+            f"is the speed of a simple function call)",
         )
-        print(f"GroupedList iteration: {mean_grouped:.3f} μs ({percent:.3f}% of flat list iteration time)")
+        print(
+            f"GroupedList iteration: {mean_grouped:.3f} μs "
+            f"({percent:.3f}% of flat list iteration time)",
+        )
         assert percent < self.speed_tolerance
 
     def test_create_group_speed_performance(self, test_list: GroupedList) -> None:
@@ -364,7 +392,10 @@ class TestGroupedListPerformance(BasePerformanceTestSuite):
         mean_time = time_taken / self.timeit_runs * 1000000
 
         # Print the performance measurement
-        print(f"\nCreate group: {mean_time:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nCreate group: {mean_time:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
+        )
         # No comparison here, just measuring the absolute time
 
     def test_require_group_speed_performance(self, test_list: GroupedList) -> None:
@@ -402,9 +433,13 @@ class TestGroupedListPerformance(BasePerformanceTestSuite):
 
         # Print the performance measurements
         print(
-            f"\nRequire existing group: {mean_existing:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)",
+            f"\nRequire existing group: {mean_existing:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
-        print(f"Require new group: {mean_new:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"Require new group: {mean_new:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
+        )
         # No comparison here, just measuring the absolute time
 
     def test_as_flat_list_speed_performance(self, nested_test_list: GroupedList) -> None:
@@ -424,7 +459,10 @@ class TestGroupedListPerformance(BasePerformanceTestSuite):
         mean_time = time_taken / self.timeit_runs * 1000000
 
         # Print the performance measurement
-        print(f"\nAs flat list: {mean_time:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nAs flat list: {mean_time:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
+        )
         # No comparison here, just measuring the absolute time
 
     def test_as_flat_tuple_speed_performance(self, nested_test_list: GroupedList) -> None:
@@ -444,7 +482,10 @@ class TestGroupedListPerformance(BasePerformanceTestSuite):
         mean_time = time_taken / self.timeit_runs * 1000000
 
         # Print the performance measurement
-        print(f"\nAs flat tuple: {mean_time:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nAs flat tuple: {mean_time:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
+        )
         # No comparison here, just measuring the absolute time
 
     def test_get_group_speed_performance(self, nested_test_list: GroupedList) -> None:
@@ -465,7 +506,10 @@ class TestGroupedListPerformance(BasePerformanceTestSuite):
         mean_time = time_taken / self.timeit_runs * 1000000
 
         # Print the performance measurement
-        print(f"\nGet group: {mean_time:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
+        print(
+            f"\nGet group: {mean_time:.3f} μs "
+            f"({self.call_speed:.3f} is the speed of a simple function call)",
+        )
         # No comparison here, just measuring the absolute time
 
     def test_nested_get_item_speed_performance(self, nested_test_list: GroupedList) -> None:

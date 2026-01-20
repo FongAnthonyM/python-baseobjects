@@ -21,7 +21,7 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 from abc import abstractmethod
-from typing import Any, ClassVar, Optional
+from typing import Any, ClassVar
 
 # Local Packages #
 from ..bases import BaseObject
@@ -75,7 +75,7 @@ class BaseRegisteredClass(BaseObject):
         if cls.class_registration:
             if cls.class_registry is None:
                 cls.create_class_registry()
-            elif not cls.class_registry:
+            elif not cls.class_registry.head_class:
                 cls.class_registry.head_class = cls
 
             cls.register_class(**(register_kwargs or {}))
@@ -87,18 +87,19 @@ class BaseRegisteredClass(BaseObject):
         cls.class_registry = cls.class_registry_type(head_class=cls)
 
     @classmethod
-    @abstractmethod
     def register_class(cls, *args: Any, **kwargs: Any) -> None:
         """Registers this class.
 
         Args:
-            *args: Positional arguments to implement.
-            **kwargs: Keyword arguments to implement.
+            *args: Positional arguments to pass to the registry.
+            **kwargs: Keyword arguments to pass to the registry.
         """
+        if cls.class_registry is not None:
+            cls.class_registry.register_class(cls, *args, **kwargs)
 
     @classmethod
     @abstractmethod
-    def get_registered_class(cls, *args: Any, **kwargs: Any) -> Optional["BaseRegisteredClass"]:
+    def get_registered_class(cls, *args: Any, **kwargs: Any) -> type[BaseRegisteredClass] | None:
         """Gets a subclass from the registry.
 
         Args:

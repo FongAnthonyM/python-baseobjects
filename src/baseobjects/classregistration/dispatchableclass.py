@@ -20,6 +20,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
+from abc import abstractmethod
 from typing import Any
 
 # Local Packages #
@@ -40,6 +41,19 @@ class DispatchableClass(BaseRegisteredClass):
 
     # Class Methods #
     @classmethod
+    @abstractmethod
+    def get_registered_class(cls, *args: Any, **kwargs: Any) -> type[DispatchableClass] | None:
+        """Gets a subclass from the registry.
+
+        Args:
+            *args: Positional arguments to implement.
+            **kwargs: Keyword arguments to implement.
+
+        Returns:
+            The requested subclass, or None if not found.
+        """
+
+    @classmethod
     def get_class_information(cls, *args: Any, **kwargs: Any) -> Any:
         """Gets a class's lookup information from a given set of arguments.
 
@@ -55,9 +69,9 @@ class DispatchableClass(BaseRegisteredClass):
 
     # Magic Methods #
     # Construction/Destruction
-    def __new__(cls, *args: Any, **kwargs: Any) -> BaseRegisteredClass:
+    def __new__(cls, *args: Any, **kwargs: Any) -> DispatchableClass:
         """With the given input, will return the correct subclass."""
-        if cls is cls.class_registry.head_class and (kwargs or args):
+        if cls.class_registry is not None and cls is cls.class_registry.head_class and (kwargs or args):
             class_ = cls.get_registered_class(*cls.get_class_information(*args, **kwargs))
             if class_ is not None and class_ is not cls.class_registry.head_class:
                 return class_(*args, **kwargs)

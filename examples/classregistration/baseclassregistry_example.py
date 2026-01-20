@@ -11,7 +11,7 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any
+from typing import Any, cast
 
 # Source Packages #
 from baseobjects.classregistration import BaseClassRegistry
@@ -48,7 +48,7 @@ class SimpleClassRegistry(BaseClassRegistry):
         Returns:
             The requested class, or the default value if not found.
         """
-        return self.get(name, default)
+        return cast(type, self.get(name, default))
 
 
 # Example classes to register
@@ -196,11 +196,11 @@ def factory_pattern() -> None:
         Raises:
             ValueError: If the animal type is not found in the registry.
         """
-        animal_class = registry.get_class(animal_type)
+        animal_class = cast(Any, registry.get_class(animal_type))
         if animal_class is None:
             msg = f"Unknown animal type: {animal_type}"
             raise ValueError(msg)
-        return animal_class(name)
+        return cast(Animal, animal_class(name))
 
     # Use the factory to create animals
     print("Using the factory to create animals...")
@@ -242,6 +242,7 @@ def registry_with_head_class() -> None:
     registry.register_class(Cat)
     registry.register_class(Bird)
 
+    assert registry.head_class is not None
     print(f"Head class: {registry.head_class.__name__}")
     print("Classes in registry:")
     for name, cls in registry.items():
@@ -250,8 +251,8 @@ def registry_with_head_class() -> None:
 
     # Create instances using the head class as a base
     print("Creating instances and checking if they are instances of the head class...")
-    dog = registry.get_class("Dog")("Fido")
-    cat = registry.get_class("Cat")("Garfield")
+    dog = cast(Any, registry.get_class("Dog"))("Fido")
+    cat = cast(Any, registry.get_class("Cat"))("Garfield")
 
     print(f"Is dog an instance of Animal? {isinstance(dog, Animal)} == True")
     print(f"Is cat an instance of Animal? {isinstance(cat, Animal)} == True")

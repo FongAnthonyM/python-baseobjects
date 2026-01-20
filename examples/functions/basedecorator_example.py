@@ -16,9 +16,7 @@ This example demonstrates:
 import asyncio
 import pickle
 import time
-from collections.abc import Callable
-from functools import wraps
-from typing import Any, Optional, TypeVar, Union
+from typing import Any
 
 # Source Packages #
 from baseobjects.functions import BaseDecorator
@@ -34,7 +32,7 @@ class TimerDecorator(BaseDecorator):
     function takes to execute.
     """
 
-    def __init__(self, func: AnyCallable, decimal_places: int = 4) -> None:
+    def __init__(self, func: AnyCallable | None = None, decimal_places: int = 4) -> None:
         """Initialize the timer decorator.
 
         Args:
@@ -54,11 +52,14 @@ class TimerDecorator(BaseDecorator):
         Returns:
             The result of the decorated function.
         """
+        wrapped = self.__wrapped__
+        assert wrapped is not None
         start_time = time.time()
-        result = self.__wrapped__(*args, **kwargs)
+        result = wrapped(*args, **kwargs)
         end_time = time.time()
         execution_time = end_time - start_time
-        print(f"Function '{self.__wrapped__.__name__}' executed in {execution_time:.{self.decimal_places}f} seconds")
+        name = getattr(wrapped, "__name__", "wrapper")
+        print(f"Function '{name}' executed in {execution_time:.{self.decimal_places}f} seconds")
         return result
 
 
@@ -70,7 +71,7 @@ class RepeatDecorator(BaseDecorator):
     behavior.
     """
 
-    def __init__(self, func: AnyCallable, times: int = 1, show_iteration: bool = True) -> None:
+    def __init__(self, func: AnyCallable | None = None, times: int = 1, show_iteration: bool = True) -> None:
         """Initialize the repeat decorator.
 
         Args:
@@ -92,11 +93,13 @@ class RepeatDecorator(BaseDecorator):
         Returns:
             A list of results from each execution of the decorated function.
         """
+        wrapped = self.__wrapped__
+        assert wrapped is not None
         results = []
         for i in range(self.times):
             if self.show_iteration:
                 print(f"Iteration {i + 1}/{self.times}:")
-            result = self.__wrapped__(*args, **kwargs)
+            result = wrapped(*args, **kwargs)
             results.append(result)
         return results
 
@@ -108,7 +111,7 @@ class AsyncRetryDecorator(BaseDecorator):
     This decorator demonstrates how BaseDecorator can handle coroutine functions.
     """
 
-    def __init__(self, func: AnyCallable, max_retries: int = 3, delay: float = 1.0) -> None:
+    def __init__(self, func: AnyCallable | None = None, max_retries: int = 3, delay: float = 1.0) -> None:
         """Initialize the async retry decorator.
 
         Args:
@@ -130,12 +133,14 @@ class AsyncRetryDecorator(BaseDecorator):
         Returns:
             The result of the decorated coroutine function.
         """
+        wrapped = self.__wrapped__
+        assert wrapped is not None
         last_exception: Exception | None = None
         for attempt in range(self.max_retries + 1):
             try:
                 if attempt > 0:
                     print(f"Retry attempt {attempt}/{self.max_retries}...")
-                return await self.__wrapped__(*args, **kwargs)
+                return await wrapped(*args, **kwargs)
             except Exception as e:
                 last_exception = e
                 if attempt < self.max_retries:
@@ -156,7 +161,7 @@ class CounterDecorator(BaseDecorator):
     This decorator demonstrates how to create a decorator with state.
     """
 
-    def __init__(self, func: AnyCallable) -> None:
+    def __init__(self, func: AnyCallable | None = None) -> None:
         """Initialize the counter decorator.
 
         Args:
@@ -175,9 +180,12 @@ class CounterDecorator(BaseDecorator):
         Returns:
             The result of the decorated function.
         """
+        wrapped = self.__wrapped__
+        assert wrapped is not None
         self.call_count += 1
-        print(f"Call #{self.call_count} to function '{self.__wrapped__.__name__}'")
-        return self.__wrapped__(*args, **kwargs)
+        name = getattr(wrapped, "__name__", "wrapper")
+        print(f"Call #{self.call_count} to function '{name}'")
+        return wrapped(*args, **kwargs)
 
     def reset_counter(self) -> None:
         """Reset the call counter to zero."""
@@ -190,8 +198,10 @@ class CounterDecorator(BaseDecorator):
             A dictionary containing the state of the decorator.
         """
         state = super().__getstate__()
-        state["call_count"] = self.call_count
-        return state
+        if isinstance(state, dict):
+            state["call_count"] = self.call_count
+            return state
+        return {"call_count": self.call_count}
 
     def __setstate__(self, state: dict[str, Any]) -> None:
         """Set the state of the decorator from unpickling.
@@ -284,7 +294,11 @@ def basic_decorator_example() -> None:
     # Use the decorator as a function decorator
     @TimerDecorator
     def calculate_sum(n: int) -> int:
-        """Calculate the sum of numbers from 1 to n."""
+        """Calculate the sum of numbers from 1 to n.
+
+        Returns:
+            The sum of numbers.
+        """
         return sum(range(1, n + 1))
 
     # Call the decorated function
@@ -313,20 +327,28 @@ def decorator_with_arguments_example() -> None:
     # Use the decorator with arguments
     @RepeatDecorator(times=2, show_iteration=False)
     def greet(name: str) -> str:
-        """Greet a person."""
+        """Greet a person.
+
+        Returns:
+            The greeting string.
+        """
         greeting = f"Hello, {name}!"
         print(greeting)
         return greeting
 
     # Call the decorated function
     print("\nRepeating greet function 2 times (without showing iterations):")
-    results = greet("World")
+    results = greet("World")  # type: ignore[operator]
     print(f"Results: {results} == ['Hello, World!', 'Hello, World!']")
 
     # Use the decorator without arguments (default values)
     @RepeatDecorator
     def square(x: int) -> int:
-        """Square a number."""
+        """Square a number.
+
+        Returns:
+            The squared number.
+        """
         return x * x
 
     # Call the decorated function
@@ -363,13 +385,17 @@ async def async_decorator_example() -> None:
     # Use the decorator as a function decorator
     @AsyncRetryDecorator(max_retries=2, delay=0.3)
     async def fetch_with_timeout(url: str, timeout: float = 0.5) -> dict[str, Any]:
-        """Fetch data with a specified timeout."""
+        """Fetch data with a specified timeout.
+
+        Returns:
+            The fetched data.
+        """
         return await fetch_data(url, timeout)
 
     # Call the decorated function with a timeout that's too short
     print("\nFetching data with a short timeout (should retry and succeed with default delay):")
     try:
-        result = await fetch_with_timeout("https://example.com/api/data", timeout=0.1)
+        result = await fetch_with_timeout("https://example.com/api/data", timeout=0.1)  # type: ignore[operator]
         print(f"Success! Received: {result['data']}")
     except Exception as e:
         print(f"Failed after retries: {e}")

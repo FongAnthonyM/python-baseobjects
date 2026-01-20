@@ -19,26 +19,39 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from collections.abc import Callable
-from typing import Any, Type
+import pickle
+from typing import Any, ClassVar, cast
+from unittest.mock import patch
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.functions import DynamicCallable, DynamicFunction, DynamicMethod
-from src.baseobjects.testsuite.functions import DynamicCallableTestSuite
+from baseobjects.functions import DynamicCallable, DynamicFunction, DynamicMethod
+from baseobjects.testsuite.functions import (
+    DynamicCallableTestSuite,
+    DynamicFunctionTestSuite,
+    DynamicMethodTestSuite,
+)
 
 
 # Definitions #
 # Helper Functions #
 def add_function(x: int, y: int = 2) -> int:
-    """A test function that adds two numbers."""
+    """A test function that adds two numbers.
+
+    Returns:
+        The sum of x and y.
+    """
     return x + y
 
 
 def multiply_function(x: int, y: int = 3) -> int:
-    """A test function that multiplies two numbers."""
+    """A test function that multiplies two numbers.
+
+    Returns:
+        The product of x and y.
+    """
     return x * y
 
 
@@ -51,11 +64,19 @@ class DynamicCallableTestObject:
         self.value = value
 
     def method1(self, x: int) -> int:
-        """A test method that adds x to the value."""
+        """A test method that adds x to the value.
+
+        Returns:
+            The sum of value and x.
+        """
         return self.value + x
 
     def method2(self, x: int) -> int:
-        """A test method that multiplies the value by x."""
+        """A test method that multiplies the value by x.
+
+        Returns:
+            The product of value and x.
+        """
         return self.value * x
 
 
@@ -68,7 +89,7 @@ class TestDynamicCallable(DynamicCallableTestSuite):
     """
 
     # Attributes #
-    TestClass: type[DynamicCallable] = DynamicCallable
+    UnitTestClass: ClassVar[type[DynamicCallable]] = DynamicCallable
 
     # Instance Methods #
     def create_test_method_object(self) -> DynamicCallable:
@@ -77,39 +98,7 @@ class TestDynamicCallable(DynamicCallableTestSuite):
         Returns:
             DynamicCallable: An instance of DynamicCallable that wraps a method.
         """
-        return self.create_method_object()
-
-    # @pytest.mark.skip(reason="DynamicCallable doesn't support pickling of methods")
-    def test_pickling(self, test_object: DynamicCallable) -> None:
-        """Test pickling and unpickling of the callable object.
-
-        This test is skipped for DynamicCallable because it doesn't support pickling of methods.
-
-        Args:
-            test_object: A fixture providing a DynamicCallable instance.
-        """
-        super().test_pickling(test_object)
-
-    def test_bind_method_property(self) -> None:
-        """Test that the bind_method property correctly gets and sets the binding method."""
-        test_method_object = self.create_test_method_object()
-
-        # Verify the initial bind_method
-        assert test_method_object.bind_method == "bind_builtin"
-
-        # Set the bind_method property to bind_wrapped (which exists in BaseCallable)
-        test_method_object.bind_method = "bind_wrapped"
-
-        # Verify the property was set correctly
-        assert test_method_object.bind_method == "bind_wrapped"
-        assert test_method_object.bind_multiplexer.selected == "bind_wrapped"
-
-        # Set it back to the default
-        test_method_object.bind_method = "bind_builtin"
-
-        # Verify it was set back correctly
-        assert test_method_object.bind_method == "bind_builtin"
-        assert test_method_object.bind_multiplexer.selected == "bind_builtin"
+        return cast(DynamicCallable, self.create_method_object())
 
     # Fixtures
     @pytest.fixture
@@ -128,7 +117,7 @@ class TestDynamicCallable(DynamicCallableTestSuite):
         Returns:
             DynamicCallable: An instance of DynamicCallable that wraps a function.
         """
-        return self.create_function_object(add_function)
+        return cast(DynamicCallable, self.create_function_object(add_function))
 
     @pytest.fixture
     def test_method_object(self) -> DynamicCallable:
@@ -137,224 +126,127 @@ class TestDynamicCallable(DynamicCallableTestSuite):
         Returns:
             DynamicCallable: An instance of DynamicCallable that wraps a method.
         """
-        return self.create_method_object()
+        return cast(DynamicCallable, self.create_method_object())
 
-    # Tests
-    def test_instance_creation(self, *args: Any, **kwargs: Any) -> None:
-        """Test that instances of the class can be created.
 
-        Args:
-            *args: Positional arguments list to pass to the class constructor.
-            **kwargs: Keyword arguments to pass to the class constructor.
-        """
-        # Create an instance with a function
-        instance = self.TestClass(add_function)
+class TestDynamicFunction(DynamicFunctionTestSuite):
+    """Test the DynamicFunction class.
 
-        # Verify it's an instance of the correct class
-        assert isinstance(instance, self.TestClass)
+    This class tests the functionality of the DynamicFunction class.
+    """
 
-        # Verify it has the correct function
-        assert instance.__func__ is add_function
+    # Attributes #
+    UnitTestClass: ClassVar[type[DynamicFunction]] = DynamicFunction
 
-        # Create an instance with a method
-        instance = self.TestClass(DynamicCallableTestObject.method1)
 
-        # Verify it has the correct method
-        assert instance.__func__ is DynamicCallableTestObject.method1
+class TestDynamicMethod(DynamicMethodTestSuite):
+    """Test the DynamicMethod class.
 
-    def test_call(self, test_function_object: DynamicCallable) -> None:
-        """Test that the callable object can be called and correctly delegates to the wrapped function.
+    This class tests the functionality of the DynamicMethod class.
+    """
 
-        Args:
-            test_function_object: A fixture providing a DynamicCallable instance that wraps a function.
-        """
-        # Call the callable object
-        result = test_function_object(3)
+    # Attributes #
+    UnitTestClass: ClassVar[type[DynamicMethod]] = DynamicMethod
 
-        # Verify it returns the expected result
-        assert result == 5  # 3 + 2 (default y)
+    def test_call_without_self(self) -> None:
+        """Test calling when _self_ attribute causes AttributeError."""
+        class MockDynamicMethod(DynamicMethod):
+            @property
+            def _self_(self) -> Any:
+                raise AttributeError("Mocked AttributeError")
 
-        # Call with different arguments
-        result = test_function_object(3, 4)
+            @_self_.setter
+            def _self_(self, value: Any) -> None:
+                pass
 
-        # Verify it returns the expected result
-        assert result == 7  # 3 + 4
+        def func() -> int:
+            return 1
 
-    def test_as_function(self, test_function_object: DynamicCallable) -> None:
-        """Test that the callable object can be converted to a standard Python function.
+        obj = MockDynamicMethod(func)
+        assert obj() == 1
 
-        Args:
-            test_function_object: A fixture providing a DynamicCallable instance that wraps a function.
-        """
-        # Convert to a standard Python function
-        func = test_function_object.as_function()
 
-        # Verify it's a function
-        assert callable(func)
+# Classes #
+class SlotDynamicCallable(DynamicCallable):
+    """A DynamicCallable subclass with slots for testing."""
 
-        # Verify it returns the expected result
-        assert func(3) == 5  # 3 + 2 (default y)
-        assert func(3, 4) == 7  # 3 + 4
+    __slots__ = ("extra",)
 
-    def test_call_wrapped(self, test_function_object: DynamicCallable) -> None:
-        """Test that the wrapped function can be called directly.
+    def __init__(self, func: Any, **kwargs: Any) -> None:
+        """Initializes the SlotDynamicCallable."""
+        self.extra = 1
+        super().__init__(func, **kwargs)
 
-        Args:
-            test_function_object: A fixture providing a DynamicCallable instance that wraps a function.
-        """
-        # Call the wrapped function directly
-        result = test_function_object.call_wrapped(3)
 
-        # Verify it returns the expected result
-        assert result == 5  # 3 + 2 (default y)
+class TestDynamicCallableCoverage:
+    """Tests coverage for DynamicCallable."""
 
-        # Call with different arguments
-        result = test_function_object.call_wrapped(3, 4)
+    def test_call_wrapped(self) -> None:
+        """Tests calling the wrapped function directly."""
+        dc = DynamicCallable(lambda x: x + 1)
+        assert dc.call_wrapped(1) == 2
 
-        # Verify it returns the expected result
-        assert result == 7  # 3 + 4
+    def test_as_function(self) -> None:
+        """Tests as_function method."""
+        dc = DynamicCallable(lambda x: x + 1)
+        func = dc.as_function()
+        assert func(1) == 2
+        assert func.__name__ == "<lambda>"
 
-    def test_dynamic_method(self, test_bind_target: Any) -> None:
-        """Test the DynamicMethod subclass.
+    def _setup_slots(self) -> SlotDynamicCallable:
+        return SlotDynamicCallable(len)
 
-        Args:
-            test_bind_target: A fixture providing an instance to bind the method to.
-        """
+    def _setup_dict(self) -> DynamicCallable:
+        dc = DynamicCallable(len)
+        dc.foo = "bar"  # type: ignore[attr-defined]
+        return dc
 
-        # Create a method that can work with the test_bind_target
-        def compatible_method(self, x: int) -> int:
-            """A test method that works with any object as self."""
-            return x + 5  # Just return x + 5, ignoring self
+    @pytest.mark.parametrize(
+        ("setup_method", "verify_attr", "expected_val"),
+        [
+            ("_setup_slots", "extra", 1),
+            ("_setup_dict", "foo", "bar"),
+        ],
+    )
+    def test_pickling_variants(self, setup_method: str, verify_attr: str, expected_val: Any) -> None:
+        """Tests pickling with various object structures."""
+        dc = getattr(self, setup_method)()
+        dump = pickle.dumps(dc)
+        loaded = pickle.loads(dump)
+        assert loaded([1]) == 1
+        assert getattr(loaded, verify_attr) == expected_val
 
-        # Create a DynamicMethod instance
-        dynamic_method = DynamicMethod(compatible_method)
+    @pytest.mark.parametrize(
+        ("state", "verifier"),
+        [
+            ((None, {"extra": 2}), lambda dc: dc.extra == 2),
+            (None, lambda dc: dc.bind_multiplexer.selected == dc.default_bind_method),
+        ],
+    )
+    def test_setstate_variants(self, state: Any, verifier: Any) -> None:
+        """Tests setstate with different state types."""
+        dc = SlotDynamicCallable(len)
+        dc.__setstate__(state)
+        assert verifier(dc)
 
-        # Verify it's an instance of the correct class
-        assert isinstance(dynamic_method, DynamicMethod)
+    def test_getstate_none_return(self) -> None:
+        """Tests getstate when super class returns None."""
+        dc = DynamicCallable(len)
+        with patch.object(DynamicCallable.__base__, "__getstate__", return_value=None):
+            state = dc.__getstate__()
+            assert state is None or state == {}
 
-        # Verify the default bind_method is bind_self
-        assert dynamic_method.bind_method == "bind_self"
-        assert dynamic_method.default_bind_method == "bind_self"
+    def test_init_false(self) -> None:
+        """Tests initialization with init=False."""
+        dc = DynamicCallable(init=False)
+        assert dc.__wrapped__ is None
 
-        # Bind the method to an instance
-        bound_method = dynamic_method.__get__(test_bind_target, type(test_bind_target))
-
-        # Verify the binding
-        assert bound_method._self_() is test_bind_target
-
-        # Call the bound method
-        result = bound_method(3)
-
-        # Verify it returns the expected result
-        assert result == 8  # 3 + 5
-
-    def test_dynamic_function(self) -> None:
-        """Test the DynamicFunction subclass."""
-        # Create a DynamicFunction instance
-        dynamic_function = DynamicFunction(add_function)
-
-        # Verify it's an instance of the correct class
-        assert isinstance(dynamic_function, DynamicFunction)
-
-        # Call the function
-        result = dynamic_function(3)
-
-        # Verify it returns the expected result
-        assert result == 5  # 3 + 2 (default y)
-
-    def test_bind_method_change(self, test_method_object: DynamicCallable, test_bind_target: Any) -> None:
-        """Test that changing the bind_method affects how the object is bound.
-
-        Args:
-            test_method_object: A fixture providing a DynamicCallable instance that wraps a method.
-            test_bind_target: A fixture providing an instance to bind the method to.
-        """
-
-        # Add a custom bind method to the bind_multiplexer
-        def bind_custom(self, instance, owner=None):
-            # Create a function that returns a fixed value
-            def fixed_value(*args, **kwargs) -> int:
-                return 42
-
-            return fixed_value
-
-        test_method_object.bind_multiplexer.add_function("bind_custom", bind_custom)
-
-        # Change the bind_method to bind_custom
-        test_method_object.bind_method = "bind_custom"
-        assert test_method_object.bind_method == "bind_custom"
-
-        # Test with bind_custom
-        bound_method = test_method_object.__get__(test_bind_target, type(test_bind_target))
-
-        # Verify it returns the fixed value
-        assert bound_method() == 42
-
-    def test_call_method_change(self, test_function_object: DynamicCallable) -> None:
-        """Test that changing the call_method affects how the object is called.
-
-        Args:
-            test_function_object: A fixture providing a DynamicCallable instance that wraps a function.
-        """
-
-        # Add multiple call methods to the call_multiplexer
-        def call_double(self, *args, **kwargs):
-            return self.call_wrapped(*args, **kwargs) * 2
-
-        def call_triple(self, *args, **kwargs):
-            return self.call_wrapped(*args, **kwargs) * 3
-
-        test_function_object.call_multiplexer.add_function("call_double", call_double)
-        test_function_object.call_multiplexer.add_function("call_triple", call_triple)
-
-        # Test with call_double
-        test_function_object.call_method = "call_double"
-        assert test_function_object.call_method == "call_double"
-        result = test_function_object(3)
-        assert result == 10  # (3 + 2) * 2
-
-        # Test with call_triple
-        test_function_object.call_method = "call_triple"
-        assert test_function_object.call_method == "call_triple"
-        result = test_function_object(3)
-        assert result == 15  # (3 + 2) * 3
-
-        # Test switching back to call_wrapped
-        test_function_object.call_method = "call_wrapped"
-        assert test_function_object.call_method == "call_wrapped"
-        result = test_function_object(3)
-        assert result == 5  # 3 + 2
-
-    def test_construct_with_bind_method(self) -> None:
-        """Test that the bind_method can be set during construction."""
-        # Create an instance with a specific bind_method
-        instance = self.TestClass(add_function, bind_method="bind_wrapped")
-
-        # Verify the bind_method was set correctly
-        assert instance.bind_method == "bind_wrapped"
-
-    def test_construct_with_call_method(self) -> None:
-        """Test that the call_method can be set during construction."""
-        # Create an instance with a specific call_method
-        instance = self.TestClass(add_function, call_method="call_wrapped")
-
-        # Verify the call_method was set correctly
-        assert instance.call_method == "call_wrapped"
-
-    def test_no_function(self) -> None:
-        """Test the edge case where no function is provided."""
-        # Create an instance without a function
-        instance = self.TestClass()
-
-        # Verify it's an instance of the correct class
-        assert isinstance(instance, self.TestClass)
-
-        # Verify it has no function
-        assert instance.__func__ is None
-
-        # Try to call the instance (should raise an error)
+    def test_setstate_unknown(self) -> None:
+        """Tests setstate with unknown state type."""
+        dc = DynamicCallable(len)
+        # baseobjects.bases.basereducible.BaseReducible raises TypeError for invalid state
         with pytest.raises(TypeError):
-            instance(3)
+            dc.__setstate__("invalid_state")
 
 
 # Main #

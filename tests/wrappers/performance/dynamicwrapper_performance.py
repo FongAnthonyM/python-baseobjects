@@ -17,14 +17,14 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import timeit
-from typing import Any
+from typing import Any, ClassVar
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from src.baseobjects.testsuite import WrapperPerformanceTestSuite
-from src.baseobjects.wrappers import DynamicWrapper
+from baseobjects.testsuite import WrapperPerformanceTestSuite
+from baseobjects.wrappers import DynamicWrapper
 
 
 # Definitions #
@@ -32,10 +32,10 @@ from src.baseobjects.wrappers import DynamicWrapper
 class DynamicWrapperTestObject(DynamicWrapper):
     """A test class that inherits from DynamicWrapper.
 
-    This class uses DynamicWrapper to wrap ExampleOne and ExampleTwo objects.
+    This class uses DynamicWrapper to wrap ConcreteOne and ConcreteTwo objects.
     """
 
-    _wrapped_map_ = ["_first", "_second"]
+    _wrapped_map_: ClassVar[list[str]] = ["_first", "_second"]
 
     def __init__(self, first: Any = None, second: Any = None) -> None:
         """Initialize with wrapped objects.
@@ -65,32 +65,32 @@ class TestDynamicWrapperPerformance(WrapperPerformanceTestSuite):
     and compares them with direct operations on the wrapped objects.
 
     Attributes:
-        TestClass: The DynamicWrapper test class to be assayed.
+        UnitTestClass: The DynamicWrapper test class to be assayed.
         timeit_runs: The number of runs to use for timeit measurements.
         speed_tolerance: The maximum percentage of time a new implementation can take compared to the old one.
     """
 
     # Attributes #
-    TestClass = DynamicWrapperTestObject
+    UnitTestClass = DynamicWrapperTestObject
 
     # Instance Methods #
     # Fixtures
     @pytest.fixture
     def test_object(
         self,
-        test_example_one: "WrapperPerformanceTestSuite.ExampleOne",
-        test_example_two: "WrapperPerformanceTestSuite.ExampleTwo",
+        test_example_one: "WrapperPerformanceTestSuite.ConcreteOne",
+        test_example_two: "WrapperPerformanceTestSuite.ConcreteTwo",
     ) -> DynamicWrapperTestObject:
         """Create a test object.
 
         Args:
-            test_example_one: A fixture providing an ExampleOne object.
-            test_example_two: A fixture providing an ExampleTwo object.
+            test_example_one: A fixture providing an ConcreteOne object.
+            test_example_two: A fixture providing an ConcreteTwo object.
 
         Returns:
-            A DynamicWrapperTestObject with ExampleOne and ExampleTwo objects.
+            A DynamicWrapperTestObject with ConcreteOne and ConcreteTwo objects.
         """
-        return self.TestClass(self.ExampleOne(), self.ExampleTwo())
+        return self.UnitTestClass(self.ConcreteOne(), self.ConcreteTwo())
 
     # Tests
     def test_instance_creation_performance(self) -> None:
@@ -100,20 +100,20 @@ class TestDynamicWrapperPerformance(WrapperPerformanceTestSuite):
         """
 
         def wrapper_creation() -> None:
-            _ = self.TestClass(self.ExampleOne(), self.ExampleTwo())
+            _ = self.UnitTestClass(self.ConcreteOne(), self.ConcreteTwo())
 
         # Calculate the mean time in microseconds for the wrapper creation
         new_time = timeit.timeit(wrapper_creation, number=self.timeit_runs // 10)  # Reduce runs for creation
         mean_new = new_time / (self.timeit_runs // 10) * 1000000
 
         # Print the performance comparison
-        print(f"\n{self.TestClass.__name__} creation: {mean_new:.3f} μs")
+        print(f"\n{self.UnitTestClass.__name__} creation: {mean_new:.3f} μs")
         # No assertion here, just measuring performance
 
     def test_getattr_performance(
         self,
         test_object: DynamicWrapperTestObject,
-        test_example_one: "WrapperPerformanceTestSuite.ExampleOne",
+        test_example_one: "WrapperPerformanceTestSuite.ConcreteOne",
     ) -> None:
         """Test the performance of the __getattr__ method.
 
@@ -121,7 +121,7 @@ class TestDynamicWrapperPerformance(WrapperPerformanceTestSuite):
 
         Args:
             test_object: A fixture providing a DynamicWrapperTestObject.
-            test_example_one: A fixture providing an ExampleOne object.
+            test_example_one: A fixture providing an ConcreteOne object.
         """
 
         def dynamic_access() -> None:
@@ -140,13 +140,13 @@ class TestDynamicWrapperPerformance(WrapperPerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\n{self.TestClass.__name__} __getattr__: {mean_new:.3f} μs ({percent:.3f}% of direct access time)")
+        print(f"\n{self.UnitTestClass.__name__} __getattr__: {mean_new:.3f} μs ({percent:.3f}% of direct access time)")
         assert percent < self.speed_tolerance
 
     def test_setattr_performance(
         self,
         test_object: DynamicWrapperTestObject,
-        test_example_one: "WrapperPerformanceTestSuite.ExampleOne",
+        test_example_one: "WrapperPerformanceTestSuite.ConcreteOne",
     ) -> None:
         """Test the performance of the __setattr__ method.
 
@@ -154,7 +154,7 @@ class TestDynamicWrapperPerformance(WrapperPerformanceTestSuite):
 
         Args:
             test_object: A fixture providing a DynamicWrapperTestObject.
-            test_example_one: A fixture providing an ExampleOne object.
+            test_example_one: A fixture providing an ConcreteOne object.
         """
 
         def dynamic_set() -> None:
@@ -173,7 +173,7 @@ class TestDynamicWrapperPerformance(WrapperPerformanceTestSuite):
         percent = (mean_new / mean_old) * 100
 
         # Print the performance comparison
-        print(f"\n{self.TestClass.__name__} __setattr__: {mean_new:.3f} μs ({percent:.3f}% of direct set time)")
+        print(f"\n{self.UnitTestClass.__name__} __setattr__: {mean_new:.3f} μs ({percent:.3f}% of direct set time)")
         assert percent < self.speed_tolerance
 
 
