@@ -304,7 +304,7 @@ def docs_build_active(session: Session) -> None:
     session.run("sphinx-build", *args)
 
 
-@session(python=python_versions[0], venv_backend="none")
+@session(name="docs_active", python=python_versions[0], venv_backend="none", tags=["active_venv"])
 def docs_active(session: Session) -> None:
     """Build and serve the documentation with live reloading on file changes using the active environment."""
     args = session.posargs or ["--open-browser", "docs", "docs/_build"]

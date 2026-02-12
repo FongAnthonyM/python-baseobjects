@@ -16,7 +16,7 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 from abc import abstractmethod
-from typing import Any, ClassVar
+from typing import Any
 
 # Local Packages #
 from .basetestsuite import BaseTestSuite
@@ -34,7 +34,8 @@ class BaseClassTestSuite(BaseTestSuite):
         UnitTestClass: The class that the test suite is testing.
     """
 
-    UnitTestClass: ClassVar[type[Any] | None] = None
+    # Attributes #
+    UnitTestClass: type[Any] | None = None
 
     # Tests #
     # Instantiation #

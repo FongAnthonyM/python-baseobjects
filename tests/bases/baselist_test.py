@@ -45,7 +45,7 @@ class TestBaseList(BaseListTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[BaseTestList]] = BaseTestList
+    UnitTestClass: type[BaseTestList] = BaseTestList
 
 
 # Main #

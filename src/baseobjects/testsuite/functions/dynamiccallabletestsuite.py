@@ -19,7 +19,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar, cast
+from typing import Any, cast
 
 # Third-Party Packages #
 import pytest
@@ -42,7 +42,7 @@ class DynamicCallableTestSuite(BaseCallableTestSuite):
         UnitTestClass: The class that the test suite is testing, which should be DynamicCallable or a subclass.
     """
 
-    UnitTestClass: ClassVar[type[DynamicCallable]]
+    UnitTestClass: type[DynamicCallable]
 
     # Tests #
     # Magic Methods #

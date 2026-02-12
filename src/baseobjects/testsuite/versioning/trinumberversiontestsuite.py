@@ -17,7 +17,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import copy
 import pickle
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -41,7 +41,7 @@ class TriNumberVersionTestSuite(VersionTestSuite):
     This class provides common test functionality for TriNumberVersion classes.
     """
 
-    UnitTestClass: ClassVar[type[TriNumberVersion]] = TriNumberVersion
+    UnitTestClass: type[TriNumberVersion] = TriNumberVersion
 
     # Fixtures #
     @pytest.fixture

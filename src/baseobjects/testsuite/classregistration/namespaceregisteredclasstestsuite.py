@@ -15,7 +15,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -38,7 +38,7 @@ class NamespaceRegisteredClassTestSuite(BaseRegisteredClassTestSuite):
         UnitTestClass: The class that the test suite is testing.
     """
 
-    UnitTestClass: ClassVar[type[NamespaceRegisteredClass]]
+    UnitTestClass: type[NamespaceRegisteredClass]
 
     # Tests #
     def test_init_subclass_with_registration(self) -> None:

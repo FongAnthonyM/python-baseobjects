@@ -8,7 +8,7 @@ API Reference
 
 
 Bases
-----------------
+-----
 
 Core base classes and common primitives that other modules build upon.
 
@@ -27,7 +27,7 @@ BaseMeta
    :members:
 
 Bases Base Callable
-----------------------------
+-------------------
 
 .. automodule:: baseobjects.bases.basecallable
 
@@ -44,12 +44,12 @@ SentinelObject
    :members:
 
 Bases Collections
----------------------------
+-----------------
 
 .. automodule:: baseobjects.bases.collections
 
 Bases Collections Base Dict
----------------------------------
+---------------------------
 
 .. automodule:: baseobjects.bases.collections.basedict
    :members:

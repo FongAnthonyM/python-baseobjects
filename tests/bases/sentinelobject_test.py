@@ -37,7 +37,7 @@ class TestSentinelObject(SentinelObjectTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[SentinelObject]] = SentinelObject
+    UnitTestClass: type[SentinelObject] = SentinelObject
 
     @pytest.mark.parametrize("sentinel_name", ["DEFAULTSENTINEL", "SEARCHSENTINEL"])
     def test_predefined_constants(self, sentinel_name: str) -> None:

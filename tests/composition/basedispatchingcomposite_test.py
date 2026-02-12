@@ -143,7 +143,7 @@ class TestBaseDispatchingComposite(BaseDispatchingCompositeTestSuite):
 
     # Attributes #
     UnitTestComponent: ClassVar[type[BaseComponent]] = ConcreteComponentClass
-    UnitTestClass: ClassVar[type[BaseDispatchingComposite]] = ConcreteDispatchingCompositeClass
+    UnitTestClass: type[BaseDispatchingComposite] = ConcreteDispatchingCompositeClass
 
     # Fixtures
     @pytest.fixture(

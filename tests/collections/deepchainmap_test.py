@@ -38,7 +38,7 @@ class TestDeepChainMap(DeepChainMapTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[DeepChainMap]] = DeepChainMap
+    UnitTestClass: type[DeepChainMap] = DeepChainMap
 
 
 # Main #

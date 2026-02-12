@@ -16,7 +16,7 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import time
-from typing import Any, ClassVar
+from typing import Any
 
 # Local Packages #
 from ...cachingtools.caches.timedsinglecache import TimedSingleCache
@@ -31,7 +31,8 @@ class TimedSingleCacheTestSuite(TimedCacheTestSuite):
     This class provides common test functionality for single item timed cache classes.
     """
 
-    UnitTestClass: ClassVar[type[TimedSingleCache]] = TimedSingleCache
+    # Attributes #
+    UnitTestClass: type[TimedSingleCache] = TimedSingleCache
 
     # Tests #
     def test_single_item_replacement(self, example_functions: tuple[Any, Any]) -> None:

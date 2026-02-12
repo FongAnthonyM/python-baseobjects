@@ -51,7 +51,7 @@ class DynamicWrapperTestSuite(WrapperTestSuite):
     This class provides common test functionality for DynamicWrapper classes.
     """
 
-    UnitTestClass: ClassVar[type[DynamicWrapper]]
+    UnitTestClass: type[DynamicWrapper]
 
     # Tests #
     def test_setattr_method(self) -> None:

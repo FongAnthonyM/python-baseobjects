@@ -50,7 +50,7 @@ class TestBaseComposite(BaseCompositeTestSuite):
 
     # Attributes #
     UnitTestComponent: ClassVar[type[BaseComponent]] = ConcreteComponentClass
-    UnitTestClass: ClassVar[type[BaseComposite]] = ConcreteCompositeClass
+    UnitTestClass: type[BaseComposite] = ConcreteCompositeClass
 
     # Tests #
     def test_init_false(self) -> None:

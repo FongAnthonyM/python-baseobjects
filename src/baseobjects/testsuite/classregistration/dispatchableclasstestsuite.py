@@ -15,7 +15,6 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import ClassVar
 
 # Local Packages #
 from ...classregistration import DispatchableClass
@@ -35,4 +34,4 @@ class DispatchableClassTestSuite(BaseRegisteredClassTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[DispatchableClass]]
+    UnitTestClass: type[DispatchableClass]

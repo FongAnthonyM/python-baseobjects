@@ -95,7 +95,7 @@ class TestDynamicDecorator(DynamicDecoratorTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[DynamicDecorator]] = DynamicDecorator
+    UnitTestClass: type[DynamicDecorator] = DynamicDecorator
 
     # Instance Methods #
     def create_test_method_object(self) -> DynamicDecorator:

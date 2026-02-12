@@ -15,7 +15,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar
+from typing import Any
 
 # Local Packages #
 from ...cachingtools.caches.timedlrucache import TimedLRUCache
@@ -30,7 +30,8 @@ class TimedLRUCacheTestSuite(TimedCacheTestSuite):
     This class provides common test functionality for LRU timed cache classes.
     """
 
-    UnitTestClass: ClassVar[type[TimedLRUCache]] = TimedLRUCache
+    # Attributes #
+    UnitTestClass: type[TimedLRUCache] = TimedLRUCache
 
     # Tests #
     def test_lru_eviction(self, example_functions: tuple[Any, Any]) -> None:

@@ -39,7 +39,7 @@ class TestDynamicMethod(DynamicMethodTestSuite):
 
     # Attributes #
     __test__ = True
-    UnitTestClass: ClassVar[type[DynamicMethod]] = DynamicMethod
+    UnitTestClass: type[DynamicMethod] = DynamicMethod
 
 
 # Main #

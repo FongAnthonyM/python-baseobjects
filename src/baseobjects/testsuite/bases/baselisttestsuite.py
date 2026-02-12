@@ -20,7 +20,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import copy
 import pickle
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -41,7 +41,8 @@ class BaseListTestSuite(BaseObjectTestSuite):
         UnitTestClass: The class that the test suite is testing, which should be BaseList or a subclass.
     """
 
-    UnitTestClass: ClassVar[type[BaseList]]
+    # Attributes #
+    UnitTestClass: type[BaseList]
 
     # Fixtures #
     @pytest.fixture

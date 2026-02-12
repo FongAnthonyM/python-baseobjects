@@ -121,7 +121,7 @@ class TestBaseReducible(BaseReducibleTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[ReducibleTestObject]] = ReducibleTestObject
+    UnitTestClass: type[ReducibleTestObject] = ReducibleTestObject
 
     def test_getstate_missing_slot(self) -> None:
         """Tests getstate when a slot is missing (deleted)."""

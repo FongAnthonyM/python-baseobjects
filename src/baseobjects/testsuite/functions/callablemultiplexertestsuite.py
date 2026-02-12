@@ -17,7 +17,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import inspect
 import pickle
-from typing import Any, ClassVar
+from typing import Any
 from unittest.mock import patch
 
 # Third-Party Packages #
@@ -88,7 +88,7 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
         UnitTestClass: The class that the test suite is testing.
     """
 
-    UnitTestClass: ClassVar[type[CallableMultiplexer]]
+    UnitTestClass: type[CallableMultiplexer]
 
     # Helper Methods #
     def create_function_object(self, func: Any = None, *args: Any, **kwargs: Any) -> CallableMultiplexer:

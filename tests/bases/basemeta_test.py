@@ -50,7 +50,7 @@ class TestBaseMeta(BaseClassTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[BaseMeta]] = BaseMetaSubclass
+    UnitTestClass: type[BaseMeta] = BaseMetaSubclass
     ConcreteUnitTestClass: type[ConcreteClass] = ConcreteClass
 
     # Instance Methods #

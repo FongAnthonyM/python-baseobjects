@@ -38,7 +38,7 @@ class TestDynamicFunction(DynamicFunctionTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[DynamicFunction]] = DynamicFunction
+    UnitTestClass: type[DynamicFunction] = DynamicFunction
 
 
 # Main #

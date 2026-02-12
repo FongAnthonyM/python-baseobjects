@@ -15,7 +15,6 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import ClassVar
 
 # Local Packages #
 from ...composition import DispatchableComposite
@@ -37,4 +36,4 @@ class DispatchableCompositeTestSuite(BaseDispatchingCompositeTestSuite, Dispatch
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[DispatchableComposite]]
+    UnitTestClass: type[DispatchableComposite]

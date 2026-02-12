@@ -44,7 +44,7 @@ class TestBaseDict(BaseDictTestSuite):
         __test__ = False
 
     # Attributes #
-    UnitTestClass: ClassVar[type[BaseTestDict]] = BaseTestDict
+    UnitTestClass: type[BaseTestDict] = BaseTestDict
 
 
 # Main #

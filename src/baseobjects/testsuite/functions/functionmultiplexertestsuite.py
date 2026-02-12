@@ -15,7 +15,6 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import ClassVar
 
 # Third-Party Packages #
 import pytest
@@ -32,7 +31,7 @@ class FunctionMultiplexerTestSuite(CallableMultiplexerTestSuite):
     This class provides common test functionality for child classes of ~baseobjects.functions.FunctionMultiplexer.
     """
 
-    UnitTestClass: ClassVar[type[FunctionMultiplexer]]
+    UnitTestClass: type[FunctionMultiplexer]
 
     # Tests #
     # Magic Methods #

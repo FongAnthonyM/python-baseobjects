@@ -33,7 +33,7 @@ class StaticWrapperTestSuite(WrapperTestSuite):
     This class provides common test functionality for StaticWrapper classes.
     """
 
-    UnitTestClass: ClassVar[type[StaticWrapper]]
+    UnitTestClass: type[StaticWrapper]
 
     # Tests #
     def test_exclude_attributes(self) -> None:

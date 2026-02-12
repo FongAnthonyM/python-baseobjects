@@ -36,7 +36,7 @@ class TestNamespaceClassRegistry(NamespaceClassRegistryTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[NamespaceClassRegistry]] = NamespaceClassRegistry
+    UnitTestClass: type[NamespaceClassRegistry] = NamespaceClassRegistry
 
 
 # Main #

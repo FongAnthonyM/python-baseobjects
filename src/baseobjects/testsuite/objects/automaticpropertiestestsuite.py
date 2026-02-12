@@ -20,7 +20,6 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import copy
 import pickle
-from typing import ClassVar
 
 # Third-Party Packages #
 import pytest
@@ -43,7 +42,7 @@ class AutomaticPropertiesTestSuite(BaseObjectTestSuite):
         UnitTestClass: The class that the test suite is testing.
     """
 
-    UnitTestClass: ClassVar[type[AutomaticProperties]]
+    UnitTestClass: type[AutomaticProperties]
 
     # Tests #
     # Instantiation #

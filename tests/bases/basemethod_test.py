@@ -89,7 +89,7 @@ class TestBaseMethod(BaseMethodTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[BaseMethod]] = BaseMethod
+    UnitTestClass: type[BaseMethod] = BaseMethod
 
     # Instance Methods #
     # Tests

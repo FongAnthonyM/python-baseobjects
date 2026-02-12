@@ -124,7 +124,7 @@ class TestDispatchableClass(DispatchableClassTestSuite):
         class_registration = True
 
     # Attributes #
-    UnitTestClass: ClassVar[type[ConcreteDispatchableClass]] = ConcreteDispatchableClass
+    UnitTestClass: type[ConcreteDispatchableClass] = ConcreteDispatchableClass
 
     # Instance Methods #
     # Tests

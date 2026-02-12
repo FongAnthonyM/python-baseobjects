@@ -20,7 +20,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -43,7 +43,8 @@ class BaseFunctionTestSuite(BaseCallableTestSuite):
         UnitTestClass: The class that the test suite is testing, which should be BaseFunction or a subclass.
     """
 
-    UnitTestClass: ClassVar[type[BaseFunction]]
+    # Attributes #
+    UnitTestClass: type[BaseFunction]
 
     # Tests #
     # Magic Methods #

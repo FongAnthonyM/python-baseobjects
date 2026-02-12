@@ -16,7 +16,7 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 from collections.abc import Callable
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -96,7 +96,7 @@ class FunctionRegistryTestSuite(BaseDictTestSuite):
     This class provides common test functionality for child classes of ~baseobjects.functions.FunctionRegistry.
     """
 
-    UnitTestClass: ClassVar[type[FunctionRegistry]]
+    UnitTestClass: type[FunctionRegistry]
 
     # Fixtures #
     @pytest.fixture

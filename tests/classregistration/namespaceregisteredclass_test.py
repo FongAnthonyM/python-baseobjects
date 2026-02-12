@@ -48,7 +48,7 @@ class TestNamespaceRegisteredClass(NamespaceRegisteredClassTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[ConcreteNamespaceRegisteredClass]] = ConcreteNamespaceRegisteredClass
+    UnitTestClass: type[ConcreteNamespaceRegisteredClass] = ConcreteNamespaceRegisteredClass
 
     @pytest.mark.parametrize(
         ("args", "kwargs", "expected", "error"),

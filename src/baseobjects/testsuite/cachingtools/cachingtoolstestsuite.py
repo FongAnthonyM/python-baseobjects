@@ -20,7 +20,7 @@ import pickle
 import time
 from abc import abstractmethod
 from collections.abc import Callable
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -60,7 +60,8 @@ class BaseCacheTestSuite(BaseObjectTestSuite):
         UnitTestClass: The cache class that the test suite is testing.
     """
 
-    UnitTestClass: ClassVar[type[Any]]
+    # Attributes #
+    UnitTestClass: type[Any]
 
     # Helper Methods #
     def create_example_functions(self) -> tuple[Callable[..., Any], Callable[..., Any]]:
@@ -369,7 +370,8 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
         UnitTestClass: The timed cache class that the test suite is testing.
     """
 
-    UnitTestClass: ClassVar[type[BaseTimedCache]]
+    # Attributes #
+    UnitTestClass: type[BaseTimedCache]
 
     # Tests #
     # Instantiation #

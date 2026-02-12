@@ -36,7 +36,7 @@ class TestTriNumberVersion(TriNumberVersionTestSuite):
     """
 
     # Class Attributes #
-    UnitTestClass: ClassVar[type[TriNumberVersion]] = TriNumberVersion
+    UnitTestClass: type[TriNumberVersion] = TriNumberVersion
 
 
 # Main #

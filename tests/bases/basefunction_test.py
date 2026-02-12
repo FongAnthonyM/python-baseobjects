@@ -39,7 +39,7 @@ class TestBaseFunction(BaseFunctionTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[BaseFunction]] = BaseFunction
+    UnitTestClass: type[BaseFunction] = BaseFunction
 
     # Instance Methods #
     # Tests

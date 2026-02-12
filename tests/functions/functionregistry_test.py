@@ -36,7 +36,7 @@ class TestFunctionRegistry(FunctionRegistryTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[FunctionRegistry]] = FunctionRegistry
+    UnitTestClass: type[FunctionRegistry] = FunctionRegistry
 
     def test_init_false(self) -> None:
         """Test initialization with init=False."""

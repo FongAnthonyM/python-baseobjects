@@ -36,7 +36,7 @@ class TestFunctionMultiplexer(FunctionMultiplexerTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[FunctionMultiplexer]] = FunctionMultiplexer
+    UnitTestClass: type[FunctionMultiplexer] = FunctionMultiplexer
 
 
 # Main #

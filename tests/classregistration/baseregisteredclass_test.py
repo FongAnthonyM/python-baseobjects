@@ -113,7 +113,7 @@ class TestBaseRegisteredClass(BaseRegisteredClassTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[ConcreteRegisteredClass]] = ConcreteRegisteredClass
+    UnitTestClass: type[ConcreteRegisteredClass] = ConcreteRegisteredClass
 
     def test_base_register_class_coverage(self) -> None:
         """Tests the base implementation of register_class."""

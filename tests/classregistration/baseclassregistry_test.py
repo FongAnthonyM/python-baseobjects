@@ -62,7 +62,7 @@ class TestBaseClassRegistry(BaseClassRegistryTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[BaseClassRegistry]] = ConcreteClassRegistry
+    UnitTestClass: type[BaseClassRegistry] = ConcreteClassRegistry
 
 
 # Main #

@@ -21,7 +21,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import copy
 import pickle
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -43,7 +43,8 @@ class BaseReducibleTestSuite(BaseObjectTestSuite):
         UnitTestClass: The class that the test suite is testing, which should be BaseReducible or a subclass.
     """
 
-    UnitTestClass: ClassVar[type[BaseReducible] | None] = None  # type: ignore[assignment]
+    # Attributes #
+    UnitTestClass: type[BaseReducible] | None = None  # type: ignore[assignment]
 
     # Tests #
     # Copying #

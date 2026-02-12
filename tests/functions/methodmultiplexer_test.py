@@ -36,7 +36,7 @@ class TestMethodMultiplexer(MethodMultiplexerTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[MethodMultiplexer]] = MethodMultiplexer
+    UnitTestClass: type[MethodMultiplexer] = MethodMultiplexer
 
 
 # Main #

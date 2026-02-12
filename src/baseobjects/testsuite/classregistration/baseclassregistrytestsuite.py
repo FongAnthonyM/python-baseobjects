@@ -17,7 +17,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import copy
 import pickle
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -46,7 +46,7 @@ class BaseClassRegistryTestSuite(BaseDictTestSuite):
     class ConcreteClass2:
         """Another test class for testing the registry."""
 
-    UnitTestClass: ClassVar[type[BaseClassRegistry]]
+    UnitTestClass: type[BaseClassRegistry]
 
     # Helper Methods #
     def create_test_registry(self, *args: Any, **kwargs: Any) -> BaseClassRegistry:

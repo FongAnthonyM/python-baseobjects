@@ -25,7 +25,7 @@ import copy
 import inspect
 import pickle
 from abc import abstractmethod
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -48,7 +48,8 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
         UnitTestClass: The class that the test suite is testing, which should be BaseMethod or a subclass.
     """
 
-    UnitTestClass: ClassVar[type[BaseMethod]]
+    # Attributes #
+    UnitTestClass: type[BaseMethod]
     BindTargetClass: type[Any]
 
     # Fixtures #

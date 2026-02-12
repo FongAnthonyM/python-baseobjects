@@ -42,7 +42,7 @@ class TestCallableMultiplexer(CallableMultiplexerTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[CallableMultiplexer]] = CallableMultiplexer
+    UnitTestClass: type[CallableMultiplexer] = CallableMultiplexer
 
     def test_construct_with_registry_as_func(self) -> None:
         """Test constructing with a FunctionRegistry as the first argument."""
@@ -71,7 +71,7 @@ class TestFunctionMultiplexer(FunctionMultiplexerTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[FunctionMultiplexer]] = FunctionMultiplexer
+    UnitTestClass: type[FunctionMultiplexer] = FunctionMultiplexer
 
 
 class TestMethodMultiplexer(MethodMultiplexerTestSuite):
@@ -81,7 +81,7 @@ class TestMethodMultiplexer(MethodMultiplexerTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[MethodMultiplexer]] = MethodMultiplexer
+    UnitTestClass: type[MethodMultiplexer] = MethodMultiplexer
 
 
 # Main #

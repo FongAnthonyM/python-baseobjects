@@ -36,7 +36,7 @@ class BaseMethodRegistryTestSuite(FunctionRegistryTestSuite):
     This class provides common test functionality for child classes of BaseMethodRegistry.
     """
 
-    UnitTestClass: ClassVar[type[BaseMethodRegistry]]
+    UnitTestClass: type[BaseMethodRegistry]
 
     # Tests #
     # Instantiation #
@@ -91,7 +91,7 @@ class BoundMethodRegistryTestSuite(FunctionRegistryTestSuite):
     This class provides common test functionality for child classes of BoundMethodRegistry.
     """
 
-    UnitTestClass: ClassVar[type[BoundMethodRegistry]]
+    UnitTestClass: type[BoundMethodRegistry]
 
     BaseRegistryClass: ClassVar[type[BaseMethodRegistry]] = BaseMethodRegistry
 
@@ -410,7 +410,7 @@ class MethodRegistryTestSuite(BaseMethodRegistryTestSuite):
     This class provides common test functionality for child classes of MethodRegistry.
     """
 
-    UnitTestClass: ClassVar[type[MethodRegistry]]
+    UnitTestClass: type[MethodRegistry]
 
     # Tests #
     def test_descriptor_protocol(self, test_object: MethodRegistry, test_instance: RegistryTestObject) -> None:

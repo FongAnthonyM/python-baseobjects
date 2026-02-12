@@ -18,7 +18,7 @@ __version__ = "1.12.0"
 import copy
 import pickle
 import time
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -36,7 +36,7 @@ class TimedDictTestSuite(BaseDictTestSuite):
     This class provides common test functionality for TimedDict classes.
     """
 
-    UnitTestClass: ClassVar[type[TimedDict]]
+    UnitTestClass: type[TimedDict]
 
     # Fixtures #
     @pytest.fixture

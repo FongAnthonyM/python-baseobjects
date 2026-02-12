@@ -18,7 +18,7 @@ __version__ = "1.12.0"
 import copy
 import pickle
 from abc import abstractmethod
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -47,7 +47,7 @@ class VersionTestSuite(BaseObjectTestSuite):
         UnitTestClass: The version class that the test suite is testing.
     """
 
-    UnitTestClass: ClassVar[type[Version]]
+    UnitTestClass: type[Version]
 
     # Tests #
     # Magic Methods #

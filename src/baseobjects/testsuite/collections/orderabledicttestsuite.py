@@ -17,7 +17,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import copy
 import pickle
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -35,7 +35,7 @@ class OrderableDictTestSuite(BaseDictTestSuite):
     This class provides common test functionality for OrderableDict classes.
     """
 
-    UnitTestClass: ClassVar[type[OrderableDict]]
+    UnitTestClass: type[OrderableDict]
 
     # Fixtures #
     @pytest.fixture

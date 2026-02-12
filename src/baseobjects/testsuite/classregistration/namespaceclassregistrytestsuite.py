@@ -16,7 +16,7 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import unittest.mock
-from typing import Any, ClassVar, cast
+from typing import Any, cast
 
 # Third-Party Packages #
 import pytest
@@ -38,7 +38,7 @@ class NamespaceClassRegistryTestSuite(BaseClassRegistryTestSuite):
         UnitTestClass: The class that the test suite is testing.
     """
 
-    UnitTestClass: ClassVar[type[NamespaceClassRegistry]]
+    UnitTestClass: type[NamespaceClassRegistry]
 
     # Fixtures #
     @pytest.fixture

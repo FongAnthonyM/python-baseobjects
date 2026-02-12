@@ -192,7 +192,7 @@ class TestBaseTimedCacheCallable(BaseTimedCacheCallableTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[BaseTimedCacheCallable]] = ConcreteTimedCacheCallable
+    UnitTestClass: type[BaseTimedCacheCallable] = ConcreteTimedCacheCallable
 
     # Instance Methods #
     # Fixtures

@@ -15,7 +15,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar
+from typing import Any
 
 # Local Packages #
 from ...cachingtools.caches.timedkeylesscache import TimedKeylessCache
@@ -30,7 +30,8 @@ class TimedKeylessCacheTestSuite(TimedCacheTestSuite):
     This class provides common test functionality for keyless timed cache classes.
     """
 
-    UnitTestClass: ClassVar[type[TimedKeylessCache]] = TimedKeylessCache
+    # Attributes #
+    UnitTestClass: type[TimedKeylessCache] = TimedKeylessCache
 
     # Tests #
     def test_caching(self, *args: Any, **kwargs: Any) -> None:

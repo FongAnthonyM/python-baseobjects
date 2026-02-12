@@ -56,7 +56,7 @@ class TestBaseObject(BaseObjectTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[BaseTestObject]] = BaseTestObject
+    UnitTestClass: type[BaseTestObject] = BaseTestObject
 
     # Instance Methods #
     # Tests

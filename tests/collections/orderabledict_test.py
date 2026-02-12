@@ -39,7 +39,7 @@ class TestOrderableDict(OrderableDictTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[OrderableDict]] = OrderableDict
+    UnitTestClass: type[OrderableDict] = OrderableDict
 
 
 # Main #

@@ -19,7 +19,7 @@ import asyncio
 import copy
 import pickle
 from collections import deque
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -36,7 +36,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
     This class provides common test functionality for child classes of ~baseobjects.objects.CallbackManager.
     """
 
-    UnitTestClass: ClassVar[type[CallbackManager]]
+    UnitTestClass: type[CallbackManager]
 
     # Fixtures #
     @pytest.fixture

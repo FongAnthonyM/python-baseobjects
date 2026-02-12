@@ -38,7 +38,7 @@ class TestGroupedList(GroupedListTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[GroupedList]] = GroupedList
+    UnitTestClass: type[GroupedList] = GroupedList
 
 
 # Main #

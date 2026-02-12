@@ -16,7 +16,7 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import pickle
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -52,7 +52,7 @@ class MethodMultiplexerTestSuite(CallableMultiplexerTestSuite):
     This class provides common test functionality for child classes of ~baseobjects.functions.MethodMultiplexer.
     """
 
-    UnitTestClass: ClassVar[type[MethodMultiplexer]]
+    UnitTestClass: type[MethodMultiplexer]
 
     # Helper Methods #
     def create_function_object(self, func: Any = None, *args: Any, **kwargs: Any) -> MethodMultiplexer:

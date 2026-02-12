@@ -16,7 +16,7 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import pickle
-from typing import Any, ClassVar, Literal
+from typing import Any, Literal
 
 # Third-Party Packages #
 import pytest
@@ -33,7 +33,7 @@ class SingleKwargDispatchTestSuite(BaseDecoratorTestSuite):
     This class provides common test functionality for singlekwargdispatch.
     """
 
-    UnitTestClass: ClassVar[type[singlekwargdispatch]] = singlekwargdispatch
+    UnitTestClass: type[singlekwargdispatch] = singlekwargdispatch
 
     # Tests #
     # Magic Methods #

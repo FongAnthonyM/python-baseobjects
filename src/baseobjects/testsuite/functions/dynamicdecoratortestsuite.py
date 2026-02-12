@@ -20,7 +20,7 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 from abc import abstractmethod
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -44,7 +44,7 @@ class DynamicDecoratorTestSuite(BaseDecoratorTestSuite, DynamicFunctionTestSuite
         UnitTestClass: The class that the test suite is testing, which should be DynamicDecorator or a subclass.
     """
 
-    UnitTestClass: ClassVar[type[DynamicDecorator]]
+    UnitTestClass: type[DynamicDecorator]
 
     # Tests #
     # Magic Methods #

@@ -22,7 +22,7 @@ __version__ = "1.12.0"
 import pickle
 import time
 from collections.abc import Callable
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -98,7 +98,8 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         UnitTestClass: The class that the test suite is testing, which should be BaseTimedCacheCallable or a subclass.
     """
 
-    UnitTestClass: ClassVar[type[BaseTimedCacheCallable]]
+    # Attributes #
+    UnitTestClass: type[BaseTimedCacheCallable]
 
     # Helper Methods #
     def create_test_function(self) -> tuple[Callable[..., Any], Callable[..., Any]]:

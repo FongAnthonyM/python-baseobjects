@@ -397,7 +397,7 @@ class TestVersion(VersionTestSuite):
     """
 
     # Class Attributes #
-    UnitTestClass: ClassVar[type[ConcreteVersion]] = ConcreteVersion
+    UnitTestClass: type[ConcreteVersion] = ConcreteVersion
 
     # Instance Methods #
     # Fixtures

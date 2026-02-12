@@ -42,7 +42,7 @@ class BaseComponentTestSuite(BaseObjectTestSuite):
 
     UnitTestComposite: ClassVar[type[Any]]
 
-    UnitTestClass: ClassVar[type[BaseComponent]]
+    UnitTestClass: type[BaseComponent]
 
     # Fixtures #
     @pytest.fixture

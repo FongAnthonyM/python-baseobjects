@@ -51,7 +51,7 @@ class TestBaseCallable(BaseCallableTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[BaseCallable]] = BaseCallable
+    UnitTestClass: type[BaseCallable] = BaseCallable
 
     # Instance Methods #
     # Tests

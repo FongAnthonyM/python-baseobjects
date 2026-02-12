@@ -20,7 +20,7 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import asyncio
-from typing import Any, ClassVar
+from typing import Any
 
 # Local Packages #
 from ...functions.dynamiccallable import DynamicFunction
@@ -79,7 +79,7 @@ class DynamicFunctionTestSuite(DynamicCallableTestSuite, BaseFunctionTestSuite):
         UnitTestClass: The class that the test suite is testing, which should be DynamicFunction or a subclass.
     """
 
-    UnitTestClass: ClassVar[type[DynamicFunction]]
+    UnitTestClass: type[DynamicFunction]
 
     # Tests #
     def test_coroutine(self, test_function_object: DynamicFunction) -> None:

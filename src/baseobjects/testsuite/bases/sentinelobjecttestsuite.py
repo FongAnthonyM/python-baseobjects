@@ -20,7 +20,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import copy
 import pickle
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -42,7 +42,8 @@ class SentinelObjectTestSuite(BaseObjectTestSuite):
         UnitTestClass: The class that the test suite is testing, which should be SentinelObject or a subclass.
     """
 
-    UnitTestClass: ClassVar[type[SentinelObject]]
+    # Attributes #
+    UnitTestClass: type[SentinelObject]
 
     # Fixtures #
     @pytest.fixture

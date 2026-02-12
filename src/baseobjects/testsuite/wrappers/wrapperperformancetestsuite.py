@@ -17,7 +17,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import timeit
 from abc import abstractmethod
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -114,7 +114,7 @@ class WrapperPerformanceTestSuite(BasePerformanceTestSuite):
 
     speed_tolerance: int = 150
 
-    UnitTestClass: ClassVar[type[Any]]
+    UnitTestClass: type[Any]
 
     # Fixtures #
     @abstractmethod

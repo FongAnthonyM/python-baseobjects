@@ -37,7 +37,7 @@ class TestLinkedNode(LinkedNodeTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[LinkedNode]] = LinkedNode
+    UnitTestClass: type[LinkedNode] = LinkedNode
 
 
 # Main #

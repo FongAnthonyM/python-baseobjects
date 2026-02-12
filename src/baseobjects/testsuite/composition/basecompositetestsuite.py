@@ -41,7 +41,7 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
 
     UnitTestComponent: ClassVar[type[Any]]
 
-    UnitTestClass: ClassVar[type[BaseComposite]]
+    UnitTestClass: type[BaseComposite]
 
     # Helper Methods #
     def create_components(

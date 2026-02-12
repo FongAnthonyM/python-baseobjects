@@ -20,7 +20,7 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import asyncio
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -73,7 +73,7 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
         UnitTestClass: The class that the test suite is testing, which should be DynamicMethod or a subclass.
     """
 
-    UnitTestClass: ClassVar[type[DynamicMethod]]
+    UnitTestClass: type[DynamicMethod]
 
     # Tests #
     # Magic Methods #

@@ -38,14 +38,14 @@ class TestBaseMethodRegistry(BaseMethodRegistryTestSuite):
     """Test the BaseMethodRegistry class."""
 
     # Attributes #
-    UnitTestClass: ClassVar[type[BaseMethodRegistry]] = BaseMethodRegistry
+    UnitTestClass: type[BaseMethodRegistry] = BaseMethodRegistry
 
 
 class TestBoundMethodRegistry(BoundMethodRegistryTestSuite):
     """Test the BoundMethodRegistry class."""
 
     # Attributes #
-    UnitTestClass: ClassVar[type[BoundMethodRegistry]] = BoundMethodRegistry
+    UnitTestClass: type[BoundMethodRegistry] = BoundMethodRegistry
     BaseRegistryClass: ClassVar[type[BaseMethodRegistry]] = BaseMethodRegistry
 
 
@@ -53,7 +53,7 @@ class TestMethodRegistry(MethodRegistryTestSuite):
     """Test the MethodRegistry class."""
 
     # Attributes #
-    UnitTestClass: ClassVar[type[MethodRegistry]] = MethodRegistry
+    UnitTestClass: type[MethodRegistry] = MethodRegistry
 
 
 # Main #

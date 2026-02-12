@@ -89,7 +89,7 @@ class TestBaseDecorator(BaseDecoratorTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[BaseDecorator]] = BaseDecorator
+    UnitTestClass: type[BaseDecorator] = BaseDecorator
 
     # Instance Methods #
     # Tests

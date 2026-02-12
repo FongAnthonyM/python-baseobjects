@@ -238,7 +238,7 @@ class TestDispatchableComposite(DispatchableCompositeTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[DispatchableComposite]] = ConcreteDispatchableComposite
+    UnitTestClass: type[DispatchableComposite] = ConcreteDispatchableComposite
     UnitTestComponent: ClassVar[type[BaseComponent]] = ConcreteComponentClass
 
     # Fixtures

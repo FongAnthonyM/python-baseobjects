@@ -39,7 +39,7 @@ class TestCircularDoublyLinkedContainer(CircularDoublyLinkedContainerTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[CircularDoublyLinkedContainer]] = CircularDoublyLinkedContainer
+    UnitTestClass: type[CircularDoublyLinkedContainer] = CircularDoublyLinkedContainer
 
     def test_linked_node_init(self) -> None:
         """Tests LinkedNode initialization."""

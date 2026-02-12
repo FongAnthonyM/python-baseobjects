@@ -69,7 +69,7 @@ class TestBaseComponent(BaseComponentTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[BaseComponent]] = ConcreteComponentClass
+    UnitTestClass: type[BaseComponent] = ConcreteComponentClass
     UnitTestComposite: ClassVar[type[BaseComposite]] = ConcreteCompositeClass
 
     # Tests #

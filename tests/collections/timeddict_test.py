@@ -38,7 +38,7 @@ class TestTimedDict(TimedDictTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[TimedDict]] = TimedDict
+    UnitTestClass: type[TimedDict] = TimedDict
 
 
 # Main #

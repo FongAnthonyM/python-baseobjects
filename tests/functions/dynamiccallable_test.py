@@ -89,7 +89,7 @@ class TestDynamicCallable(DynamicCallableTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[DynamicCallable]] = DynamicCallable
+    UnitTestClass: type[DynamicCallable] = DynamicCallable
 
     # Instance Methods #
     def create_test_method_object(self) -> DynamicCallable:
@@ -136,7 +136,7 @@ class TestDynamicFunction(DynamicFunctionTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[DynamicFunction]] = DynamicFunction
+    UnitTestClass: type[DynamicFunction] = DynamicFunction
 
 
 class TestDynamicMethod(DynamicMethodTestSuite):
@@ -146,7 +146,7 @@ class TestDynamicMethod(DynamicMethodTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: ClassVar[type[DynamicMethod]] = DynamicMethod
+    UnitTestClass: type[DynamicMethod] = DynamicMethod
 
     def test_call_without_self(self) -> None:
         """Test calling when _self_ attribute causes AttributeError."""

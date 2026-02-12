@@ -18,7 +18,7 @@ __version__ = "1.12.0"
 import copy
 import pickle
 from collections import ChainMap
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -39,7 +39,7 @@ class DeepChainMapTestSuite(BaseObjectTestSuite):
         UnitTestClass: The class that the test suite is testing, which should be DeepChainMap or a subclass.
     """
 
-    UnitTestClass: ClassVar[type[DeepChainMap]] = DeepChainMap
+    UnitTestClass: type[DeepChainMap] = DeepChainMap
 
     # Fixtures #
     @pytest.fixture
