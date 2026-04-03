@@ -22,7 +22,7 @@ __version__ = "1.12.0"
 import copy
 import pickle
 from collections.abc import Callable
-from typing import Any, ClassVar
+from typing import Any
 from unittest.mock import patch
 
 # Third-Party Packages #
@@ -67,6 +67,8 @@ class ConcreteTimedCacheCallable(BaseTimedCacheCallable):
     caching implementation.
     """
 
+    method_type = BaseTimedCacheMethod
+
     _cache_method: str = "cache_dict"
 
     def __init__(
@@ -97,7 +99,7 @@ class ConcreteTimedCacheCallable(BaseTimedCacheCallable):
         )
 
         # Add caching methods to the cache multiplexer
-        self.cache.add_function("cache_dict", self.cache_dict)
+        self.cache.add_function("cache_dict", type(self).cache_dict)
 
         # Set the default cache method if none was specified
         if call_method is None:
@@ -135,7 +137,7 @@ class ConcreteTimedCacheCallable(BaseTimedCacheCallable):
         if self.__wrapped__ is None:
             msg = "Wrapped function is None"
             raise TypeError(msg)
-        result = self.__wrapped__(*args, **kwargs)
+        result = self.call_wrapped(*args, **kwargs)
         self.cache_container[key] = result
 
         return result
@@ -446,37 +448,65 @@ class TestBaseTimedCacheMethod:
         assert isinstance(reduce_result_tuple_none[2], tuple)
         assert reduce_result_tuple_none[2][0] is None
 
+        # Case 5: Dict state
+        class DictStateMethod(TestBaseTimedCacheMethod.ConcreteTimedCacheMethod):
+            def __getstate__(self) -> dict[str, Any]:
+                return {"a": 1, "__wrapped__": "something"}
+
+        method_dict = DictStateMethod(func=MockFunc(), instance=owner_instance, owner=Owner)
+        reduce_result_dict = method_dict.__reduce__()
+        state_dict = reduce_result_dict[2]
+        assert isinstance(state_dict, dict)
+        assert state_dict == {"a": 1}
+        assert "__wrapped__" not in state_dict
+
+    def test_call_exception_handling(self) -> None:
+        """Tests exception handling in call_caching and call_clearing."""
+        def func(x: int) -> int:
+            return x
+
+        # Wrapped function takes 1 arg (x)
+        # We will call it with 2 args (instance and x) to trigger TypeError
+        class Dummy:
+            pass
+        dummy = Dummy()
+        method = self.ConcreteTimedCacheMethod(func=func, instance=dummy, owner=None)
+
+        # Test call_caching
+        assert method.call_caching(5) == 5
+
+        # Test call_clearing
+        assert method.call_clearing(5) == 5
+
+
+class ConcreteTimedCacheMethod(BaseTimedCacheMethod):
+    """Concrete implementation for testing."""
+
+    def clear_cache(self) -> None:
+        """Clears the cache."""
+        super().clear_cache()
+
+
+class ConcreteTimedCache(BaseTimedCache):
+    """Concrete implementation for testing."""
+
+    method_type: type[BaseTimedCacheMethod] = ConcreteTimedCacheMethod
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Initializes the concrete timed cache."""
+        super().__init__(*args, **kwargs)
+
+    def clear_cache(self) -> None:
+        """Clears the cache."""
+        super().clear_cache()
+
 
 class TestBaseTimedCache:
     """Tests the BaseTimedCache class."""
 
-    class ConcreteTimedCacheMethod(BaseTimedCacheMethod):
-        """Concrete implementation for testing."""
-
-        def clear_cache(self) -> None:
-            """Clears the cache."""
-            super().clear_cache()
-
-    class ConcreteTimedCache(BaseTimedCache):
-        """Concrete implementation for testing."""
-
-        method_type: Any = None  # set later
-
-        def __init__(self, *args: Any, **kwargs: Any) -> None:
-            """Initializes the concrete timed cache."""
-            super().__init__(*args, **kwargs)
-
-        def clear_cache(self) -> None:
-            """Clears the cache."""
-            super().clear_cache()
-
-    def setup_method(self) -> None:
-        """Sets up the test method."""
-        self.ConcreteTimedCache.method_type = self.ConcreteTimedCacheMethod
-
     def test_instanced_cache_setter(self) -> None:
         """Tests setter for instanced_cache."""
-        cache = self.ConcreteTimedCache(lambda: None)
+        cache = ConcreteTimedCache(lambda: None)
         cache.instanced_cache = True
         assert cache._instanced_cache is True
         cache.instanced_cache = False
@@ -484,7 +514,7 @@ class TestBaseTimedCache:
 
     def test_bind(self) -> None:
         """Tests bind method."""
-        cache = self.ConcreteTimedCache(lambda: None)
+        cache = ConcreteTimedCache(lambda: None)
 
         class Target:
             pass
@@ -495,7 +525,7 @@ class TestBaseTimedCache:
 
     def test_bind_to_attribute_no_instance(self) -> None:
         """Tests bind_to_attribute with no instance."""
-        cache = self.ConcreteTimedCache(lambda: None)
+        cache = ConcreteTimedCache(lambda: None)
         assert cache.bind_to_attribute(None) is cache
 
     @pytest.mark.parametrize(
@@ -507,7 +537,7 @@ class TestBaseTimedCache:
     )
     def test_bind_to_attribute_instance(self, name: str | None, expected_attr: str) -> None:
         """Tests bind_to_attribute with instance."""
-        cache = self.ConcreteTimedCache(lambda: None)
+        cache = ConcreteTimedCache(lambda: None)
 
         class Target:
             pass
@@ -526,7 +556,7 @@ class TestBaseTimedCache:
     @pytest.mark.parametrize("lifetime", [10, None])
     def test_clear_cache_expiration_update(self, lifetime: int | None) -> None:
         """Tests clear_cache behavior with and without lifetime."""
-        cache = self.ConcreteTimedCache(lambda: None, lifetime=lifetime)
+        cache = ConcreteTimedCache(lambda: None, lifetime=lifetime)
         if lifetime is None:
             cache.expiration = 123
         else:

@@ -22,7 +22,7 @@ class ConfigDict(BaseDict):
     """A custom dictionary for configuration settings that inherits from BaseDict."""
 
     def __init__(self, data: dict[str, Any] | None = None, /, *args: Any, **kwargs: Any) -> None:
-        """Initialize a ConfigDict object.
+        """Initializes a ConfigDict object.
 
         Args:
             data: Initial dictionary data
@@ -39,12 +39,12 @@ class ConfigDict(BaseDict):
             *args: Additional arguments for parent classes
             **kwargs: Additional keyword arguments for parent classes
         """
-        # Set default values if the dictionary is empty
+        # Sets default values if the dictionary is empty
         if not self.data:
             self.data = {"debug": False, "log_level": "INFO", "max_connections": 10, "timeout": 30}
 
     def get_with_default(self, key: str, default: Any = None) -> Any:
-        """Get a value with a default if the key doesn't exist.
+        """Gets a value with a default if the key doesn't exist.
 
         Args:
             key: The key to look up
@@ -56,7 +56,7 @@ class ConfigDict(BaseDict):
         return self.data.get(key, default)
 
     def update_if_exists(self, key: str, value: Any) -> bool:
-        """Update a value only if the key already exists.
+        """Updates a value only if the key already exists.
 
         Args:
             key: The key to update
@@ -73,10 +73,10 @@ class ConfigDict(BaseDict):
 
 # Example Sections #
 def basic_basedict_example() -> None:
-    """Demonstrate basic usage of BaseDict."""
+    """Demonstrates basic usage of BaseDict."""
     print("\nBasic BaseDict Example:")
 
-    # Create a BaseDict instance
+    # Creates a BaseDict instance
     base_dict = BaseDict({"name": "John", "age": 30, "city": "New York"})
     print(f"BaseDict: {base_dict}")
 
@@ -88,11 +88,11 @@ def basic_basedict_example() -> None:
     base_dict["age"] = 31
     print(f"Updated age: {base_dict['age']} == 31")
 
-    # Add new items
+    # Adds new items
     base_dict["email"] = "john@example.com"
     print(f"Added email: {base_dict['email']} == 'john@example.com'")
 
-    # Delete items
+    # Deletes items
     del base_dict["city"]
     print(f"After deleting city: {base_dict} == {{'name': 'John', 'age': 31, 'email': 'john@example.com'}}")
 
@@ -103,10 +103,10 @@ def basic_basedict_example() -> None:
 
 
 def custom_basedict_example() -> None:
-    """Demonstrate creating a custom dictionary class that inherits from BaseDict."""
+    """Demonstrates creating a custom dictionary class that inherits from BaseDict."""
     print("\nCustom BaseDict Example:")
 
-    # Create an empty ConfigDict (will be populated with defaults)
+    # Creates an empty ConfigDict (will be populated with defaults)
     config = ConfigDict()
     print(f"Default config: {config}")
 
@@ -123,7 +123,7 @@ def custom_basedict_example() -> None:
     value = config.get_with_default("cache_size", 1024)
     print(f"Cache size (with default): {value} == 1024")
 
-    # Update existing key
+    # Updates existing key
     updated = config.update_if_exists("max_connections", 20)
     print(f"Updated max_connections: {updated} == True")
     print(f"New max_connections value: {config['max_connections']} == 20")
@@ -135,10 +135,10 @@ def custom_basedict_example() -> None:
 
 
 def baseobject_features_example() -> None:
-    """Demonstrate BaseObject features with BaseDict."""
+    """Demonstrates BaseObject features with BaseDict."""
     print("\nBaseObject Features Example:")
 
-    # Create a ConfigDict
+    # Creates a ConfigDict
     config = ConfigDict(
         {
             "debug": True,
@@ -173,7 +173,7 @@ def baseobject_features_example() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     basic_basedict_example()
     custom_basedict_example()
     baseobject_features_example()

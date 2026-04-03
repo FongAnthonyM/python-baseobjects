@@ -35,7 +35,7 @@ class DescriptorGetMethod(Protocol):
 
     # Any Callable Protocol #
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        """Call the object."""
+        """Calls the object."""
         ...
 
     # Descriptor Protocol #
@@ -53,7 +53,7 @@ class CallMethod(Protocol):
 
     # Any Callable Protocol #
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        """Call the object."""
+        """Calls the object."""
         ...
 
     # Descriptor Protocol #

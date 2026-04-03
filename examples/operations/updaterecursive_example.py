@@ -18,19 +18,20 @@ from typing import Any
 # Source Packages #
 from baseobjects.operations import update_recursive
 
-
 # Example Sections #
+
+
 def basic_usage_example() -> None:
-    """Demonstrate basic usage of update_recursive."""
+    """Demonstrates basic usage of update_recursive."""
     print("\nBasic update_recursive Usage:")
 
-    # Create a simple dictionary
+    # Creates a simple dictionary
     original = {"a": 1, "b": 2, "c": 3}
 
-    # Create an update dictionary
+    # Creates an update dictionary
     updates = {"b": 22, "d": 4}
 
-    # Update the original dictionary
+    # Updates the original dictionary
     result = update_recursive(original, updates)
 
     print(f"Original dictionary: {original}")
@@ -38,27 +39,27 @@ def basic_usage_example() -> None:
     print(f"Result: {result}")
     print("Expected: {'a': 1, 'b': 22, 'c': 3, 'd': 4}")
 
-    # Verify that result is the same object as original (modified in-place)
+    # Verifies that result is the same object as original (modified in-place)
     print(f"Result is original: {result is original} == True")
 
 
 def nested_dictionary_example() -> None:
-    """Demonstrate updating nested dictionaries with update_recursive."""
+    """Demonstrates updating nested dictionaries with update_recursive."""
     print("\nNested Dictionary Example:")
 
-    # Create a nested dictionary
+    # Creates a nested dictionary
     original = {
         "user": {"name": "John", "age": 30, "address": {"city": "New York", "zip": "10001"}},
         "settings": {"theme": "dark", "notifications": True},
     }
 
-    # Create an update with nested changes
+    # Creates an update with nested changes
     updates = {
         "user": {"age": 31, "address": {"state": "NY"}},  # Update existing value  # Add new nested value
         "settings": {"language": "en"},  # Add new value to existing nested dict
     }
 
-    # Update the original dictionary
+    # Updates the original dictionary
     result = update_recursive(original, updates)
 
     print("Original nested dictionary:")
@@ -83,7 +84,7 @@ def nested_dictionary_example() -> None:
     print("\nExpected:")
     print(f"  {expected}")
 
-    # Verify that nested structures are preserved
+    # Verifies that nested structures are preserved
     print("\nVerifying nested structures:")
     print(f"  User name: {result['user']['name']} == 'John'")
     print(f"  User age: {result['user']['age']} == 31")
@@ -93,10 +94,10 @@ def nested_dictionary_example() -> None:
 
 
 def compare_with_dict_update_example() -> None:
-    """Compare update_recursive with standard dict.update()."""
+    """Compares update_recursive with standard dict.update()."""
     print("\nComparing update_recursive with dict.update():")
 
-    # Create nested dictionaries
+    # Creates nested dictionaries
     dict1 = {"a": 1, "b": {"x": 10, "y": 20}}
 
     dict2 = {"a": 1, "b": {"x": 10, "y": 20}}
@@ -104,14 +105,14 @@ def compare_with_dict_update_example() -> None:
     # Updates with nested structure
     updates = {"b": {"z": 30}}
 
-    # Update using standard dict.update()
+    # Updates using standard dict.update()
     dict1.update(updates)
     print("Using dict.update():")
     print(f"  Result: {dict1}")
     print("  Expected: {'a': 1, 'b': {'z': 30}}")
     print("  Note: The nested dictionary was completely replaced")
 
-    # Update using update_recursive
+    # Updates using update_recursive
     update_recursive(dict2, updates)
     print("\nUsing update_recursive():")
     print(f"  Result: {dict2}")
@@ -120,19 +121,19 @@ def compare_with_dict_update_example() -> None:
 
 
 def different_mapping_types_example() -> None:
-    """Demonstrate update_recursive with different mapping types."""
+    """Demonstrates update_recursive with different mapping types."""
     print("\nDifferent Mapping Types Example:")
 
-    # Create a defaultdict
+    # Creates a defaultdict
     original: defaultdict[str, Any] = defaultdict(dict)
     original["user"]["name"] = "John"
     original["user"]["age"] = 30
     original["settings"]["theme"] = "dark"
 
-    # Create updates
+    # Creates updates
     updates = {"user": {"email": "john@example.com"}, "settings": {"language": "en"}}
 
-    # Update using update_recursive
+    # Updates using update_recursive
     result = update_recursive(original, updates)
 
     print(f"Original (defaultdict): {dict(original)}")
@@ -144,7 +145,7 @@ def different_mapping_types_example() -> None:
     }
     print(f"Expected: {expected}")
 
-    # Verify the result is still a defaultdict
+    # Verifies the result is still a defaultdict
     print(f"Result is defaultdict: {isinstance(result, defaultdict)} == True")
 
     # Try adding a new nested key (should work with defaultdict)
@@ -155,7 +156,7 @@ def different_mapping_types_example() -> None:
 
 
 def practical_example() -> None:
-    """Demonstrate a practical use case for update_recursive."""
+    """Demonstrates a practical use case for update_recursive."""
     print("\nPractical Example - Configuration Management:")
 
     # Default configuration
@@ -178,17 +179,17 @@ def practical_example() -> None:
     # Environment-specific configuration
     env_config = {"database": {"port": 6432, "credentials": {"username": "prod_user"}}}
 
-    # Create working configuration by applying updates
+    # Creates working configuration by applying updates
     config: dict[str, Any] = default_config.copy()
     print("Starting with default configuration:")
     print(f"  {config}")
 
-    # Apply user configuration
+    # Applies user configuration
     update_recursive(config, user_config)
     print("\nAfter applying user configuration:")
     print(f"  {config}")
 
-    # Apply environment configuration
+    # Applies environment configuration
     update_recursive(config, env_config)
     print("\nAfter applying environment configuration:")
     print(f"  {config}")
@@ -205,10 +206,10 @@ def practical_example() -> None:
 
 
 def iterable_input_example() -> None:
-    """Demonstrate using update_recursive with different types of iterables."""
+    """Demonstrates using update_recursive with different types of iterables."""
     print("\nIterable Input Example:")
 
-    # Create a base dictionary
+    # Creates a base dictionary
     original = {"a": 1, "b": {"x": 10, "y": 20}}
 
     # Example 1: Using a list of tuples
@@ -259,14 +260,14 @@ def iterable_input_example() -> None:
     print(f"  Result: {result4}")
     print("  Expected: {'a': 1, 'b': {'x': 10, 'y': 20, 'z': 30}, 'c': 3}")
 
-    # Verify all results are equivalent
+    # Verifies all results are equivalent
     print("\nVerifying all results are equivalent:")
     print(f"  All results equal: {result1 == result2 == result3 == result4} == True")
 
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     basic_usage_example()
     nested_dictionary_example()
     compare_with_dict_update_example()

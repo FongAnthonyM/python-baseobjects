@@ -65,13 +65,13 @@ class BaseListTestSuite(BaseObjectTestSuite):
             *args: Positional arguments list to pass to the class constructor.
             **kwargs: Keyword arguments to pass to the class constructor.
         """
-        # Create Object
+        # Creates Object
         obj = self.UnitTestClass(*args, **kwargs)
 
         # Validate
         assert isinstance(obj, self.UnitTestClass)
         assert isinstance(obj, BaseList)
-        # Check if it behaves like a list
+        # Checks if it behaves like a list
         assert hasattr(obj, "data")
         assert isinstance(obj.data, list)
 
@@ -159,7 +159,7 @@ class BaseListTestSuite(BaseObjectTestSuite):
     # Functionality #
     def test_list_initialization(self) -> None:
         """Tests initialization of BaseList with a list."""
-        # Initialize with a list
+        # Initializes with a list
         init_list = ["item1", "item2", "item3"]
         test_list = self.UnitTestClass(init_list)
 

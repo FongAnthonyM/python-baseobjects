@@ -21,7 +21,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import asyncio
 import pickle
-from typing import Any, ClassVar, cast
+from typing import Any, cast
 
 # Third-Party Packages #
 import pytest

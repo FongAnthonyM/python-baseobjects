@@ -39,6 +39,40 @@ class TimedKeylessCacheCallable(TimedSingleCacheCallable):
     args_key: bool | None = None
 
     # Instance Methods #
+    # Constructors
+    def construct(
+        self,
+        func: Any | None = None,
+        typed: bool | None = None,
+        lifetime: int | float | None = None,
+        call_method: str | None = None,
+        instanced: bool | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
+        """Constructs this object with the given arguments.
+
+        Args:
+            func: The function to wrap.
+            typed: Determines if the function's arguments are type sensitive for caching.
+            lifetime: The period between cache resets in seconds.
+            call_method: The default call method to use.
+            instanced: Determines if the cache exists in the main function or in the method instances.
+            *args: Arguments for inheritance.
+            **kwargs: Keyword arguments for inheritance.
+        """
+        self.args_key = False
+
+        super().construct(
+            func=func,
+            typed=typed,
+            lifetime=lifetime,
+            call_method=call_method,
+            instanced=instanced,
+            *args,
+            **kwargs,
+        )
+
     # Caching
     def caching(self, *args: Any, **kwargs: Any) -> Any:
         """Caching that holds a single result.
@@ -51,7 +85,7 @@ class TimedKeylessCacheCallable(TimedSingleCacheCallable):
             The result of the wrapped function.
         """
         if not self.args_key:
-            self.cache_container = self.__wrapped__(*args, **kwargs)  # type:ignore[misc]
+            self.cache_container = self.call_wrapped(*args, **kwargs)
             self.args_key = True
 
         return self.cache_container

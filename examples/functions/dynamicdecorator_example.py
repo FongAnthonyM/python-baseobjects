@@ -32,7 +32,7 @@ class MultiModeDecorator(DynamicDecorator):
     """
 
     def __init__(self, func: AnyCallable, mode: str = "normal") -> None:
-        """Initialize the multi-mode decorator.
+        """Initializes the multi-mode decorator.
 
         Args:
             func: The function to decorate.
@@ -91,7 +91,7 @@ class MultiModeDecorator(DynamicDecorator):
         return result
 
     def set_mode(self, mode: str) -> None:
-        """Set the mode of operation.
+        """Sets the mode of operation.
 
         Args:
             mode: The mode to set ("normal", "debug", or "timing").
@@ -122,7 +122,7 @@ class StaticBindingDecorator(DynamicDecorator):
     __get__: AnyCallable = BaseCallable.bind_builtin  # Assigns __get__ to a previously defined method.
 
     def __init__(self, func: AnyCallable, callback_mode: str = "normal") -> None:
-        """Initialize the static binding decorator.
+        """Initializes the static binding decorator.
 
         Args:
             func: The function to decorate.
@@ -161,7 +161,7 @@ class StaticBindingDecorator(DynamicDecorator):
         return result
 
     def set_callback_mode(self, mode: str) -> None:
-        """Set the callback mode.
+        """Sets the callback mode.
 
         Args:
             mode: The mode to set ("normal" or "verbose").
@@ -189,7 +189,7 @@ class StaticCallbackDecorator(DynamicDecorator):
     __call__: AnyCallable = BaseCallable.call_wrapped  # Assigns __call__ to a previously defined method.
 
     def __init__(self, func: AnyCallable) -> None:
-        """Initialize the static callback decorator.
+        """Initializes the static callback decorator.
 
         Args:
             func: The function to decorate.
@@ -216,7 +216,7 @@ class Calculator:
 
     @MultiModeDecorator
     def add(self, a: int, b: int) -> int:
-        """Add two numbers.
+        """Adds two numbers.
 
         Returns:
             The sum.
@@ -225,7 +225,7 @@ class Calculator:
 
     @StaticBindingDecorator
     def subtract(self, a: int, b: int) -> int:
-        """Subtract b from a.
+        """Subtracts b from a.
 
         Returns:
             The difference.
@@ -234,7 +234,7 @@ class Calculator:
 
     @StaticCallbackDecorator
     def multiply(self, a: int, b: int) -> int:
-        """Multiply two numbers.
+        """Multiplies two numbers.
 
         Returns:
             The product.
@@ -243,7 +243,7 @@ class Calculator:
 
     @FullyStaticDecorator
     def divide(self, a: int, b: int) -> float:
-        """Divide a by b.
+        """Divides a by b.
 
         Args:
             a: Numerator
@@ -263,7 +263,7 @@ class Calculator:
 
 # Functions #
 def fibonacci(n: int) -> int:
-    """Calculate the nth Fibonacci number recursively.
+    """Calculates the nth Fibonacci number recursively.
 
     Returns:
         The nth Fibonacci number.
@@ -281,10 +281,10 @@ def basic_dynamicdecorator_usage() -> None:
     """Demonstrates basic usage of DynamicDecorator."""
     print("Basic DynamicDecorator Usage:\n")
 
-    # Create a DynamicDecorator directly
+    # Creates a DynamicDecorator directly
     dynamic_decorator = DynamicDecorator(fibonacci)
 
-    # Call the decorated function
+    # Calls the decorated function
     result = dynamic_decorator(5)
     print(f"fibonacci(5) = {result} == 5")
 
@@ -308,23 +308,23 @@ def dynamicdecorator_vs_basedecorator() -> None:
     """Demonstrates the differences between DynamicDecorator and BaseDecorator."""
     print("DynamicDecorator vs BaseDecorator:\n")
 
-    # Create both types of decorators
+    # Creates both types of decorators
     dynamic_dec = DynamicDecorator(fibonacci)
     base_dec = BaseDecorator(fibonacci)
 
-    # Show that both can be called directly
+    # Shows that both can be called directly
     dynamic_result = dynamic_dec(5)
     base_result = base_dec(5)
     print("Direct call:")
     print(f"dynamic_dec(5) = {dynamic_result} == 5")
     print(f"base_dec(5) = {base_result} == 5")
 
-    # Show the class hierarchy
+    # Shows the class hierarchy
     print("\nClass hierarchy:")
     print(f"DynamicDecorator inherits from: {DynamicDecorator.__mro__[1:3]}")
     print(f"BaseDecorator inherits from: {BaseDecorator.__mro__[1:2]}")
 
-    # Show the key difference: DynamicDecorator has call_method and bind_method attributes
+    # Shows the key difference: DynamicDecorator has call_method and bind_method attributes
     print("\nKey differences:")
     print(f"DynamicDecorator has call_method: {hasattr(dynamic_dec, 'call_method')}")
     print(f"DynamicDecorator has bind_method: {hasattr(dynamic_dec, 'bind_method')}")
@@ -338,7 +338,7 @@ def multimode_decorator_example() -> None:
     """Demonstrates a DynamicDecorator that can switch between different modes."""
     print("MultiMode Decorator Example:\n")
 
-    # Create a decorated function
+    # Creates a decorated function
     multi_fib = MultiModeDecorator(fibonacci)
 
     # Try different modes
@@ -363,7 +363,7 @@ def multimode_decorator_example() -> None:
     result = calculator.add(5, 3)
     print(f"5 + 3 = {result} == 8\n")
 
-    # Create a new instance with a different mode
+    # Creates a new instance with a different mode
     # For demonstration purposes, we'll create a new decorator instance
     debug_decorator = MultiModeDecorator(lambda a, b: a + b, mode="debug")
 
@@ -384,7 +384,7 @@ def static_binding_example() -> None:
     result = calculator.subtract(10, 4)  # type: ignore[misc]
     print(f"10 - 4 = {result} == 6\n")
 
-    # Create a new instance with a different callback mode
+    # Creates a new instance with a different callback mode
     verbose_decorator = StaticBindingDecorator(lambda a, b: a - b, callback_mode="verbose")
 
     print("Verbose callback mode:")
@@ -404,7 +404,7 @@ def static_callback_example() -> None:
     result = calculator.multiply(5, 6)
     print(f"5 * 6 = {result} == 30\n")
 
-    # Create a new instance to demonstrate static callback
+    # Creates a new instance to demonstrate static callback
     static_callback = StaticCallbackDecorator(lambda a, b: a * b)
 
     print("Using static callback decorator:")
@@ -424,7 +424,7 @@ def fully_static_example() -> None:
     result = calculator.divide(20, 4)  # type: ignore[misc]
     print(f"20 / 4 = {result} == 5.0")
 
-    # Show that it behaves like a regular method
+    # Shows that it behaves like a regular method
     try:
         result = calculator.divide(10, 0)  # type: ignore[misc]
     except ValueError as e:
@@ -438,7 +438,7 @@ if __name__ == "__main__":
     # Basic usage of DynamicDecorator
     basic_dynamicdecorator_usage()
 
-    # Compare DynamicDecorator with BaseDecorator
+    # Compares DynamicDecorator with BaseDecorator
     dynamicdecorator_vs_basedecorator()
 
     # MultiMode decorator example

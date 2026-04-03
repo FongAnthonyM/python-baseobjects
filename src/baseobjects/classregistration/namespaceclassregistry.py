@@ -54,7 +54,7 @@ class NamespaceClassRegistry(BaseClassRegistry):
         """Initializes this object with the given arguments.
 
         Args:
-            classes: Classes and their namespaces to add, can be an iterable of iterables or a dictionary.
+            classes: Classes and their namespaces to add can be an iterable of iterables or a dictionary.
             head_class: The head class of the registered classes.
             *args: Positional arguments for inheritance.
             init: Determines if this object will construct.

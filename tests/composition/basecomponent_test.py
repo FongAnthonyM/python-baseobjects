@@ -16,7 +16,7 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import pickle
-from typing import Any, ClassVar
+from typing import Any
 from unittest.mock import patch
 
 # Third-Party Packages #
@@ -70,7 +70,7 @@ class TestBaseComponent(BaseComponentTestSuite):
 
     # Attributes #
     UnitTestClass: type[BaseComponent] = ConcreteComponentClass
-    UnitTestComposite: ClassVar[type[BaseComposite]] = ConcreteCompositeClass
+    UnitTestComposite: type[BaseComposite] = ConcreteCompositeClass
 
     # Tests #
     def test_init_false(self) -> None:

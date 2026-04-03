@@ -32,7 +32,7 @@ def _update_recursive(d: MutableMapping[Any, Any], updates: Iterable[tuple[Any, 
         The original mapping that has been updated.
     """
     for key, value in updates:
-        #  Get the existing value, defaulting to empty dict if not present
+        #  Gets the existing value, defaulting to empty dict if not present
         if isinstance(value, Mapping) and isinstance((existing := d.get(key, None)), MutableMapping):
             d[key] = _update_recursive(existing, value.items())
         else:

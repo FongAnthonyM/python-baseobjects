@@ -128,7 +128,7 @@ class GroupedList(BaseList):
             case _:
                 try:
                     return self.get_item(int(i))
-                except ValueError, TypeError:
+                except (ValueError, TypeError):
                     msg = f"Invalid index type: {type(i)}"
                     raise TypeError(msg) from None
 
@@ -154,7 +154,7 @@ class GroupedList(BaseList):
             case _:
                 try:
                     self.set_item(int(i), item)
-                except ValueError, TypeError:
+                except (ValueError, TypeError):
                     msg = f"Invalid index type: {type(i)}"
                     raise TypeError(msg) from None
 
@@ -179,7 +179,7 @@ class GroupedList(BaseList):
             case _:
                 try:
                     self.delete_item(int(i))
-                except ValueError, TypeError:
+                except (ValueError, TypeError):
                     msg = f"Invalid index type: {type(i)}"
                     raise TypeError(msg) from None
 
@@ -555,7 +555,7 @@ class GroupedList(BaseList):
         else:
             names = list(name)
 
-        # Get name at this level
+        # Gets name at this level
         first = names.pop()
         new_group = self.groups[first]
 
@@ -783,7 +783,7 @@ class GroupedList(BaseList):
         flat_list = self.as_flat_list()
         indices = range(*slice_.indices(len(flat_list)))
 
-        # Delete items in reverse order to avoid index shifting
+        # Deletes items in reverse order to avoid index shifting
         for i in sorted(indices, reverse=True):
             self.delete_item(i)
         return None

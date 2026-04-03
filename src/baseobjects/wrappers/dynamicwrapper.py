@@ -81,7 +81,7 @@ class DynamicWrapper(BaseObject):
             name: The name of the attribute to set.
             value: Whatever the attribute will contain.
         """
-        # Check if item is in self and if not check in object parents
+        # Checks if item is in self and if not check in object parents
         if name not in self._wrapped_map_ and name not in dir(self):
             # Iterate through all indirect parents to find attribute
             for attribute in self._wrapped_map_:
@@ -100,7 +100,7 @@ class DynamicWrapper(BaseObject):
         Args:
             name: The name of the attribute to delete.
         """
-        # Check if item is in self and if not check in object parents
+        # Checks if item is in self and if not check in object parents
         if name not in self._wrapped_map_ and name not in dir(self):
             # Iterate through all indirect parents to find attribute
             for attribute in self._wrapped_map_:

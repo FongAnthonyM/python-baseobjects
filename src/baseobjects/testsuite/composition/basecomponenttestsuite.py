@@ -18,7 +18,7 @@ __version__ = "1.12.0"
 import copy
 import pickle
 import weakref
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -40,7 +40,7 @@ class BaseComponentTestSuite(BaseObjectTestSuite):
         UnitTestClass: The class that the test suite is testing.
     """
 
-    UnitTestComposite: ClassVar[type[Any]]
+    UnitTestComposite: type[Any]
 
     UnitTestClass: type[BaseComponent]
 
@@ -182,22 +182,22 @@ class BaseComponentTestSuite(BaseObjectTestSuite):
         Args:
             test_composite: A fixture providing a composite object.
         """
-        # Verify the composite reference is a weak reference
+        # Verifies the composite reference is a weak reference
         test_object = self.UnitTestClass(test_composite)
         assert isinstance(test_object._composite, weakref.ReferenceType)
 
-        # Verify we can still access the composite through the property
+        # Verifies we can still access the composite through the property
         assert test_object.composite is test_composite
 
-        # Create a new scope to test garbage collection
+        # Creates a new scope to test garbage collection
         def temp_scope() -> None:
             temp_composite = self.UnitTestComposite()
             test_object.composite = temp_composite
 
-        # Get weak reference to temporary composite
+        # Gets weak reference to temporary composite
         temp_scope()
 
-        # Verify the temporary composite was garbage collected
+        # Verifies the temporary composite was garbage collected
         assert test_object.composite is None
 
     def test_composite_none(self) -> None:

@@ -46,7 +46,7 @@ class ConcreteDispatchableClass(DispatchableClass):
         return cls.class_registry.get_class("example", name)
 
     @classmethod
-    def get_class_information(cls, *args: Any, **kwargs: Any) -> Any:
+    def get_class_information(cls, *args: Any, **kwargs: Any) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
         """Gets the class information.
 
         Args:
@@ -54,9 +54,10 @@ class ConcreteDispatchableClass(DispatchableClass):
             **kwargs: Keyword arguments.
 
         Returns:
-            The class information tuple.
+            The keyword arguments for class lookup and the keyword arguments to pass to the class constructor or None
+            if not found.
         """
-        return (kwargs.get("name"),)
+        return {"name": kwargs.get("name")}, None
 
 
 class SubClass(ConcreteDispatchableClass):

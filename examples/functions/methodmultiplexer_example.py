@@ -25,7 +25,7 @@ class MathOperations:
     """
 
     def add(self, a: float, b: float) -> float:
-        """Add two numbers.
+        """Adds two numbers.
 
         Args:
             a: The first number.
@@ -37,7 +37,7 @@ class MathOperations:
         return a + b
 
     def subtract(self, a: float, b: float) -> float:
-        """Subtract the second number from the first.
+        """Subtracts the second number from the first.
 
         Args:
             a: The first number.
@@ -49,7 +49,7 @@ class MathOperations:
         return a - b
 
     def multiply(self, a: float, b: float) -> float:
-        """Multiply two numbers.
+        """Multiplies two numbers.
 
         Args:
             a: The first number.
@@ -61,7 +61,7 @@ class MathOperations:
         return a * b
 
     def divide(self, a: float, b: float) -> float:
-        """Divide the first number by the second.
+        """Divides the first number by the second.
 
         Args:
             a: The first number.
@@ -86,7 +86,7 @@ class StringOperations:
     """
 
     def uppercase(self, text: str) -> str:
-        """Convert text to uppercase.
+        """Converts text to uppercase.
 
         Args:
             text: The text to convert.
@@ -97,7 +97,7 @@ class StringOperations:
         return text.upper()
 
     def lowercase(self, text: str) -> str:
-        """Convert text to lowercase.
+        """Converts text to lowercase.
 
         Args:
             text: The text to convert.
@@ -138,27 +138,27 @@ class MethodProcessor:
     """
 
     def __init__(self, name: str) -> None:
-        """Initialize the processor with a name.
+        """Initializes the processor with a name.
 
         Args:
             name: The name of the processor.
         """
         self.name = name
 
-        # Create instances of operation classes
+        # Creates instances of operation classes
         self.math_ops = MathOperations()
         self.string_ops = StringOperations()
 
-        # Create a registry for our methods
+        # Creates a registry for our methods
         self.registry = FunctionRegistry()
 
-        # Add methods to the registry
+        # Adds methods to the registry
         self.registry["add"] = self.math_ops.add
         self.registry["subtract"] = self.math_ops.subtract
         self.registry["uppercase"] = self.string_ops.uppercase
         self.registry["lowercase"] = self.string_ops.lowercase
 
-        # Create a MethodMultiplexer with our registry
+        # Creates a MethodMultiplexer with our registry
         # The instance parameter is important for method binding
         self.multiplexer = MethodMultiplexer(registry=self.registry, instance=self)
 
@@ -166,7 +166,7 @@ class MethodProcessor:
         self.multiplexer.select("add")
 
     def process(self, *args: Any, **kwargs: Any) -> Any:
-        """Process the input using the currently selected method.
+        """Processes the input using the currently selected method.
 
         Args:
             *args: Positional arguments for the method.
@@ -178,7 +178,7 @@ class MethodProcessor:
         return self.multiplexer(*args, **kwargs)
 
     def set_operation(self, operation_name: str) -> None:
-        """Set the operation to use for processing.
+        """Sets the operation to use for processing.
 
         Args:
             operation_name: The name of the operation to use.
@@ -198,10 +198,10 @@ def method_processor_example() -> None:
     """Demonstrates using MethodMultiplexer in a practical application."""
     print("MethodProcessor Example:\n")
 
-    # Create a processor
+    # Creates a processor
     processor = MethodProcessor("Method Processor")
 
-    # Process some data with the default operation (add)
+    # Processes some data with the default operation (add)
     a, b = 10, 5
     result = processor.process(a, b)
     print("Processing with default operation 'add':")
@@ -231,7 +231,7 @@ def dynamic_method_multiplexer_example() -> None:
     """
     print("Dynamic Method Selection with MethodMultiplexer:\n")
 
-    # Create a class with various methods that we'll dynamically select between
+    # Creates a class with various methods that we'll dynamically select between
     class DataProcessor:
         def __init__(self, name: str) -> None:
             self.name = name
@@ -241,14 +241,14 @@ def dynamic_method_multiplexer_example() -> None:
                 "mixed": [10, "abc", 30, "xyz"],
             }
 
-            # Create a MethodMultiplexer that wraps this instance
+            # Creates a MethodMultiplexer that wraps this instance
             # Note: We don't provide a registry - we'll select methods directly from the instance
             self.method_selector = MethodMultiplexer(instance=self)
 
-            # Set a default method
+            # Sets a default method
             self.method_selector.select("sum_numbers")
 
-        # Define various processing methods that we'll select between
+        # Defines various processing methods that we'll select between
         def sum_numbers(self) -> Any:
             """Sum all numbers in the numbers list.
 
@@ -258,7 +258,7 @@ def dynamic_method_multiplexer_example() -> None:
             return sum(self.data["numbers"])
 
         def average_numbers(self) -> Any:
-            """Calculate the average of numbers in the numbers list.
+            """Calculates the average of numbers in the numbers list.
 
             Returns:
                 The average.
@@ -275,7 +275,7 @@ def dynamic_method_multiplexer_example() -> None:
             return self.data["text"][::-1]
 
         def uppercase_text(self) -> Any:
-            """Convert the text to uppercase.
+            """Converts the text to uppercase.
 
             Returns:
                 The uppercase text.
@@ -300,7 +300,7 @@ def dynamic_method_multiplexer_example() -> None:
 
         # Method to add new data
         def add_number(self, number: int) -> list[int]:
-            """Add a number to the numbers list.
+            """Adds a number to the numbers list.
 
             Returns:
                 The updated list.
@@ -310,7 +310,7 @@ def dynamic_method_multiplexer_example() -> None:
 
         # Method to process using the currently selected method
         def process(self) -> Any:
-            """Process data using the currently selected method.
+            """Processes data using the currently selected method.
 
             Returns:
                 The result.
@@ -330,16 +330,16 @@ def dynamic_method_multiplexer_example() -> None:
             self.method_selector.select(method_name)
             return f"Selected method: {method_name}"
 
-    # Create an instance of our processor
+    # Creates an instance of our processor
     processor = DataProcessor("Dynamic Method Processor")
 
-    # Show initial data
+    # Shows initial data
     print("Initial data:")
     print(f"Numbers: {processor.data['numbers']}")
     print(f"Text: '{processor.data['text']}'")
     print(f"Mixed: {processor.data['mixed']}")
 
-    # Process with the default method (sum_numbers)
+    # Processes with the default method (sum_numbers)
     result = processor.process()
     print("\nUsing default method 'sum_numbers':")
     print(f"processor.process() = {result}")
@@ -362,7 +362,7 @@ def dynamic_method_multiplexer_example() -> None:
     print("\nChanged to method 'extract_numbers':")
     print(f"processor.process() = {result}")
 
-    # Add a new number using the method_selector directly
+    # Adds a new number using the method_selector directly
     processor.method_selector.select("add_number")
     result = processor.method_selector(10)  # Call with an argument
     print("\nCalling 'add_number' with argument 10:")
@@ -380,10 +380,10 @@ def dynamic_method_multiplexer_example() -> None:
     print("\nUsing 'extract_strings' method (not in registry, but in instance):")
     print(f"processor.process() = {result}")
 
-    # Demonstrate that we can dynamically add methods to the instance and select them
+    # Demonstrates that we can dynamically add methods to the instance and select them
     print("\nDynamically adding a new method to the instance:")
 
-    # Add a new method to the instance
+    # Adds a new method to the instance
     def count_items(self: DataProcessor) -> dict[str, int]:
         """Count the number of items in each data category.
 
@@ -392,7 +392,7 @@ def dynamic_method_multiplexer_example() -> None:
         """
         return {"numbers": len(self.data["numbers"]), "text": len(self.data["text"]), "mixed": len(self.data["mixed"])}
 
-    # Add the method to the instance
+    # Adds the method to the instance
     # Standard Libraries #
     import types
 

@@ -39,7 +39,7 @@ class WrappingDynamicCallable(DynamicCallable):
             A callable that adds a prefix to the result.
         """
 
-        # Create a new callable that adds a prefix
+        # Creates a new callable that adds a prefix
         def prefixed_callable(*args: Any, **kwargs: Any) -> Any:
             assert self.__wrapped__ is not None
             result = self.__wrapped__(instance, *args, **kwargs)
@@ -101,7 +101,7 @@ class NonWrappingDynamicCallable(DynamicCallable):
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initialize the NonWrappingDynamicCallable.
+        """Initializes the NonWrappingDynamicCallable.
 
         This constructor initializes the object without requiring a wrapped function. It registers custom methods with
         the call_multiplexer and sets a default call method.
@@ -110,14 +110,14 @@ class NonWrappingDynamicCallable(DynamicCallable):
             *args: Arguments for the parent class.
             **kwargs: Keyword arguments for the parent class.
         """
-        # Initialize with no wrapped function
+        # Initializes with no wrapped function
         super().__init__(None, *args, **kwargs)
 
-        # Set the default call method
+        # Sets the default call method
         self.call_method = "add"
 
     def add(self, a: float, b: float) -> float:
-        """Add two numbers.
+        """Adds two numbers.
 
         Args:
             a: The first number.
@@ -129,7 +129,7 @@ class NonWrappingDynamicCallable(DynamicCallable):
         return a + b
 
     def subtract(self, a: float, b: float) -> float:
-        """Subtract b from a.
+        """Subtracts b from a.
 
         Args:
             a: The first number.
@@ -141,7 +141,7 @@ class NonWrappingDynamicCallable(DynamicCallable):
         return a - b
 
     def multiply(self, a: float, b: float) -> float:
-        """Multiply two numbers.
+        """Multiplies two numbers.
 
         Args:
             a: The first number.
@@ -153,7 +153,7 @@ class NonWrappingDynamicCallable(DynamicCallable):
         return a * b
 
     def divide(self, a: float, b: float) -> float:
-        """Divide a by b.
+        """Divides a by b.
 
         Args:
             a: The first number.
@@ -175,7 +175,7 @@ class ExampleClass:
     """A class to demonstrate using DynamicCallable as a descriptor."""
 
     def __init__(self, name: str) -> None:
-        """Initialize the object."""
+        """Initializes the object."""
         self.name = name
 
     def greet(self, name: str) -> str:
@@ -186,10 +186,10 @@ class ExampleClass:
         """
         return f"Hello, {name}! I'm {self.name}!"
 
-    # Create a DynamicCallable as a class attribute
+    # Creates a DynamicCallable as a class attribute
     dynamic_greeter = DynamicCallable(greet)
 
-    # Create a custom wrapping DynamicCallable as a class attribute
+    # Creates a custom wrapping DynamicCallable as a class attribute
     custom_greeter = WrappingDynamicCallable(greet)
 
 
@@ -208,27 +208,27 @@ def basic_dynamiccallable_usage() -> None:
     """Demonstrates basic usage of DynamicCallable."""
     print("Basic DynamicCallable Usage:\n")
 
-    # Create a DynamicCallable with a simple function
+    # Creates a DynamicCallable with a simple function
     dynamic_callable = DynamicCallable(example_function)
 
-    # Call the function using the default call method
+    # Calls the function using the default call method
     result = dynamic_callable(5, 3)
     print("Default call method (call_wrapped):")
     print(f"dynamic_callable(5, 3) = {result}")
 
-    # Check the current call method
+    # Checks the current call method
     print(f"\nCurrent call method: {dynamic_callable.call_method}")
 
-    # Check the current bind method
+    # Checks the current bind method
     print(f"Current bind method: {dynamic_callable.bind_method}")
 
-    # Create a DynamicCallable with no function
+    # Creates a DynamicCallable with no function
     empty_dynamic = DynamicCallable()
 
-    # Set the function after creation
+    # Sets the function after creation
     empty_dynamic.__func__ = example_function
 
-    # Call the function
+    # Calls the function
     result = empty_dynamic(10, 20)
     print("\nSetting function after creation:")
     print(f"empty_dynamic(10, 20) = {result}")
@@ -240,7 +240,7 @@ def wrapping_dynamiccallable_usage() -> None:
     """Demonstrates usage of a wrapping DynamicCallable with additional methods."""
     print("Wrapping DynamicCallable Usage:\n")
 
-    # Create a wrapping DynamicCallable
+    # Creates a wrapping DynamicCallable
     wrapping_dynamic = WrappingDynamicCallable(example_function)
 
     # Use the default call method
@@ -271,7 +271,7 @@ def dynamiccallable_as_descriptor() -> None:
     """Demonstrates using DynamicCallable as a descriptor."""
     print("DynamicCallable as Descriptor:\n")
 
-    # Create an instance of ConcreteClass
+    # Creates an instance of ConcreteClass
     example = ExampleClass("John")
 
     # Use the DynamicCallable descriptor
@@ -297,7 +297,7 @@ def multiplexer_exploration() -> None:
     """Explores the multiplexers in DynamicCallable."""
     print("Multiplexer Exploration:\n")
 
-    # Create a DynamicCallable
+    # Creates a DynamicCallable
     dynamic_callable = DynamicCallable(example_function)
 
     # Examine the bind multiplexer
@@ -312,7 +312,7 @@ def multiplexer_exploration() -> None:
     print(f"Selected method: {dynamic_callable.call_multiplexer.selected}")
     print(f"Available methods: {list(dynamic_callable.call_multiplexer.registry.keys())}")
 
-    # Add a custom method to the call multiplexer
+    # Adds a custom method to the call multiplexer
     def call_with_double(self: Any, *args: Any, **kwargs: Any) -> Any:
         """Double the result of the wrapped function.
 
@@ -344,7 +344,7 @@ def nonwrapping_dynamiccallable_usage() -> None:
     """Demonstrates usage of a non-wrapping DynamicCallable with direct functionality."""
     print("Non-Wrapping DynamicCallable Usage:\n")
 
-    # Create a non-wrapping DynamicCallable
+    # Creates a non-wrapping DynamicCallable
     calculator = NonWrappingDynamicCallable()
 
     # Use the default call method (add)
@@ -387,7 +387,7 @@ def pickling_dynamiccallable() -> None:
     # Standard Libraries #
     import pickle
 
-    # Create a DynamicCallable
+    # Creates a DynamicCallable
     dynamic_callable = DynamicCallable(example_function)
 
     # Test before pickling

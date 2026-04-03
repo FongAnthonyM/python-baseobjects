@@ -20,7 +20,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import copy
 import pickle
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -268,6 +268,32 @@ class TestBaseObject(BaseObjectTestSuite):
         # The inner object should also be copied
         assert outer_copy.mutable["inner"] is not inner
         assert isinstance(outer_copy.mutable["inner"], self.UnitTestClass)
+
+    # Modifications #
+    def test_dict_modifications(self, test_object: BaseObject) -> None:
+        """Tests BaseObject with __dict__ modifications.
+
+        This test verifies that BaseObject works correctly when __dict__ is modified directly.
+
+        Args:
+            test_object: A fixture providing a test object instance.
+        """
+        # Modify __dict__ directly
+        test_object.__dict__["new_attr"] = "new value"
+
+        # Verify the attribute is accessible
+        if hasattr(test_object, "new_attr"):
+            assert test_object.new_attr == "new value"
+
+        # Copy the object
+        copy_obj = test_object.copy()
+
+        # Verify the copy has the same attribute
+        if hasattr(copy_obj, "new_attr") and hasattr(test_object, "new_attr"):
+            assert copy_obj.new_attr == test_object.new_attr
+
+        # Verify the copy is a different instance
+        assert copy_obj is not test_object
 
 
 # Main #

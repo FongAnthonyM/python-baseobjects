@@ -18,11 +18,13 @@ __version__ = "1.12.0"
 from .basecomponenttestsuite import BaseComponentTestSuite
 from .basecompositetestsuite import BaseCompositeTestSuite
 from .basedispatchingcompositetestsuite import BaseDispatchingCompositeTestSuite
+from .compositefactoryclasstestsuite import CompositeFactoryClassTestSuite
 from .dispatchablecompositetestsuite import DispatchableCompositeTestSuite
 
 __all__ = [
     "BaseComponentTestSuite",
     "BaseCompositeTestSuite",
     "BaseDispatchingCompositeTestSuite",
+    "CompositeFactoryClassTestSuite",
     "DispatchableCompositeTestSuite",
 ]

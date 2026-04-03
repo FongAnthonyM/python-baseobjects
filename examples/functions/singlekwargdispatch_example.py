@@ -23,7 +23,7 @@ from baseobjects.functions import singlekwargdispatch
 # Standalone Functions with singlekwargdispatch #
 @singlekwargdispatch
 def convert_value(value: Any) -> str:
-    """Convert a value to a string representation.
+    """Converts a value to a string representation.
 
     This is the default implementation that converts any value to a string.
 
@@ -38,7 +38,7 @@ def convert_value(value: Any) -> str:
 
 @convert_value.register
 def _(value: int) -> str:
-    """Convert an integer to a string representation.
+    """Converts an integer to a string representation.
 
     Args:
         value: The integer to convert.
@@ -51,7 +51,7 @@ def _(value: int) -> str:
 
 @convert_value.register
 def _(value: float) -> str:
-    """Convert a float to a string representation.
+    """Converts a float to a string representation.
 
     Args:
         value: The float to convert.
@@ -64,7 +64,7 @@ def _(value: float) -> str:
 
 @convert_value.register
 def _(value: str) -> str:
-    """Convert a string to a formatted representation.
+    """Converts a string to a formatted representation.
 
     Args:
         value: The string to convert.
@@ -78,7 +78,7 @@ def _(value: str) -> str:
 @convert_value.register(tuple)
 @convert_value.register(list)
 def _(value: list[Any] | tuple[Any, ...]) -> str:
-    """Convert a list to a string representation.
+    """Converts a list to a string representation.
 
     Args:
         value: The list to convert.
@@ -92,7 +92,7 @@ def _(value: list[Any] | tuple[Any, ...]) -> str:
 
 @singlekwargdispatch(kwarg="format_as")
 def format_data(data: Any, format_as: Any = None, precision: int = 2) -> str:
-    """Format data based on the format_as parameter.
+    """Formats data based on the format_as parameter.
 
     This is the default implementation that returns a simple string representation.
 
@@ -109,7 +109,7 @@ def format_data(data: Any, format_as: Any = None, precision: int = 2) -> str:
 
 @format_data.register  # type: ignore[untyped-decorator]
 def _(data: Any, format_as: str, precision: int = 2) -> str:
-    """Format data as a string with specified formatting.
+    """Formats data as a string with specified formatting.
 
     Args:
         data: The data to format.
@@ -141,7 +141,7 @@ def _(data: Any, format_as: str, precision: int = 2) -> str:
 
 @format_data.register  # type: ignore[untyped-decorator]
 def _(data: Any, format_as: int, precision: int = 2) -> str:
-    """Format data with integer formatting options.
+    """Formats data with integer formatting options.
 
     Args:
         data: The data to format.
@@ -179,7 +179,7 @@ class Circle(Shape):
     """A circle shape."""
 
     def __init__(self, radius: float) -> None:
-        """Initialize a circle with a radius.
+        """Initializes a circle with a radius.
 
         Args:
             radius: The radius of the circle.
@@ -187,7 +187,7 @@ class Circle(Shape):
         self.radius = radius
 
     def __str__(self) -> str:
-        """Return the string representation."""
+        """Returns the string representation."""
         return f"Circle(radius={self.radius})"
 
 
@@ -195,7 +195,7 @@ class Rectangle(Shape):
     """A rectangle shape."""
 
     def __init__(self, width: float, height: float) -> None:
-        """Initialize a rectangle with width and height.
+        """Initializes a rectangle with width and height.
 
         Args:
             width: The width of the rectangle.
@@ -205,7 +205,7 @@ class Rectangle(Shape):
         self.height = height
 
     def __str__(self) -> str:
-        """Return the string representation."""
+        """Returns the string representation."""
         return f"Rectangle(width={self.width}, height={self.height})"
 
 
@@ -213,7 +213,7 @@ class Triangle(Shape):
     """A triangle shape."""
 
     def __init__(self, base: float, height: float) -> None:
-        """Initialize a triangle with base and height.
+        """Initializes a triangle with base and height.
 
         Args:
             base: The base of the triangle.
@@ -223,7 +223,7 @@ class Triangle(Shape):
         self.height = height
 
     def __str__(self) -> str:
-        """Return the string representation."""
+        """Returns the string representation."""
         return f"Triangle(base={self.base}, height={self.height})"
 
 
@@ -232,7 +232,7 @@ class ShapeProcessor:
 
     @singlekwargdispatch
     def calculate_area(self, shape: Shape) -> float:
-        """Calculate the area of a shape.
+        """Calculates the area of a shape.
 
         This is the default implementation that raises NotImplementedError.
 
@@ -247,7 +247,7 @@ class ShapeProcessor:
 
     @calculate_area.register
     def _(self, shape: Circle) -> float:
-        """Calculate the area of a circle.
+        """Calculates the area of a circle.
 
         Args:
             shape: The circle to calculate the area of.
@@ -262,7 +262,7 @@ class ShapeProcessor:
 
     @calculate_area.register
     def _(self, shape: Rectangle) -> float:
-        """Calculate the area of a rectangle.
+        """Calculates the area of a rectangle.
 
         Args:
             shape: The rectangle to calculate the area of.
@@ -274,7 +274,7 @@ class ShapeProcessor:
 
     @calculate_area.register
     def _(self, shape: Triangle) -> float:
-        """Calculate the area of a triangle.
+        """Calculates the area of a triangle.
 
         Args:
             shape: The triangle to calculate the area of.
@@ -290,7 +290,7 @@ class DataProcessor:
 
     @singlekwargdispatch(kwarg="data")
     def process(self, prefix: str, data: Any) -> str:
-        """Process data based on its type.
+        """Processes data based on its type.
 
         This is the default implementation that converts the data to a string.
 
@@ -305,7 +305,7 @@ class DataProcessor:
 
     @process.register  # type: ignore[untyped-decorator]
     def _(self, prefix: str, data: int) -> str:
-        """Process integer data.
+        """Processes integer data.
 
         Args:
             prefix: A prefix to add to the processed data.
@@ -318,7 +318,7 @@ class DataProcessor:
 
     @process.register  # type: ignore[untyped-decorator]
     def _(self, prefix: str, data: float) -> str:
-        """Process float data.
+        """Processes float data.
 
         Args:
             prefix: A prefix to add to the processed data.
@@ -331,7 +331,7 @@ class DataProcessor:
 
     @process.register  # type: ignore[untyped-decorator]
     def _(self, prefix: str, data: str) -> str:
-        """Process string data.
+        """Processes string data.
 
         Args:
             prefix: A prefix to add to the processed data.
@@ -344,7 +344,7 @@ class DataProcessor:
 
     @process.register  # type: ignore[untyped-decorator]
     def _(self, prefix: str, data: list[Any]) -> str:
-        """Process list data.
+        """Processes list data.
 
         Args:
             prefix: A prefix to add to the processed data.
@@ -357,7 +357,7 @@ class DataProcessor:
 
     @process.register  # type: ignore[untyped-decorator]
     def _(self, prefix: str, data: dict[str, Any]) -> str:
-        """Process dictionary data.
+        """Processes dictionary data.
 
         Args:
             prefix: A prefix to add to the processed data.
@@ -374,7 +374,7 @@ class MultiParameterProcessor:
 
     @singlekwargdispatch(kwarg="format_type")
     def format_data(self, value: Any, description: str, format_type: Any) -> str:
-        """Format data based on the format_type.
+        """Formats data based on the format_type.
 
         This is the default implementation that returns a simple string representation.
 
@@ -390,7 +390,7 @@ class MultiParameterProcessor:
 
     @format_data.register  # type: ignore[untyped-decorator]
     def _(self, value: Any, description: str, format_type: str) -> str:
-        """Format data with a string format type.
+        """Formats data with a string format type.
 
         Args:
             value: The value to format.
@@ -409,7 +409,7 @@ class MultiParameterProcessor:
 
     @format_data.register  # type: ignore[untyped-decorator]
     def _(self, value: Any, description: str, format_type: int) -> str:
-        """Format data with an integer format type.
+        """Formats data with an integer format type.
 
         Args:
             value: The value to format.
@@ -423,7 +423,7 @@ class MultiParameterProcessor:
 
     @format_data.register  # type: ignore[untyped-decorator]
     def _(self, value: Any, description: str, format_type: bool) -> str:
-        """Format data with a boolean format type.
+        """Formats data with a boolean format type.
 
         Args:
             value: The value to format.
@@ -513,15 +513,15 @@ def method_singlekwargdispatch_example() -> None:
     # Positional dispatching with methods
     print("Positional method dispatching:")
 
-    # Create a shape processor
+    # Creates a shape processor
     processor = ShapeProcessor()
 
-    # Create some shapes
+    # Creates some shapes
     circle = Circle(radius=5)
     rectangle = Rectangle(width=4, height=6)
     triangle = Triangle(base=3, height=8)
 
-    # Calculate areas using positional dispatching
+    # Calculates areas using positional dispatching
     print("Calculating areas using positional dispatching:")
 
     # Circle area
@@ -547,7 +547,7 @@ def method_singlekwargdispatch_example() -> None:
     # Keyword dispatching with method
     print("Keyword method dispatching:\n")
 
-    # Create processor
+    # Creates processor
 
     data_processor = DataProcessor()
 
@@ -582,10 +582,10 @@ def flexible_keyword_dispatching_example() -> None:
     """Demonstrates singlekwargdispatch with the dispatching keyword not as the first argument."""
     print("Flexible Keyword Dispatching Example:\n")
 
-    # Create a multi-parameter processor
+    # Creates a multi-parameter processor
     processor = MultiParameterProcessor()
 
-    # Process data with different format types
+    # Processes data with different format types
     print("Processing data with different format types:")
 
     # String format type (uppercase)

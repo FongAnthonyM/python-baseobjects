@@ -108,18 +108,21 @@ class BaseCallable(BaseReducible):
         else:
             self.__wrapped__ = value
             # Determine if the wrapped function is a coroutine
-            if iscoroutinefunction(value):
+            is_base_callable = False
+            try:
+                # Use object.__getattribute__ to check for a marker that only BaseCallable has
+                # without triggering descriptors or complex isinstance logic.
+                object.__getattribute__(value, "_is_coroutine_marker")
+                is_base_callable = True
+            except (AttributeError, TypeError):
+                pass
+
+            if is_base_callable:
+                self._is_coroutine_marker = value._is_coroutine_marker
+            elif iscoroutinefunction(value):
                 self._is_coroutine_marker = True
             else:
                 self._is_coroutine_marker = None
-
-            # Copy all attributes from the wrapped function to this object
-            d_copy = getattr(value, "__dict__", {}).copy()
-            if d_copy:
-                exlcuded = set(dir(self))
-                for k, v in d_copy.items():
-                    if k not in exlcuded:
-                        setattr(self, k, v)
 
             # Assign standard function attributes from wrapped function to this object
             for attr in WRAPPER_ASSIGNMENTS:
@@ -130,6 +133,11 @@ class BaseCallable(BaseReducible):
                 except AttributeError:
                     pass
                 else:
+                    setattr(self, attr, attr_value)
+
+            # Assign other custom attributes
+            for attr, attr_value in getattr(value, "__dict__", {}).items():
+                if attr not in self._exclude_attributes and not hasattr(self, attr):
                     setattr(self, attr, attr_value)
 
     @__func__.deleter
@@ -177,7 +185,7 @@ class BaseCallable(BaseReducible):
         if (instance := getattr(func, "__self__", None)) is not None and hasattr(func, "__func__"):
             # Initialize with the underlying function
             new_callable.__init__(func.__func__, *args, **kwargs)  # type:ignore[misc]
-            # Bind to the same instance as the original method
+            # Binds to the same instance as the original method
             new_callable = new_callable.__get__(instance, instance.__class__)
 
         return new_callable
@@ -202,7 +210,7 @@ class BaseCallable(BaseReducible):
 
         # Object Construction #
         if init:
-            self.construct(func, *args, **kwargs)
+            self.construct(*args, func=func, **kwargs)
 
     # Instance Methods #
     # Constructors/Destructors
@@ -245,7 +253,7 @@ class BaseCallable(BaseReducible):
         """Creates a method of the wrapped function which is bound to another object.
 
         This method uses the descriptor protocol to bind the wrapped function directly to the specified instance,
-        bypassing this callable object. This is useful when you want to preserve the original binding behavior of the
+        bypassing this callable object. This is useful to preserve the original binding behavior of the
         wrapped function.
 
         Args:
@@ -263,15 +271,12 @@ class BaseCallable(BaseReducible):
     def call_wrapped(self, *args: Any, **kwargs: Any) -> Any:
         """Calls the wrapped function with the provided arguments.
 
-        This method directly calls the wrapped function with the provided arguments, without any additional processing
-        or binding. It's the most basic way to invoke the wrapped function.
-
         Args:
             *args: Positional arguments to pass to the wrapped function.
             **kwargs: Keyword arguments to pass to the wrapped function.
 
         Returns:
-            The result of calling the wrapped function with the provided arguments.
+            The result of calling the wrapped function.
         """
         return self.__wrapped__(*args, **kwargs)  # type:ignore[misc]
 
@@ -286,7 +291,7 @@ class BaseCallable(BaseReducible):
             A standard Python function that delegates to this callable object. If the wrapped function is a coroutine
             function, the returned function will also be a coroutine function.
         """
-        # Create appropriate wrapper function based on whether the wrapped function is a coroutine
+        # Creates appropriate wrapper function based on whether the wrapped function is a coroutine
         if self._is_coroutine_marker is not None:
 
             async def wrapper_function(*args: Any, **kwargs: Any) -> Any:
@@ -320,7 +325,7 @@ class BaseCallable(BaseReducible):
         wrapper_function.__dict__.update(self.__dict__)
         wrapper_function.__wrapped__ = self  # type: ignore[attr-defined]
 
-        # Remove excluded attributes from the wrapper function
+        # Removes excluded attributes from the wrapper function
         wrapper_dict = wrapper_function.__dict__
         for n in (n for n in self._cast_excluded if n in wrapper_dict):
             del wrapper_dict[n]
@@ -426,7 +431,7 @@ class BaseMethod(BaseCallable):
                 tuple[dict, dict]: __dict__ is present and __slots__ is present.
         """
         state = super().__getstate__()
-        # Convert weak reference to strong reference for pickling
+        # Converts weak reference to strong reference for pickling
         if isinstance(state, dict):
             state["_self_"] = self.__self__
         elif isinstance(state, tuple) and state[0] is not None:
@@ -546,7 +551,6 @@ class BaseMethod(BaseCallable):
 
         return self
 
-    # Calling
     def call_binding(self, *args: Any, **kwargs: Any) -> Any:
         """Binds the wrapped function to the stored instance and calls it.
 
@@ -569,7 +573,7 @@ class BaseMethod(BaseCallable):
     # Method Overrides #
     # Special method overriding which leads to less overhead.
     __get__: DescriptorGetMethod = bind_self
-    __call__: CallMethod = call_binding
+    __call__: CallMethod = call_binding  # type: ignore[assignment]
 
 
 class BaseFunction(BaseCallable):
@@ -625,7 +629,7 @@ class BaseFunction(BaseCallable):
                 unchanged.
             owner: The class of the object being bound to. This is used for proper method binding and to support
                 inheritance.
-            name: The name of the attribute to set on the instance. If None, the name of the wrapped function is used.
+            name: The name of the attribute to set on the instance. If None, a unique cache name is used.
 
         Returns:
             If instance is None, this function is unchanged. Otherwise, the new method object that was created and set

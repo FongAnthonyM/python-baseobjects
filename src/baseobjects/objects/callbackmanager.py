@@ -584,7 +584,7 @@ class CallbackManager(BaseReducible):
                 in the conditional_callbacks_async dictionary and a task queue will be created for it.
             **kwargs: Additional keyword arguments to pass to format_conditional_callback.
         """
-        # Format Callback, Condition, and Caller
+        # Formats Callback, Condition, and Caller
         callback, condition, caller = self.format_conditional_callback(
             callback,
             condition,
@@ -596,7 +596,7 @@ class CallbackManager(BaseReducible):
             **kwargs,
         )
 
-        # Register
+        # Registers
         if is_async:
             self.conditional_callbacks_async[name] = self.create_conditional_callback(callback, condition, caller, name)
         else:
@@ -613,7 +613,7 @@ class CallbackManager(BaseReducible):
             callbacks: A dictionary of synchronous callback configurations.
             callbacks_async: A dictionary of asynchronous callback configurations.
         """
-        # Register Callbacks
+        # Registers Callbacks
         if callbacks:
             if isinstance(callbacks, dict):
                 callbacks = callbacks.items()
@@ -624,7 +624,7 @@ class CallbackManager(BaseReducible):
             )
             self.conditional_callbacks.update(creation_iter)
 
-        # Register Async Callbacks
+        # Registers Async Callbacks
         if callbacks_async:
             if isinstance(callbacks_async, dict):
                 callbacks_async = callbacks_async.items()
@@ -891,11 +891,11 @@ class CallbackManager(BaseReducible):
 
         checked = False
         while tasks or (checked := await condition_async()):
-            # Add Callback Tasks and Await Them
+            # Adds Callback Tasks and Await Them
             if tasks:
                 await next(iter(tasks))
             elif len(tasks) < self.max_callback_tasks and checked:
-                # Create Callback Tasks
+                # Creates Callback Tasks
                 callback_task = create_task(callback_async())
                 callback_task.add_done_callback(tasks.remove)
                 tasks.append(callback_task)
@@ -926,11 +926,11 @@ class CallbackManager(BaseReducible):
 
         checked = False
         while tasks or (checked := await condition_async()):
-            # Add Callback Tasks and Await Them
+            # Adds Callback Tasks and Await Them
             if tasks:
                 await next(iter(tasks))
             elif len(tasks) < self.max_callback_tasks and checked:
-                # Create Callback Tasks
+                # Creates Callback Tasks
                 callback_task = await callback_async()
                 callback_task.add_done_callback(tasks.remove)
                 tasks.append(callback_task)
@@ -962,9 +962,9 @@ class CallbackManager(BaseReducible):
 
         checked = False
         while tasks or (checked := await condition_async()):
-            # Add Callback Tasks and Await Them
+            # Adds Callback Tasks and Await Them
             if len(tasks) < self.max_callback_tasks and checked:
-                # Create Callback Tasks
+                # Creates Callback Tasks
                 callback_task = create_task(callback_async())
                 callback_task.add_done_callback(tasks.remove)
                 tasks.append(callback_task)
@@ -1001,9 +1001,9 @@ class CallbackManager(BaseReducible):
 
         checked = False
         while tasks or (checked := await condition_async()):
-            # Add Callback Tasks and Await Them
+            # Adds Callback Tasks and Await Them
             if len(tasks) < self.max_callback_tasks and checked:
-                # Create Callback Tasks
+                # Creates Callback Tasks
                 callback_task = await callback_async()
                 callback_task.add_done_callback(tasks.remove)
                 tasks.append(callback_task)
@@ -1018,9 +1018,9 @@ class CallbackManager(BaseReducible):
         schedule of evaluations is managed asynchronously. It stores the reference to the created task in a dictionary
         for tracking and adds a callback that will handle cleanup after the task completion.
         """
-        # Check if scheduler is running
+        # Checks if scheduler is running
         if not tasks:
-            # Create Scheduler
+            # Creates Scheduler
             scheduler_task = create_task(scheduler.schedule_async(*args, **kwargs))  # Create scheduling task.
             scheduler_task.add_done_callback(tasks.remove)  # Remove task from tasks deque when done.
             tasks.append(scheduler_task)  # Add task to tasks deque.

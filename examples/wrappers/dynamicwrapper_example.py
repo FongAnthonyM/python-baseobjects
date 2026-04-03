@@ -25,12 +25,12 @@ class SimpleObject:
     """A simple object to be wrapped."""
 
     def __init__(self, value: int = 0) -> None:
-        """Initialize the object."""
+        """Initializes the object."""
         self.value = value
         self.name = "SimpleObject"
 
     def get_value(self) -> int:
-        """Get the value.
+        """Gets the value.
 
         Returns:
             The value.
@@ -38,11 +38,11 @@ class SimpleObject:
         return self.value
 
     def set_value(self, value: int) -> None:
-        """Set the value."""
+        """Sets the value."""
         self.value = value
 
     def __str__(self) -> str:
-        """Return the string representation."""
+        """Returns the string representation."""
         return f"{self.name}(value={self.value})"
 
 
@@ -50,16 +50,16 @@ class ComplexObject:
     """A more complex object to be wrapped."""
 
     def __init__(self, items: list[int] | None = None) -> None:
-        """Initialize the object."""
+        """Initializes the object."""
         self.items = items or []
         self.name = "ComplexObject"
 
     def add_item(self, item: int) -> None:
-        """Add an item to the list."""
+        """Adds an item to the list."""
         self.items.append(item)
 
     def get_items(self) -> list[int]:
-        """Get all items.
+        """Gets all items.
 
         Returns:
             The list of items.
@@ -71,28 +71,28 @@ class ComplexObject:
         self.items = []
 
     def __str__(self) -> str:
-        """Return the string representation."""
+        """Returns the string representation."""
         return f"{self.name}(items={self.items})"
 
 
 class CustomDynamicWrapper(DynamicWrapper):
     """A custom DynamicWrapper that wraps both simple and complex objects."""
 
-    # Define which attributes contain objects to wrap
+    # Defines which attributes contain objects to wrap
     _wrapped_map_: ClassVar[list[str]] = ["simple", "complex"]
 
-    # Define the wrapped object attributes
+    # Defines the wrapped object attributes
     _simple = None
     _complex = None
 
     def __init__(self, simple_obj: SimpleObject | None = None, complex_obj: ComplexObject | None = None) -> None:
-        """Initialize the wrapper with simple and complex objects."""
+        """Initializes the wrapper with simple and complex objects."""
         super().__init__()
         self.simple = simple_obj or SimpleObject()
         self.complex = complex_obj or ComplexObject()
 
     def get_combined_str(self) -> str:
-        """Get a string representation of both wrapped objects.
+        """Gets a string representation of both wrapped objects.
 
         Returns:
             The combined string.
@@ -102,19 +102,19 @@ class CustomDynamicWrapper(DynamicWrapper):
 
 # Example Sections #
 def basic_usage_example() -> None:
-    """Demonstrate basic usage of DynamicWrapper."""
+    """Demonstrates basic usage of DynamicWrapper."""
     print("\nBasic DynamicWrapper Usage:")
 
-    # Create objects to wrap
+    # Creates objects to wrap
     simple = SimpleObject(10)
     complex_obj = ComplexObject([1, 2, 3])
 
-    # Create a DynamicWrapper subclass
+    # Creates a DynamicWrapper subclass
     class MyWrapper(DynamicWrapper):
-        # Define which attributes contain objects to wrap
+        # Defines which attributes contain objects to wrap
         _wrapped_map_: ClassVar[list[str]] = ["obj1", "obj2"]
 
-    # Create an instance of the wrapper
+    # Creates an instance of the wrapper
     wrapper = MyWrapper()
     wrapper.obj1 = simple
     wrapper.obj2 = complex_obj
@@ -129,7 +129,7 @@ def basic_usage_example() -> None:
     print(f"  wrapper.name: {wrapper.name} == 'SimpleObject'")
     print(f"  wrapper.items: {wrapper.items} == [1, 2, 3]")
 
-    # Call wrapped object methods
+    # Calls wrapped object methods
     print("\nCalling wrapped object methods:")
     print(f"  wrapper.get_value(): {wrapper.get_value()} == 10")
     wrapper.set_value(20)
@@ -142,10 +142,10 @@ def basic_usage_example() -> None:
 
 
 def custom_wrapper_example() -> None:
-    """Demonstrate using a custom DynamicWrapper subclass."""
+    """Demonstrates using a custom DynamicWrapper subclass."""
     print("\nCustom DynamicWrapper Subclass Example:")
 
-    # Create a custom wrapper
+    # Creates a custom wrapper
     wrapper = CustomDynamicWrapper(SimpleObject(5), ComplexObject([10, 20, 30]))
 
     print("Created custom wrapper:")
@@ -161,16 +161,16 @@ def custom_wrapper_example() -> None:
     wrapper.add_item(40)
     print(f"  After wrapper.add_item(40): {wrapper.items} == [10, 20, 30, 40]")
 
-    # Call a method from the wrapper itself
+    # Calls a method from the wrapper itself
     print("\nCalling a method from the wrapper itself:")
     print(f"  wrapper.get_combined_str(): {wrapper.get_combined_str()}")
 
 
 def attribute_resolution_example() -> None:
-    """Demonstrate attribute resolution in DynamicWrapper."""
+    """Demonstrates attribute resolution in DynamicWrapper."""
     print("\nAttribute Resolution Example:")
 
-    # Create objects with overlapping attribute names
+    # Creates objects with overlapping attribute names
     obj1 = SimpleObject(10)
     obj1.shared_attr = "from obj1"  # type: ignore
 
@@ -178,7 +178,7 @@ def attribute_resolution_example() -> None:
     obj2.shared_attr = "from obj2"  # type: ignore
     obj2.unique_attr = "only in obj2"  # type: ignore
 
-    # Create a wrapper
+    # Creates a wrapper
     class AttributeWrapper(DynamicWrapper):
         _wrapped_map_: ClassVar[list[str]] = ["first", "second"]
 
@@ -205,10 +205,10 @@ def attribute_resolution_example() -> None:
 
 
 def dynamic_attribute_example() -> None:
-    """Demonstrate dynamic attribute handling in DynamicWrapper."""
+    """Demonstrates dynamic attribute handling in DynamicWrapper."""
     print("\nDynamic Attribute Example:")
 
-    # Create a wrapper
+    # Creates a wrapper
     class DynamicAttrWrapper(DynamicWrapper):
         _wrapped_map_: ClassVar[list[str]] = ["obj"]
 
@@ -236,20 +236,20 @@ def dynamic_attribute_example() -> None:
     except AttributeError:
         print("  AttributeError: attribute no longer exists")
 
-    # Add a new attribute to the wrapped object at runtime
+    # Adds a new attribute to the wrapped object at runtime
     print("\nAdding a new attribute to the wrapped object at runtime:")
     wrapper.obj.new_attr = "dynamically added"
     print(f"  wrapper.new_attr: {wrapper.new_attr} == 'dynamically added'")
 
 
 def performance_comparison_example() -> None:
-    """Demonstrate performance comparison between direct access and DynamicWrapper."""
+    """Demonstrates performance comparison between direct access and DynamicWrapper."""
     print("\nPerformance Comparison Example:")
 
-    # Create objects
+    # Creates objects
     simple = SimpleObject(10)
 
-    # Create a wrapper
+    # Creates a wrapper
     class PerfWrapper(DynamicWrapper):
         _wrapped_map_: ClassVar[list[str]] = ["obj"]
 
@@ -284,13 +284,13 @@ def performance_comparison_example() -> None:
 
 
 def error_handling_example() -> None:
-    """Demonstrate error handling with DynamicWrapper."""
+    """Demonstrates error handling with DynamicWrapper."""
     print("\nError Handling Example:")
 
-    # Create objects
+    # Creates objects
     simple = SimpleObject(10)
 
-    # Create a wrapper
+    # Creates a wrapper
     class ErrorWrapper(DynamicWrapper):
         _wrapped_map_: ClassVar[list[str]] = ["obj"]
 
@@ -305,7 +305,7 @@ def error_handling_example() -> None:
     except AttributeError:
         print("  AttributeError: attribute doesn't exist")
 
-    # Add the attribute to the wrapped object
+    # Adds the attribute to the wrapped object
     print("\nAdding the attribute to the wrapped object:")
     simple.non_existent_attr = "Now it exists"  # type: ignore
 
@@ -318,7 +318,7 @@ def error_handling_example() -> None:
 
 
 def compare_wrappers_example() -> None:
-    """Compare DynamicWrapper with StaticWrapper."""
+    """Compares DynamicWrapper with StaticWrapper."""
     print("\nComparing DynamicWrapper with StaticWrapper:")
 
     print("DynamicWrapper advantages:")
@@ -341,7 +341,7 @@ def compare_wrappers_example() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     basic_usage_example()
     custom_wrapper_example()
     attribute_resolution_example()

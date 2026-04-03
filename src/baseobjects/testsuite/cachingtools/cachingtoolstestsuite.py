@@ -41,7 +41,7 @@ class PicklableConcrete:
         self.__name__ = "example_func"
 
     def __call__(self, x: int) -> int:
-        """Call the method.
+        """Calls the method.
 
         Returns:
             The result of x * 2.
@@ -161,7 +161,7 @@ class BaseCacheTestSuite(BaseObjectTestSuite):
             *args: Positional arguments to pass to the class constructor.
             **kwargs: Keyword arguments to pass to the class constructor.
         """
-        # Create Object
+        # Creates Object
         caching_func, _, _ = self.create_test_caching_function(
             *args,
             lifetime=lifetime,
@@ -281,7 +281,7 @@ class BaseCacheTestSuite(BaseObjectTestSuite):
         caching_func, _, get_call_count = self.create_test_caching_function(*args, **kwargs)
         caching_func.cache_method = "no_cache"
 
-        # Call the function multiple times with the same argument
+        # Calls the function multiple times with the same argument
         result1 = caching_func(2)
         result2 = caching_func(2)
 
@@ -305,24 +305,24 @@ class BaseCacheTestSuite(BaseObjectTestSuite):
         """
         caching_func, _, get_call_count = self.create_test_caching_function(*args, **kwargs)
 
-        # Call the function multiple times with the same argument
+        # Calls the function multiple times with the same argument
         result1 = caching_func(2)
         result2 = caching_func(2)
 
-        # Verify that the function returns the correct result
+        # Verifies that the function returns the correct result
         assert result1 == 4
         assert result2 == 4
 
-        # Verify that the function was only called once
+        # Verifies that the function was only called once
         assert get_call_count() == 1
 
-        # Call the function with a different argument
+        # Calls the function with a different argument
         result3 = caching_func(3)
 
-        # Verify that the function returns the correct result
+        # Verifies that the function returns the correct result
         assert result3 == 6
 
-        # Verify that the function was called again
+        # Verifies that the function was called again
         assert get_call_count() == 2
 
     def test_cache_clearing(
@@ -341,12 +341,12 @@ class BaseCacheTestSuite(BaseObjectTestSuite):
         """
         caching_func, _, get_call_count = self.create_test_caching_function(*args, **kwargs)
 
-        # Call the function to cache the result
+        # Calls the function to cache the result
         result1 = caching_func(2)
         assert result1 == 4
         assert get_call_count() == 1
 
-        # Call the function again with the same argument to verify caching
+        # Calls the function again with the same argument to verify caching
         result2 = caching_func(2)
         assert result2 == 4
         assert get_call_count() == 1  # Call count should not increase
@@ -354,7 +354,7 @@ class BaseCacheTestSuite(BaseObjectTestSuite):
         # Clear the cache
         caching_func.clear_cache()
 
-        # Call the function again with the same argument
+        # Calls the function again with the same argument
         result3 = caching_func(2)
         assert result3 == 4
         assert get_call_count() == 2  # Call count should increase after clearing cache
@@ -400,7 +400,7 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
             *args: Positional arguments list to pass to the class constructor.
             **kwargs: Keyword arguments to pass to the class constructor.
         """
-        # Create Object
+        # Creates Object
         caching_func, _, _ = self.create_test_caching_function(
             *args,
             lifetime=lifetime,
@@ -544,20 +544,20 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
         kwargs.setdefault("lifetime", 0.05)
         caching_func, _, get_call_count = self.create_test_caching_function(*args, **kwargs)
 
-        # Call the function to cache the result
+        # Calls the function to cache the result
         result1 = caching_func(2)
         assert result1 == 4
         assert get_call_count() == 1
 
-        # Call the function again with the same argument to verify caching
+        # Calls the function again with the same argument to verify caching
         result2 = caching_func(2)
         assert result2 == 4
         assert get_call_count() == 1  # Call count should not increase
 
-        # Wait for the cache to expire
+        # Waits for the cache to expire
         time.sleep(caching_func.lifetime + 0.1)
 
-        # Call the function again with the same argument
+        # Calls the function again with the same argument
         result3 = caching_func(2)
         assert result3 == 4
         assert get_call_count() == 2  # Call count should increase after cache expiration
@@ -579,20 +579,20 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
         kwargs.setdefault("lifetime", 1.0)
         caching_func, _, _get_call_count = self.create_test_caching_function(*args, **kwargs)
 
-        # Verify that clear_condition returns False when the cache is not expired
+        # Verifies that clear_condition returns False when the cache is not expired
         caching_func.is_timed = True
         caching_func.expiration = time.perf_counter() + 2
         assert not caching_func.clear_condition()
 
-        # Verify that clear_condition returns True when the cache is expired
+        # Verifies that clear_condition returns True when the cache is expired
         caching_func.expiration = time.perf_counter() - 2
         assert caching_func.clear_condition()
 
-        # Verify that clear_condition returns False when is_timed is False
+        # Verifies that clear_condition returns False when is_timed is False
         caching_func.is_timed = False
         assert not caching_func.clear_condition()
 
-        # Verify that clear_condition returns False when lifetime is None
+        # Verifies that clear_condition returns False when lifetime is None
         caching_func.is_timed = True
         caching_func.lifetime = None
         assert not caching_func.clear_condition()
@@ -620,7 +620,7 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
 
         This test verifies that the instanced_cache property correctly gets and sets the instanced cache flag.
         """
-        # Create an instance directly or use helper
+        # Creates an instance directly or use helper
         # We need an instance of the class being tested.
         # create_test_caching_function creates a wrapper (TimedSingleCache usually)
         caching_func, _, _ = self.create_test_caching_function(*args, **kwargs)

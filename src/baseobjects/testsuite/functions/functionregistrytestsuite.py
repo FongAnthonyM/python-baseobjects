@@ -202,7 +202,7 @@ class FunctionRegistryTestSuite(BaseDictTestSuite):
 
     def test_dict_initialization(self) -> None:
         """Tests initialization of BaseDict with a dictionary."""
-        # Initialize with a dictionary
+        # Initializes with a dictionary
         init_dict = {"func1": func1, "func2": func2}
         test_dict = self.UnitTestClass(init_dict)  # type: ignore[arg-type]
 
@@ -213,7 +213,7 @@ class FunctionRegistryTestSuite(BaseDictTestSuite):
 
     def test_dict_initialization_with_kwargs(self) -> None:
         """Tests initialization of BaseDict with keyword arguments."""
-        # Initialize with keyword arguments
+        # Initializes with keyword arguments
         test_dict = self.UnitTestClass(func1=func1, func2=func2)
 
         # Validate

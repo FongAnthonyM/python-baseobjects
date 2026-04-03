@@ -13,7 +13,6 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 import pickle
-from typing import cast
 
 # Source Packages #
 from baseobjects.bases import BaseObject
@@ -55,7 +54,9 @@ class ValueComponent(BaseComponent):
         Returns:
             The current value of the composite.
         """
-        return cast(int, self.composite.value)
+        value = self.composite.value
+        assert isinstance(value, int)
+        return value
 
 
 class NameComponent(BaseComponent):
@@ -75,7 +76,9 @@ class NameComponent(BaseComponent):
         Returns:
             The current name of the composite.
         """
-        return cast(str, self.composite.name)
+        name = self.composite.name
+        assert isinstance(name, str)
+        return name
 
     def get_formatted_name(self) -> str:
         """Gets a formatted version of the composite's name.
@@ -92,14 +95,14 @@ def basic_component_usage() -> None:
     """Demonstrates basic usage of components with a composite."""
     print("Basic Component Usage:\n")
 
-    # Create a composite
+    # Creates a composite
     print("Creating a simple composite...")
     composite = SimpleComposite()
     print(f"Initial composite value: {composite.value} == 0")
     print(f"Initial composite name: {composite.name} == 'Default'")
     print()
 
-    # Create a component and connect it to the composite
+    # Creates a component and connect it to the composite
     print("Creating a value component and connecting it to the composite...")
     value_component = ValueComponent(composite=composite)
 
@@ -113,7 +116,7 @@ def basic_component_usage() -> None:
     value_component.increment_value(5)
     print(f"Composite value after increment by 5: {composite.value} == 6")
 
-    # Get the value through the component
+    # Gets the value through the component
     print("Getting the value through the component...")
     component_value = value_component.get_value()
     print(f"Value retrieved through component: {component_value} == 6")
@@ -124,11 +127,11 @@ def multiple_components() -> None:
     """Demonstrates using multiple components with a single composite."""
     print("Multiple Components with a Single Composite:\n")
 
-    # Create a composite
+    # Creates a composite
     print("Creating a simple composite...")
     composite = SimpleComposite()
 
-    # Create multiple components
+    # Creates multiple components
     print("Creating multiple components for the same composite...")
     value_component = ValueComponent(composite=composite)
     name_component = NameComponent(composite=composite)
@@ -142,7 +145,7 @@ def multiple_components() -> None:
     name_component.set_name("MyComposite")
     print(f"Composite name: {composite.name} == 'MyComposite'")
 
-    # Get formatted name
+    # Gets formatted name
     print("Getting formatted name through the name component...")
     formatted_name = name_component.get_formatted_name()
     print(f"Formatted name: {formatted_name} == 'Composite: MyComposite'")
@@ -153,7 +156,7 @@ def component_serialization() -> None:
     """Demonstrates serialization and deserialization of components."""
     print("Component Serialization and Deserialization:\n")
 
-    # Create a composite and component
+    # Creates a composite and component
     print("Creating a composite and component...")
     composite = SimpleComposite()
     composite.value = 42
@@ -193,7 +196,7 @@ def component_construction() -> None:
     """Demonstrates different ways to construct components."""
     print("Component Construction Methods:\n")
 
-    # Create a composite
+    # Creates a composite
     composite = SimpleComposite()
 
     # Method 1: Pass composite during initialization

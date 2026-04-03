@@ -15,6 +15,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
+# from typing import
 
 # Third-Party Packages #
 import pytest
@@ -44,19 +45,19 @@ class FunctionMultiplexerTestSuite(CallableMultiplexerTestSuite):
 
         For FunctionMultiplexer, methods are added as unbound functions and NOT bound upon call.
         """
-        # Add method
+        # Adds method
         test_multiplexer.add_method("method1", test_object_instance.method1)
 
         # Select
         test_multiplexer.select("method1")
 
-        # Bind to instance (should have NO effect on call for FunctionMultiplexer)
+        # Binds to instance (should have NO effect on call for FunctionMultiplexer)
         test_multiplexer.bind_self(test_object_instance)
 
-        # Call with instance as argument (manual binding)
+        # Calls with instance as argument (manual binding)
         assert test_multiplexer(test_object_instance, 3) == 13
 
-        # Call without instance should fail (missing argument)
+        # Calls without instance should fail (missing argument)
         with pytest.raises(TypeError):
             test_multiplexer(3)
 
@@ -69,13 +70,13 @@ class FunctionMultiplexerTestSuite(CallableMultiplexerTestSuite):
 
         For FunctionMultiplexer, methods are added as unbound functions and NOT bound upon call.
         """
-        # Add and select method
+        # Adds and select method
         test_multiplexer.add_select_method("method1", test_object_instance.method1)
 
-        # Verify it's selected
+        # Verifies it's selected
         assert test_multiplexer.selected == "method1"
 
-        # Call with instance as argument
+        # Calls with instance as argument
         assert test_multiplexer(test_object_instance, 3) == 13
 
     # Functionality #
@@ -98,14 +99,14 @@ class FunctionMultiplexerTestSuite(CallableMultiplexerTestSuite):
         instance = BindTarget()
         bound_multiplexer = instance.new_method
 
-        # Verify it returns the multiplexer (bound to instance)
+        # Verifies it returns the multiplexer (bound to instance)
         assert bound_multiplexer is test_method_object
         assert bound_multiplexer.__self__ is instance
 
         # Select method from the bound instance
         bound_multiplexer.select("method1")
 
-        # Call with instance as argument (manual binding required for FunctionMultiplexer)
+        # Calls with instance as argument (manual binding required for FunctionMultiplexer)
         assert bound_multiplexer(instance, 3) == 13
 
     def test_object_method_selection(self, test_multiplexer_with_object: FunctionMultiplexer) -> None:  # type: ignore[override]

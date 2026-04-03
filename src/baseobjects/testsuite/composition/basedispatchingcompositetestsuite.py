@@ -73,7 +73,7 @@ class BaseDispatchingCompositeTestSuite(BaseCompositeTestSuite):
         if expected_type is type(None):
             pytest.skip("Dispatch args/expectation not implemented.")
 
-        # Create Composite
+        # Creates Composite
         composite = self.UnitTestClass(*args, **kwargs)
 
         # Validate
@@ -96,7 +96,7 @@ class BaseDispatchingCompositeTestSuite(BaseCompositeTestSuite):
         override_type = self.UnitTestComponent
         component_types: dict[str, tuple[type, dict[str, Any]]] = {name: (override_type, {})}
 
-        # Create Composite with override
+        # Creates Composite with override
         composite = self.UnitTestClass(*args, component_types=component_types, **kwargs)  # type: ignore[misc]
 
         # Validate
@@ -118,7 +118,7 @@ class BaseDispatchingCompositeTestSuite(BaseCompositeTestSuite):
         override_instance = self.UnitTestComponent()
         components = {name: override_instance}
 
-        # Create Composite with override
+        # Creates Composite with override
         composite = self.UnitTestClass(*args, components=components, **kwargs)  # type: ignore[misc]
 
         # Validate

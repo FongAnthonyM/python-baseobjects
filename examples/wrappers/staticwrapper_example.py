@@ -30,12 +30,12 @@ class SimpleObject:
     name: str
 
     def __init__(self, value: int = 0) -> None:
-        """Initialize the object."""
+        """Initializes the object."""
         self.value = value
         self.name = "SimpleObject"
 
     def get_value(self) -> int:
-        """Get the value.
+        """Gets the value.
 
         Returns:
             The value.
@@ -43,11 +43,11 @@ class SimpleObject:
         return self.value
 
     def set_value(self, value: int) -> None:
-        """Set the value."""
+        """Sets the value."""
         self.value = value
 
     def __str__(self) -> str:
-        """Return the string representation."""
+        """Returns the string representation."""
         return f"{self.name}(value={self.value})"
 
 
@@ -55,18 +55,18 @@ class ComplexObject:
     """A more complex object to be wrapped."""
 
     def __init__(self, items: list[int] | None = None) -> None:
-        """Initialize the object."""
+        """Initializes the object."""
         # Defining attributes outside the class namespace means that StaticWrapper's _wrap() must be call so they are
         # available to the StaticWrapper
         self.items = items or []
         self.name = "ComplexObject"
 
     def add_item(self, item: int) -> None:
-        """Add an item to the list."""
+        """Adds an item to the list."""
         self.items.append(item)
 
     def get_items(self) -> list[int]:
-        """Get all items.
+        """Gets all items.
 
         Returns:
             The list of items.
@@ -78,24 +78,24 @@ class ComplexObject:
         self.items = []
 
     def __str__(self) -> str:
-        """Return the string representation."""
+        """Returns the string representation."""
         return f"{self.name}(items={self.items})"
 
 
 class CustomStaticWrapper(StaticWrapper):
     """A custom StaticWrapper that wraps both simple and complex objects."""
 
-    # Define which attributes contain objects to wrap
+    # Defines which attributes contain objects to wrap
     _wrapped_map_: ClassVar[list[tuple[str, type | None]]] = [("simple", SimpleObject), ("complex", ComplexObject)]
 
     def __init__(self, simple_obj: SimpleObject | None = None, complex_obj: ComplexObject | None = None) -> None:
-        """Initialize the wrapper with simple and complex objects."""
-        # Initialize attributes to store wrapped objects
+        """Initializes the wrapper with simple and complex objects."""
+        # Initializes attributes to store wrapped objects
         self._simple = simple_obj or SimpleObject()
         self._complex = complex_obj or ComplexObject()
 
     def get_combined_str(self) -> str:
-        """Get a string representation of both wrapped objects.
+        """Gets a string representation of both wrapped objects.
 
         Returns:
             The combined string.
@@ -105,22 +105,22 @@ class CustomStaticWrapper(StaticWrapper):
 
 # Example Sections #
 def basic_usage_example() -> None:
-    """Demonstrate basic usage of StaticWrapper."""
+    """Demonstrates basic usage of StaticWrapper."""
     print("\nBasic StaticWrapper Usage:")
 
-    # Create objects to wrap
+    # Creates objects to wrap
     simple = SimpleObject(10)
     complex_obj = ComplexObject([1, 2, 3])
 
-    # Create a StaticWrapper subclass
+    # Creates a StaticWrapper subclass
     class MyWrapper(StaticWrapper):
-        # Define which attributes contain objects to wrap
+        # Defines which attributes contain objects to wrap
         _wrapped_map_: ClassVar[list[tuple[str, type | None]]] = [("obj1", SimpleObject), ("obj2", ComplexObject)]
 
-    # Create an instance of the wrapper
+    # Creates an instance of the wrapper
     wrapper = MyWrapper()
 
-    # Set the wrapped objects
+    # Sets the wrapped objects
     wrapper._obj1 = simple  # type: ignore
     wrapper._obj2 = complex_obj  # type: ignore
 
@@ -135,7 +135,7 @@ def basic_usage_example() -> None:
     print(f"  wrapper.name: {wrapper.name} == 'SimpleObject'")  # type: ignore
     print(f"  wrapper.items exist: {hasattr(wrapper, 'items')} == False")
 
-    # Call _wrap to create property descriptors for attributes no defined in the class namespace (runtime)
+    # Calls _wrap to create property descriptors for attributes no defined in the class namespace (runtime)
     wrapper._wrap()  # This can be called within the class __init__ but will slow class creation
 
     # Access wrapped object attributes
@@ -144,7 +144,7 @@ def basic_usage_example() -> None:
     print(f"  wrapper.name: {wrapper.name} == 'SimpleObject'")  # type: ignore
     print(f"  wrapper.items: {wrapper.items} == [1, 2, 3]")  # type: ignore
 
-    # Call wrapped object methods
+    # Calls wrapped object methods
     print("\nCalling wrapped object methods:")
     print(f"  wrapper.get_value(): {wrapper.get_value()} == 10")  # type: ignore
     wrapper.set_value(20)  # type: ignore
@@ -157,16 +157,16 @@ def basic_usage_example() -> None:
 
 
 def custom_wrapper_example() -> None:
-    """Demonstrate using a custom StaticWrapper subclass."""
+    """Demonstrates using a custom StaticWrapper subclass."""
     print("\nCustom StaticWrapper Subclass Example:")
 
-    # Create a custom wrapper
+    # Creates a custom wrapper
     wrapper = CustomStaticWrapper(SimpleObject(5), ComplexObject([10, 20, 30]))
 
     print("Created custom wrapper:")
     print(f"  wrapper.get_combined_str(): {wrapper.get_combined_str()}")
 
-    # Call _wrap to create property descriptors for attributes
+    # Calls _wrap to create property descriptors for attributes
     wrapper._wrap()  # This can be called within the class __init__ but will slow class creation
 
     # Access and modify wrapped object attributes
@@ -179,16 +179,16 @@ def custom_wrapper_example() -> None:
     wrapper.add_item(40)  # type: ignore
     print(f"  After wrapper.add_item(40): {wrapper.items} == [10, 20, 30, 40]")  # type: ignore
 
-    # Call a method from the wrapper itself
+    # Calls a method from the wrapper itself
     print("\nCalling a method from the wrapper itself:")
     print(f"  wrapper.get_combined_str(): {wrapper.get_combined_str()}")
 
 
 def attribute_resolution_example() -> None:
-    """Demonstrate attribute resolution in StaticWrapper."""
+    """Demonstrates attribute resolution in StaticWrapper."""
     print("\nAttribute Resolution Example:")
 
-    # Create objects with overlapping attribute names
+    # Creates objects with overlapping attribute names
     obj1 = SimpleObject(10)
     obj1.shared_attr = "from obj1"  # type: ignore
 
@@ -196,7 +196,7 @@ def attribute_resolution_example() -> None:
     obj2.shared_attr = "from obj2"  # type: ignore
     obj2.unique_attr = "only in obj2"  # type: ignore
 
-    # Create a wrapper
+    # Creates a wrapper
     class AttributeWrapper(StaticWrapper):
         _wrapped_map_: ClassVar[list[tuple[str, type | None]]] = [("first", SimpleObject), ("second", ComplexObject)]
 
@@ -229,10 +229,10 @@ def attribute_resolution_example() -> None:
 
 
 def rewrapping_example() -> None:
-    """Demonstrate rewrapping objects in StaticWrapper."""
+    """Demonstrates rewrapping objects in StaticWrapper."""
     print("\nRewrapping Example:")
 
-    # Create a wrapper
+    # Creates a wrapper
     class RewrapWrapper(StaticWrapper):
         _wrapped_map_: ClassVar[list[tuple[str, type | None]]] = [("obj", SimpleObject)]
 
@@ -244,7 +244,7 @@ def rewrapping_example() -> None:
     print(f"  wrapper.value: {wrapper.value} == 10")  # type: ignore
     print(f"  wrapper.name: {wrapper.name} == 'SimpleObject'")  # type: ignore
 
-    # Add a new attribute to the wrapped object
+    # Adds a new attribute to the wrapped object
     wrapper._obj.new_attr = "added attribute"  # type: ignore
 
     # Need to rewrap to access the new attribute
@@ -267,13 +267,13 @@ def rewrapping_example() -> None:
 
 
 def performance_comparison_example() -> None:
-    """Demonstrate performance comparison between direct access and StaticWrapper."""
+    """Demonstrates performance comparison between direct access and StaticWrapper."""
     print("\nPerformance Comparison Example:")
 
-    # Create objects
+    # Creates objects
     simple = SimpleObject(10)
 
-    # Create a wrapper
+    # Creates a wrapper
     class PerfWrapper(StaticWrapper):
         _wrapped_map_: ClassVar[list[tuple[str, type | None]]] = [("obj", SimpleObject)]
 
@@ -310,13 +310,13 @@ def performance_comparison_example() -> None:
 
 
 def error_handling_example() -> None:
-    """Demonstrate error handling with StaticWrapper."""
+    """Demonstrates error handling with StaticWrapper."""
     print("\nError Handling Example:")
 
-    # Create objects
+    # Creates objects
     simple = SimpleObject(10)
 
-    # Create a wrapper
+    # Creates a wrapper
     class ErrorWrapper(StaticWrapper):
         _wrapped_map_: ClassVar[list[tuple[str, type | None]]] = [("obj", SimpleObject)]
 
@@ -332,7 +332,7 @@ def error_handling_example() -> None:
     except AttributeError:
         print("  AttributeError: attribute doesn't exist")
 
-    # Add the attribute to the wrapped object
+    # Adds the attribute to the wrapped object
     print("\nAdding the attribute to the wrapped object:")
     simple.non_existent_attr = "Now it exists"  # type: ignore
 
@@ -354,7 +354,7 @@ def error_handling_example() -> None:
 
 
 def compare_wrappers_example() -> None:
-    """Compare StaticWrapper with DynamicWrapper."""
+    """Compares StaticWrapper with DynamicWrapper."""
     print("\nComparing StaticWrapper with DynamicWrapper:")
 
     print("StaticWrapper advantages:")
@@ -376,7 +376,7 @@ def compare_wrappers_example() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     basic_usage_example()
     custom_wrapper_example()
     attribute_resolution_example()

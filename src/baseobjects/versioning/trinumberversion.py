@@ -108,7 +108,7 @@ class TriNumberVersion(Version):
         elif not isinstance(other, TriNumberVersion):
             try:
                 other = self.cast(other)
-            except TypeError, TypeCheckError:
+            except (TypeError, TypeCheckError):
                 return False
 
         return bool(self.tuple() == other.tuple())
@@ -130,7 +130,7 @@ class TriNumberVersion(Version):
         elif not isinstance(other, TriNumberVersion):
             try:
                 other = self.cast(other)
-            except TypeError, TypeCheckError:
+            except (TypeError, TypeCheckError):
                 return True
 
         return bool(self.tuple() != other.tuple())
@@ -156,7 +156,7 @@ class TriNumberVersion(Version):
         if not isinstance(other, TriNumberVersion):
             try:
                 other = self.cast(other)
-            except TypeError, TypeCheckError:
+            except (TypeError, TypeCheckError):
                 msg = f"'<' not supported between instances of '{self!s}' and '{other!s}'"
                 raise TypeError(msg) from None
 
@@ -183,7 +183,7 @@ class TriNumberVersion(Version):
         if not isinstance(other, TriNumberVersion):
             try:
                 other = self.cast(other)
-            except TypeError, TypeCheckError:
+            except (TypeError, TypeCheckError):
                 msg = f"'>' not supported between instances of '{self!s}' and '{other!s}'"
                 raise TypeError(msg) from None
 
@@ -210,7 +210,7 @@ class TriNumberVersion(Version):
         if not isinstance(other, TriNumberVersion):
             try:
                 other = self.cast(other)
-            except TypeError, TypeCheckError:
+            except (TypeError, TypeCheckError):
                 msg = f"'<=' not supported between instances of '{self!s}' and '{other!s}'"
                 raise TypeError(msg) from None
 
@@ -237,7 +237,7 @@ class TriNumberVersion(Version):
         if not isinstance(other, TriNumberVersion):
             try:
                 other = self.cast(other)
-            except TypeError, TypeCheckError:
+            except (TypeError, TypeCheckError):
                 msg = f"'>=' not supported between instances of '{self!s}' and '{other!s}'"
                 raise TypeError(msg) from None
 

@@ -16,18 +16,19 @@ from collections import ChainMap
 # Source Packages #
 from baseobjects.collections import DeepChainMap
 
-
 # Example Sections #
+
+
 def basic_usage_example() -> None:
-    """Demonstrate basic usage of DeepChainMap."""
+    """Demonstrates basic usage of DeepChainMap."""
     print("\nBasic DeepChainMap Usage:")
 
-    # Create dictionaries for the chain
+    # Creates dictionaries for the chain
     defaults = {"theme": "default", "language": "en", "timeout": 30, "debug": False}
     user_settings = {"language": "fr", "timeout": 60}
     session_settings = {"theme": "dark"}
 
-    # Create a DeepChainMap with these dictionaries
+    # Creates a DeepChainMap with these dictionaries
     settings = DeepChainMap(session_settings, user_settings, defaults)
 
     # Access values (looks through the chain)
@@ -37,20 +38,20 @@ def basic_usage_example() -> None:
     print(f"  Timeout: {settings['timeout']} == 60")
     print(f"  Debug: {settings['debug']} == False")
 
-    # Check the original dictionaries
+    # Checks the original dictionaries
     print("\nOriginal dictionaries:")
     print(f"  Session settings: {session_settings} == {{'theme': 'dark'}}")
     print(f"  User settings: {user_settings} == {{'language': 'fr', 'timeout': 60}}")
     print("  Defaults:")
     print(f"    {defaults} == {{'theme': 'default', 'language': 'en', 'timeout': 30, 'debug': False}}")
 
-    # Add a new key
+    # Adds a new key
     print("\nAdding a new key 'notifications':")
     settings["notifications"] = True
     print(f"  Settings['notifications']: {settings['notifications']} == True")
     print(f"  First mapping (session_settings): {session_settings} == {{'theme': 'dark', 'notifications': True}}")
 
-    # Update an existing key
+    # Updates an existing key
     print("\nUpdating existing key 'language':")
     settings["language"] = "es"
     print(f"  Settings['language']: {settings['language']} == 'es'")
@@ -58,7 +59,7 @@ def basic_usage_example() -> None:
     print("  Defaults (unchanged):")
     print(f"    {defaults} == {{'theme': 'default', 'language': 'en', 'timeout': 30, 'debug': False}}")
 
-    # Delete a key
+    # Deletes a key
     print("\nDeleting key 'timeout':")
     del settings["timeout"]
     print(f"  'timeout' in settings: {'timeout' in settings} == False")
@@ -70,18 +71,18 @@ def basic_usage_example() -> None:
 
 
 def compare_with_chainmap() -> None:
-    """Compare DeepChainMap with standard ChainMap."""
+    """Compares DeepChainMap with standard ChainMap."""
     print("\nComparing DeepChainMap with standard ChainMap:")
 
-    # Create dictionaries for the chains
+    # Creates dictionaries for the chains
     dict1 = {"a": 1, "b": 2}
     dict2 = {"b": 20, "c": 30}
     dict3 = {"c": 300, "d": 400}
 
-    # Create a standard ChainMap
+    # Creates a standard ChainMap
     standard_chain = ChainMap(dict1, dict2, dict3)
 
-    # Create a DeepChainMap with the same dictionaries
+    # Creates a DeepChainMap with the same dictionaries
     deep_chain = DeepChainMap(dict1, dict2, dict3)
 
     print("Initial dictionaries:")
@@ -145,7 +146,7 @@ def compare_with_chainmap() -> None:
 
 
 def configuration_example() -> None:
-    """Demonstrate using DeepChainMap for configuration management."""
+    """Demonstrates using DeepChainMap for configuration management."""
     print("\nConfiguration Management Example:")
 
     # System defaults
@@ -190,7 +191,7 @@ def configuration_example() -> None:
         }
     }
 
-    # Create configuration using DeepChainMap
+    # Creates configuration using DeepChainMap
     config = DeepChainMap(env_overrides, user_config, system_defaults)
 
     print("Effective configuration:")
@@ -210,7 +211,7 @@ def configuration_example() -> None:
     print(f"  Level: {config['logging']['level']} == 'DEBUG'")
     print(f"  File: {config['logging']['file']} == 'app.log'")
 
-    # Update a nested setting
+    # Updates a nested setting
     print("\nUpdating API timeout:")
     config["api"]["timeout"] = 60
 
@@ -220,10 +221,10 @@ def configuration_example() -> None:
 
 
 def error_handling_example() -> None:
-    """Demonstrate error handling with DeepChainMap."""
+    """Demonstrates error handling with DeepChainMap."""
     print("\nError Handling Example:")
 
-    # Create a DeepChainMap
+    # Creates a DeepChainMap
     map1 = {"a": 1, "b": 2}
     map2 = {"c": 3}
     deep_chain = DeepChainMap(map1, map2)
@@ -249,7 +250,7 @@ def error_handling_example() -> None:
     except KeyError as e:
         print(f"  KeyError: {e}")
 
-    # Check if key exists before deleting
+    # Checks if key exists before deleting
     print("\nChecking if key exists before deleting:")
     key = "d"
     if key in deep_chain:
@@ -261,7 +262,7 @@ def error_handling_example() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     basic_usage_example()
     compare_with_chainmap()
     configuration_example()

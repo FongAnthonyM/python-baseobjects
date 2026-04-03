@@ -76,7 +76,7 @@ class SentinelObjectTestSuite(BaseObjectTestSuite):
     # Instantiation #
     def test_instance_creation(self, *args: Any, **kwargs: Any) -> None:
         """Tests that instances of SentinelObject can be created."""
-        # Create Object
+        # Creates Object
         obj = self.UnitTestClass("TEST_SENTINEL_CREATION")
 
         # Validate
@@ -176,7 +176,7 @@ class SentinelObjectTestSuite(BaseObjectTestSuite):
         assert unpickled.identity == test_object.identity
 
     # Tests #
-    def test_dict_modifications(self, test_object: SentinelObject) -> None:  # type: ignore[override]
+    def test_dict_modifications(self, test_object: SentinelObject) -> None:
         """Tests BaseObject with __dict__ modifications.
 
         This test verifies that SentinelObject works correctly when __dict__ is modified directly.
@@ -188,17 +188,17 @@ class SentinelObjectTestSuite(BaseObjectTestSuite):
         # Modify __dict__ directly
         test_object.__dict__["new_attr"] = "new value"
 
-        # Verify the attribute is accessible
+        # Verifies the attribute is accessible
         if hasattr(test_object, "new_attr"):
             assert test_object.new_attr == "new value"
 
         # Copy the object
         copy_obj = test_object.copy()
 
-        # Verify the copy is the same instance
+        # Verifies the copy is the same instance
         assert copy_obj is test_object
 
-        # Verify the copy has the same attribute (since it's the same object)
+        # Verifies the copy has the same attribute (since it's the same object)
         if hasattr(copy_obj, "new_attr"):
             assert copy_obj.new_attr == "new value"
 
@@ -243,7 +243,7 @@ class SentinelObjectTestSuite(BaseObjectTestSuite):
         Args:
             sentinel_id: The ID to use for the sentinel object.
         """
-        # Create Object
+        # Creates Object
         obj = self.UnitTestClass(sentinel_id)
 
         # Validate
@@ -257,7 +257,7 @@ class SentinelObjectTestSuite(BaseObjectTestSuite):
         self.UnitTestClass.sentinel_registry.clear()
 
         try:
-            # Create sentinel objects
+            # Creates sentinel objects
             sentinel1 = self.UnitTestClass("REGISTRY_TEST_1")
             sentinel2 = self.UnitTestClass("REGISTRY_TEST_2")
 
@@ -268,7 +268,7 @@ class SentinelObjectTestSuite(BaseObjectTestSuite):
             assert self.UnitTestClass.sentinel_registry["REGISTRY_TEST_1"] is sentinel1
             assert self.UnitTestClass.sentinel_registry["REGISTRY_TEST_2"] is sentinel2
 
-            # Create another sentinel with existing ID
+            # Creates another sentinel with existing ID
             sentinel1_again = self.UnitTestClass("REGISTRY_TEST_1")
 
             # Validate registry didn't change

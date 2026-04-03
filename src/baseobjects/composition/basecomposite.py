@@ -54,9 +54,10 @@ class BaseComposite(BaseObject):
     # Construction/Destruction
     def __init__(
         self,
-        component_kwargs: dict[str, dict[str, Any]] | None = None,
-        component_types: dict[str, tuple[type, dict[str, Any]]] | None = None,
         components: dict[str, Any] | None = None,
+        component_types: dict[str, tuple[type, dict[str, Any]]] | None = None,
+        component_kwargs: dict[str, dict[str, Any]] | None = None,
+        *,
         init: bool = True,
         **kwargs: Any,
     ) -> None:
@@ -88,9 +89,9 @@ class BaseComposite(BaseObject):
     # Constructors/Destructors
     def construct(
         self,
-        component_kwargs: dict[str, dict[str, Any]] | None = None,
-        component_types: dict[str, tuple[type, dict[str, Any]]] | None = None,
         components: dict[str, Any] | None = None,
+        component_types: dict[str, tuple[type, dict[str, Any]]] | None = None,
+        component_kwargs: dict[str, dict[str, Any]] | None = None,
         **kwargs: Any,
     ) -> None:
         """Constructs this object with the given arguments.
@@ -102,18 +103,18 @@ class BaseComposite(BaseObject):
             **kwargs: Keyword arguments for inheritance.
         """
         self.construct_components(
-            component_kwargs=component_kwargs,
-            component_types=component_types,
             components=components,
+            component_types=component_types,
+            component_kwargs=component_kwargs,
         )
 
         super().construct(**kwargs)
 
     def construct_components(
         self,
-        component_kwargs: dict[str, dict[str, Any]] | None = None,
-        component_types: dict[str, tuple[type, dict[str, Any]]] | None = None,
         components: dict[str, Any] | None = None,
+        component_types: dict[str, tuple[type, dict[str, Any]]] | None = None,
+        component_kwargs: dict[str, dict[str, Any]] | None = None,
     ) -> None:
         """Constructs or adds components.
 
@@ -126,11 +127,11 @@ class BaseComposite(BaseObject):
         if components is None:
             components = {}
 
-        # Check for overriding components, and remove redundant construction
+        # Checks for overriding components, and remove redundant construction
         temp_types = self.default_component_types | ({} if component_types is None else component_types)
         type_names = set(temp_types.keys()) - set(components.keys()) - set(self.components.keys())
 
-        # Create Construction Iterator #
+        # Creates Construction Iterator #
         type_iter = ((n, temp_types[n]) for n in type_names)
         default_components_iter = ((n, c(composite=self, **(k | new_kwargs.get(n, {})))) for n, (c, k) in type_iter)
 

@@ -25,14 +25,14 @@ class CacheManager:
     """A simple cache manager that uses sentinel objects to mark special values."""
 
     def __init__(self) -> None:
-        """Initialize the cache manager with an empty cache."""
+        """Initializes the cache manager with an empty cache."""
         self.cache: dict[str, Any] = {}
         self.NOT_FOUND = SentinelObject("NOT_FOUND")
         self.EXPIRED = SentinelObject("EXPIRED")
         self.COMPUTING = SentinelObject("COMPUTING")
 
     def get(self, key: str, default: Any = None) -> Any:
-        """Get a value from the cache.
+        """Gets a value from the cache.
 
         Args:
             key: The key to look up
@@ -46,7 +46,7 @@ class CacheManager:
         if value is self.NOT_FOUND:
             return default
         elif value is self.EXPIRED:
-            # Handle expired value
+            # Handles expired value
             return default
         elif value is self.COMPUTING:
             # Value is being computed, return a temporary result
@@ -55,7 +55,7 @@ class CacheManager:
             return value
 
     def set(self, key: str, value: Any) -> None:
-        """Set a value in the cache.
+        """Sets a value in the cache.
 
         Args:
             key: The key to store the value under
@@ -84,12 +84,12 @@ class ConfigManager:
     """A configuration manager that uses sentinel objects for default values."""
 
     def __init__(self) -> None:
-        """Initialize the configuration manager with default settings."""
+        """Initializes the configuration manager with default settings."""
         self.settings: dict[str, Any] = {}
         self.UNSET = SentinelObject("UNSET")
 
     def get_setting(self, name: str, default: Any = None) -> Any:
-        """Get a setting value.
+        """Gets a setting value.
 
         Args:
             name: The name of the setting
@@ -106,7 +106,7 @@ class ConfigManager:
             return value
 
     def set_setting(self, name: str, value: Any) -> None:
-        """Set a setting value.
+        """Sets a setting value.
 
         Args:
             name: The name of the setting
@@ -117,22 +117,22 @@ class ConfigManager:
 
 # Example Sections #
 def basic_sentinel_example() -> None:
-    """Demonstrate basic usage of SentinelObject."""
+    """Demonstrates basic usage of SentinelObject."""
     print("\nBasic SentinelObject Example:")
 
-    # Create sentinel objects
+    # Creates sentinel objects
     null = SentinelObject("NULL")
     missing = SentinelObject("MISSING")
 
     print(f"Created NULL sentinel: {null}")
     print(f"Created MISSING sentinel: {missing}")
 
-    # Demonstrate that sentinel objects are singletons
+    # Demonstrates that sentinel objects are singletons
     null2 = SentinelObject("NULL")
     print(f"Created another NULL sentinel: {null2}")
     print(f"Are they the same object? {null is null2} == True")
 
-    # Demonstrate that different sentinel objects are different
+    # Demonstrates that different sentinel objects are different
     print(f"NULL is MISSING? {null is missing} == False")
 
     # Use sentinel objects as markers
@@ -147,24 +147,24 @@ def basic_sentinel_example() -> None:
 
 
 def sentinel_as_markers_example() -> None:
-    """Demonstrate using sentinel objects as markers in a cache."""
+    """Demonstrates using sentinel objects as markers in a cache."""
     print("\nSentinel Objects as Markers Example:")
 
-    # Create a cache manager
+    # Creates a cache manager
     cache = CacheManager()
 
-    # Set some values
+    # Sets some values
     cache.set("key1", "value1")
     cache.mark_computing("key2")
     cache.mark_expired("key3")
 
-    # Get values
+    # Gets values
     print(f"key1: {cache.get('key1')} == 'value1'")
     print(f"key2: {cache.get('key2')} == 'Computing...'")
     print(f"key3: {cache.get('key3')} == None")
     print(f"key4: {cache.get('key4')} == None")
 
-    # Demonstrate using sentinel objects for comparison
+    # Demonstrates using sentinel objects for comparison
     value = cache.cache.get("key2")
     if value is cache.COMPUTING:
         print("key2 is currently being computed")
@@ -175,10 +175,10 @@ def sentinel_as_markers_example() -> None:
 
 
 def sentinel_in_collections_example() -> None:
-    """Demonstrate using sentinel objects in dictionaries and sets."""
+    """Demonstrates using sentinel objects in dictionaries and sets."""
     print("\nSentinel Objects in Collections Example:")
 
-    # Create sentinel objects
+    # Creates sentinel objects
     red = SentinelObject("RED")
     green = SentinelObject("GREEN")
     blue = SentinelObject("BLUE")
@@ -199,14 +199,14 @@ def sentinel_in_collections_example() -> None:
 
 
 def pickling_sentinel_example() -> None:
-    """Demonstrate pickling and unpickling sentinel objects."""
+    """Demonstrates pickling and unpickling sentinel objects."""
     print("\nPickling Sentinel Objects Example:")
 
-    # Create sentinel objects
+    # Creates sentinel objects
     pending = SentinelObject("PENDING")
     completed = SentinelObject("COMPLETED")
 
-    # Create a dictionary with sentinel objects
+    # Creates a dictionary with sentinel objects
     status = {"task1": pending, "task2": completed, "task3": pending}
 
     print("Original status:")
@@ -221,28 +221,28 @@ def pickling_sentinel_example() -> None:
     print("Unpickling the status dictionary...")
     unpickled_status = pickle.loads(pickled_data)
 
-    # Verify that the sentinel objects maintain their identity
+    # Verifies that the sentinel objects maintain their identity
     print("\nVerifying unpickled status:")
     print(f"task1 is PENDING? {unpickled_status['task1'] is pending} == True")
     print(f"task2 is COMPLETED? {unpickled_status['task2'] is completed} == True")
 
-    # Demonstrate that sentinel objects maintain their identity across pickling
+    # Demonstrates that sentinel objects maintain their identity across pickling
     original_pending = status["task1"]
     unpickled_pending = unpickled_status["task1"]
     print(f"Original PENDING is unpickled PENDING? {original_pending is unpickled_pending} == True")
 
 
 def predefined_sentinels_example() -> None:
-    """Demonstrate using the predefined sentinel constants."""
+    """Demonstrates using the predefined sentinel constants."""
     print("\nPredefined Sentinel Constants Example:")
 
     # Use the predefined sentinel constants
     print(f"DEFAULTSENTINEL: {DEFAULTSENTINEL}")
     print(f"SEARCHSENTINEL: {SEARCHSENTINEL}")
 
-    # Create a function that uses DEFAULTSENTINEL
+    # Creates a function that uses DEFAULTSENTINEL
     def get_value(data: dict[str, Any], key: str, default: Any = DEFAULTSENTINEL) -> Any:
-        """Get a value from a dictionary with a special default sentinel.
+        """Gets a value from a dictionary with a special default sentinel.
 
         Args:
             data: The dictionary to get the value from
@@ -283,7 +283,7 @@ def predefined_sentinels_example() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     basic_sentinel_example()
     sentinel_as_markers_example()
     sentinel_in_collections_example()

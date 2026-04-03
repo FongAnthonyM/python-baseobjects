@@ -77,12 +77,12 @@ class CachingObjectTestSuite(BaseObjectTestSuite):
         assert loaded is not test_object
         assert loaded.counter == 1
 
-        # Verify caching still works on loaded object
+        # Verifies caching still works on loaded object
         loaded.cached_method(1)
         # CachingObject clears caches on pickle, so cache is empty and method executes again.
         assert loaded.counter == 2
 
-        # Verify method calls on new object don't affect old object
+        # Verifies method calls on new object don't affect old object
         loaded.cached_method(2)
         assert loaded.counter == 3
         assert test_object.counter == 1
@@ -102,7 +102,7 @@ class CachingObjectTestSuite(BaseObjectTestSuite):
         test_object.is_cache = False
         assert test_object.is_cache is False
 
-        # Verify caching is actually disabled
+        # Verifies caching is actually disabled
         test_object.cached_method(1)  # type: ignore[attr-defined]
         assert test_object.counter == 1  # type: ignore[attr-defined]
         test_object.cached_method(1)  # type: ignore[attr-defined]
@@ -111,7 +111,7 @@ class CachingObjectTestSuite(BaseObjectTestSuite):
         test_object.is_cache = True
         assert test_object.is_cache is True
 
-        # Verify caching is enabled
+        # Verifies caching is enabled
         test_object.cached_method(1)  # type: ignore[attr-defined]
         assert test_object.counter == 3  # type: ignore[attr-defined]
         test_object.cached_method(1)  # type: ignore[attr-defined]
@@ -122,14 +122,14 @@ class CachingObjectTestSuite(BaseObjectTestSuite):
         test_object.cached_method(1)  # type: ignore[attr-defined]
         assert test_object.counter == 1  # type: ignore[attr-defined]
 
-        # Call again, should use cache
+        # Calls again, should use cache
         test_object.cached_method(1)  # type: ignore[attr-defined]
         assert test_object.counter == 1  # type: ignore[attr-defined]
 
         # Clear caches
         test_object.clear_caches(get_caches=True)
 
-        # Call again, should re-execute
+        # Calls again, should re-execute
         test_object.cached_method(1)  # type: ignore[attr-defined]
         assert test_object.counter == 2  # type: ignore[attr-defined]
 
@@ -158,7 +158,7 @@ class CachingObjectTestSuite(BaseObjectTestSuite):
 
     def test_dynamic_cache(self, test_object: Any) -> None:
         """Tests adding a cache dynamically to the instance."""
-        # Add a cache to the instance, not the class
+        # Adds a cache to the instance, not the class
         cache = TimedCache(lambda x: x)
         test_object.dynamic_cache = cache
 
@@ -178,7 +178,7 @@ class CachingObjectTestSuite(BaseObjectTestSuite):
         test_object.cached_method(1)
         assert test_object.counter == 1
 
-        # Check internal state of lifetime_method
+        # Checks internal state of lifetime_method
         assert test_object.cached_method.cache_method != "no_cache"
         assert test_object.lifetime_method.cache_method == "no_cache"
 

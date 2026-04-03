@@ -150,7 +150,7 @@ def basic_composite_usage() -> None:
     """Demonstrates basic usage of a composite with components."""
     print("Basic Composite Usage:\n")
 
-    # Create a calculator composite
+    # Creates a calculator composite
     print("Creating a calculator composite...")
     calculator = Calculator()
 
@@ -185,7 +185,7 @@ def adding_components() -> None:
     """Demonstrates adding components to a composite."""
     print("Adding Components to a Composite:\n")
 
-    # Create a calculator with only the math component
+    # Creates a calculator with only the math component
     print("Creating a calculator with custom component types...")
     calculator = Calculator(component_types={"math": (MathComponent, {})})
 
@@ -194,7 +194,7 @@ def adding_components() -> None:
         print(f"  - {name}: {type(component).__name__}")
     print()
 
-    # Add a formatting component
+    # Adds a formatting component
     print("Adding a formatting component...")
     calculator.add_component("formatting", FormattingComponent(composite=calculator))
 
@@ -208,11 +208,11 @@ def adding_components() -> None:
     math_component = calculator.components["math"]
     formatting_component = calculator.components["formatting"]
 
-    # Perform a calculation
+    # Performs a calculation
     result = math_component.add(12, 30)
     print(f"12 + 30 = {result} == 42")
 
-    # Format the result
+    # Formats the result
     formatted = formatting_component.format_result("The answer is: ", "!")
     print(f"Formatted result: {formatted} == 'The answer is: 42!'")
     assert calculator.formatted_result == "The answer is: 42!"
@@ -264,15 +264,15 @@ def component_interaction() -> None:
     """Demonstrates interaction between components in a composite."""
     print("Component Interaction in a Composite:\n")
 
-    # Create a calculator with math and logging components
+    # Creates a calculator with math and logging components
     print("Creating a calculator with math and logging components...")
     calculator = Calculator()
 
-    # Get the components
+    # Gets the components
     math_component = calculator.components["math"]
     logging_component = calculator.components["logging"]
 
-    # Perform calculations and log them
+    # Performs calculations and log them
     print("Performing calculations and logging them...")
 
     # Addition
@@ -287,7 +287,7 @@ def component_interaction() -> None:
     math_component.multiply(3, 7)
     logging_component.log_operation("multiply", 3, 7)
 
-    # Get the log
+    # Gets the log
     print("\nRetrieving the operation log...")
     log = logging_component.get_log()
     print("Operation log:")
@@ -300,17 +300,17 @@ def composite_serialization() -> None:
     """Demonstrates serialization and deserialization of composites with components."""
     print("Composite Serialization and Deserialization:\n")
 
-    # Create a calculator with components
+    # Creates a calculator with components
     print("Creating a calculator with components...")
     calculator = Calculator()
 
-    # Perform some operations
+    # Performs some operations
     print("Performing some operations...")
     math_component = calculator.components["math"]
     math_component.add(10, 20)
     print(f"Result: {calculator.result} == 30")
 
-    # Add a formatting component
+    # Adds a formatting component
     calculator.add_component("formatting", FormattingComponent(composite=calculator))
     formatting_component = calculator.components["formatting"]
     formatted = formatting_component.format_result("Answer: ")
@@ -325,12 +325,12 @@ def composite_serialization() -> None:
     print("\nDeserializing to a new calculator...")
     new_calculator = pickle.loads(serialized)
 
-    # Check the deserialized calculator
+    # Checks the deserialized calculator
     print("Checking the deserialized calculator...")
     print(f"Result: {new_calculator.result} == 30")
     print(f"Formatted result: {new_calculator.formatted_result} == 'Answer: 30'")
 
-    # Check the components
+    # Checks the components
     print("\nComponents in the deserialized calculator:")
     for name, component in new_calculator.components.items():
         print(f"  - {name}: {type(component).__name__}")

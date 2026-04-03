@@ -50,17 +50,17 @@ class DynamicCallableTestSuite(BaseCallableTestSuite):
         """Tests that the call_method property correctly gets and sets the call method."""
         method_object = self.create_method_object()
 
-        # Set the call_method property
+        # Sets the call_method property
         method_object.call_method = "call_wrapped"  # type: ignore[attr-defined]
 
-        # Verify the property was set correctly
+        # Verifies the property was set correctly
         assert method_object.call_method == "call_wrapped"  # type: ignore[attr-defined]
         assert method_object.call_multiplexer.selected == "call_wrapped"  # type: ignore[attr-defined]
 
-        # Set it back to the default
+        # Sets it back to the default
         method_object.call_method = "call_wrapped"  # type: ignore[attr-defined]
 
-        # Verify it was set correctly
+        # Verifies it was set correctly
         assert method_object.call_method == "call_wrapped"  # type: ignore[attr-defined]
         assert method_object.call_multiplexer.selected == "call_wrapped"  # type: ignore[attr-defined]
 
@@ -78,9 +78,9 @@ class DynamicCallableTestSuite(BaseCallableTestSuite):
         result = test_function_object(3)
         assert result == 5  # 3 + 2 (default y)
 
-        # Add a custom call method to the call_multiplexer
+        # Adds a custom call method to the call_multiplexer
         def custom_call(self: Any, *args: Any, **kwargs: Any) -> Any:
-            # Multiply the result by 2
+            # Multiplies the result by 2
             return self.call_wrapped(*args, **kwargs) * 2
 
         test_function_object.call_multiplexer.add_function("custom_call", custom_call)
@@ -100,7 +100,7 @@ class DynamicCallableTestSuite(BaseCallableTestSuite):
             test_function_object: A fixture providing a DynamicCallable instance that wraps a function.
         """
 
-        # Add multiple call methods to the call_multiplexer
+        # Adds multiple call methods to the call_multiplexer
         def call_double(self: Any, *args: Any, **kwargs: Any) -> int:
             return cast(int, self.call_wrapped(*args, **kwargs) * 2)
 
@@ -133,17 +133,17 @@ class DynamicCallableTestSuite(BaseCallableTestSuite):
         """Tests that the bind_method property correctly gets and sets the binding method."""
         method_object = self.create_method_object()
 
-        # Set the bind_method property
+        # Sets the bind_method property
         method_object.bind_method = "bind_wrapped"  # type: ignore[attr-defined]
 
-        # Verify the property was set correctly
+        # Verifies the property was set correctly
         assert method_object.bind_method == "bind_wrapped"  # type: ignore[attr-defined]
         assert method_object.bind_multiplexer.selected == "bind_wrapped"  # type: ignore[attr-defined]
 
-        # Set it back to the default
+        # Sets it back to the default
         method_object.bind_method = "bind_builtin"  # type: ignore[attr-defined]
 
-        # Verify it was set back correctly
+        # Verifies it was set back correctly
         assert method_object.bind_method == "bind_builtin"  # type: ignore[attr-defined]
         assert method_object.bind_multiplexer.selected == "bind_builtin"  # type: ignore[attr-defined]
 
@@ -179,9 +179,9 @@ class DynamicCallableTestSuite(BaseCallableTestSuite):
             test_bind_target: A fixture providing an instance to bind the method to.
         """
 
-        # Add a custom bind method to the bind_multiplexer
+        # Adds a custom bind method to the bind_multiplexer
         def bind_custom(self: Any, instance: Any, owner: Any = None) -> Any:
-            # Create a function that returns a fixed value
+            # Creates a function that returns a fixed value
             def fixed_value(*args: Any, **kwargs: Any) -> int:
                 return 42
 
@@ -196,42 +196,42 @@ class DynamicCallableTestSuite(BaseCallableTestSuite):
         # Test with bind_custom
         bound_method = test_method_object.__get__(test_bind_target, type(test_bind_target))
 
-        # Verify it returns the fixed value
+        # Verifies it returns the fixed value
         assert bound_method() == 42
 
     def test_construct_with_bind_method(self) -> None:
         """Tests that the bind_method can be set during construction."""
 
-        # Create an instance with a specific bind_method
+        # Creates an instance with a specific bind_method
         def temp_func() -> None:
             pass
 
         instance = self.UnitTestClass(temp_func, bind_method="bind_wrapped")
 
-        # Verify the bind_method was set correctly
+        # Verifies the bind_method was set correctly
         assert instance.bind_method == "bind_wrapped"
 
     def test_construct_with_call_method(self) -> None:
         """Tests that the call_method can be set during construction."""
 
-        # Create an instance with a specific call_method
+        # Creates an instance with a specific call_method
         def temp_func() -> None:
             pass
 
         instance = self.UnitTestClass(temp_func, call_method="call_wrapped")
 
-        # Verify the call_method was set correctly
+        # Verifies the call_method was set correctly
         assert instance.call_method == "call_wrapped"
 
     def test_no_function(self) -> None:
         """Tests the edge case where no function is provided."""
-        # Create an instance without a function
+        # Creates an instance without a function
         instance = self.UnitTestClass()
 
-        # Verify it's an instance of the correct class
+        # Verifies it's an instance of the correct class
         assert isinstance(instance, self.UnitTestClass)
 
-        # Verify it has no function
+        # Verifies it has no function
         assert instance.__func__ is None
 
         # Try to call the instance (should raise an error)

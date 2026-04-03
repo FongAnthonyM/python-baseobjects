@@ -8,7 +8,7 @@ docstring parsing via Napoleon, and several convenience extensions like viewcode
 # Imports #
 # Standard Libraries #
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 # Ensure src is on sys.path for autodoc
@@ -20,7 +20,7 @@ if SRC.is_dir() and str(SRC) not in sys.path:
 # Project Information #
 project = "baseobjects"
 author = "Anthony Fong"
-copyright = f"{datetime.now(tz=timezone.utc).year}, {author}"
+copyright = f"{datetime.now(tz=UTC).year}, {author}"
 
 # General configuration #
 extensions = [
@@ -50,10 +50,7 @@ intersphinx_mapping = {
 }
 
 # HTML output
-html_theme = "sphinx_rtd_theme"
-html_theme_options = {
-    "collapse_navigation": False,
-    "navigation_depth": 4,
-}
+html_theme = "furo"
+html_theme_options = {}
 
 todo_include_todos = True

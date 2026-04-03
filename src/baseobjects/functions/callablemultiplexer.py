@@ -15,6 +15,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
+import sys
 from types import MethodType
 from typing import Any
 
@@ -182,6 +183,10 @@ class CallableMultiplexer(BaseMethod):
         Returns:
             The output of the wrapped function.
         """
+        print(f"DEBUG: CallableMultiplexer.__call__ for {self} (wrapped={self.__wrapped__}, binding={self.is_binding_wrapper})")
+        if self.__wrapped__ is None:
+            raise TypeError("No function selected")
+
         if self.is_binding_wrapper:
             return self._selected_bind_method(self.__self__, self.__owner__)(*args, **kwargs)
         else:
@@ -286,7 +291,7 @@ class CallableMultiplexer(BaseMethod):
         elif (func := self.registry.get(name, None)) is not None:
             self._is_binding_wrapper = False
         elif self._self_ is not None:
-            func = getattr(self._self_(), name).__func__
+            func = getattr(self._self_(), name)
             self._is_binding_wrapper = True
         else:
             func = None
@@ -308,8 +313,10 @@ class CallableMultiplexer(BaseMethod):
             name: The name of the function being added.
             func: The function to add to the registry.
         """
-        self.registry[name] = self.__func__ = func
-        self._selected_bind_method = func.__get__
+        self.registry[name] = self.__wrapped__ = func
+        self._is_binding_wrapper = False
+        if hasattr(func, "__get__"):
+            self._selected_bind_method = func.__get__
         self._selected = name
 
     def add_select_method(self, name: str, method: AnyCallable) -> None:
@@ -319,8 +326,12 @@ class CallableMultiplexer(BaseMethod):
             name: The name of the method being added.
             method: The method to add to the registry.
         """
-        self.registry[name] = self.__func__ = method.__func__  # type: ignore[attr-defined]
-        self._selected_bind_method = self.__wrapped__.__get__  # type:ignore[union-attr]
+        if hasattr(method, "__func__"):
+            method = method.__func__
+        self.registry[name] = self.__wrapped__ = method
+        self._is_binding_wrapper = False
+        if hasattr(method, "__get__"):
+            self._selected_bind_method = method.__get__
         self._selected = name
 
     # Binding
@@ -359,8 +370,6 @@ class MethodMultiplexer(CallableMultiplexer):
     priority in selection.
     """
 
-    # Magic Methods #
-    # Calling
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
         """First binds the wrapped function, then calls it.
 
@@ -369,9 +378,24 @@ class MethodMultiplexer(CallableMultiplexer):
             **kwargs: Keyword arguments of the wrapped function.
 
         Returns:
-            The output of the wrapped function.
+            The result of the wrapped function.
         """
-        return self._selected_bind_method(self.__self__, self.__owner__)(*args, **kwargs)
+        selected_func = self.__func__
+        print(f"DEBUG: MethodMultiplexer.__call__ for {self} (selected_func={selected_func})")
+        if selected_func is None:
+            raise TypeError("No function selected")
+
+        instance = self.__self__
+        owner = self.__owner__
+
+        if hasattr(selected_func, "call_wrapped"):
+            return selected_func.call_wrapped(*(instance,) + args, **kwargs)
+        else:
+            try:
+                bound = self._selected_bind_method(instance, owner)
+            except TypeError as e:
+                raise TypeError(f"{self._selected_bind_method}({instance}, {owner}) is invalid: {e}")
+            return bound(*args, **kwargs)
 
 
 class FunctionMultiplexer(CallableMultiplexer):
@@ -395,4 +419,15 @@ class FunctionMultiplexer(CallableMultiplexer):
         Returns:
             The output of the wrapped function.
         """
-        return self.__wrapped__(*args, **kwargs)  # type:ignore[misc]
+        if self.__wrapped__ is None:
+            raise TypeError("No function selected")
+
+        func = self.__wrapped__
+        if (
+            hasattr(func, "__func__") and
+            getattr(func, "__self__", None) is self.__self__ and
+            args and args[0] is self.__self__
+        ):
+            func = func.__func__
+
+        return func(*args, **kwargs)  # type:ignore[misc]

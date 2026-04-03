@@ -19,7 +19,7 @@ __version__ = "1.12.0"
 import copy
 import pickle
 import timeit
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -35,7 +35,7 @@ class NormalSentinel:
     """A normal Python object implementing a sentinel pattern for comparison."""
 
     # Class Attributes #
-    registry: ClassVar[dict[str, "NormalSentinel"]] = {}
+    registry: dict[str, "NormalSentinel"] = {}
 
     # Attributes #
     identity: str

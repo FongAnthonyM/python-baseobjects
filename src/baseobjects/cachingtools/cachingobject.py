@@ -41,6 +41,23 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
     _caches_: ClassVar[set[str]] = set()
 
     # Class Methods #
+    @staticmethod
+    def _is_cache_instance(attribute: Any) -> bool:
+        """Determines if the given attribute is a cache instance or contains one.
+
+        Args:
+            attribute: The attribute to check.
+
+        Returns:
+            True if it is or contains a cache instance, False otherwise.
+        """
+        current = attribute
+        while current is not None:
+            if isinstance(current, BaseTimedCache):
+                return True
+            current = getattr(current, "__wrapped__", None)
+        return False
+
     # Construction/Destruction
     @classmethod
     def _init_class_(cls, name: str, bases: tuple[type, ...], namespace: dict[str, Any]) -> None:
@@ -51,11 +68,11 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
             bases: The base classes of the class.
             namespace: The namespace of the class.
         """
-        super().__init__(name, bases, namespace)  # type: ignore[arg-type]
+        # Class Construction #
         cls._caches_ = cls._caches_.copy()
 
         for name, cls_attribute in namespace.items():
-            if isinstance(cls_attribute, BaseTimedCache):
+            if cls._is_cache_instance(cls_attribute):
                 cls._caches_.add(name)
 
     # Attributes #
@@ -130,8 +147,8 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
         """
         for name in dir(self):
             attribute = getattr(type(self), name, None)
-            if isinstance(attribute, BaseTimedCache) or (
-                attribute is None and isinstance(getattr(self, name), BaseTimedCache)
+            if self._is_cache_instance(attribute) or (
+                attribute is None and self._is_cache_instance(getattr(self, name))
             ):
                 self._caches.add(name)
 
@@ -144,7 +161,7 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
             exclude: The names of the caches to exclude from caching.
             get_caches: Determines if get_caches will run before setting the caches.
         """
-        # Get caches if needed.
+        # Gets caches if needed.
         if get_caches:
             self.get_caches()
 
@@ -156,7 +173,16 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
 
         # Enable caches in the set.
         for name in caches:
-            getattr(self, name).resume_caching()
+            # Try to find the decorator instance and enable it
+            cache_inst = getattr(type(self), name, None)
+            if cache_inst is not None and hasattr(cache_inst, "resume_caching"):
+                cache_inst.resume_caching()
+
+            # ALSO call it on the bound method in case it's in __dict__ or proxies
+            try:
+                getattr(self, name).resume_caching()
+            except AttributeError:
+                pass
 
         self._is_cache = True
 
@@ -167,7 +193,7 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
             exclude: The names of the caches to exclude from caching.
             get_caches: Determines if get_caches will run before setting the caches.
         """
-        # Get caches if needed.
+        # Gets caches if needed.
         if get_caches:
             self.get_caches()
 
@@ -179,7 +205,16 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
 
         # Disable caches in the set.
         for name in caches:
-            getattr(self, name).stop_caching()
+            # Try to find the decorator instance and disable it
+            cache_inst = getattr(type(self), name, None)
+            if cache_inst is not None and hasattr(cache_inst, "stop_caching"):
+                cache_inst.stop_caching()
+
+            # ALSO call it on the bound method in case it's in __dict__ or proxies
+            try:
+                getattr(self, name).stop_caching()
+            except AttributeError:
+                pass
 
         self._is_cache = False
 
@@ -190,7 +225,7 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
             exclude: The names of the caches to exclude from caching.
             get_caches: Determines if get_caches will run before setting the caches.
         """
-        # Get caches if needed.
+        # Gets caches if needed.
         if get_caches:
             self.get_caches()
 
@@ -202,7 +237,19 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
 
         # Disable expiration all caches in set.
         for name in caches:
-            getattr(self, name).is_timed = False
+            # Try to find the decorator instance
+            cache_inst = getattr(type(self), name, None)
+            if cache_inst is not None:
+                try:
+                    cache_inst.is_timed = False
+                except AttributeError:
+                    pass
+
+            # ALSO call it on the bound method in case it's in __dict__ or proxies
+            try:
+                getattr(self, name).is_timed = False
+            except AttributeError:
+                pass
 
     def timed_caching(self, exclude: set[str] | None = None, get_caches: bool = False) -> None:
         """Sets all caches to have an expiration time.
@@ -211,7 +258,7 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
             exclude: The names of the caches to exclude from caching.
             get_caches: Determines if get_caches will run before setting the caches.
         """
-        # Get caches if needed.
+        # Gets caches if needed.
         if get_caches:
             self.get_caches()
 
@@ -223,7 +270,19 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
 
         # Enable expiration for all caches in the set.
         for name in caches:
-            getattr(self, name).is_timed = True
+            # Try to find the decorator instance
+            cache_inst = getattr(type(self), name, None)
+            if cache_inst is not None:
+                try:
+                    cache_inst.is_timed = True
+                except AttributeError:
+                    pass
+
+            # ALSO call it on the bound method in case it's in __dict__ or proxies
+            try:
+                getattr(self, name).is_timed = True
+            except AttributeError:
+                pass
 
     def set_lifetimes(
         self,
@@ -238,7 +297,7 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
             exclude: The names of the caches to exclude from caching.
             get_caches: Determines if get_caches will run before setting the caches.
         """
-        # Get caches if needed.
+        # Gets caches if needed.
         if get_caches:
             self.get_caches()
 
@@ -248,9 +307,21 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
         else:
             caches = self._caches
 
-        # Set all the lifetimes
+        # Sets all the lifetimes
         for name in caches:
-            getattr(self, name).lifetime = lifetime
+            # Try to find the decorator instance
+            cache_inst = getattr(type(self), name, None)
+            if cache_inst is not None:
+                try:
+                    cache_inst.lifetime = lifetime
+                except AttributeError:
+                    pass
+
+            # ALSO call it on the bound method in case it's in __dict__ or proxies
+            try:
+                getattr(self, name).lifetime = lifetime
+            except AttributeError:
+                pass
 
     def clear_caches(self, exclude: set[str] | None = None, get_caches: bool = False) -> None:
         """Clears all caches in this object.
@@ -259,7 +330,7 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
             exclude: The names of the caches to exclude from caching.
             get_caches: Determines if get_caches will run before setting the caches.
         """
-        # Get caches if needed.
+        # Gets caches if needed.
         if get_caches:
             self.get_caches()
 
@@ -271,4 +342,13 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
 
         # Clear caches in the set.
         for name in caches:
-            getattr(self, name).clear_cache()
+            # Try to find the decorator instance
+            cache_inst = getattr(type(self), name, None)
+            if cache_inst is not None and hasattr(cache_inst, "clear_cache"):
+                cache_inst.clear_cache()
+
+            # ALSO call it on the bound method in case it's in __dict__ or proxies
+            try:
+                getattr(self, name).clear_cache()
+            except AttributeError:
+                pass

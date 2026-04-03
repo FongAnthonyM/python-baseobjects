@@ -17,7 +17,7 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import timeit
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -35,7 +35,7 @@ class StaticWrapperTestObject(StaticWrapper):
     This class uses StaticWrapper to wrap ConcreteOne and ConcreteTwo objects.
     """
 
-    _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = [
+    _wrapped_map_: list[tuple[str, type[Any] | None]] = [
         ("_first", WrapperPerformanceTestSuite.ConcreteOne),
         ("_second", WrapperPerformanceTestSuite.ConcreteTwo),
     ]

@@ -167,10 +167,10 @@ class BaseRegisteredClassTestSuite(BaseObjectTestSuite):
         class NewTestSubclass(self.UnitTestClass):  # type: ignore[name-defined, misc]
             class_registration = False
 
-        # Register class
+        # Registers class
         NewTestSubclass.register_class(*args, **kwargs)
 
-        # Verify class was registered
+        # Verifies class was registered
         assert self.UnitTestClass.class_registry is not None
         assert NewTestSubclass.__name__ in self.UnitTestClass.class_registry
         assert self.UnitTestClass.class_registry[NewTestSubclass.__name__] is NewTestSubclass
@@ -185,10 +185,10 @@ class BaseRegisteredClassTestSuite(BaseObjectTestSuite):
             *args: Positional arguments to test the get_register_class method.
             **kwargs: Keyword arguments to test the get_register_class method.
         """
-        # Register class
+        # Registers class
         got_class = self.UnitTestClass.get_registered_class(example_subclass.__name__)
 
-        # Verify class was registered
+        # Verifies class was registered
         assert self.UnitTestClass.class_registry is not None
         assert example_subclass.__name__ in self.UnitTestClass.class_registry
         assert got_class is example_subclass

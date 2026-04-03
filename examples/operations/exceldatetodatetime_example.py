@@ -13,15 +13,15 @@ This example demonstrates:
 # Imports #
 # Standard Libraries #
 import datetime
-from typing import cast
 
 # Source Packages #
 from baseobjects.operations import excel_date_to_datetime
 
-
 # Example Sections #
+
+
 def basic_usage_example() -> None:
-    """Demonstrate basic usage of excel_date_to_datetime."""
+    """Demonstrates basic usage of excel_date_to_datetime."""
     print("\nBasic excel_date_to_datetime Usage:")
 
     # Excel dates are stored as the number of days since December 30, 1899
@@ -31,20 +31,20 @@ def basic_usage_example() -> None:
     # This represents January 1, 2023
     excel_date_int = 44927
 
-    # Convert to datetime
+    # Converts to datetime
     dt = excel_date_to_datetime(excel_date_int)
 
     print(f"Excel date (int): {excel_date_int}")
     print(f"Converted datetime: {dt}")
     print("Expected: 2023-01-01 00:00:00+00:00")
 
-    # Verify the timezone
+    # Verifies the timezone
     print(f"Timezone: {dt.tzinfo}")
     print("Expected: UTC")
 
 
 def different_types_example() -> None:
-    """Demonstrate converting different types of Excel date values."""
+    """Demonstrates converting different types of Excel date values."""
     print("\nDifferent Types Example:")
 
     # Integer Excel date
@@ -82,20 +82,20 @@ def different_types_example() -> None:
 
 
 def timezone_example() -> None:
-    """Demonstrate working with different timezones."""
+    """Demonstrates working with different timezones."""
     print("\nTimezone Example:")
 
     # Example Excel date value
     excel_date = 44927.5  # January 1, 2023 at 12:00 PM
 
-    # Convert to datetime with UTC timezone (default)
+    # Converts to datetime with UTC timezone (default)
     dt_utc = excel_date_to_datetime(excel_date)
 
     print("With UTC timezone:")
     print(f"  {dt_utc}")
     print(f"  Timezone: {dt_utc.tzinfo}")
 
-    # Convert to datetime with local timezone
+    # Converts to datetime with local timezone
     local_tz = datetime.datetime.now().astimezone().tzinfo
     dt_local = excel_date_to_datetime(excel_date, tzinfo=local_tz)
 
@@ -103,14 +103,14 @@ def timezone_example() -> None:
     print(f"  {dt_local}")
     print(f"  Timezone: {dt_local.tzinfo}")
 
-    # Convert to datetime with no timezone
+    # Converts to datetime with no timezone
     dt_none = excel_date_to_datetime(excel_date, tzinfo=None)
 
     print("\nWith no timezone:")
     print(f"  {dt_none}")
     print(f"  Timezone: {dt_none.tzinfo}")
 
-    # Convert to datetime with Eastern timezone
+    # Converts to datetime with Eastern timezone
     eastern = datetime.timezone(datetime.timedelta(hours=-5))  # UTC-5
     dt_eastern = excel_date_to_datetime(excel_date, tzinfo=eastern)
 
@@ -120,7 +120,7 @@ def timezone_example() -> None:
 
 
 def excel_date_peculiarities_example() -> None:
-    """Demonstrate handling Excel date peculiarities."""
+    """Demonstrates handling Excel date peculiarities."""
     print("\nExcel Date Peculiarities Example:")
 
     # Excel incorrectly treats 1900 as a leap year
@@ -158,36 +158,36 @@ def excel_date_peculiarities_example() -> None:
 
 
 def date_calculation_example() -> None:
-    """Demonstrate date calculations with Excel dates."""
+    """Demonstrates date calculations with Excel dates."""
     print("\nDate Calculation Example:")
 
-    # Convert some dates to Excel format and back
+    # Converts some dates to Excel format and back
 
     # Today's date
-    today = datetime.datetime.now(datetime.timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    today = datetime.datetime.now(datetime.UTC).replace(hour=0, minute=0, second=0, microsecond=0)
 
-    # Convert to Excel date
+    # Converts to Excel date
     # Excel dates are days since December 30, 1899
     # Python datetime epoch is January 1, 1970
     # The difference is 25569 days
-    excel_epoch = datetime.datetime(1899, 12, 30, tzinfo=datetime.timezone.utc)
+    excel_epoch = datetime.datetime(1899, 12, 30, tzinfo=datetime.UTC)
     excel_date = (today - excel_epoch).days
 
     print(f"Today's date: {today}")
     print(f"Converted to Excel date: {excel_date}")
 
-    # Convert back to datetime
+    # Converts back to datetime
     dt = excel_date_to_datetime(excel_date)
 
     print(f"Converted back to datetime: {dt}")
 
-    # Calculate the difference
+    # Calculates the difference
     diff = (today - dt).total_seconds()
 
     print(f"Difference: {abs(diff)} seconds")
     print("Expected: 0 seconds")
 
-    # Add time component (12:30 PM)
+    # Adds time component (12:30 PM)
     excel_date_with_time = excel_date + 0.5208333333  # 0.5 days + 0.0208333333 (30 minutes)
     dt_with_time = excel_date_to_datetime(excel_date_with_time)
 
@@ -197,7 +197,7 @@ def date_calculation_example() -> None:
 
 
 def practical_example() -> None:
-    """Demonstrate a practical use case for excel_date_to_datetime."""
+    """Demonstrates a practical use case for excel_date_to_datetime."""
     print("\nPractical Example - Processing Excel Data:")
 
     # Simulate data exported from Excel
@@ -211,7 +211,7 @@ def practical_example() -> None:
     for row in excel_data:
         print(f"  {row}")
 
-    # Process the data to convert Excel dates to Python datetimes
+    # Processes the data to convert Excel dates to Python datetimes
     processed_data = []
     for row in excel_data:
         processed_row = row.copy()
@@ -223,20 +223,22 @@ def practical_example() -> None:
     for row in processed_data:
         print(f"  {row}")
 
-    # Calculate age and tenure for each person
-    today = datetime.datetime.now(datetime.timezone.utc)
+    # Calculates age and tenure for each person
+    today = datetime.datetime.now(datetime.UTC)
 
     print("\nCalculated information:")
     for row in processed_data:
         name = row["Name"]
-        dob = cast(datetime.datetime, row["DOB"])
-        start_date = cast(datetime.datetime, row["StartDate"])
+        dob = row["DOB"]
+        assert isinstance(dob, datetime.datetime)
+        start_date = row["StartDate"]
+        assert isinstance(start_date, datetime.datetime)
 
-        # Calculate age
+        # Calculates age
         age_days = (today - dob).days
         age_years = age_days / 365.25
 
-        # Calculate tenure
+        # Calculates tenure
         tenure_days = (today - start_date).days
         tenure_years = tenure_days / 365.25
 
@@ -246,13 +248,13 @@ def practical_example() -> None:
         print(f"    Start Date: {start_date.strftime('%Y-%m-%d')}")
         print(f"    Tenure: {tenure_years:.1f} years")
 
-        # Format dates for display in a report
+        # Formats dates for display in a report
         print(f"    Formatted DOB: {dob.strftime('%B %d, %Y')}")
         print(f"    Formatted Start Date: {start_date.strftime('%B %d, %Y')}")
 
 
 def error_handling_example() -> None:
-    """Demonstrate error handling with excel_date_to_datetime."""
+    """Demonstrates error handling with excel_date_to_datetime."""
     print("\nError Handling Example:")
 
     # Try with an invalid type
@@ -277,7 +279,7 @@ def error_handling_example() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     basic_usage_example()
     different_types_example()
     timezone_example()

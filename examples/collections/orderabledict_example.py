@@ -13,13 +13,14 @@ This example demonstrates:
 # Source Packages #
 from baseobjects.collections import OrderableDict
 
-
 # Example Sections #
+
+
 def basic_usage_example() -> None:
-    """Demonstrate basic usage of OrderableDict."""
+    """Demonstrates basic usage of OrderableDict."""
     print("\nBasic OrderableDict Usage:")
 
-    # Create an OrderableDict with initial items
+    # Creates an OrderableDict with initial items
     user_info = OrderableDict({"name": "John Doe", "email": "john.doe@example.com", "age": 30})
 
     print("Initial dictionary:")
@@ -32,7 +33,7 @@ def basic_usage_example() -> None:
     print(f"Email: {user_info['email']} == 'john.doe@example.com'")
     print(f"Age: {user_info['age']} == 30")
 
-    # Add new items (they are appended to the order)
+    # Adds new items (they are appended to the order)
     print("\nAdding new items:")
     user_info["phone"] = "555-1234"
     user_info["address"] = "123 Main St"
@@ -41,7 +42,7 @@ def basic_usage_example() -> None:
     for key, value in user_info.items():
         print(f"  {key}: {value}")
 
-    # Update existing items (order is preserved)
+    # Updates existing items (order is preserved)
     print("\nUpdating existing items:")
     user_info["age"] = 31
 
@@ -49,7 +50,7 @@ def basic_usage_example() -> None:
     for key, value in user_info.items():
         print(f"  {key}: {value}")
 
-    # Remove items
+    # Removes items
     print("\nRemoving items:")
     del user_info["email"]
 
@@ -57,19 +58,19 @@ def basic_usage_example() -> None:
     for key, value in user_info.items():
         print(f"  {key}: {value}")
 
-    # Check the order
+    # Checks the order
     print("\nOrder of keys:")
     print(f"  {list(user_info.keys())} == ['name', 'age', 'phone', 'address']")
 
 
 def order_manipulation_example() -> None:
-    """Demonstrate manipulating the order of items in OrderableDict."""
+    """Demonstrates manipulating the order of items in OrderableDict."""
     print("\nOrder Manipulation Example:")
 
-    # Create an OrderableDict
+    # Creates an OrderableDict
     menu = OrderableDict()
 
-    # Add items in a specific order
+    # Adds items in a specific order
     menu["appetizers"] = ["Salad", "Soup", "Bruschetta"]
     menu["main_courses"] = ["Steak", "Pasta", "Fish"]
     menu["desserts"] = ["Cake", "Ice Cream", "Fruit"]
@@ -123,10 +124,10 @@ def order_manipulation_example() -> None:
 
 
 def index_access_example() -> None:
-    """Demonstrate accessing items by index in OrderableDict."""
+    """Demonstrates accessing items by index in OrderableDict."""
     print("\nIndex Access Example:")
 
-    # Create an OrderableDict
+    # Creates an OrderableDict
     colors = OrderableDict()
     colors["red"] = "#FF0000"
     colors["green"] = "#00FF00"
@@ -148,7 +149,7 @@ def index_access_example() -> None:
     print("\nAccessing out-of-range index with default:")
     print(f"Index 10 (with default 'Not found'): {colors.get_index(10, 'Not found')} == 'Not found'")
 
-    # Set value by index
+    # Sets value by index
     print("\nSetting value by index:")
     colors.set_index(1, "#00CC00")  # Change green to a different shade
 
@@ -156,17 +157,17 @@ def index_access_example() -> None:
     for key, value in colors.items():
         print(f"  {key}: {value}")
 
-    # Get the key at a specific index
+    # Gets the key at a specific index
     print("\nGetting key at index:")
     third_key = colors.order[2]
     print(f"Key at index 2: {third_key} == 'blue'")
 
 
 def compare_with_dict_example() -> None:
-    """Compare OrderableDict with regular dict and collection.OrderedDict."""
+    """Compares OrderableDict with regular dict and collection.OrderedDict."""
     print("\nComparing OrderableDict with other dictionary types:")
 
-    # Create dictionaries with the same initial content
+    # Creates dictionaries with the same initial content
     regular_dict = {"a": 1, "b": 2, "c": 3}
     orderable_dict = OrderableDict({"a": 1, "b": 2, "c": 3})
 
@@ -174,7 +175,7 @@ def compare_with_dict_example() -> None:
     print(f"  Regular dict: {regular_dict}")
     print(f"  OrderableDict: {orderable_dict}")
 
-    # Add items in a different order
+    # Adds items in a different order
     print("\nAdding items in a different order:")
 
     # For regular dict (Python 3.7+), insertion order is preserved but can't be manipulated
@@ -202,13 +203,13 @@ def compare_with_dict_example() -> None:
 
 
 def practical_example() -> None:
-    """Demonstrate a practical use case for OrderableDict."""
+    """Demonstrates a practical use case for OrderableDict."""
     print("\nPractical Example - Form Field Ordering:")
 
-    # Create a form with fields in a specific order
+    # Creates a form with fields in a specific order
     form_fields = OrderableDict()
 
-    # Add fields in the desired order
+    # Adds fields in the desired order
     form_fields["first_name"] = {"label": "First Name", "type": "text", "required": True}
 
     form_fields["last_name"] = {"label": "Last Name", "type": "text", "required": True}
@@ -239,7 +240,7 @@ def practical_example() -> None:
     for field_name, field_props in form_fields.items():
         print(f"  {field_props['label']} ({field_name}): {field_props['type']} field")
 
-    # Add a new field in a specific position
+    # Adds a new field in a specific position
     print("\nAdding a new field in a specific position:")
     form_fields.insert(2, "middle_name", {"label": "Middle Name", "type": "text", "required": False})
 
@@ -250,10 +251,10 @@ def practical_example() -> None:
 
 
 def error_handling_example() -> None:
-    """Demonstrate error handling with OrderableDict."""
+    """Demonstrates error handling with OrderableDict."""
     print("\nError Handling Example:")
 
-    # Create an OrderableDict
+    # Creates an OrderableDict
     data = OrderableDict({"a": 1, "b": 2, "c": 3})
 
     # Try to access a non-existent key
@@ -294,7 +295,7 @@ def error_handling_example() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     basic_usage_example()
     order_manipulation_example()
     index_access_example()

@@ -86,101 +86,101 @@ class DynamicFunctionTestSuite(DynamicCallableTestSuite, BaseFunctionTestSuite):
         """Tests that the callable object correctly handles coroutine functions."""
         test_coroutine_object = self.create_coroutine_object(async_add_function)
 
-        # Call the coroutine function and run it in an event loop
+        # Calls the coroutine function and run it in an event loop
         coro = test_coroutine_object(3)
         result = asyncio.run(coro)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 5  # 3 + 2 (default y)
 
-        # Call with different arguments
+        # Calls with different arguments
         coro = test_coroutine_object(3, 4)
         result = asyncio.run(coro)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 7  # 3 + 4
 
     def test_as_function_coroutine(self) -> None:
         """Tests that the callable object wrapping a coroutine can be converted to a coroutine function."""
         test_coroutine_object = self.create_coroutine_object(async_add_function)
 
-        # Convert to a standard Python function
+        # Converts to a standard Python function
         func = test_coroutine_object.as_function()
 
-        # Verify it's a function
+        # Verifies it's a function
         assert callable(func)
 
-        # Call the function and run it in an event loop
+        # Calls the function and run it in an event loop
         coro = func(3)
         result = asyncio.run(coro)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 5  # 3 + 2 (default y)
 
-        # Call with different arguments
+        # Calls with different arguments
         coro = func(3, 4)
         result = asyncio.run(coro)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 7  # 3 + 4
 
     def test_function_binding(self, test_function_object: DynamicFunction) -> None:
         """Tests that the DynamicFunction can be bound to an instance."""
-        # Create a test function object with a method that works with an instance
+        # Creates a test function object with a method that works with an instance
         test_function_object = self.create_method_object(instance_method)  # type: ignore[assignment]
         test_object_instance = self.create_bind_target()
 
-        # Bind the function to the instance
+        # Binds the function to the instance
         bound_function = test_function_object.bind(test_object_instance)
 
-        # Verify the binding
+        # Verifies the binding
         assert bound_function.__self__ is test_object_instance
 
-        # Call the bound function
+        # Calls the bound function
         result, instance = bound_function(5)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 7  # 5 + 2 (default y)
         assert instance is test_object_instance
 
     def test_function_binding_to_attribute(self) -> None:
         """Tests that the DynamicFunction can be bound to an instance attribute."""
-        # Create a test function object with a method that works with an instance
+        # Creates a test function object with a method that works with an instance
         test_function_object = self.create_method_object(instance_method)
         test_object_instance = self.create_bind_target()
 
-        # Bind the function to an attribute of the instance
+        # Binds the function to an attribute of the instance
         test_function_object.bind_to_attribute(test_object_instance, name="custom_function")  # type: ignore[attr-defined]
 
-        # Verify the binding
+        # Verifies the binding
         assert hasattr(test_object_instance, "custom_function")
         assert callable(test_object_instance.custom_function)
 
-        # Call the bound function
+        # Calls the bound function
         result, instance = test_object_instance.custom_function(5)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 7  # 5 + 2 (default y)
         assert instance is test_object_instance
 
     def test_change_function(self, test_function_object: DynamicFunction) -> None:
         """Tests the edge case where the function is changed after creation."""
-        # Create an instance with a function
+        # Creates an instance with a function
         instance = self.create_function_object(add_function)
 
-        # Verify it has the correct function
+        # Verifies it has the correct function
         assert instance.__func__ is add_function
 
-        # Call the function
+        # Calls the function
         result = instance(3)
         assert result == 5  # 3 + 2 (default y)
 
         # Change the function
         instance.__func__ = multiply_function
 
-        # Verify it has the new function
+        # Verifies it has the new function
         assert instance.__func__ is multiply_function
 
-        # Call the new function
+        # Calls the new function
         result = instance(3)
         assert result == 9  # 3 * 3 (default y)

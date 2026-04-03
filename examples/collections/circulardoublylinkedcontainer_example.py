@@ -16,17 +16,18 @@ This example demonstrates:
 from baseobjects.collections import CircularDoublyLinkedContainer
 from baseobjects.collections.circulardoublylinkedcontainer import LinkedNode
 
-
 # Example Sections #
+
+
 def basic_usage_example() -> None:
-    """Demonstrate basic usage of CircularDoublyLinkedContainer."""
+    """Demonstrates basic usage of CircularDoublyLinkedContainer."""
     print("\nBasic CircularDoublyLinkedContainer Usage:")
 
-    # Create an empty container
+    # Creates an empty container
     container = CircularDoublyLinkedContainer()
     print(f"Created empty container: is_empty={container.is_empty} == True")
 
-    # Add nodes to the container
+    # Adds nodes to the container
     print("\nAdding nodes to the container:")
     node1 = container.append("First Node")
     print(f"Added node with data: {node1.data} == 'First Node'")
@@ -37,7 +38,7 @@ def basic_usage_example() -> None:
     node3 = container.append("Third Node")
     print(f"Added node with data: {node3.data} == 'Third Node'")
 
-    # Check container properties
+    # Checks container properties
     print(f"\nContainer is empty: {container.is_empty} == False")
     print(f"Container length: {len(container)} == 3")
 
@@ -71,10 +72,10 @@ def basic_usage_example() -> None:
 
 
 def node_manipulation_example() -> None:
-    """Demonstrate node manipulation in CircularDoublyLinkedContainer."""
+    """Demonstrates node manipulation in CircularDoublyLinkedContainer."""
     print("\nNode Manipulation Example:")
 
-    # Create a container with some nodes
+    # Creates a container with some nodes
     container = CircularDoublyLinkedContainer()
     container.append("Node A")
     container.append("Node B")
@@ -93,7 +94,7 @@ def node_manipulation_example() -> None:
     for i, node in enumerate(container):
         print(f"  Node {i}: {node.data}")
 
-    # Remove a node
+    # Removes a node
     print("\nRemoving node at index 2:")
     removed_node = container.pop(2)
     print(f"Removed node with data: {removed_node.data} == 'Node B'")
@@ -131,10 +132,10 @@ def node_manipulation_example() -> None:
 
 
 def iteration_example() -> None:
-    """Demonstrate iteration through CircularDoublyLinkedContainer."""
+    """Demonstrates iteration through CircularDoublyLinkedContainer."""
     print("\nIteration Example:")
 
-    # Create a container with some nodes
+    # Creates a container with some nodes
     container = CircularDoublyLinkedContainer()
     container.append("Node 1")
     container.append("Node 2")
@@ -155,7 +156,7 @@ def iteration_example() -> None:
     for node in container.reverse_iter():
         print(f"  {node.data}")
 
-    # Demonstrate cycle (limited to 8 iterations for example)
+    # Demonstrates cycle (limited to 8 iterations for example)
     print("\nForward cycle (first 8 iterations):")
     cycle = container.forward_cycle()
     for i in range(8):
@@ -171,10 +172,10 @@ def iteration_example() -> None:
 
 
 def shift_example() -> None:
-    """Demonstrate shifting the start position in CircularDoublyLinkedContainer."""
+    """Demonstrates shifting the start position in CircularDoublyLinkedContainer."""
     print("\nShift Example:")
 
-    # Create a container with some nodes
+    # Creates a container with some nodes
     container = CircularDoublyLinkedContainer()
     container.append("Node A")
     container.append("Node B")
@@ -205,15 +206,15 @@ def shift_example() -> None:
 
 
 def custom_node_example() -> None:
-    """Demonstrate using custom LinkedNode objects."""
+    """Demonstrates using custom LinkedNode objects."""
     print("\nCustom Node Example:")
 
-    # Create custom nodes
+    # Creates custom nodes
     node_a = LinkedNode("Custom Node A")
     node_b = LinkedNode("Custom Node B")
     node_c = LinkedNode("Custom Node C")
 
-    # Create a container and add the custom nodes
+    # Creates a container and add the custom nodes
     container = CircularDoublyLinkedContainer()
     container.append(node_a)
     container.append(node_b)
@@ -223,7 +224,7 @@ def custom_node_example() -> None:
     for i, node in enumerate(container):
         print(f"  Node {i}: {node.data}")
 
-    # Demonstrate that the nodes are properly linked
+    # Demonstrates that the nodes are properly linked
     print("\nNavigating through nodes directly:")
     current = container.first_node
     assert current is not None
@@ -245,10 +246,10 @@ def custom_node_example() -> None:
 
 
 def practical_example() -> None:
-    """Demonstrate a practical use case for CircularDoublyLinkedContainer."""
+    """Demonstrates a practical use case for CircularDoublyLinkedContainer."""
     print("\nPractical Example - Circular Buffer:")
 
-    # Create a circular buffer with a maximum size of 3
+    # Creates a circular buffer with a maximum size of 3
     class CircularBuffer:
         def __init__(self, max_size: int) -> None:
             self.container = CircularDoublyLinkedContainer()
@@ -256,14 +257,14 @@ def practical_example() -> None:
 
         def add(self, item: object) -> None:
             if len(self.container) >= self.max_size:
-                # Remove the oldest item (first node)
+                # Removes the oldest item (first node)
                 self.container.pop(0)
             self.container.append(item)
 
         def get_items(self) -> list[object]:
             return [node.data for node in self.container]
 
-    # Create a buffer and add items
+    # Creates a buffer and add items
     buffer = CircularBuffer(max_size=3)
 
     print("Adding 'Item 1' to buffer:")
@@ -288,13 +289,13 @@ def practical_example() -> None:
 
 
 def deep_copy_example() -> None:
-    """Demonstrate deep copying of CircularDoublyLinkedContainer."""
+    """Demonstrates deep copying of CircularDoublyLinkedContainer."""
     print("\nDeep Copy Example:")
 
     # Standard Libraries #
     import copy
 
-    # Create a container with some nodes
+    # Creates a container with some nodes
     original = CircularDoublyLinkedContainer()
     original.append("Node 1")
     original.append("Node 2")
@@ -304,7 +305,7 @@ def deep_copy_example() -> None:
     for i, node in enumerate(original):
         print(f"  Node {i}: {node.data}")
 
-    # Create a deep copy
+    # Creates a deep copy
     copied = copy.deepcopy(original)
 
     print("\nCopied container contents:")
@@ -327,7 +328,7 @@ def deep_copy_example() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     basic_usage_example()
     node_manipulation_example()
     iteration_example()

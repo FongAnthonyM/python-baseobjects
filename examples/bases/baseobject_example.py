@@ -23,7 +23,7 @@ class Person(BaseObject):
     """A simple class that inherits from BaseObject."""
 
     def __init__(self, name: str | None = None, age: int | None = None, *args: Any, **kwargs: Any) -> None:
-        """Initialize a Person object.
+        """Initializes a Person object.
 
         Args:
             name: The person's name
@@ -65,7 +65,7 @@ class Employee(Person):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        """Initialize an Employee object.
+        """Initializes an Employee object.
 
         Args:
             name: The employee's name
@@ -101,34 +101,34 @@ class Employee(Person):
         self.department = department or ""
         self.projects: list[str] = []  # Mutable attribute to demonstrate deep vs shallow copy
 
-        # Call parent's construct with remaining args/kwargs
+        # Calls parent's construct with remaining args/kwargs
         super().construct(name, age, *args, **kwargs)
 
 
 # Example Sections #
 def basic_baseobject_example() -> None:
-    """Demonstrate basic usage of BaseObject."""
+    """Demonstrates basic usage of BaseObject."""
     print("\nBasic BaseObject Example:")
 
-    # Create a Person instance
+    # Creates a Person instance
     person = Person("Alice", 30)
     print(f"Person: {person.name}, {person.age}")
 
-    # Add some friends
+    # Adds some friends
     person.friends.append("Bob")
     person.friends.append("Charlie")
     print(f"Friends: {person.friends}")
 
-    # Add some preferences
+    # Adds some preferences
     person.preferences["color"] = "blue"
     person.preferences["food"] = "pizza"
     print(f"Preferences: {person.preferences}")
 
-    # Create an Employee instance
+    # Creates an Employee instance
     employee = Employee("Dave", 35, "E12345", "Engineering")
     print(f"Employee: {employee.name}, {employee.age}, {employee.employee_id}, {employee.department}")
 
-    # Add some projects
+    # Adds some projects
     employee.projects.append("Project A")
     employee.projects.append("Project B")
     print(f"Projects: {employee.projects}")
@@ -139,10 +139,10 @@ def basic_baseobject_example() -> None:
 
 
 def shallow_copy_example() -> None:
-    """Demonstrate shallow copying of BaseObject instances."""
+    """Demonstrates shallow copying of BaseObject instances."""
     print("\nShallow Copy Example:")
 
-    # Create an original object
+    # Creates an original object
     original = Employee("Alice", 30, "E12345", "Engineering")
     original.friends.append("Bob")
     original.projects.append("Project X")
@@ -154,14 +154,14 @@ def shallow_copy_example() -> None:
     print(f"  Projects: {original.projects}")
     print(f"  Preferences: {original.preferences}")
 
-    # Create a shallow copy
+    # Creates a shallow copy
     shallow_copy = original.copy()
 
     print("\nShallow copy created")
     print(f"Are they the same object? {original is shallow_copy} == False")
     print(f"Do they have the same attribute values? {original.name == shallow_copy.name} == True")
 
-    # Show that mutable attributes are shared
+    # Shows that mutable attributes are shared
     print(f"Do they share the friends list? {id(original.friends) == id(shallow_copy.friends)} == True")
     print(f"Do they share the projects list? {id(original.projects) == id(shallow_copy.projects)} == True")
     print(f"Do they share the preferences dict? {id(original.preferences) == id(shallow_copy.preferences)} == True")
@@ -178,10 +178,10 @@ def shallow_copy_example() -> None:
 
 
 def deep_copy_example() -> None:
-    """Demonstrate deep copying of BaseObject instances."""
+    """Demonstrates deep copying of BaseObject instances."""
     print("\nDeep Copy Example:")
 
-    # Create an original object
+    # Creates an original object
     original = Employee("Bob", 40, "E67890", "Marketing")
     original.friends.append("Alice")
     original.projects.append("Project A")
@@ -193,14 +193,14 @@ def deep_copy_example() -> None:
     print(f"  Projects: {original.projects}")
     print(f"  Preferences: {original.preferences}")
 
-    # Create a deep copy
+    # Creates a deep copy
     deep_copy = original.deepcopy()
 
     print("\nDeep copy created")
     print(f"Are they the same object? {original is deep_copy} == False")
     print(f"Do they have the same attribute values? {original.name == deep_copy.name} == True")
 
-    # Show that mutable attributes are not shared
+    # Shows that mutable attributes are not shared
     print(f"Do they share the friends list? {id(original.friends) == id(deep_copy.friends)} == False")
     print(f"Do they share the projects list? {id(original.projects) == id(deep_copy.projects)} == False")
     print(f"Do they share the preferences dict? {id(original.preferences) == id(deep_copy.preferences)} == False")
@@ -221,7 +221,7 @@ def deep_copy_example() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     basic_baseobject_example()
     shallow_copy_example()
     deep_copy_example()

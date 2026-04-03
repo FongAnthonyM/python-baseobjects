@@ -65,12 +65,3 @@ class DispatchableComposite(BaseDispatchingComposite, DispatchableClass):
         """
         msg = "This method needs to be set to get the registered class."
         raise NotImplementedError(msg)
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initializes this object with the given arguments.
-
-        Args:
-            *args: Positional arguments used for class dispatching (ignored here).
-            **kwargs: Keyword arguments used for initialization.
-        """
-        super().__init__(**kwargs)

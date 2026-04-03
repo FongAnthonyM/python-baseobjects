@@ -12,7 +12,7 @@ Key Components
 
 AutomaticProperties
 -------------------
-AutomaticProperties uses a metaclass hook to construct properties from a mapping. You can configure how getters/setters are created via a factory.
+AutomaticProperties uses a metaclass hook to construct properties from a mapping. Getter/setter creation can be configured via a factory.
 
 .. code-block:: python
 
@@ -38,7 +38,7 @@ AutomaticProperties uses a metaclass hook to construct properties from a mapping
 
 Callbacks (overview)
 --------------------
-The callback tools allow registering functions and running them later under certain conditions or schedules. See the API reference for concrete usage in your installed version.
+The callback tools allow registering functions and running them later under certain conditions or schedules. See the API reference for concrete usage in the installed version.
 
 Best Practices
 --------------

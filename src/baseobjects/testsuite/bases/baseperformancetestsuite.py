@@ -54,7 +54,7 @@ class StatsMicro(Stats):
     """
 
     def print_stats(self, *amount: Any) -> Self:
-        """Print the statistics for the profiled code.
+        """Prints the statistics for the profiled code.
 
         Args:
             *amount: Optional restrictions on what to print.
@@ -85,7 +85,7 @@ class StatsMicro(Stats):
         return self
 
     def print_line(self, func: Any) -> None:  # hack: should print percentages
-        """Print a single line of statistics.
+        """Prints a single line of statistics.
 
         Args:
             func: The function for which to print statistics.

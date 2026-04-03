@@ -15,7 +15,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar, cast
+from typing import Any, cast
 
 # Third-Party Packages #
 import pytest
@@ -70,14 +70,14 @@ class ConcreteDispatchableComposite(DispatchableComposite):
     """A base test subclass of DispatchableComposite for testing purposes."""
 
     # Class Attributes #
-    class_registry_type: ClassVar[type[BaseClassRegistry]] = ConcreteClassRegistry
-    class_registration: ClassVar[bool] = True
-    default_component_types: ClassVar[dict[str, tuple[type, dict[str, Any]]]] = {
+    class_registry_type: type[BaseClassRegistry] = ConcreteClassRegistry
+    class_registration: bool = True
+    default_component_types: dict[str, tuple[type, dict[str, Any]]] = {
         "default_component": (ConcreteComponentClass, {}),
     }
 
     @classmethod
-    def get_class_information(cls, *args: Any, **kwargs: Any) -> tuple[str]:
+    def get_class_information(cls, *args: Any, **kwargs: Any) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
         """Gets a class's lookup information from a given set of arguments.
 
         Args:
@@ -85,13 +85,14 @@ class ConcreteDispatchableComposite(DispatchableComposite):
             **kwargs: Keyword arguments to get the name from.
 
         Returns:
-            A tuple containing the class name to look up.
+            The keyword arguments for class lookup and the keyword arguments to pass to the class constructor or None
+            if not found.
         """
         if args and isinstance(args[0], str):
-            return (args[0],)
+            return {"name": args[0]}, None
         if "type_" in kwargs and isinstance(kwargs["type_"], str):
-            return (kwargs["type_"],)
-        return (cls.__name__,)
+            return {"name": kwargs["type_"]}, None
+        return {"name": cls.__name__}, None
 
     @classmethod
     def register_class(cls, *args: Any, **kwargs: Any) -> None:
@@ -239,7 +240,7 @@ class TestDispatchableComposite(DispatchableCompositeTestSuite):
 
     # Attributes #
     UnitTestClass: type[DispatchableComposite] = ConcreteDispatchableComposite
-    UnitTestComponent: ClassVar[type[BaseComponent]] = ConcreteComponentClass
+    UnitTestComponent: type[BaseComponent] = ConcreteComponentClass
 
     # Fixtures
     @pytest.fixture(
@@ -286,16 +287,16 @@ class TestDispatchableComposite(DispatchableCompositeTestSuite):
     @pytest.mark.parametrize(
         ("args", "kwargs", "expected"),
         [
-            (("TypeADispatchable",), {}, ("TypeADispatchable",)),
-            ((), {"type_": "TypeBDispatchable"}, ("TypeBDispatchable",)),
-            ((123,), {"irrelevant": "value"}, ("ConcreteDispatchableComposite",)),
+            (("TypeADispatchable",), {}, ({"name": "TypeADispatchable"}, None)),
+            ((), {"type_": "TypeBDispatchable"}, ({"name": "TypeBDispatchable"}, None)),
+            ((123,), {"irrelevant": "value"}, ({"name": "ConcreteDispatchableComposite"}, None)),
         ],
     )
     def test_get_class_information(
         self,
         args: tuple[Any, ...],
         kwargs: dict[str, Any],
-        expected: tuple[str],
+        expected: tuple[dict[str, Any] | None, dict[str, Any] | None],
     ) -> None:
         """Tests the get_class_information method.
 

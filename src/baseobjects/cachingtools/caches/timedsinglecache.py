@@ -39,9 +39,44 @@ class TimedSingleCacheCallable(BaseTimedCacheCallable):
 
     # Attributes #
     _cache_method: str = "caching"
+    _instanced_cache: bool = False
     args_key: Hashable | None = None
 
     # Instance Methods #
+    # Constructors
+    def construct(
+        self,
+        func: AnyCallable | None = None,
+        typed: bool | None = None,
+        lifetime: int | float | None = None,
+        call_method: str | None = None,
+        instanced: bool | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
+        """Constructs this object with the given arguments.
+
+        Args:
+            func: The function to wrap.
+            typed: Determines if the function's arguments are type sensitive for caching.
+            lifetime: The period between cache resets in seconds.
+            call_method: The default call method to use.
+            instanced: Determines if the cache exists in the main function or in the method instances.
+            *args: Arguments for inheritance.
+            **kwargs: Keyword arguments for inheritance.
+        """
+        self.args_key = None
+
+        super().construct(
+            func=func,
+            typed=typed,
+            lifetime=lifetime,
+            call_method=call_method,
+            instanced=instanced,
+            *args,
+            **kwargs,
+        )
+
     # Caching Methods
     def caching(self, *args: Any, **kwargs: Any) -> Any:
         """Caching that holds a single result.
@@ -55,7 +90,7 @@ class TimedSingleCacheCallable(BaseTimedCacheCallable):
         """
         key = self.create_key(args, kwargs, self.typed)
         if key != self.args_key:
-            self.cache_container = self.__wrapped__(*args, **kwargs)  # type:ignore[misc]
+            self.cache_container = self.call_wrapped(*args, **kwargs)
             self.args_key = key
 
         return self.cache_container
@@ -74,7 +109,7 @@ class TimedSingleCacheCallable(BaseTimedCacheCallable):
             self.expiration = perf_counter() + self.lifetime
 
 
-class TimedSingleCacheMethod(TimedSingleCacheCallable, BaseTimedCacheMethod):
+class TimedSingleCacheMethod(BaseTimedCacheMethod, TimedSingleCacheCallable):
     """A method class for TimedSingleCache."""
 
     def construct(self, func: Any | None = None, *args: Any, **kwargs: Any) -> None:
@@ -85,6 +120,7 @@ class TimedSingleCacheMethod(TimedSingleCacheCallable, BaseTimedCacheMethod):
             *args: Arguments for inheritance.
             **kwargs: Keyword arguments for inheritance.
         """
+        self.args_key = None
         super().construct(func, *args, **kwargs)
 
 

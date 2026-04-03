@@ -12,7 +12,7 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar, cast
+from typing import Any, ClassVar
 
 # Source Packages #
 from baseobjects.classregistration import NamespaceClassRegistry
@@ -25,7 +25,7 @@ class TextProcessingComponent(BaseComponent):
     """A component that processes text in various ways."""
 
     def process(self, text: str) -> str:
-        """Process text according to the component's specific implementation.
+        """Processes text according to the component's specific implementation.
 
         Args:
             text: The text to process.
@@ -41,7 +41,7 @@ class UppercaseComponent(TextProcessingComponent):
     """A component that converts text to uppercase."""
 
     def process(self, text: str) -> str:
-        """Convert text to uppercase.
+        """Converts text to uppercase.
 
         Args:
             text: The text to convert.
@@ -58,7 +58,7 @@ class LowercaseComponent(TextProcessingComponent):
     """A component that converts text to lowercase."""
 
     def process(self, text: str) -> str:
-        """Convert text to lowercase.
+        """Converts text to lowercase.
 
         Args:
             text: The text to convert.
@@ -140,7 +140,7 @@ class TextProcessor(BaseDispatchingComposite):
         init: bool = True,
         **kwargs: Any,
     ) -> None:
-        """Initialize the TextProcessor.
+        """Initializes the TextProcessor.
 
         Args:
             name: The name of the component to add.
@@ -222,15 +222,12 @@ class TextProcessor(BaseDispatchingComposite):
         """
         # Ensure 'with_kwargs' is not in kwargs twice if passed
         kwargs.pop("with_kwargs", None)
-        return {
-            name: cast(
-                tuple[type, dict[str, Any]],
-                self.component_types_registry.get_class(namespace, class_name, with_kwargs=True, **kwargs),
-            ),
-        }
+        result = self.component_types_registry.get_class(namespace, class_name, with_kwargs=True, **kwargs)
+        assert isinstance(result, tuple)
+        return {name: result}
 
     def process_text(self, text: str, component_name: str) -> str:
-        """Process text using the specified component.
+        """Processes text using the specified component.
 
         Args:
             text: The text to process.
@@ -247,10 +244,12 @@ class TextProcessor(BaseDispatchingComposite):
             raise ValueError(msg)
 
         component = self.components[component_name]
-        return cast(str, component.process(text))
+        result = component.process(text)
+        assert isinstance(result, str)
+        return result
 
 
-# Register components in the registry
+# Registers components in the registry
 TextProcessor.component_types_registry.register_class(
     LowercaseComponent,
     namespace="text",
@@ -276,7 +275,7 @@ def basic_dispatching_composite_usage() -> None:
     """Demonstrates basic usage of a dispatching composite."""
     print("Basic Dispatching Composite Usage:\n")
 
-    # Create a text processor with the default component (uppercase)
+    # Creates a text processor with the default component (uppercase)
     print("Creating a text processor with the default component (uppercase)...")
     processor = TextProcessor()
 
@@ -285,7 +284,7 @@ def basic_dispatching_composite_usage() -> None:
         print(f"  - {name}: {type(component).__name__}")
     print()
 
-    # Process text using the default component
+    # Processes text using the default component
     print("Processing text using the default component...")
     sample_text = "Hello, World!"
     result = processor.process_text(sample_text, "uppercase")
@@ -299,7 +298,7 @@ def creating_components_with_string_identifiers() -> None:
     """Demonstrates creating components using string identifiers."""
     print("Creating Components with String Identifiers:\n")
 
-    # Create a text processor with a lowercase component
+    # Creates a text processor with a lowercase component
     print("Creating a text processor with a lowercase component...")
     processor = TextProcessor(name="lowercase", namespace="text", class_name="LowercaseComponent")
 
@@ -308,7 +307,7 @@ def creating_components_with_string_identifiers() -> None:
         print(f"  - {name}: {type(component).__name__}")
     print()
 
-    # Process text using the lowercase component
+    # Processes text using the lowercase component
     print("Processing text using the lowercase component...")
     sample_text = "Hello, World!"
     result = processor.process_text(sample_text, "lowercase")
@@ -322,11 +321,11 @@ def multiple_dispatched_components() -> None:
     """Demonstrates using multiple dispatched components."""
     print("Multiple Dispatched Components:\n")
 
-    # Create a text processor with multiple components
+    # Creates a text processor with multiple components
     print("Creating a text processor with multiple components...")
     processor = TextProcessor()
 
-    # Add components using string identifiers
+    # Adds components using string identifiers
     print("Adding components using string identifiers...")
     processor.construct(name="lowercase", namespace="text", class_name="LowercaseComponent")
     processor.construct(name="reverse", namespace="text", class_name="ReverseComponent")
@@ -337,7 +336,7 @@ def multiple_dispatched_components() -> None:
         print(f"  - {name}: {type(component).__name__}")
     print()
 
-    # Process text using different components
+    # Processes text using different components
     sample_text = "Hello, World!"
     print(f"Original text: {sample_text}")
 
@@ -363,7 +362,7 @@ def dynamic_component_selection() -> None:
     """Demonstrates dynamic component selection based on user input."""
     print("Dynamic Component Selection:\n")
 
-    # Create a text processor with all available components
+    # Creates a text processor with all available components
     print("Creating a text processor with all available components...")
     processor = TextProcessor()
     processor.construct(name="lowercase", namespace="text", class_name="LowercaseComponent")
@@ -392,16 +391,16 @@ def custom_component_registry() -> None:
     """Demonstrates creating and using a custom component registry."""
     print("Custom Component Registry:\n")
 
-    # Create a new registry
+    # Creates a new registry
     print("Creating a new component registry...")
     custom_registry = NamespaceClassRegistry()
 
-    # Register components in the custom registry
+    # Registers components in the custom registry
     print("Registering components in the custom registry...")
     custom_registry.register_class(UppercaseComponent, namespace="custom", name="UpperCase")
     custom_registry.register_class(LowercaseComponent, namespace="custom", name="LowerCase")
 
-    # Create a subclass of TextProcessor with the custom registry
+    # Creates a subclass of TextProcessor with the custom registry
     print("Creating a subclass of TextProcessor with the custom registry...")
 
     class CustomTextProcessor(TextProcessor):
@@ -409,7 +408,7 @@ def custom_component_registry() -> None:
 
         component_types_registry = custom_registry
 
-    # Create an instance with a component from the custom registry
+    # Creates an instance with a component from the custom registry
     print("Creating an instance with a component from the custom registry...")
     processor = CustomTextProcessor(name="custom_lower", namespace="custom", class_name="LowerCase")
 
@@ -417,7 +416,7 @@ def custom_component_registry() -> None:
     for name, component in processor.components.items():
         print(f"  - {name}: {type(component).__name__}")
 
-    # Process text using the custom component
+    # Processes text using the custom component
     sample_text = "Hello, World!"
     result = processor.process_text(sample_text, "custom_lower")
     print(f"\nOriginal text: {sample_text}")

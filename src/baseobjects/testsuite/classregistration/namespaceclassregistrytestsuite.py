@@ -91,7 +91,7 @@ class NamespaceClassRegistryTestSuite(BaseClassRegistryTestSuite):
 
         registry = self.UnitTestClass(classes=classes)
 
-        # Verify classes were added
+        # Verifies classes were added
         assert "test_namespace" in registry
         assert "ConcreteClass1" in registry["test_namespace"]
         assert "ConcreteClass2" in registry["test_namespace"]
@@ -108,11 +108,11 @@ class NamespaceClassRegistryTestSuite(BaseClassRegistryTestSuite):
             *args: Positional arguments to pass to use in testing the register_class method.
             **kwargs: Keyword arguments to pass to use in testing the register_class method.
         """
-        # Register a class
+        # Registers a class
         test_registry = cast(NamespaceClassRegistry, self.create_test_registry(*args, **kwargs))
         test_registry.register_class(self.ConcreteClass1, namespace="test_namespace", name="ConcreteClass1")
 
-        # Verify
+        # Verifies
         assert "test_namespace" in test_registry
         assert "ConcreteClass1" in test_registry["test_namespace"]
         assert test_registry["test_namespace"]["ConcreteClass1"][0] == self.ConcreteClass1
@@ -125,7 +125,7 @@ class NamespaceClassRegistryTestSuite(BaseClassRegistryTestSuite):
            *args: Positional arguments to pass to use in testing the register_classes method.
            **kwargs: Keyword arguments to pass to use in testing the register_classes method.
         """
-        # Register multiple classes
+        # Registers multiple classes
         test_registry = cast(NamespaceClassRegistry, self.create_test_registry(*args, **kwargs))
         classes = [
             (self.ConcreteClass1, "test_namespace", "ConcreteClass1", {}),
@@ -133,7 +133,7 @@ class NamespaceClassRegistryTestSuite(BaseClassRegistryTestSuite):
         ]
         test_registry.register_classes(classes)
 
-        # Verify classes were registered
+        # Verifies classes were registered
         assert "test_namespace" in test_registry
         assert "ConcreteClass1" in test_registry["test_namespace"]
         assert "ConcreteClass2" in test_registry["test_namespace"]
@@ -153,7 +153,7 @@ class NamespaceClassRegistryTestSuite(BaseClassRegistryTestSuite):
         """
         cls = populated_registry.get_class("test_namespace", "ConcreteClass1")
 
-        # Verify class was retrieved
+        # Verifies class was retrieved
         assert cls == self.ConcreteClass1
 
     def test_get_class_with_kwargs(self, populated_registry: NamespaceClassRegistry) -> None:
@@ -162,10 +162,10 @@ class NamespaceClassRegistryTestSuite(BaseClassRegistryTestSuite):
         Args:
             populated_registry: A populated test registry.
         """
-        # Get a class with keyword arguments
+        # Gets a class with keyword arguments
         cls_and_kwargs = populated_registry.get_class("test_namespace", "ConcreteClass2", with_kwargs=True)
 
-        # Verify class and keyword arguments were retrieved
+        # Verifies class and keyword arguments were retrieved
         assert cls_and_kwargs[0] == self.ConcreteClass2
         assert cls_and_kwargs[1] == {"arg1": "value1"}
 
@@ -176,12 +176,12 @@ class NamespaceClassRegistryTestSuite(BaseClassRegistryTestSuite):
             *args: Positional arguments to pass to use in testing the get_classes method.
             **kwargs: Keyword arguments to pass to use in testing the get_classes method.
         """
-        # Get a non-existent class with a default value
+        # Gets a non-existent class with a default value
         test_registry = cast(NamespaceClassRegistry, self.create_test_registry(*args, **kwargs))
         default = object()
         cls = test_registry.get_class("non_existent_namespace", "NonExistentClass", default=default)
 
-        # Verify default was returned
+        # Verifies default was returned
         assert cls is default
 
     def test_get_class_raises_key_error(self, *args: Any, **kwargs: Any) -> None:
@@ -191,7 +191,7 @@ class NamespaceClassRegistryTestSuite(BaseClassRegistryTestSuite):
             *args: Positional arguments to pass to use in testing the get_classes method.
             **kwargs: Keyword arguments to pass to use in testing the get_classes method.
         """
-        # Verify getting a non-existent class raises a KeyError
+        # Verifies getting a non-existent class raises a KeyError
         test_registry = cast(NamespaceClassRegistry, self.create_test_registry(*args, **kwargs))
         with pytest.raises(KeyError):
             test_registry.get_class("non_existent_namespace", "NonExistentClass")
@@ -202,10 +202,10 @@ class NamespaceClassRegistryTestSuite(BaseClassRegistryTestSuite):
         Args:
             populated_registry: A populated test registry.
         """
-        # Get a new instance of a class
+        # Gets a new instance of a class
         instance = populated_registry.get_new("test_namespace", "ConcreteClass1")
 
-        # Verify instance was created
+        # Verifies instance was created
         assert isinstance(instance, self.ConcreteClass1)
 
     def test_get_new_with_kwargs(self, populated_registry: NamespaceClassRegistry) -> None:
@@ -220,7 +220,7 @@ class NamespaceClassRegistryTestSuite(BaseClassRegistryTestSuite):
                 self.arg1 = arg1
                 self.arg2 = arg2
 
-        # Register a class that accepts kwargs
+        # Registers a class that accepts kwargs
         populated_registry.register_class(
             UnitTestClassWithKwargs,
             namespace="test_namespace",
@@ -228,14 +228,14 @@ class NamespaceClassRegistryTestSuite(BaseClassRegistryTestSuite):
             class_kwargs={"arg1": "default"},
         )
 
-        # Get a new instance with overridden kwargs
+        # Gets a new instance with overridden kwargs
         instance = populated_registry.get_new(
             "test_namespace",
             "UnitTestClassWithKwargs",
             class_kwargs={"arg2": "overridden"},
         )
 
-        # Verify instance was created with correct args
+        # Verifies instance was created with correct args
         assert isinstance(instance, UnitTestClassWithKwargs)
         assert instance.arg1 == "default"
         assert instance.arg2 == "overridden"
@@ -252,7 +252,7 @@ class NamespaceClassRegistryTestSuite(BaseClassRegistryTestSuite):
                 self.arg1 = arg1
                 self.arg2 = arg2
 
-        # Register a class
+        # Registers a class
         populated_registry.register_class(
             UnitTestClassWithKwargs,
             namespace="test_namespace",
@@ -260,7 +260,7 @@ class NamespaceClassRegistryTestSuite(BaseClassRegistryTestSuite):
             class_kwargs={"arg1": "default_value"},
         )
 
-        # Get a new instance without using default keyword arguments
+        # Gets a new instance without using default keyword arguments
         instance = populated_registry.get_new(
             "test_namespace",
             "UnitTestClassWithKwargs",
@@ -268,7 +268,7 @@ class NamespaceClassRegistryTestSuite(BaseClassRegistryTestSuite):
             class_kwargs={"arg2": "custom_value"},
         )
 
-        # Verify instance was created with only the provided keyword arguments
+        # Verifies instance was created with only the provided keyword arguments
         assert isinstance(instance, UnitTestClassWithKwargs)
         assert instance.arg1 is None
         assert instance.arg2 == "custom_value"
@@ -280,20 +280,20 @@ class NamespaceClassRegistryTestSuite(BaseClassRegistryTestSuite):
             *args: Positional arguments to pass to use in testing the update_classes method.
             **kwargs: Keyword arguments to pass to use in testing the update_classes method.
         """
-        # Create registries
+        # Creates registries
         registry1 = cast(NamespaceClassRegistry, self.create_test_registry(*args, **kwargs))
         registry2 = cast(NamespaceClassRegistry, self.create_test_registry(*args, **kwargs))
 
-        # Register classes in registry1
+        # Registers classes in registry1
         registry1.register_class(self.ConcreteClass1, namespace="ns1", name="Class1")
 
-        # Register classes in registry2
+        # Registers classes in registry2
         registry2.register_class(self.ConcreteClass2, namespace="ns2", name="Class2")
 
-        # Update registry1 with registry2
+        # Updates registry1 with registry2
         registry1.update_classes(registry2)
 
-        # Verify classes were updated
+        # Verifies classes were updated
         assert "ns1" in registry1
         assert "Class1" in registry1["ns1"]
         assert "ns2" in registry1

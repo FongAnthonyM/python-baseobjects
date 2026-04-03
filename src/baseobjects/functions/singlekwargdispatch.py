@@ -37,12 +37,44 @@ FuncT = TypeVar("FuncT", bound=Callable[..., Any])
 
 
 # Functions #
+def _normalize_type(cls: Any) -> Any:
+    """Normalizes a type by returning its origin if it exists.
+
+    Args:
+        cls: The type to normalize.
+
+    Returns:
+        The normalized type.
+    """
+    origin = get_origin(cls)
+    return origin if origin is not None and origin not in {Union, UnionType} else cls
+
+
 def _is_union_type(cls: Any) -> bool:
+    """Checks if a type is a union type.
+
+    Args:
+        cls: The type to check.
+
+    Returns:
+        True if the type is a union type, False otherwise.
+    """
     return get_origin(cls) in {Union, UnionType}
 
 
 def _is_valid_dispatch_type(cls: Any) -> bool:
-    return isinstance(cls, type) or (_is_union_type(cls) and all(isinstance(arg, type) for arg in get_args(cls)))
+    """Checks if a type is a valid dispatch type (class or union of classes).
+
+    Args:
+        cls: The type to check.
+
+    Returns:
+        True if the type is a valid dispatch type, False otherwise.
+    """
+    cls = _normalize_type(cls)
+    if _is_union_type(cls):
+        return all(isinstance(_normalize_type(arg), type) for arg in get_args(cls))
+    return isinstance(cls, type)
 
 
 # Classes #
@@ -381,9 +413,9 @@ class singlekwargdispatch(BaseDecorator, singledispatchmethod):  # type: ignore[
 
         if _is_union_type(cls):
             for arg in get_args(cls):
-                self.registry[arg] = method
+                self.registry[_normalize_type(arg)] = method
         else:
-            self.registry[cls] = method
+            self.registry[_normalize_type(cls)] = method
         if self.cache_token is None and hasattr(cls, "__abstractmethods__"):
             self.cache_token = get_cache_token()
         self.dispatch_cache.clear()

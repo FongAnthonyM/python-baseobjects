@@ -28,7 +28,7 @@ class MathOperations:
     """
 
     def add(self, a: float, b: float) -> float:
-        """Add two numbers.
+        """Adds two numbers.
 
         Args:
             a: The first number.
@@ -40,7 +40,7 @@ class MathOperations:
         return a + b
 
     def subtract(self, a: float, b: float) -> float:
-        """Subtract the second number from the first.
+        """Subtracts the second number from the first.
 
         Args:
             a: The first number.
@@ -52,7 +52,7 @@ class MathOperations:
         return a - b
 
     def multiply(self, a: float, b: float) -> float:
-        """Multiply two numbers.
+        """Multiplies two numbers.
 
         Args:
             a: The first number.
@@ -64,7 +64,7 @@ class MathOperations:
         return a * b
 
     def divide(self, a: float, b: float) -> float:
-        """Divide the first number by the second.
+        """Divides the first number by the second.
 
         Args:
             a: The first number.
@@ -89,7 +89,7 @@ class StringOperations:
     """
 
     def uppercase(self, text: str) -> str:
-        """Convert text to uppercase.
+        """Converts text to uppercase.
 
         Args:
             text: The text to convert.
@@ -100,7 +100,7 @@ class StringOperations:
         return text.upper()
 
     def lowercase(self, text: str) -> str:
-        """Convert text to lowercase.
+        """Converts text to lowercase.
 
         Args:
             text: The text to convert.
@@ -140,23 +140,23 @@ class OperationsContainer:
     to bind methods to instances.
     """
 
-    # Define a MethodRegistry as a class attribute
+    # Defines a MethodRegistry as a class attribute
     # When accessed through an instance, it will return a BoundMethodRegistry
     methods = MethodRegistry()
 
     def __init__(self, name: str) -> None:
-        """Initialize the container with a name.
+        """Initializes the container with a name.
 
         Args:
             name: The name of the container.
         """
         self.name = name
 
-        # Initialize the methods registry with some methods
+        # Initializes the methods registry with some methods
         # We'll use a separate instance variable to store the math_ops instance
         self.math_ops = MathOperations()
 
-        # Add methods to the registry
+        # Adds methods to the registry
         # The methods will be bound to self.math_ops when accessed through self.methods
         # We wrap them to handle the double binding
         # (MethodRegistry binds to instance, and math_ops methods are already bound)
@@ -166,7 +166,7 @@ class OperationsContainer:
         self.methods["divide"] = lambda obj, *args, **kwargs: self.math_ops.divide(*args, **kwargs)
 
     def add_method(self, name: str, method: Callable[..., Any]) -> None:
-        """Add a method to the registry.
+        """Adds a method to the registry.
 
         Args:
             name: The name of the method.
@@ -175,7 +175,7 @@ class OperationsContainer:
         self.methods[name] = method
 
     def execute_method(self, method_name: str, *args: Any, **kwargs: Any) -> Any:
-        """Execute a method from the registry.
+        """Executes a method from the registry.
 
         Args:
             method_name: The name of the method to execute.
@@ -211,31 +211,31 @@ class MultiOperationsContainer:
     to organize methods by category.
     """
 
-    # Define separate MethodRegistry instances for different categories
+    # Defines separate MethodRegistry instances for different categories
     math_methods = MethodRegistry()
     string_methods = MethodRegistry()
 
     def __init__(self, name: str) -> None:
-        """Initialize the container with a name.
+        """Initializes the container with a name.
 
         Args:
             name: The name of the container.
         """
         self.name = name
 
-        # Initialize the method registries
+        # Initializes the method registries
         # We'll use separate instance variables to store the operations instances
         self.math_ops = MathOperations()
         self.string_ops = StringOperations()
 
-        # Add methods to the math registry
+        # Adds methods to the math registry
         # The methods will be bound to self.math_ops when accessed through self.math_methods
         self.math_methods["add"] = lambda obj, *args, **kwargs: self.math_ops.add(*args, **kwargs)
         self.math_methods["subtract"] = lambda obj, *args, **kwargs: self.math_ops.subtract(*args, **kwargs)
         self.math_methods["multiply"] = lambda obj, *args, **kwargs: self.math_ops.multiply(*args, **kwargs)
         self.math_methods["divide"] = lambda obj, *args, **kwargs: self.math_ops.divide(*args, **kwargs)
 
-        # Add methods to the string registry
+        # Adds methods to the string registry
         # The methods will be bound to self.string_ops when accessed through self.string_methods
         self.string_methods["uppercase"] = lambda obj, *args, **kwargs: self.string_ops.uppercase(*args, **kwargs)
         self.string_methods["lowercase"] = lambda obj, *args, **kwargs: self.string_ops.lowercase(*args, **kwargs)
@@ -243,7 +243,7 @@ class MultiOperationsContainer:
         self.string_methods["reverse"] = lambda obj, *args, **kwargs: self.string_ops.reverse(*args, **kwargs)
 
     def execute_math_method(self, method_name: str, *args: Any, **kwargs: Any) -> Any:
-        """Execute a math method from the registry.
+        """Executes a math method from the registry.
 
         Args:
             method_name: The name of the method to execute.
@@ -264,7 +264,7 @@ class MultiOperationsContainer:
         return method(*args, **kwargs)
 
     def execute_string_method(self, method_name: str, *args: Any, **kwargs: Any) -> Any:
-        """Execute a string method from the registry.
+        """Executes a string method from the registry.
 
         Args:
             method_name: The name of the method to execute.
@@ -307,37 +307,37 @@ def basic_method_registry() -> None:
     """Demonstrates basic usage of MethodRegistry."""
     print("Basic MethodRegistry Usage:\n")
 
-    # Create a class with a MethodRegistry
+    # Creates a class with a MethodRegistry
     class Example:
         methods = MethodRegistry()
 
         def __init__(self, name: str) -> None:
-            """Initialize."""
+            """Initializes."""
             self.name = name
 
-    # Create instances of the class
+    # Creates instances of the class
     instance1 = Example("Instance 1")
     instance2 = Example("Instance 2")
 
-    # Show that each instance has its own bound registry
+    # Shows that each instance has its own bound registry
     print("Each instance has its own bound registry:")
     print(f"instance1.methods is instance2.methods: {instance1.methods is instance2.methods}")
     print(f"Type of instance1.methods: {type(instance1.methods).__name__}")
     print(f"Type of Example.methods: {type(Example.methods).__name__}")
 
-    # Add methods to the registry
+    # Adds methods to the registry
     print("\nAdding methods to the registry...")
 
-    # Create a MathOperations instance
+    # Creates a MathOperations instance
     math_ops = MathOperations()
 
-    # Add methods to the class registry
+    # Adds methods to the class registry
     # Since MethodRegistry binds the method to the instance, we need to wrap the
     # already-bound methods to accept the instance (self) as the first argument
     Example.methods["add"] = lambda self, *args, **kwargs: math_ops.add(*args, **kwargs)
     Example.methods["subtract"] = lambda self, *args, **kwargs: math_ops.subtract(*args, **kwargs)
 
-    # Check the methods in each instance
+    # Checks the methods in each instance
     print(f"Methods in instance1: {list(instance1.methods.keys())}")
     print(f"Methods in instance2: {list(instance2.methods.keys())}")
 
@@ -359,24 +359,24 @@ def method_registry_vs_function_registry() -> None:
     """Demonstrates the difference between MethodRegistry and FunctionRegistry."""
     print("MethodRegistry vs FunctionRegistry:\n")
 
-    # Create a class with both registry types
+    # Creates a class with both registry types
     class Example:
         method_registry = MethodRegistry()
         function_registry = FunctionRegistry()
 
         def __init__(self, name: str) -> None:
-            """Initialize."""
+            """Initializes."""
             self.name = name
 
-    # Create instances of the class
+    # Creates instances of the class
     instance1 = Example("Instance 1")
     instance2 = Example("Instance 2")
 
-    # Create operation instances
+    # Creates operation instances
     math_ops = MathOperations()
     string_ops = StringOperations()
 
-    # Add methods to both registries
+    # Adds methods to both registries
     # For MethodRegistry, we wrap to handle the bound instance
     Example.method_registry["add"] = lambda self, *args, **kwargs: math_ops.add(*args, **kwargs)
     Example.method_registry["uppercase"] = lambda self, *args, **kwargs: string_ops.uppercase(*args, **kwargs)
@@ -384,14 +384,14 @@ def method_registry_vs_function_registry() -> None:
     Example.function_registry["add"] = math_ops.add
     Example.function_registry["uppercase"] = string_ops.uppercase
 
-    # Compare the registries
+    # Compares the registries
     print("Registry types:")
     print(f"Type of Example.method_registry: {type(Example.method_registry).__name__}")
     print(f"Type of instance1.method_registry: {type(instance1.method_registry).__name__}")
     print(f"Type of Example.function_registry: {type(Example.function_registry).__name__}")
     print(f"Type of instance1.function_registry: {type(instance1.function_registry).__name__}")
 
-    # Show that method_registry instances are different for each instance
+    # Shows that method_registry instances are different for each instance
     print("\nRegistry instances:")
     same_method_registry = instance1.method_registry is instance2.method_registry
     print("method_registry same across instances:", same_method_registry)
@@ -430,9 +430,9 @@ def method_registry_vs_function_registry() -> None:
     # Let's define some static methods and functions
     print("\nUsing static methods and functions with function_registry:")
 
-    # Define static methods
+    # Defines static methods
     def static_add(a: float, b: float) -> float:
-        """Add two numbers without requiring an instance.
+        """Adds two numbers without requiring an instance.
 
         Returns:
             The sum.
@@ -447,7 +447,7 @@ def method_registry_vs_function_registry() -> None:
         """
         return text.upper()
 
-    # Add the static methods to the function_registry
+    # Adds the static methods to the function_registry
     Example.function_registry["static_add"] = static_add
     Example.function_registry["static_uppercase"] = static_uppercase
 
@@ -465,14 +465,14 @@ def operations_container_example() -> None:
     """Demonstrates using MethodRegistry in a practical application."""
     print("OperationsContainer Example:\n")
 
-    # Create containers
+    # Creates containers
     container1 = OperationsContainer("Container 1")
     container2 = OperationsContainer("Container 2")
 
-    # Show the initial methods
+    # Shows the initial methods
     print(f"Initial methods in {container1.name}: {container1.list_methods()}")
 
-    # Execute some methods
+    # Executes some methods
     print("\nExecuting methods:")
     a, b = 10, 5
 
@@ -488,10 +488,10 @@ def operations_container_example() -> None:
     result = container1.execute_method("divide", a, b)
     print(f"{container1.name}.execute_method('divide', {a}, {b}) = {result}")
 
-    # Add a custom method to container2
+    # Adds a custom method to container2
     print(f"\nAdding a custom method to {container2.name}...")
 
-    # Define a method for the math_ops instance
+    # Defines a method for the math_ops instance
     def power_method(self: Any, a: float, b: float) -> float:
         """Raise a to the power of b.
 
@@ -500,17 +500,17 @@ def operations_container_example() -> None:
         """
         return float(a**b)
 
-    # Add the method to the math_ops instance
+    # Adds the method to the math_ops instance
     container2.math_ops.power = power_method.__get__(container2.math_ops, MathOperations)  # type: ignore[attr-defined]
 
-    # Add the bound method to the registry
+    # Adds the bound method to the registry
     # We need to wrap it to handle the double binding
     container2.add_method("power", lambda obj, *args: container2.math_ops.power(*args))  # type: ignore[attr-defined]
 
-    # Show the updated methods
+    # Shows the updated methods
     print(f"Methods in {container2.name}: {container2.list_methods()}")
 
-    # Execute the custom method
+    # Executes the custom method
     result = container2.execute_method("power", 2, 3)
     print(f"{container2.name}.execute_method('power', 2, 3) = {result}")
 
@@ -529,14 +529,14 @@ def multi_operations_container_example() -> None:
     """Demonstrates using multiple MethodRegistry instances in a class."""
     print("MultiOperationsContainer Example:\n")
 
-    # Create a container
+    # Creates a container
     container = MultiOperationsContainer("Multi Container")
 
-    # Show the available methods
+    # Shows the available methods
     print(f"Math methods: {container.list_math_methods()}")
     print(f"String methods: {container.list_string_methods()}")
 
-    # Execute some math methods
+    # Executes some math methods
     print("\nExecuting math methods:")
     a, b = 10, 5
 
@@ -546,7 +546,7 @@ def multi_operations_container_example() -> None:
     result = container.execute_math_method("subtract", a, b)
     print(f"execute_math_method('subtract', {a}, {b}) = {result}")
 
-    # Execute some string methods
+    # Executes some string methods
     print("\nExecuting string methods:")
     text = "hello world"
 
@@ -566,17 +566,17 @@ def method_binding_example() -> None:
     """Demonstrates how MethodRegistry binds methods to instances."""
     print("Method Binding Example:\n")
 
-    # Create a class with instance methods
+    # Creates a class with instance methods
     class Example:
         def __init__(self, name: str, value: Any) -> None:
-            """Initialize."""
+            """Initializes."""
             self.name = name
             self.value = value
 
-            # Create a MethodRegistry for this instance
+            # Creates a MethodRegistry for this instance
             self.methods = MethodRegistry()
 
-            # Add instance methods to the registry
+            # Adds instance methods to the registry
             self.methods["get"] = self.get_value
             self.methods["set"] = self.set_value
 
@@ -587,21 +587,21 @@ def method_binding_example() -> None:
             self.value = value
             return self.value
 
-    # Create instances with different values
+    # Creates instances with different values
     instance1 = Example("Instance 1", 10)
     instance2 = Example("Instance 2", 20)
 
-    # Show that the methods are bound to the correct instance
+    # Shows that the methods are bound to the correct instance
     print("Methods bound to instances:")
 
-    # Get values from both instances
+    # Gets values from both instances
     result1 = instance1.methods["get"]()
     result2 = instance2.methods["get"]()
 
     print(f"{instance1.name}.methods['get']() = {result1}")
     print(f"{instance2.name}.methods['get']() = {result2}")
 
-    # Set values on both instances
+    # Sets values on both instances
     new_value1 = 15
     new_value2 = 25
 
@@ -611,7 +611,7 @@ def method_binding_example() -> None:
     print(f"\n{instance1.name}.methods['set']({new_value1}) = {result1}")
     print(f"{instance2.name}.methods['set']({new_value2}) = {result2}")
 
-    # Verify the values were updated
+    # Verifies the values were updated
     print("\nUpdated values:")
     print(f"{instance1.name}.value = {instance1.value}")
     print(f"{instance2.name}.value = {instance2.value}")
@@ -624,7 +624,7 @@ if __name__ == "__main__":
     # Basic usage of MethodRegistry
     basic_method_registry()
 
-    # Compare MethodRegistry with FunctionRegistry
+    # Compares MethodRegistry with FunctionRegistry
     method_registry_vs_function_registry()
 
     # Using MethodRegistry in a practical application

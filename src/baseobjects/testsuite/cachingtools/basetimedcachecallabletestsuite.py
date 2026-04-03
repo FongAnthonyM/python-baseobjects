@@ -87,6 +87,18 @@ class _TestFunc:
         return x + 2
 
 
+class MockObj:
+    """A mock object for testing pickling of bound methods."""
+
+    def __init__(self, value: int = 10) -> None:
+        """Initializes the mock object."""
+        self.value = value
+
+    def method(self, x: int) -> int:
+        """A simple method for testing."""
+        return self.value + x
+
+
 class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
     """Base test suite for BaseTimedCacheCallable and its subclasses.
 
@@ -152,7 +164,7 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         Args:
             test_function_object: A fixture providing a BaseTimedCacheCallable instance that wraps a function.
         """
-        # Call the function and verify the result
+        # Calls the function and verify the result
         result = test_function_object(5)
         assert result == 7
 
@@ -162,14 +174,14 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         Args:
             test_function_object: A fixture providing a BaseTimedCacheCallable instance that wraps a function.
         """
-        # Call the wrapped function directly
+        # Calls the wrapped function directly
         result = test_function_object.call_wrapped(5)
         assert result == 7
 
     def test_call_multiplexer(self) -> None:  # type: ignore[override]
         """Tests that the call_multiplexer correctly delegates to the selected call method."""
 
-        # Create a test function object
+        # Creates a test function object
         def test_func(x: int) -> int:
             return x * 2
 
@@ -192,23 +204,23 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         func, get_call_count = test_function
         cache_func = self.UnitTestClass(func=func, lifetime=1)
 
-        # Set up caching
+        # Sets up caching
         cache_func.call_method = "call_caching"
 
-        # Call the function to cache the result
+        # Calls the function to cache the result
         result1 = cache_func(2)
         assert result1 == 4
         assert get_call_count() == 1
 
-        # Call again to use the cache
+        # Calls again to use the cache
         result2 = cache_func(2)
         assert result2 == 4
         assert get_call_count() == 1  # Count shouldn't increase if caching works
 
-        # Set expiration to the past to trigger cache clearing
+        # Sets expiration to the past to trigger cache clearing
         cache_func.expiration = time.perf_counter() - 2
 
-        # Call again, should clear cache and call function again
+        # Calls again, should clear cache and call function again
         result3 = cache_func(2)
         assert result3 == 4
         assert get_call_count() == 2  # Count should increase
@@ -224,15 +236,15 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         func, get_call_count = test_function
         cache_func = self.UnitTestClass(func=func)
 
-        # Set up clearing
+        # Sets up clearing
         cache_func.call_method = "call_clearing"
 
-        # Call the function
+        # Calls the function
         result1 = cache_func(2)
         assert result1 == 4
         assert get_call_count() == 1
 
-        # Call again, should clear cache and call function again
+        # Calls again, should clear cache and call function again
         result2 = cache_func(2)
         assert result2 == 4
         assert get_call_count() == 2  # Count should increase
@@ -265,12 +277,12 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
             *args: Positional arguments list to pass to the class constructor.
             **kwargs: Keyword arguments to pass to the class constructor.
         """
-        # Create a basic instance
+        # Creates a basic instance
         instance = self.UnitTestClass(*args, **kwargs)
         assert instance is not None
         assert isinstance(instance, self.UnitTestClass)
 
-        # Create an instance with a function
+        # Creates an instance with a function
         def test_func(x: int) -> int:
             return x * 2
 
@@ -294,6 +306,19 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
 
     def test_deepcopy_method(self, test_method_object: BaseTimedCacheCallable, test_bind_target: Any) -> None:
         """Tests deep copying of a bound method."""
+        # Standard Libraries #
+        import copy
+
+        obj_deepcopy = copy.deepcopy(test_method_object)
+        assert obj_deepcopy is not test_method_object
+        assert isinstance(obj_deepcopy, type(test_method_object))
+
+        # Result should be the same
+        # Use a flexible call in case it's not bound as expected
+        try:
+            assert obj_deepcopy(1) == test_method_object(1)
+        except TypeError:
+            assert obj_deepcopy(test_bind_target, 1) == test_method_object(test_bind_target, 1)
 
     # Pickling #
     def test_pickling_state_none(self) -> None:
@@ -321,28 +346,28 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         Args:
             test_function_object: A fixture providing a BaseTimedCacheCallable instance that wraps a function.
         """
-        # Convert to a function and call it
+        # Converts to a function and call it
         func = test_function_object.as_function()
         result = func(5)
         assert result == 7
 
     def test_lifetime_setting(self) -> None:
         """Tests that the lifetime can be set during construction and affects expiration."""
-        # Create a cache with a specific lifetime
+        # Creates a cache with a specific lifetime
         func, _get_call_count = self.create_test_function()
         cache_func = self.UnitTestClass(func=func, lifetime=5)
 
-        # Verify the lifetime was set correctly
+        # Verifies the lifetime was set correctly
         assert cache_func.lifetime == 5
 
-        # Call the function to set the expiration
+        # Calls the function to set the expiration
         cache_func.clear_cache()
 
-        # Verify the expiration is in the future
+        # Verifies the expiration is in the future
         assert cache_func.expiration is not None
         assert cache_func.expiration > time.perf_counter()
 
-        # Verify the expiration is approximately lifetime seconds in the future
+        # Verifies the expiration is approximately lifetime seconds in the future
         expected_expiration = time.perf_counter() + 5
         assert abs(cache_func.expiration - expected_expiration) < 0.1
 
@@ -357,25 +382,25 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         func, get_call_count = test_function
         cache_func = self.UnitTestClass(func=func, typed=True)
 
-        # Set up caching
+        # Sets up caching
         cache_func.call_method = "call_caching"
 
-        # Call with int
+        # Calls with int
         result1 = cache_func(2)
         assert result1 == 4
         assert get_call_count() == 1
 
-        # Call with same value as float
+        # Calls with same value as float
         result2 = cache_func(2.0)
         assert result2 == 4
         assert get_call_count() == 2  # Count should increase because types are different
 
-        # Call with int again
+        # Calls with int again
         result3 = cache_func(2)
         assert result3 == 4
         assert get_call_count() == 2  # Count shouldn't increase, using cache
 
-        # Call with float again
+        # Calls with float again
         result4 = cache_func(2.0)
         assert result4 == 4
         assert get_call_count() == 2  # Count shouldn't increase, using cache
@@ -392,7 +417,7 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         cache_func = self.UnitTestClass(func=func)
         cache_func.cache_method = "no_cache"
 
-        # Call the function multiple times with the same argument
+        # Calls the function multiple times with the same argument
         result1 = cache_func(2)
         result2 = cache_func(2)
 
@@ -454,12 +479,60 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         Args:
             test_function_object: A fixture providing a BaseTimedCacheCallable instance that wraps a function.
         """
-        # Set the cache_method property
+        # Sets the cache_method property
         test_function_object.cache_method = "no_cache"
 
-        # Verify the property was set correctly
+        # Verifies the property was set correctly
         assert test_function_object.cache_method == "no_cache"
         assert test_function_object.cache.selected == "no_cache"
+
+    def test_call_exception_handling(self) -> None:
+        """Tests the exception handling in call_caching and call_clearing."""
+        if not hasattr(self.UnitTestClass, "bind"):
+            pytest.skip("UnitTestClass does not have bind method.")
+
+        def func(x: int) -> int:
+            return x
+
+        cache_func = self.UnitTestClass(func=func)
+
+        # Manually create a bound method with an incompatible instance
+        # This will trigger TypeError when calling self.cache(instance, *args)
+        # because func only takes 1 argument but will be called with 2 (instance and x)
+        class Dummy:
+            pass
+        dummy = Dummy()
+
+        bound_method = cache_func.bind(instance=dummy)
+        bound_method.call_method = "call_caching"
+
+        # Should not raise TypeError, should fall back to calling without instance
+        result = bound_method(5)
+        assert result == 5
+
+        bound_method.call_method = "call_clearing"
+        result = bound_method(5)
+        assert result == 5
+
+    def test_pickling_bound_method(self) -> None:
+        """Tests pickling and unpickling of a bound method."""
+        if not hasattr(self.UnitTestClass, "bind"):
+            pytest.skip("UnitTestClass does not have bind method.")
+
+        obj = MockObj()
+        # Create a cache decorator and bind it
+        cache_decorator = self.UnitTestClass(func=MockObj.method)
+        # We MUST set it as the method in the class for _rebind_method to find it
+        MockObj.method = cache_decorator
+
+        bound_method = cache_decorator.bind(instance=obj, owner=MockObj)
+
+        pickled = pickle.dumps(bound_method)
+        unpickled = pickle.loads(pickled)
+
+        assert unpickled is not bound_method
+        assert unpickled(5) == 15
+        assert unpickled.__self__.value == 10
 
     @pytest.mark.parametrize("instanced", [True, False])
     def test_instanced_cache_property(self, instanced: bool) -> None:
@@ -491,7 +564,7 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         func, _get_call_count = test_function
         cache_func = self.UnitTestClass(func=func)
 
-        # Set up caching
+        # Sets up caching
         cache_func.call_method = "call_caching"
         active_method = cache_func.cache.selected
 
@@ -512,11 +585,11 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         func, _get_call_count = test_function
         cache_func = self.UnitTestClass(func=func)
 
-        # Set up caching
+        # Sets up caching
         cache_func.call_method = "call_caching"
         active_method = cache_func.cache.selected
 
-        # Stop caching
+        # Stops caching
         cache_func.stop_caching()
         assert cache_func.cache.selected == "no_cache"
 
@@ -552,7 +625,7 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
 
     def test_getstate_uninitialized(self) -> None:
         """Tests getstate on uninitialized object."""
-        # Create instance without calling __init__
+        # Creates instance without calling __init__
         obj = self.UnitTestClass.__new__(self.UnitTestClass)
         state = obj.__getstate__()
         # Should contain _saved_cache_method as None

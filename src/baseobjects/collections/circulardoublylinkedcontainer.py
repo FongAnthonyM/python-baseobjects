@@ -115,7 +115,7 @@ class LinkedNode(BaseReducible):
                 tuple[dict, dict]: __dict__ is present and __slots__ is present.
         """
         state = super().__getstate__()
-        # Convert weak reference to strong reference for pickling
+        # Converts weak reference to strong reference for pickling
         if isinstance(state, dict):
             state["_next"] = self.next
             state["_previous"] = self.previous
@@ -335,7 +335,7 @@ class CircularDoublyLinkedContainer(BaseObject):
 
     @singlekwargdispatch(kwarg="data")
     def append(self, data: Any) -> LinkedNode:
-        """Add a new node and data to the end of the container.
+        """Adds a new node and data to the end of the container.
 
         Args:
             data: The data to add to the new last node.
@@ -367,7 +367,7 @@ class CircularDoublyLinkedContainer(BaseObject):
 
     @append.register  # type: ignore[untyped-decorator]
     def _(self, data: LinkedNode) -> LinkedNode:
-        """Add a new node and data to the end of the container.
+        """Adds a new node and data to the end of the container.
 
         Args:
             data: The data to add to the new last node.
@@ -398,7 +398,7 @@ class CircularDoublyLinkedContainer(BaseObject):
 
     @singlekwargdispatch(kwarg="data")
     def insert(self, data: Any, index: int) -> LinkedNode:
-        """Add a new node and data at index within the container.
+        """Adds a new node and data at index within the container.
 
         Args:
             data: The data to add to the new node.
@@ -429,7 +429,7 @@ class CircularDoublyLinkedContainer(BaseObject):
 
     @insert.register  # type: ignore[untyped-decorator]
     def _(self, data: LinkedNode, index: int) -> LinkedNode:
-        """Add a new node and data at index within the container.
+        """Adds a new node and data at index within the container.
 
         Args:
             data: The data to add to the new node.

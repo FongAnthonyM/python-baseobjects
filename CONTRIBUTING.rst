@@ -1,7 +1,7 @@
 Contributor Guide
 =================
 
-Thank you for your interest in improving this project.
+Interest is appreciated in improving this project.
 This project is open-source under the `MIT license`_ and
 welcomes contributions in the form of bug reports, feature requests, and pull requests.
 
@@ -24,13 +24,13 @@ Report bugs on the `Issue Tracker`_.
 
 When filing an issue, make sure to answer these questions:
 
-- Which operating system and Python version are you using?
-- Which version of this project are you using?
-- What did you do?
-- What did you expect to see?
-- What did you see instead?
+- Operating system and Python version.
+- Version of this project.
+- Steps taken.
+- Expected behavior.
+- Actual behavior.
 
-The best way to get your bug fixed is to provide a test case,
+Providing a test case is the best way to get a bug fixed,
 and/or steps to reproduce the issue.
 
 
@@ -43,7 +43,7 @@ Request features on the `Issue Tracker`_.
 Development Environment Setup
 ------------------------------
 
-You need Python 3.14+ and the following tools:
+Python 3.14+ and the following tools are required:
 
 - Nox_
 
@@ -53,7 +53,7 @@ Install the package with development requirements:
 
    $ pip install -e .[dev]
 
-You can now run an interactive Python session:
+An interactive Python session can now be run:
 
 .. code:: console
 
@@ -117,7 +117,7 @@ These sessions create isolated virtual environments for each run. This ensures t
 Active Environment
 ^^^^^^^^^^^^^^^^^^
 
-These sessions run tools in the currently active Python environment. This is useful for testing with different dependencies (e.g., experimental versions) or for faster iteration if you already have valid dependencies installed.
+These sessions run tools in the currently active Python environment. This is useful for testing with different dependencies (e.g., experimental versions) or for faster iteration if valid dependencies are already installed.
 
 **Tag:** ``active_venv``
 
@@ -132,7 +132,7 @@ These sessions run tools in the currently active Python environment. This is use
 Running Specific Sessions
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can run individual sessions by name:
+Individual sessions can be run by name:
 
 .. code:: console
 
@@ -150,22 +150,22 @@ Submitting Changes
 
 Open a `pull request`_ to submit changes to this project.
 
-Your pull request needs to meet the following guidelines for acceptance:
+Pull requests must meet the following guidelines for acceptance:
 
 - The Nox test suite must pass without errors and warnings.
 - Include unit tests. This project maintains 100% code coverage.
-- If your changes add functionality, update the documentation accordingly.
+- If changes add functionality, update the documentation accordingly.
 
-Feel free to submit early, though—we can always iterate on this.
+Submitting changes early is encouraged to allow for iterative improvements and discussion.
 
-To run linting and code formatting checks before committing your change, you can install pre-commit as a Git hook by running the following command:
+To run linting and code formatting checks before committing a change, install pre-commit as a Git hook by running the following command:
 
 .. code:: console
 
    $ nox --session=pre-commit -- install
 
 It is recommended to open an issue before starting work on anything.
-This will allow a chance to talk it over with the owners and validate your approach.
+This allows a chance to discuss the work with the owners and validate the approach.
 
 .. _pull request: https://github.com/AnthonyTechnologies/python-baseobjects/pulls
 .. github-only

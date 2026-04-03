@@ -24,7 +24,7 @@ import copy
 import pickle
 from collections.abc import Callable
 from functools import partial
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest

@@ -28,6 +28,8 @@ import pytest
 from ...objects import AutomaticProperties
 from ..bases import BaseObjectTestSuite
 
+# from typing import
+
 
 # Definitions #
 # Classes #
@@ -48,7 +50,7 @@ class AutomaticPropertiesTestSuite(BaseObjectTestSuite):
     # Instantiation #
     def test_instance_creation(self) -> None:
         """Tests that instances of the class can be created."""
-        # Create Object
+        # Creates Object
         obj = self.UnitTestClass()
 
         # Validate
@@ -124,11 +126,11 @@ class AutomaticPropertiesTestSuite(BaseObjectTestSuite):
         Args:
             factory_method: The name of the factory method to test.
         """
-        # Get Property Callbacks
+        # Gets Property Callbacks
         factory = getattr(self.UnitTestClass, factory_method)
         get_cb, set_cb, del_cb = factory("_test_prop")
 
-        # Create Test Object
+        # Creates Test Object
         obj = self.UnitTestClass()
         obj._test_prop = "test value"  # type: ignore[attr-defined]
 

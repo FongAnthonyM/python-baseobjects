@@ -22,11 +22,13 @@ __version__ = "1.12.0"
 from .basecomponent import BaseComponent
 from .basecomposite import BaseComposite
 from .basedispatchingcomposite import BaseDispatchingComposite
+from .compositefactoryclass import CompositeFactoryClass
 from .dispatchablecomposite import DispatchableComposite
 
 __all__ = [
     "BaseComponent",
     "BaseComposite",
     "BaseDispatchingComposite",
+    "CompositeFactoryClass",
     "DispatchableComposite",
 ]

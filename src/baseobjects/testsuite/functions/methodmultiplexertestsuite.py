@@ -68,7 +68,7 @@ class MethodMultiplexerTestSuite(CallableMultiplexerTestSuite):
 
         obj = CallableMultiplexerTestObject(value=10)
 
-        # Call base create logic but inject instance
+        # Calls base create logic but inject instance
         # We reimplement to avoid base issues
         # Local Packages #
         from ...functions import FunctionRegistry
@@ -132,12 +132,12 @@ class MethodMultiplexerTestSuite(CallableMultiplexerTestSuite):
 
         Overrides to provide 'self' argument.
         """
-        # Call the wrapped function directly
+        # Calls the wrapped function directly
         # method-like function expects self as first arg
         instance = test_function_object.__self__
         result = test_function_object.call_wrapped(instance, 3)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 5
 
     def test_add_select_function(self, test_multiplexer: MethodMultiplexer) -> None:  # type: ignore[override]
@@ -149,10 +149,10 @@ class MethodMultiplexerTestSuite(CallableMultiplexerTestSuite):
         def subtract(self: Any, x: int, y: int = 2) -> int:
             return self.value - x - y  # type: ignore[no-any-return]
 
-        # Add and select function
+        # Adds and select function
         test_multiplexer.add_select_function("subtract", subtract)
 
-        # Verify it's selected
+        # Verifies it's selected
         assert test_multiplexer.selected == "subtract"
 
         # Ensure binding (if not already)
@@ -189,17 +189,17 @@ class MethodMultiplexerTestSuite(CallableMultiplexerTestSuite):
         Overrides to ensure instance is kept alive.
         """
 
-        # Create a temporary function
+        # Creates a temporary function
         def temp_func(self: Any, x: int, y: int = 2) -> int:
             return x + y
 
-        # Create an attribute in the function
+        # Creates an attribute in the function
         temp_func.new_attribute = "test"  # type: ignore[attr-defined]
 
-        # Create object to keep it alive
+        # Creates object to keep it alive
         obj = CallableMultiplexerTestObject(value=10)
 
-        # Create a callable object
+        # Creates a callable object
         # We manually create it instead of using create_function_object to keep obj alive in this scope
         # Local Packages #
         from ...functions import FunctionRegistry
@@ -224,11 +224,11 @@ class MethodMultiplexerTestSuite(CallableMultiplexerTestSuite):
         pickled = pickle.dumps(data)
         unpickled_multiplexer, _unpickled_instance = pickle.loads(pickled)
 
-        # Verify state
+        # Verifies state
         assert unpickled_multiplexer.selected == test_multiplexer.selected
         assert "add" in unpickled_multiplexer.registry
 
-        # Call
+        # Calls
         assert unpickled_multiplexer(3) == 5
 
     # Functionality #
@@ -248,7 +248,7 @@ class MethodMultiplexerTestSuite(CallableMultiplexerTestSuite):
             # Expected in some environments
             pass
 
-        # Bind to instance
+        # Binds to instance
         obj = CallableMultiplexerTestObject(value=10)
         bound = unbound.bind_self(obj)
 

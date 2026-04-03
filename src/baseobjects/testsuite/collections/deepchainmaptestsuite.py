@@ -177,7 +177,7 @@ class DeepChainMapTestSuite(BaseObjectTestSuite):
         assert isinstance(obj_copy, self.UnitTestClass)
         assert len(obj_copy.maps) == len(test_object.maps)
 
-        # Check that the maps are the same objects (shallow copy)
+        # Checks that the maps are the same objects (shallow copy)
         # ChainMap copy logic copies the first map, but keeps the rest.
         assert obj_copy.maps[0] == test_object.maps[0]
         assert id(obj_copy.maps[0]) != id(test_object.maps[0])  # First map is copied
@@ -211,7 +211,7 @@ class DeepChainMapTestSuite(BaseObjectTestSuite):
         assert isinstance(obj_deepcopy, self.UnitTestClass)
         assert len(obj_deepcopy.maps) == len(test_object.maps)
 
-        # Check that the maps are the same but not the same objects
+        # Checks that the maps are the same but not the same objects
         for i, m in enumerate(obj_deepcopy.maps):
             assert m == test_object.maps[i]
             assert id(m) != id(test_object.maps[i])  # Different objects
@@ -237,11 +237,11 @@ class DeepChainMapTestSuite(BaseObjectTestSuite):
         assert isinstance(unpickled, self.UnitTestClass)
         assert len(unpickled.maps) == len(test_object.maps)
 
-        # Check that the maps are the same
+        # Checks that the maps are the same
         for i, m in enumerate(unpickled.maps):
             assert m == test_object.maps[i]
 
-        # Check that the values are accessible
+        # Checks that the values are accessible
         assert unpickled["a"] == 1
         assert unpickled["b"] == 2
         assert unpickled["c"] == 3
@@ -305,7 +305,7 @@ class DeepChainMapTestSuite(BaseObjectTestSuite):
 
         This test verifies that DeepChainMap works correctly with nested dictionaries.
         """
-        # Create a DeepChainMap with nested dictionaries
+        # Creates a DeepChainMap with nested dictionaries
         nested_map = self.UnitTestClass({"a": {"x": 1, "y": 2}}, {"b": {"z": 3}}, {"a": {"w": 4}})
 
         # Test accessing nested values
@@ -327,7 +327,7 @@ class DeepChainMapTestSuite(BaseObjectTestSuite):
 
         This test verifies that DeepChainMap works correctly with empty mappings.
         """
-        # Create a DeepChainMap with empty mappings
+        # Creates a DeepChainMap with empty mappings
         empty_maps = self.UnitTestClass({}, {}, {})
 
         # Test adding values
@@ -348,10 +348,10 @@ class DeepChainMapTestSuite(BaseObjectTestSuite):
         Args:
             multi_map: A DeepChainMap with multiple mappings.
         """
-        # Update with a dictionary containing existing and new keys
+        # Updates with a dictionary containing existing and new keys
         multi_map.update({"a": 100, "c": 300, "e": 500})
 
-        # Check existing keys were updated in the appropriate mappings
+        # Checks existing keys were updated in the appropriate mappings
         assert multi_map["a"] == 100
         assert multi_map.maps[0]["a"] == 100
 
@@ -359,7 +359,7 @@ class DeepChainMapTestSuite(BaseObjectTestSuite):
         assert "c" not in multi_map.maps[0]
         assert multi_map.maps[1]["c"] == 300
 
-        # Check new keys were added to the first mapping
+        # Checks new keys were added to the first mapping
         assert multi_map["e"] == 500
         assert multi_map.maps[0]["e"] == 500
         assert "e" not in multi_map.maps[1]

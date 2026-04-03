@@ -18,7 +18,6 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import ClassVar
 
 # Third-Party Packages #
 import pytest
@@ -46,7 +45,7 @@ class TestBoundMethodRegistry(BoundMethodRegistryTestSuite):
 
     # Attributes #
     UnitTestClass: type[BoundMethodRegistry] = BoundMethodRegistry
-    BaseRegistryClass: ClassVar[type[BaseMethodRegistry]] = BaseMethodRegistry
+    BaseRegistryClass: type[BaseMethodRegistry] = BaseMethodRegistry
 
 
 class TestMethodRegistry(MethodRegistryTestSuite):

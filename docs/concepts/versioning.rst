@@ -51,5 +51,5 @@ TriNumberVersion uses singlekwargdispatch internally to implement set_version ba
 
 Best Practices
 --------------
-- Use Version.cast when converting from unknown inputs and you want an option to pass through on failure.
+- Use Version.cast when converting from unknown inputs and an option to pass through on failure is desired.
 - Prefer tuple() for comparison-friendly operations; use str() for presentation.

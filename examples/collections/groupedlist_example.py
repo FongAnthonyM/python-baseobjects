@@ -14,13 +14,14 @@ This example demonstrates:
 # Source Packages #
 from baseobjects.collections import GroupedList
 
-
 # Example Sections #
+
+
 def basic_usage_example() -> None:
-    """Demonstrate basic usage of GroupedList."""
+    """Demonstrates basic usage of GroupedList."""
     print("\nBasic GroupedList Usage:")
 
-    # Create a GroupedList with initial items
+    # Creates a GroupedList with initial items
     items = ["apple", "banana", "cherry", "date", "elderberry"]
     grouped_list = GroupedList(items)
 
@@ -38,7 +39,7 @@ def basic_usage_example() -> None:
     print(f"After modification: {grouped_list}")
     print(f"New second item: {grouped_list[1]} == 'blueberry'")
 
-    # Add items
+    # Adds items
     print("\nAdding items:")
     grouped_list.append("fig")
     print(f"After append: {grouped_list}")
@@ -47,7 +48,7 @@ def basic_usage_example() -> None:
     grouped_list.insert(2, "grape")
     print(f"After insert: {grouped_list}")
 
-    # Remove items
+    # Removes items
     print("\nRemoving items:")
     grouped_list.remove("date")
     print(f"After remove: {grouped_list}")
@@ -56,12 +57,12 @@ def basic_usage_example() -> None:
     print(f"Popped item: {popped} == 'fig'")
     print(f"After pop: {grouped_list}")
 
-    # Check membership
+    # Checks membership
     print("\nChecking membership:")
     print(f"'apple' in list: {'apple' in grouped_list} == True")
     print(f"'date' in list: {'date' in grouped_list} == False")
 
-    # Get flat representation
+    # Gets flat representation
     print("\nFlat representation:")
     flat_list = grouped_list.as_flat_list()
     print(f"As flat list: {flat_list}")
@@ -71,18 +72,18 @@ def basic_usage_example() -> None:
 
 
 def group_operations_example() -> None:
-    """Demonstrate operations with named groups."""
+    """Demonstrates operations with named groups."""
     print("\nGroup Operations Example:")
 
-    # Create an empty GroupedList
+    # Creates an empty GroupedList
     grouped_list = GroupedList()
 
-    # Create named groups
+    # Creates named groups
     print("Creating named groups:")
     fruits = grouped_list.create_group("fruits")
     vegetables = grouped_list.create_group("vegetables")
 
-    # Add items to groups
+    # Adds items to groups
     fruits.append("apple")
     fruits.append("banana")
     fruits.append("cherry")
@@ -96,7 +97,7 @@ def group_operations_example() -> None:
     print(f"Fruits group: {grouped_list['fruits']}")
     print(f"Vegetables group: {grouped_list['vegetables']}")
 
-    # Add items directly to a group using the group name
+    # Adds items directly to a group using the group name
     print("\nAdding items to a group using the group name:")
     grouped_list.append("date", group="fruits")
     grouped_list.append("eggplant", group="vegetables")
@@ -114,13 +115,13 @@ def group_operations_example() -> None:
     print(f"First item: {grouped_list[0]} == 'apple'")
     print(f"Fifth item: {grouped_list[4]} == 'carrot'")
 
-    # Remove a group
+    # Removes a group
     print("\nRemoving a group:")
     grouped_list.remove_group("vegetables")
     print(f"After removing vegetables group: {grouped_list}")
     print(f"Total number of items: {len(grouped_list)} == 4")
 
-    # Check if a group exists and create if it doesn't
+    # Checks if a group exists and create if it doesn't
     print("\nRequiring a group (creates if it doesn't exist):")
     dairy = grouped_list.require_group("dairy")
     dairy.append("milk")
@@ -132,21 +133,21 @@ def group_operations_example() -> None:
 
 
 def nested_groups_example() -> None:
-    """Demonstrate nested groups and hierarchical data."""
+    """Demonstrates nested groups and hierarchical data."""
     print("\nNested Groups Example:")
 
-    # Create a GroupedList for a file system structure
+    # Creates a GroupedList for a file system structure
     file_system = GroupedList()
 
-    # Create top-level directories
+    # Creates top-level directories
     documents = file_system.create_group("documents")
     pictures = file_system.create_group("pictures")
 
-    # Create subdirectories in documents
+    # Creates subdirectories in documents
     work = documents.create_group("work")
     personal = documents.create_group("personal")
 
-    # Add files to directories
+    # Adds files to directories
     work.append("report.docx")
     work.append("presentation.pptx")
     work.append("budget.xlsx")
@@ -170,7 +171,7 @@ def nested_groups_example() -> None:
     work_dir = file_system.require_group(["documents", "work"])
     print(f"Work directory: {work_dir}")
 
-    # Add a new file to a nested directory
+    # Adds a new file to a nested directory
     print("\nAdding a file to a nested directory:")
     file_system.append("contract.pdf", group=["documents", "work"])
     print(f"Updated work directory: {file_system['documents']['work']}")
@@ -191,10 +192,10 @@ def nested_groups_example() -> None:
 
 
 def comparison_operations_example() -> None:
-    """Demonstrate comparison operations with GroupedList."""
+    """Demonstrates comparison operations with GroupedList."""
     print("\nComparison Operations Example:")
 
-    # Create two GroupedLists
+    # Creates two GroupedLists
     list1 = GroupedList(["a", "b", "c"])
     fruits = list1.create_group("fruits")
     fruits.append("apple")
@@ -210,14 +211,14 @@ def comparison_operations_example() -> None:
     fruits3.append("apple")
     fruits3.append("cherry")
 
-    # Compare GroupedLists
+    # Compares GroupedLists
     print("Comparing GroupedLists:")
     print(f"list1 == list2: {list1 == list2} == True")
     print(f"list1 == list3: {list1 == list3} == False")
     print(f"list1 < list3: {list1 < list3} == True")
     print(f"list3 > list1: {list3 > list1} == True")
 
-    # Compare with regular lists
+    # Compares with regular lists
     regular_list = ["a", "b", "c", "apple", "banana"]
     print("\nComparing with regular lists:")
     print(f"list1 == regular_list: {list1 == regular_list} == True")
@@ -232,22 +233,22 @@ def comparison_operations_example() -> None:
 
 
 def practical_example() -> None:
-    """Demonstrate a practical use case for GroupedList."""
+    """Demonstrates a practical use case for GroupedList."""
     print("\nPractical Example - Task Management System:")
 
-    # Create a task management system using GroupedList
+    # Creates a task management system using GroupedList
     tasks = GroupedList()
 
-    # Create task categories
+    # Creates task categories
     work = tasks.create_group("work")
     personal = tasks.create_group("personal")
 
-    # Create priority levels within work tasks
+    # Creates priority levels within work tasks
     high_priority = work.create_group("high_priority")
     medium_priority = work.create_group("medium_priority")
     low_priority = work.create_group("low_priority")
 
-    # Add tasks
+    # Adds tasks
     high_priority.append("Complete project proposal")
     high_priority.append("Prepare for client meeting")
 
@@ -279,7 +280,7 @@ def practical_example() -> None:
     for task in tasks["work"]["high_priority"]:
         print(f"  - {task}")
 
-    # Add a new task to a specific category and priority
+    # Adds a new task to a specific category and priority
     print("\nAdding a new high priority work task:")
     tasks.append("Respond to urgent email", group=["work", "high_priority"])
 
@@ -304,10 +305,10 @@ def practical_example() -> None:
 
 
 def error_handling_example() -> None:
-    """Demonstrate error handling with GroupedList."""
+    """Demonstrates error handling with GroupedList."""
     print("\nError Handling Example:")
 
-    # Create a GroupedList
+    # Creates a GroupedList
     grouped_list = GroupedList(["a", "b", "c"])
     fruits = grouped_list.create_group("fruits")
     fruits.append("apple")
@@ -351,7 +352,7 @@ def error_handling_example() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     basic_usage_example()
     group_operations_example()
     nested_groups_example()

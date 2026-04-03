@@ -26,30 +26,30 @@ class FunctionProcessor:
     """
 
     def __init__(self, name: str) -> None:
-        """Initialize the processor with a name.
+        """Initializes the processor with a name.
 
         Args:
             name: The name of the processor.
         """
         self.name = name
 
-        # Create a registry for our functions
+        # Creates a registry for our functions
         self.registry = FunctionRegistry()
 
-        # Add standalone functions to the registry
+        # Adds standalone functions to the registry
         self.registry["add"] = lambda a, b: a + b
         self.registry["subtract"] = lambda a, b: a - b
         self.registry["multiply"] = lambda a, b: a * b
         self.registry["divide"] = lambda a, b: a / b if b != 0 else float("inf")
 
-        # Create a FunctionMultiplexer with our registry
+        # Creates a FunctionMultiplexer with our registry
         self.multiplexer = FunctionMultiplexer(registry=self.registry)
 
         # Default to the add operation
         self.multiplexer.select("add")
 
     def process(self, *args: Any, **kwargs: Any) -> Any:
-        """Process the input using the currently selected function.
+        """Processes the input using the currently selected function.
 
         Args:
             *args: Positional arguments for the function.
@@ -61,7 +61,7 @@ class FunctionProcessor:
         return self.multiplexer(*args, **kwargs)
 
     def set_operation(self, operation_name: str) -> None:
-        """Set the operation to use for processing.
+        """Sets the operation to use for processing.
 
         Args:
             operation_name: The name of the operation to use.
@@ -81,10 +81,10 @@ def function_processor_example() -> None:
     """Demonstrates using FunctionMultiplexer in a practical application."""
     print("FunctionProcessor Example:\n")
 
-    # Create a processor
+    # Creates a processor
     processor = FunctionProcessor("Function Processor")
 
-    # Process some data with the default operation (add)
+    # Processes some data with the default operation (add)
     a, b = 10, 5
     result = processor.process(a, b)
     print("Processing with default operation 'add':")

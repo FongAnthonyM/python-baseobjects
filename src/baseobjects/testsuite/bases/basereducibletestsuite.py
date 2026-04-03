@@ -44,7 +44,7 @@ class BaseReducibleTestSuite(BaseObjectTestSuite):
     """
 
     # Attributes #
-    UnitTestClass: type[BaseReducible] | None = None  # type: ignore[assignment]
+    UnitTestClass: type[BaseReducible | None] = None  # type: ignore[assignment]
 
     # Tests #
     # Copying #
@@ -119,7 +119,7 @@ class BaseReducibleTestSuite(BaseObjectTestSuite):
         if hasattr(test_object, "slot_value"):
             test_object.slot_value = "slot"
 
-        # Get state
+        # Gets state
         state = test_object.__getstate__()
 
         # Validate
@@ -145,7 +145,7 @@ class BaseReducibleTestSuite(BaseObjectTestSuite):
         Args:
             test_object: A fixture providing a test object instance.
         """
-        # Get original state
+        # Gets original state
         state = test_object.__getstate__()
 
         # Modify object

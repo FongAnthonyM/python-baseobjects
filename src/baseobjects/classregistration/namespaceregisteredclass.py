@@ -69,7 +69,7 @@ class NamespaceRegisteredClass(BaseRegisteredClass):
         r_kwargs = n_kwargs if register_kwargs is None else register_kwargs | n_kwargs
         super().__init_subclass__(register_kwargs=r_kwargs, **kwargs)
 
-    # Register
+    # Registers
     @classmethod
     def register_class(
         cls,

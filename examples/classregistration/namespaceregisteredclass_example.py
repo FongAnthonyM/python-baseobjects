@@ -12,7 +12,7 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar, cast
+from typing import Any, ClassVar
 
 # Source Packages #
 from baseobjects.classregistration import NamespaceRegisteredClass
@@ -34,7 +34,7 @@ class Vehicle(NamespaceRegisteredClass):
     name: str
 
     def __init__(self, name: str) -> None:
-        """Initialize a vehicle with a name.
+        """Initializes a vehicle with a name.
 
         Args:
             name: The name of the vehicle.
@@ -42,7 +42,7 @@ class Vehicle(NamespaceRegisteredClass):
         self.name = name
 
     def start(self) -> str:
-        """Start the vehicle.
+        """Starts the vehicle.
 
         Returns:
             A message indicating the vehicle has started.
@@ -50,7 +50,7 @@ class Vehicle(NamespaceRegisteredClass):
         return f"{self.name} is starting..."
 
     def stop(self) -> str:
-        """Stop the vehicle.
+        """Stops the vehicle.
 
         Returns:
             A message indicating the vehicle has stopped.
@@ -58,7 +58,7 @@ class Vehicle(NamespaceRegisteredClass):
         return f"{self.name} is stopping..."
 
     def describe(self) -> str:
-        """Return a description of the vehicle.
+        """Returns a description of the vehicle.
 
         Returns:
             A string describing the vehicle.
@@ -73,7 +73,7 @@ class Car(Vehicle):
     class_registry_namespace: ClassVar[str] = "land"
 
     def __init__(self, name: str, doors: int = 4) -> None:
-        """Initialize a car with a name and number of doors.
+        """Initializes a car with a name and number of doors.
 
         Args:
             name: The name of the car.
@@ -83,7 +83,7 @@ class Car(Vehicle):
         self.doors = doors
 
     def start(self) -> str:
-        """Start the car.
+        """Starts the car.
 
         Returns:
             A message indicating the car has started.
@@ -91,7 +91,7 @@ class Car(Vehicle):
         return f"{self.name} car engine is starting... Vroom!"
 
     def describe(self) -> str:
-        """Return a description of the car.
+        """Returns a description of the car.
 
         Returns:
             A string describing the car.
@@ -107,7 +107,7 @@ class Motorcycle(Vehicle):
     class_registry_name: ClassVar[str] = "Bike"  # Custom name for registry
 
     def __init__(self, name: str, has_sidecar: bool = False) -> None:
-        """Initialize a motorcycle with a name and sidecar information.
+        """Initializes a motorcycle with a name and sidecar information.
 
         Args:
             name: The name of the motorcycle.
@@ -117,7 +117,7 @@ class Motorcycle(Vehicle):
         self.has_sidecar = has_sidecar
 
     def start(self) -> str:
-        """Start the motorcycle.
+        """Starts the motorcycle.
 
         Returns:
             A message indicating the motorcycle has started.
@@ -125,7 +125,7 @@ class Motorcycle(Vehicle):
         return f"{self.name} motorcycle engine is starting... Vroom vroom!"
 
     def describe(self) -> str:
-        """Return a description of the motorcycle.
+        """Returns a description of the motorcycle.
 
         Returns:
             A string describing the motorcycle.
@@ -141,7 +141,7 @@ class Boat(Vehicle):
     class_registry_namespace: ClassVar[str] = "water"
 
     def __init__(self, name: str, length: float) -> None:
-        """Initialize a boat with a name and length.
+        """Initializes a boat with a name and length.
 
         Args:
             name: The name of the boat.
@@ -151,7 +151,7 @@ class Boat(Vehicle):
         self.length = length
 
     def start(self) -> str:
-        """Start the boat.
+        """Starts the boat.
 
         Returns:
             A message indicating the boat has started.
@@ -159,7 +159,7 @@ class Boat(Vehicle):
         return f"{self.name} boat engine is starting... Rumble!"
 
     def describe(self) -> str:
-        """Return a description of the boat.
+        """Returns a description of the boat.
 
         Returns:
             A string describing the boat.
@@ -174,7 +174,7 @@ class Airplane(Vehicle):
     class_registry_namespace: ClassVar[str] = "air"
 
     def __init__(self, name: str, engines: int) -> None:
-        """Initialize an airplane with a name and number of engines.
+        """Initializes an airplane with a name and number of engines.
 
         Args:
             name: The name of the airplane.
@@ -184,7 +184,7 @@ class Airplane(Vehicle):
         self.engines = engines
 
     def start(self) -> str:
-        """Start the airplane.
+        """Starts the airplane.
 
         Returns:
             A message indicating the airplane has started.
@@ -192,7 +192,7 @@ class Airplane(Vehicle):
         return f"{self.name} airplane engines are starting... Whoosh!"
 
     def describe(self) -> str:
-        """Return a description of the airplane.
+        """Returns a description of the airplane.
 
         Returns:
             A string describing the airplane.
@@ -207,7 +207,7 @@ class Helicopter(Vehicle):
     _module_ = "air"  # Using _module_ instead of class_registry_namespace
 
     def __init__(self, name: str, rotors: int = 1) -> None:
-        """Initialize a helicopter with a name and number of rotors.
+        """Initializes a helicopter with a name and number of rotors.
 
         Args:
             name: The name of the helicopter.
@@ -217,7 +217,7 @@ class Helicopter(Vehicle):
         self.rotors = rotors
 
     def start(self) -> str:
-        """Start the helicopter.
+        """Starts the helicopter.
 
         Returns:
             A message indicating the helicopter has started.
@@ -225,7 +225,7 @@ class Helicopter(Vehicle):
         return f"{self.name} helicopter rotors are starting... Whop whop whop!"
 
     def describe(self) -> str:
-        """Return a description of the helicopter.
+        """Returns a description of the helicopter.
 
         Returns:
             A string describing the helicopter.
@@ -239,13 +239,13 @@ def automatic_namespace_registration() -> None:
     """Demonstrates automatic registration of subclasses with namespaces."""
     print("Automatic Namespace Registration:\n")
 
-    # Check if subclasses were automatically registered
+    # Checks if subclasses were automatically registered
     print("Checking if subclasses were automatically registered...")
 
     # The class_registry should have been created automatically
     print(f"Class registry exists: {Vehicle.class_registry is not None}")
 
-    # Print the registered classes by namespace
+    # Prints the registered classes by namespace
     print("\nRegistered classes by namespace:")
     if Vehicle.class_registry is not None:
         for namespace, classes in Vehicle.class_registry.items():
@@ -253,7 +253,7 @@ def automatic_namespace_registration() -> None:
             for name, (cls, _kwargs) in classes.items():
                 print(f"  - {name}: {cls.__name__}")
 
-    # Verify that all expected classes are registered in their correct namespaces
+    # Verifies that all expected classes are registered in their correct namespaces
     print("\nVerifying registered classes...")
     assert Vehicle.get_registered_class("land", "Car") == Car
     assert Vehicle.get_registered_class("land", "Bike") == Motorcycle  # Note the custom name
@@ -268,20 +268,20 @@ def creating_instances_from_registry() -> None:
     """Demonstrates creating instances from registered classes."""
     print("Creating Instances from Registry:\n")
 
-    # Get classes from the registry
+    # Gets classes from the registry
     print("Getting classes from the registry by namespace and name...")
-    car_class = cast(Any, Vehicle.get_registered_class("land", "Car"))
+    car_class: Any = Vehicle.get_registered_class("land", "Car")
     assert car_class is not None
-    motorcycle_class = cast(Any, Vehicle.get_registered_class("land", "Bike"))
+    motorcycle_class: Any = Vehicle.get_registered_class("land", "Bike")
     assert motorcycle_class is not None
-    boat_class = cast(Any, Vehicle.get_registered_class("water", "Boat"))
+    boat_class: Any = Vehicle.get_registered_class("water", "Boat")
     assert boat_class is not None
-    airplane_class = cast(Any, Vehicle.get_registered_class("air", "Airplane"))
+    airplane_class: Any = Vehicle.get_registered_class("air", "Airplane")
     assert airplane_class is not None
-    helicopter_class = cast(Any, Vehicle.get_registered_class("air", "Helicopter"))
+    helicopter_class: Any = Vehicle.get_registered_class("air", "Helicopter")
     assert helicopter_class is not None
 
-    # Create instances
+    # Creates instances
     print("Creating instances...")
     car = car_class("Sedan", doors=4)
     motorcycle = motorcycle_class("Cruiser", has_sidecar=True)
@@ -310,12 +310,12 @@ def custom_namespace_and_name() -> None:
     """Demonstrates registering a class with a custom namespace and name."""
     print("Custom Namespace and Name:\n")
 
-    # Define a new vehicle class with custom namespace and name
+    # Defines a new vehicle class with custom namespace and name
     class Submarine(Vehicle):
         """A submarine vehicle."""
 
         def __init__(self, name: str, depth: float) -> None:
-            """Initialize a submarine with a name and maximum depth.
+            """Initializes a submarine with a name and maximum depth.
 
             Args:
                 name: The name of the submarine.
@@ -325,7 +325,7 @@ def custom_namespace_and_name() -> None:
             self.depth = depth
 
         def start(self) -> str:
-            """Start the submarine.
+            """Starts the submarine.
 
             Returns:
                 A message indicating the submarine has started.
@@ -333,24 +333,24 @@ def custom_namespace_and_name() -> None:
             return f"{self.name} submarine engines are starting... Bubble bubble!"
 
         def describe(self) -> str:
-            """Return a description of the submarine.
+            """Returns a description of the submarine.
 
             Returns:
                 A string describing the submarine.
             """
             return f"{self.name} is a submarine that can dive to {self.depth} meters."
 
-    # Register the submarine with a custom namespace and name
+    # Registers the submarine with a custom namespace and name
     print("Registering a submarine with custom namespace and name...")
     Submarine.register_class(namespace="underwater", name="Sub")
 
-    # Verify the submarine is registered
+    # Verifies the submarine is registered
     print("\nVerifying submarine registration...")
-    submarine_class = cast(Any, Vehicle.get_registered_class("underwater", "Sub"))
+    submarine_class: Any = Vehicle.get_registered_class("underwater", "Sub")
     assert submarine_class == Submarine
     print("Submarine is correctly registered as 'Sub' in the 'underwater' namespace.")
 
-    # Create and use a submarine instance
+    # Creates and use a submarine instance
     print("\nCreating and using a submarine instance...")
     submarine = submarine_class("Deep Diver", depth=1000.0)
     print(f"Description: {submarine.describe()}")
@@ -362,14 +362,14 @@ def module_based_namespace() -> None:
     """Demonstrates using the module name as the namespace."""
     print("Module-Based Namespace:\n")
 
-    # Define a new vehicle class that uses its module as the namespace
+    # Defines a new vehicle class that uses its module as the namespace
     class Spaceship(Vehicle):
         """A spaceship vehicle."""
 
         # No explicit namespace - will use module
 
         def __init__(self, name: str, warp_speed: float) -> None:
-            """Initialize a spaceship with a name and warp speed.
+            """Initializes a spaceship with a name and warp speed.
 
             Args:
                 name: The name of the spaceship.
@@ -379,7 +379,7 @@ def module_based_namespace() -> None:
             self.warp_speed = warp_speed
 
         def start(self) -> str:
-            """Start the spaceship.
+            """Starts the spaceship.
 
             Returns:
                 A message indicating the spaceship has started.
@@ -387,7 +387,7 @@ def module_based_namespace() -> None:
             return f"{self.name} spaceship engines are starting... Whoosh!"
 
         def describe(self) -> str:
-            """Return a description of the spaceship.
+            """Returns a description of the spaceship.
 
             Returns:
                 A string describing the spaceship.
@@ -397,7 +397,7 @@ def module_based_namespace() -> None:
     # The spaceship should be registered with the module name as the namespace
     print("Checking if spaceship is registered with module name as namespace...")
 
-    # Print all namespaces to find the spaceship
+    # Prints all namespaces to find the spaceship
     print("\nAll namespaces in registry:")
     assert Vehicle.class_registry is not None
     for namespace, classes in Vehicle.class_registry.items():
@@ -405,7 +405,7 @@ def module_based_namespace() -> None:
         for name, (cls, _kwargs) in classes.items():
             print(f"  - {name}: {cls.__name__}")
 
-    # Find the spaceship in the registry
+    # Finds the spaceship in the registry
     spaceship_found = False
     for namespace, classes in Vehicle.class_registry.items():
         if "Spaceship" in classes:
@@ -417,7 +417,7 @@ def module_based_namespace() -> None:
 
     assert spaceship_found, "Spaceship should be registered with its module as namespace"
 
-    # Create and use a spaceship instance
+    # Creates and use a spaceship instance
     print("\nCreating and using a spaceship instance...")
     spaceship = Spaceship("Enterprise", warp_speed=9.0)
     print(f"Description: {spaceship.describe()}")
@@ -429,7 +429,7 @@ def vehicle_factory() -> None:
     """Demonstrates using the class registry as a factory for vehicles."""
     print("Vehicle Factory:\n")
 
-    # Create a factory function
+    # Creates a factory function
     def create_vehicle(vehicle_type: str, namespace: str, name: str, **kwargs: Any) -> Vehicle:
         """Factory function to create vehicles.
 
@@ -446,14 +446,16 @@ def vehicle_factory() -> None:
             ValueError: If the vehicle type is not found in the registry.
         """
         try:
-            vehicle_class = cast(Any, Vehicle.get_registered_class(namespace, vehicle_type))
+            vehicle_class: Any = Vehicle.get_registered_class(namespace, vehicle_type)
         except KeyError:
             vehicle_class = None
 
         if vehicle_class is None:
             msg = f"Unknown vehicle type: {vehicle_type} in namespace {namespace}"
             raise ValueError(msg)
-        return cast(Vehicle, vehicle_class(name, **kwargs))
+        result = vehicle_class(name, **kwargs)
+        assert isinstance(result, Vehicle)
+        return result
 
     # Use the factory to create vehicles
     print("Using the factory to create vehicles...")
@@ -488,17 +490,17 @@ def vehicle_factory() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Demonstrate automatic namespace registration
+    # Demonstrates automatic namespace registration
     automatic_namespace_registration()
 
-    # Demonstrate creating instances from the registry
+    # Demonstrates creating instances from the registry
     creating_instances_from_registry()
 
-    # Demonstrate custom namespace and name
+    # Demonstrates custom namespace and name
     custom_namespace_and_name()
 
-    # Demonstrate module-based namespace
+    # Demonstrates module-based namespace
     module_based_namespace()
 
-    # Demonstrate using the class registry as a factory
+    # Demonstrates using the class registry as a factory
     vehicle_factory()

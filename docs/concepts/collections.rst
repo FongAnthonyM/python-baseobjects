@@ -10,7 +10,7 @@ Example: typed list-like collection
 .. code-block:: python
 
    # Example only: actual collection classes and names may differ.
-   from baseobjects.bases.collections import BaseList  # if available in your version
+   from baseobjects.bases.collections import BaseList  # if available in the installed version
 
    class IntList(BaseList):  # hypothetical example for illustration
        item_type = int
@@ -21,9 +21,9 @@ Example: typed list-like collection
 
 Guidelines
 ----------
-- Prefer explicit item typing when you want early validation and clearer errors.
+- Prefer explicit item typing when early validation and clearer errors are desired.
 - Leverage BaseObject.copy()/deepcopy() semantics for safe duplication of container state.
 
 Note
 ----
-The exact collection classes available can vary by version. Consult the API reference for the list of concrete classes in your installed version.
+The exact collection classes available can vary by version. Consult the API reference for the list of concrete classes in the installed version.

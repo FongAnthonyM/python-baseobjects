@@ -9,10 +9,11 @@ This example demonstrates:
 4. Retrieving registered subclasses
 5. Using the class registry for dispatching
 """
+from __future__ import annotations
 
-# Imports #
 # Standard Libraries #
-from typing import Any, ClassVar, cast
+# Imports #
+from typing import Any, ClassVar
 
 # Source Packages #
 from baseobjects.classregistration import BaseClassRegistry, BaseRegisteredClass
@@ -49,7 +50,9 @@ class SimpleClassRegistry(BaseClassRegistry):
         Returns:
             The requested class, or the default value if not found.
         """
-        return cast(type, self.get(name, default))
+        result = self.get(name, default)
+        assert isinstance(result, type)
+        return result
 
 
 class Shape(BaseRegisteredClass):
@@ -66,7 +69,7 @@ class Shape(BaseRegisteredClass):
     # Class Methods #
     @classmethod
     def register_class(cls, name: str | None = None) -> None:
-        """Register this class in the class registry.
+        """Registers this class in the class registry.
 
         Args:
             name: The name to register the class under. If None, uses the class name.
@@ -81,8 +84,8 @@ class Shape(BaseRegisteredClass):
         cls.class_registry.register_class(cls, name=name)
 
     @classmethod
-    def get_registered_class(cls, name: str) -> type["Shape"] | None:
-        """Get a registered class by name.
+    def get_registered_class(cls, name: str) -> type[Shape] | None:
+        """Gets a registered class by name.
 
         Args:
             name: The name of the class to retrieve.
@@ -93,14 +96,16 @@ class Shape(BaseRegisteredClass):
         if cls.class_registry is None:
             return None
 
-        return cast(type["Shape"] | None, cls.class_registry.get_class(name))
+        result = cls.class_registry.get_class(name)
+        assert result is None or isinstance(result, type)
+        return result
 
     # Instance Attributes #
     name: str
 
     # Magic Methods #
     def __init__(self, name: str) -> None:
-        """Initialize a shape with a name.
+        """Initializes a shape with a name.
 
         Args:
             name: The name of the shape.
@@ -109,7 +114,7 @@ class Shape(BaseRegisteredClass):
 
     # Instance Methods #
     def area(self) -> float:
-        """Calculate the area of the shape.
+        """Calculates the area of the shape.
 
         Returns:
             The area of the shape.
@@ -117,7 +122,7 @@ class Shape(BaseRegisteredClass):
         return 0.0
 
     def perimeter(self) -> float:
-        """Calculate the perimeter of the shape.
+        """Calculates the perimeter of the shape.
 
         Returns:
             The perimeter of the shape.
@@ -125,7 +130,7 @@ class Shape(BaseRegisteredClass):
         return 0.0
 
     def describe(self) -> str:
-        """Return a description of the shape.
+        """Returns a description of the shape.
 
         Returns:
             A string describing the shape.
@@ -137,7 +142,7 @@ class Circle(Shape):
     """A circle shape."""
 
     def __init__(self, name: str, radius: float) -> None:
-        """Initialize a circle with a name and radius.
+        """Initializes a circle with a name and radius.
 
         Args:
             name: The name of the circle.
@@ -147,7 +152,7 @@ class Circle(Shape):
         self.radius = radius
 
     def area(self) -> float:
-        """Calculate the area of the circle.
+        """Calculates the area of the circle.
 
         Returns:
             The area of the circle.
@@ -158,7 +163,7 @@ class Circle(Shape):
         return math.pi * self.radius**2
 
     def perimeter(self) -> float:
-        """Calculate the perimeter (circumference) of the circle.
+        """Calculates the perimeter (circumference) of the circle.
 
         Returns:
             The perimeter of the circle.
@@ -169,7 +174,7 @@ class Circle(Shape):
         return 2 * math.pi * self.radius
 
     def describe(self) -> str:
-        """Return a description of the circle.
+        """Returns a description of the circle.
 
         Returns:
             A string describing the circle.
@@ -181,7 +186,7 @@ class Rectangle(Shape):
     """A rectangle shape."""
 
     def __init__(self, name: str, width: float, height: float) -> None:
-        """Initialize a rectangle with a name, width, and height.
+        """Initializes a rectangle with a name, width, and height.
 
         Args:
             name: The name of the rectangle.
@@ -193,7 +198,7 @@ class Rectangle(Shape):
         self.height = height
 
     def area(self) -> float:
-        """Calculate the area of the rectangle.
+        """Calculates the area of the rectangle.
 
         Returns:
             The area of the rectangle.
@@ -201,7 +206,7 @@ class Rectangle(Shape):
         return self.width * self.height
 
     def perimeter(self) -> float:
-        """Calculate the perimeter of the rectangle.
+        """Calculates the perimeter of the rectangle.
 
         Returns:
             The perimeter of the rectangle.
@@ -209,7 +214,7 @@ class Rectangle(Shape):
         return 2 * (self.width + self.height)
 
     def describe(self) -> str:
-        """Return a description of the rectangle.
+        """Returns a description of the rectangle.
 
         Returns:
             A string describing the rectangle.
@@ -221,7 +226,7 @@ class Square(Rectangle):
     """A square shape (special case of rectangle)."""
 
     def __init__(self, name: str, side: float) -> None:
-        """Initialize a square with a name and side length.
+        """Initializes a square with a name and side length.
 
         Args:
             name: The name of the square.
@@ -231,7 +236,7 @@ class Square(Rectangle):
         self.side = side
 
     def describe(self) -> str:
-        """Return a description of the square.
+        """Returns a description of the square.
 
         Returns:
             A string describing the square.
@@ -243,7 +248,7 @@ class Triangle(Shape):
     """A triangle shape."""
 
     def __init__(self, name: str, a: float, b: float, c: float) -> None:
-        """Initialize a triangle with a name and three sides.
+        """Initializes a triangle with a name and three sides.
 
         Args:
             name: The name of the triangle.
@@ -257,7 +262,7 @@ class Triangle(Shape):
         self.c = c
 
     def area(self) -> float:
-        """Calculate the area of the triangle using Heron's formula.
+        """Calculates the area of the triangle using Heron's formula.
 
         Returns:
             The area of the triangle.
@@ -269,7 +274,7 @@ class Triangle(Shape):
         return math.sqrt(s * (s - self.a) * (s - self.b) * (s - self.c))
 
     def perimeter(self) -> float:
-        """Calculate the perimeter of the triangle.
+        """Calculates the perimeter of the triangle.
 
         Returns:
             The perimeter of the triangle.
@@ -277,7 +282,7 @@ class Triangle(Shape):
         return self.a + self.b + self.c
 
     def describe(self) -> str:
-        """Return a description of the triangle.
+        """Returns a description of the triangle.
 
         Returns:
             A string describing the triangle.
@@ -291,19 +296,19 @@ def automatic_class_registration() -> None:
     """Demonstrates automatic registration of subclasses."""
     print("Automatic Class Registration:\n")
 
-    # Check if subclasses were automatically registered
+    # Checks if subclasses were automatically registered
     print("Checking if subclasses were automatically registered...")
 
     # The class_registry should have been created automatically
     print(f"Class registry exists: {Shape.class_registry is not None}")
 
-    # Print the registered classes
+    # Prints the registered classes
     print("\nRegistered classes:")
     if Shape.class_registry is not None:
         for name, cls in Shape.class_registry.items():
             print(f"  - {name}: {cls.__name__}")
 
-    # Verify that all expected classes are registered
+    # Verifies that all expected classes are registered
     print("\nVerifying registered classes...")
     assert Shape.get_registered_class("Circle") == Circle
     assert Shape.get_registered_class("Rectangle") == Rectangle
@@ -317,18 +322,18 @@ def creating_instances_from_registry() -> None:
     """Demonstrates creating instances from registered classes."""
     print("Creating Instances from Registry:\n")
 
-    # Get classes from the registry
+    # Gets classes from the registry
     print("Getting classes from the registry...")
-    circle_class = cast(Any, Shape.get_registered_class("Circle"))
+    circle_class: Any = Shape.get_registered_class("Circle")
     assert circle_class is not None
-    rectangle_class = cast(Any, Shape.get_registered_class("Rectangle"))
+    rectangle_class: Any = Shape.get_registered_class("Rectangle")
     assert rectangle_class is not None
-    square_class = cast(Any, Shape.get_registered_class("Square"))
+    square_class: Any = Shape.get_registered_class("Square")
     assert square_class is not None
-    triangle_class = cast(Any, Shape.get_registered_class("Triangle"))
+    triangle_class: Any = Shape.get_registered_class("Triangle")
     assert triangle_class is not None
 
-    # Create instances
+    # Creates instances
     print("Creating instances...")
     circle = circle_class("My Circle", 5.0)
     rectangle = rectangle_class("My Rectangle", 4.0, 6.0)
@@ -360,14 +365,14 @@ def manual_class_registration() -> None:
     """Demonstrates manual registration of classes."""
     print("Manual Class Registration:\n")
 
-    # Define a new shape class that won't be automatically registered
+    # Defines a new shape class that won't be automatically registered
     class Hexagon(Shape):
         """A hexagon shape."""
 
         class_registration = False  # Disable automatic registration
 
         def __init__(self, name: str, side: float) -> None:
-            """Initialize a hexagon with a name and side length.
+            """Initializes a hexagon with a name and side length.
 
             Args:
                 name: The name of the hexagon.
@@ -377,7 +382,7 @@ def manual_class_registration() -> None:
             self.side = side
 
         def area(self) -> float:
-            """Calculate the area of the hexagon.
+            """Calculates the area of the hexagon.
 
             Returns:
                 The area of the hexagon.
@@ -388,7 +393,7 @@ def manual_class_registration() -> None:
             return 3 * math.sqrt(3) * self.side**2 / 2
 
         def perimeter(self) -> float:
-            """Calculate the perimeter of the hexagon.
+            """Calculates the perimeter of the hexagon.
 
             Returns:
                 The perimeter of the hexagon.
@@ -396,28 +401,28 @@ def manual_class_registration() -> None:
             return 6 * self.side
 
         def describe(self) -> str:
-            """Return a description of the hexagon.
+            """Returns a description of the hexagon.
 
             Returns:
                 A string describing the hexagon.
             """
             return f"{self.name} is a hexagon with side length {self.side}."
 
-    # Check if Hexagon was automatically registered (it shouldn't be)
+    # Checks if Hexagon was automatically registered (it shouldn't be)
     print("Checking if Hexagon was automatically registered...")
-    hexagon_class = Shape.get_registered_class("Hexagon")
+    hexagon_class: Any = Shape.get_registered_class("Hexagon")
     print(f"Hexagon in registry: {hexagon_class is not None} == False")
 
     # Manually register the Hexagon class
     print("\nManually registering the Hexagon class...")
     Hexagon.register_class()
 
-    # Check if Hexagon is now registered
+    # Checks if Hexagon is now registered
     print("Checking if Hexagon is now registered...")
-    hexagon_class = cast(Any, Shape.get_registered_class("Hexagon"))
+    hexagon_class = Shape.get_registered_class("Hexagon")
     print(f"Hexagon in registry: {hexagon_class is not None} == True")
 
-    # Create and use a Hexagon instance
+    # Creates and use a Hexagon instance
     print("\nCreating and using a Hexagon instance...")
     assert hexagon_class is not None
     hexagon = hexagon_class("My Hexagon", 4.0)
@@ -431,7 +436,7 @@ def shape_factory() -> None:
     """Demonstrates using the class registry as a factory for shapes."""
     print("Shape Factory:\n")
 
-    # Create a factory function
+    # Creates a factory function
     def create_shape(shape_type: str, name: str, **kwargs: Any) -> Shape:
         """Factory function to create shapes.
 
@@ -446,11 +451,13 @@ def shape_factory() -> None:
         Raises:
             ValueError: If the shape type is not found in the registry.
         """
-        shape_class = cast(Any, Shape.get_registered_class(shape_type))
+        shape_class: Any = Shape.get_registered_class(shape_type)
         if shape_class is None:
             msg = f"Unknown shape type: {shape_type}"
             raise ValueError(msg)
-        return cast(Shape, shape_class(name, **kwargs))
+        result = shape_class(name, **kwargs)
+        assert isinstance(result, Shape)
+        return result
 
     # Use the factory to create shapes
     print("Using the factory to create shapes...")
@@ -485,14 +492,14 @@ def shape_factory() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Demonstrate automatic class registration
+    # Demonstrates automatic class registration
     automatic_class_registration()
 
-    # Demonstrate creating instances from the registry
+    # Demonstrates creating instances from the registry
     creating_instances_from_registry()
 
-    # Demonstrate manual class registration
+    # Demonstrates manual class registration
     manual_class_registration()
 
-    # Demonstrate using the class registry as a factory
+    # Demonstrates using the class registry as a factory
     shape_factory()

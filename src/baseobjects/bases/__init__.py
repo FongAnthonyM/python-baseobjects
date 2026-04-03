@@ -44,7 +44,7 @@ from .basemeta import BaseMeta
 from .baseobject import BaseObject
 from .basereducible import BaseReducible
 from .collections import BaseDict, BaseList
-from .sentinelobject import DEFAULTSENTINEL, SEARCHSENTINEL, SentinelObject
+from .sentinelobject import DEFAULTSENTINEL, SEARCHSENTINEL, SentinelObject, default_sentinel, search_sentinel
 
 __all__ = [
     "DEFAULTSENTINEL",
@@ -58,4 +58,6 @@ __all__ = [
     "BaseObject",
     "BaseReducible",
     "SentinelObject",
+    "default_sentinel",
+    "search_sentinel",
 ]

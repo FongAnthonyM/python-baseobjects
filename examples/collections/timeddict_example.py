@@ -16,19 +16,20 @@ import time
 # Source Packages #
 from baseobjects.collections import TimedDict
 
-
 # Example Sections #
+
+
 def basic_usage_example() -> None:
-    """Demonstrate basic usage of TimedDict."""
+    """Demonstrates basic usage of TimedDict."""
     print("\nBasic TimedDict Usage:")
 
-    # Create a TimedDict with a 2-second lifetime
+    # Creates a TimedDict with a 2-second lifetime
     cache = TimedDict()
     cache.lifetime = 2  # 2 seconds
 
     print(f"Created TimedDict with lifetime: {cache.lifetime} seconds")
 
-    # Add items to the cache
+    # Adds items to the cache
     cache["key1"] = "value1"
     cache["key2"] = "value2"
     cache["key3"] = "value3"
@@ -42,24 +43,24 @@ def basic_usage_example() -> None:
     print(f"cache['key1']: {cache['key1']} == 'value1'")
     print(f"'key2' in cache: {'key2' in cache} == True")
 
-    # Wait for less than the lifetime
+    # Waits for less than the lifetime
     print("\nWaiting for 1 second (less than lifetime)...")
     time.sleep(1)
 
-    # Check if items are still in the cache
+    # Checks if items are still in the cache
     print("Cache contents after 1 second:")
     for key, value in cache.items():
         print(f"  {key}: {value}")
 
-    # Wait for the cache to expire
+    # Waits for the cache to expire
     print("\nWaiting for 1.5 more seconds (total > lifetime)...")
     time.sleep(1.5)
 
-    # Check if items are still in the cache (they should be cleared)
+    # Checks if items are still in the cache (they should be cleared)
     print("Cache contents after expiration:")
     print(f"Cache is empty: {len(cache) == 0} == True")
 
-    # Add new items after expiration
+    # Adds new items after expiration
     print("\nAdding new items after expiration:")
     cache["new_key"] = "new_value"
 
@@ -69,16 +70,16 @@ def basic_usage_example() -> None:
 
 
 def timer_manipulation_example() -> None:
-    """Demonstrate manipulating the timer in TimedDict."""
+    """Demonstrates manipulating the timer in TimedDict."""
     print("\nTimer Manipulation Example:")
 
-    # Create a TimedDict with a 3-second lifetime
+    # Creates a TimedDict with a 3-second lifetime
     cache = TimedDict()
     cache.lifetime = 3  # 3 seconds
 
     print(f"Created TimedDict with lifetime: {cache.lifetime} seconds")
 
-    # Add items to the cache
+    # Adds items to the cache
     cache["key1"] = "value1"
     cache["key2"] = "value2"
 
@@ -86,7 +87,7 @@ def timer_manipulation_example() -> None:
     for key, value in cache.items():
         print(f"  {key}: {value}")
 
-    # Wait for some time
+    # Waits for some time
     print("\nWaiting for 2 seconds...")
     time.sleep(2)
 
@@ -94,18 +95,18 @@ def timer_manipulation_example() -> None:
     print("Resetting expiration timer...")
     cache.reset_expiration()
 
-    # Add another item
+    # Adds another item
     cache["key3"] = "value3"
 
     print("Cache contents after reset:")
     for key, value in cache.items():
         print(f"  {key}: {value}")
 
-    # Wait for 2 more seconds (less than the new lifetime)
+    # Waits for 2 more seconds (less than the new lifetime)
     print("\nWaiting for 2 more seconds...")
     time.sleep(2)
 
-    # Check if items are still in the cache
+    # Checks if items are still in the cache
     print("Cache contents after 2 more seconds:")
     for key, value in cache.items():
         print(f"  {key}: {value}")
@@ -114,11 +115,11 @@ def timer_manipulation_example() -> None:
     print("\nDisabling timing...")
     cache.is_timed = False
 
-    # Wait for more than the lifetime
+    # Waits for more than the lifetime
     print("Waiting for 4 seconds (> lifetime)...")
     time.sleep(4)
 
-    # Check if items are still in the cache (they should still be there)
+    # Checks if items are still in the cache (they should still be there)
     print("Cache contents with timing disabled:")
     for key, value in cache.items():
         print(f"  {key}: {value}")
@@ -128,26 +129,26 @@ def timer_manipulation_example() -> None:
     cache.is_timed = True
     cache.reset_expiration()
 
-    # Wait for more than the lifetime
+    # Waits for more than the lifetime
     print("Waiting for 4 seconds (> lifetime)...")
     time.sleep(4)
 
-    # Check if items are still in the cache (they should be cleared)
+    # Checks if items are still in the cache (they should be cleared)
     print("Cache contents after re-enabling timing and waiting:")
     print(f"Cache is empty: {len(cache) == 0} == True")
 
 
 def context_manager_example() -> None:
-    """Demonstrate using context managers with TimedDict."""
+    """Demonstrates using context managers with TimedDict."""
     print("\nContext Manager Example:")
 
-    # Create a TimedDict with a 2-second lifetime
+    # Creates a TimedDict with a 2-second lifetime
     cache = TimedDict()
     cache.lifetime = 2  # 2 seconds
 
     print(f"Created TimedDict with lifetime: {cache.lifetime} seconds")
 
-    # Add items to the cache
+    # Adds items to the cache
     cache["key1"] = "value1"
     cache["key2"] = "value2"
 
@@ -155,7 +156,7 @@ def context_manager_example() -> None:
     for key, value in cache.items():
         print(f"  {key}: {value}")
 
-    # Wait for 1 second
+    # Waits for 1 second
     print("\nWaiting for 1 second...")
     time.sleep(1)
 
@@ -164,11 +165,11 @@ def context_manager_example() -> None:
     with cache.pause_timer():
         print("Timer paused")
 
-        # Wait for more than the lifetime
+        # Waits for more than the lifetime
         print("Waiting for 3 seconds (> lifetime) while timer is paused...")
         time.sleep(3)
 
-        # Check if items are still in the cache (they should be)
+        # Checks if items are still in the cache (they should be)
         print("Cache contents while timer is paused:")
         for key, value in cache.items():
             print(f"  {key}: {value}")
@@ -180,11 +181,11 @@ def context_manager_example() -> None:
     print("Waiting for 1.5 seconds...")
     time.sleep(1.5)
 
-    # Check if items are still in the cache (they should be cleared)
+    # Checks if items are still in the cache (they should be cleared)
     print("Cache contents after waiting:")
     print(f"Cache is empty: {len(cache) == 0} == True")
 
-    # Add new items
+    # Adds new items
     cache["key3"] = "value3"
     cache["key4"] = "value4"
 
@@ -193,11 +194,11 @@ def context_manager_example() -> None:
     with cache.pause_reset_timer():
         print("Timer paused and will be reset on exit")
 
-        # Wait for more than the lifetime
+        # Waits for more than the lifetime
         print("Waiting for 3 seconds (> lifetime) while timer is paused...")
         time.sleep(3)
 
-        # Check if items are still in the cache (they should be)
+        # Checks if items are still in the cache (they should be)
         print("Cache contents while timer is paused:")
         for key, value in cache.items():
             print(f"  {key}: {value}")
@@ -209,25 +210,25 @@ def context_manager_example() -> None:
     print("Waiting for 1 second...")
     time.sleep(1)
 
-    # Check if items are still in the cache (they should be)
+    # Checks if items are still in the cache (they should be)
     print("Cache contents after waiting 1 second:")
     for key, value in cache.items():
         print(f"  {key}: {value}")
 
-    # Wait for the remaining lifetime
+    # Waits for the remaining lifetime
     print("\nWaiting for 1.5 more seconds...")
     time.sleep(1.5)
 
-    # Check if items are still in the cache (they should be cleared)
+    # Checks if items are still in the cache (they should be cleared)
     print("Cache contents after waiting for full lifetime:")
     print(f"Cache is empty: {len(cache) == 0} == True")
 
 
 def practical_example() -> None:
-    """Demonstrate a practical use case for TimedDict."""
+    """Demonstrates a practical use case for TimedDict."""
     print("\nPractical Example - Session Cache:")
 
-    # Create a simulated session cache with a short lifetime
+    # Creates a simulated session cache with a short lifetime
     session_cache = TimedDict()
     session_cache.lifetime = 5  # 5 seconds
 
@@ -252,7 +253,7 @@ def practical_example() -> None:
     session_cache.reset_expiration()
     print("Session timeout reset")
 
-    # Check session data
+    # Checks session data
     print("Session data is still available:")
     print(f"  User ID: {session_cache.get('user_id')} == '12345'")
     print(f"  Username: {session_cache.get('username')} == 'john_doe'")
@@ -261,7 +262,7 @@ def practical_example() -> None:
     print("\nUser is inactive for 6 seconds (> lifetime):")
     time.sleep(6)
 
-    # Check if session has expired
+    # Checks if session has expired
     print("Checking if session has expired:")
     if len(session_cache) == 0:
         print("  Session has expired, user needs to log in again")
@@ -286,15 +287,15 @@ def practical_example() -> None:
 
 
 def compare_dict_timeddict_example() -> None:
-    """Compare regular dict with TimedDict."""
+    """Compares regular dict with TimedDict."""
     print("\nComparing dict with TimedDict:")
 
-    # Create a regular dict and a TimedDict
+    # Creates a regular dict and a TimedDict
     regular_dict = {}
     timed_dict = TimedDict()
     timed_dict.lifetime = 2  # 2 seconds
 
-    # Add the same items to both
+    # Adds the same items to both
     regular_dict["key1"] = "value1"
     regular_dict["key2"] = "value2"
 
@@ -305,7 +306,7 @@ def compare_dict_timeddict_example() -> None:
     print(f"  Regular dict: {regular_dict}")
     print(f"  TimedDict: {dict(timed_dict.items())}")
 
-    # Wait for the TimedDict to expire
+    # Waits for the TimedDict to expire
     print("\nWaiting for 3 seconds (> TimedDict lifetime)...")
     time.sleep(3)
 
@@ -319,14 +320,14 @@ def compare_dict_timeddict_example() -> None:
 
 
 def error_handling_example() -> None:
-    """Demonstrate error handling with TimedDict."""
+    """Demonstrates error handling with TimedDict."""
     print("\nError Handling Example:")
 
-    # Create a TimedDict
+    # Creates a TimedDict
     cache = TimedDict()
     cache.lifetime = 1  # 1 second
 
-    # Add an item
+    # Adds an item
     cache["key"] = "value"
 
     # Try to access a non-existent key
@@ -342,7 +343,7 @@ def error_handling_example() -> None:
     value = cache.get("nonexistent", "default")
     print(f"  Value: {value} == 'default'")
 
-    # Wait for the cache to expire
+    # Waits for the cache to expire
     print("\nWaiting for the cache to expire (1.5 seconds)...")
     time.sleep(1.5)
 
@@ -362,7 +363,7 @@ def error_handling_example() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     basic_usage_example()
     timer_manipulation_example()
     context_manager_example()

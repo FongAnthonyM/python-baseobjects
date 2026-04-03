@@ -29,7 +29,7 @@ class MathOperations:
 
     @staticmethod
     def add(a: float, b: float) -> float:
-        """Add two numbers.
+        """Adds two numbers.
 
         Args:
             a: The first number.
@@ -42,7 +42,7 @@ class MathOperations:
 
     @staticmethod
     def subtract(a: float, b: float) -> float:
-        """Subtract the second number from the first.
+        """Subtracts the second number from the first.
 
         Args:
             a: The first number.
@@ -55,7 +55,7 @@ class MathOperations:
 
     @staticmethod
     def multiply(a: float, b: float) -> float:
-        """Multiply two numbers.
+        """Multiplies two numbers.
 
         Args:
             a: The first number.
@@ -68,7 +68,7 @@ class MathOperations:
 
     @staticmethod
     def divide(a: float, b: float) -> float:
-        """Divide the first number by the second.
+        """Divides the first number by the second.
 
         Args:
             a: The first number.
@@ -107,7 +107,7 @@ class StringOperations:
 
     @staticmethod
     def uppercase(text: str) -> str:
-        """Convert text to uppercase.
+        """Converts text to uppercase.
 
         Args:
             text: The text to convert.
@@ -119,7 +119,7 @@ class StringOperations:
 
     @staticmethod
     def lowercase(text: str) -> str:
-        """Convert text to lowercase.
+        """Converts text to lowercase.
 
         Args:
             text: The text to convert.
@@ -161,10 +161,10 @@ class Calculator:
     """
 
     def __init__(self) -> None:
-        """Initialize the calculator with a function registry."""
+        """Initializes the calculator with a function registry."""
         self.registry = FunctionRegistry()
 
-        # Add basic operations
+        # Adds basic operations
         self.registry.update(
             {
                 "add": MathOperations.add,
@@ -175,7 +175,7 @@ class Calculator:
         )
 
     def register_operation(self, name: str, operation: Callable[..., Any]) -> None:
-        """Register a new operation.
+        """Registers a new operation.
 
         Args:
             name: The name of the operation.
@@ -184,7 +184,7 @@ class Calculator:
         self.registry[name] = operation
 
     def perform_operation(self, operation_name: str, *args: Any, **kwargs: Any) -> Any:
-        """Perform an operation by name.
+        """Performs an operation by name.
 
         Args:
             operation_name: The name of the operation to perform.
@@ -215,7 +215,7 @@ class Calculator:
 
 # Standalone functions for the registry
 def square(x: float) -> float:
-    """Calculate the square of a number.
+    """Calculates the square of a number.
 
     Args:
         x: The number to square.
@@ -227,7 +227,7 @@ def square(x: float) -> float:
 
 
 def cube(x: float) -> float:
-    """Calculate the cube of a number.
+    """Calculates the cube of a number.
 
     Args:
         x: The number to cube.
@@ -239,7 +239,7 @@ def cube(x: float) -> float:
 
 
 def factorial(n: int) -> int:
-    """Calculate the factorial of a number.
+    """Calculates the factorial of a number.
 
     Args:
         n: The number to calculate the factorial of.
@@ -264,17 +264,17 @@ def basic_function_registry() -> None:
     """Demonstrates basic usage of FunctionRegistry."""
     print("Basic FunctionRegistry Usage:\n")
 
-    # Create an empty registry
+    # Creates an empty registry
     registry = FunctionRegistry()
     print(f"Created empty registry: {registry}")
 
-    # Add functions to the registry
+    # Adds functions to the registry
     print("\nAdding functions to the registry...")
     registry["add"] = MathOperations.add
     registry["square"] = square
     registry["factorial"] = factorial
 
-    # Check the contents of the registry
+    # Checks the contents of the registry
     print(f"Registry now contains: {list(registry.keys())}")
 
     # Use functions from the registry
@@ -299,19 +299,19 @@ def registry_initialization() -> None:
     """Demonstrates different ways to initialize a FunctionRegistry."""
     print("FunctionRegistry Initialization:\n")
 
-    # Initialize with a dictionary of functions
+    # Initializes with a dictionary of functions
     print("Initializing with a dictionary of functions:")
     functions = {"add": MathOperations.add, "subtract": MathOperations.subtract, "multiply": MathOperations.multiply}
     registry1 = FunctionRegistry(functions=functions)
     print(f"Registry1 contains: {list(registry1.keys())}")
 
-    # Initialize with an object
+    # Initializes with an object
     print("\nInitializing with an object:")
     math_ops = MathOperations()
     registry2 = FunctionRegistry(object_=math_ops)
     print(f"Registry2 contains: {list(registry2.keys())}")
 
-    # Initialize with multiple objects
+    # Initializes with multiple objects
     print("\nInitializing with multiple objects:")
     math_ops = MathOperations()
     string_ops = StringOperations()
@@ -325,23 +325,23 @@ def updating_registry() -> None:
     """Demonstrates updating a FunctionRegistry from different sources."""
     print("Updating FunctionRegistry:\n")
 
-    # Create an empty registry
+    # Creates an empty registry
     registry = FunctionRegistry()
     print(f"Created empty registry: {registry}")
 
-    # Update from a dictionary
+    # Updates from a dictionary
     print("\nUpdating from a dictionary:")
     functions = {"square": square, "cube": cube}
     registry.update(functions)
     print(f"Registry now contains: {list(registry.keys())}")
 
-    # Update from an object
+    # Updates from an object
     print("\nUpdating from an object:")
     math_ops = MathOperations()
     registry.update_from_object(math_ops)
     print(f"Registry now contains: {list(registry.keys())}")
 
-    # Update from multiple objects
+    # Updates from multiple objects
     print("\nUpdating from multiple objects:")
     string_ops = StringOperations()
     registry.update_from_objects(string_ops)
@@ -354,11 +354,11 @@ def calculator_example() -> None:
     """Demonstrates using FunctionRegistry in a practical application."""
     print("Calculator Example:\n")
 
-    # Create a calculator
+    # Creates a calculator
     calculator = Calculator()
     print(f"Created calculator with operations: {calculator.list_operations()}")
 
-    # Perform some operations
+    # Performs some operations
     print("\nPerforming operations:")
 
     a, b = 10, 5
@@ -375,7 +375,7 @@ def calculator_example() -> None:
     result = calculator.perform_operation("divide", a, b)
     print(f"divide({a}, {b}) = {result}")
 
-    # Register additional operations
+    # Registers additional operations
     print("\nRegistering additional operations:")
     calculator.register_operation("power", MathOperations.power)
     calculator.register_operation("square", square)
@@ -383,7 +383,7 @@ def calculator_example() -> None:
 
     print(f"Calculator now has operations: {calculator.list_operations()}")
 
-    # Perform the new operations
+    # Performs the new operations
     print("\nPerforming new operations:")
 
     result = calculator.perform_operation("power", 2, 3)
@@ -410,12 +410,12 @@ def function_composition() -> None:
     """Demonstrates using FunctionRegistry for function composition."""
     print("Function Composition Example:\n")
 
-    # Create a registry with some functions
+    # Creates a registry with some functions
     registry = FunctionRegistry(
         {"square": square, "cube": cube, "add": MathOperations.add, "multiply": MathOperations.multiply},
     )
 
-    # Define a function that composes functions from the registry
+    # Defines a function that composes functions from the registry
     def compose_functions(function_names: list[str], initial_value: float) -> float:
         """Compose functions from the registry.
 

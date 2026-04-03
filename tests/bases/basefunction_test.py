@@ -20,7 +20,7 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 from types import MethodType
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -56,7 +56,7 @@ class TestBaseFunction(BaseFunctionTestSuite):
             new_method = test_method_object
 
         instance = BindTarget()
-        assert isinstance(instance.new_method, MethodType)
+        assert isinstance(instance.new_method, (MethodType, BaseMethod))
         assert instance.new_method.__self__ is instance
 
         # Verify it returns the expected result when called

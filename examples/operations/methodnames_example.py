@@ -22,13 +22,14 @@ from baseobjects.operations import (
     iter_public_method_names,
 )
 
-
 # Example Classes #
+
+
 class ExampleClass:
     """A simple example class to demonstrate method name functions."""
 
     def __init__(self, value: int = 0) -> None:
-        """Initialize the ExampleClass.
+        """Initializes the ExampleClass.
 
         Args:
             value: An integer value.
@@ -90,34 +91,34 @@ class DerivedClass(ExampleClass):
 
 # Example Sections #
 def basic_usage_example() -> None:
-    """Demonstrate basic usage of get_method_names and get_public_method_names."""
+    """Demonstrates basic usage of get_method_names and get_public_method_names."""
     print("\nBasic Usage Example:")
 
-    # Create an instance of ExampleClass
+    # Creates an instance of ExampleClass
     obj = ExampleClass(10)
 
-    # Get all method names
+    # Gets all method names
     all_methods = get_method_names(obj)
 
     print("All methods of ExampleClass:")
     for method in all_methods:
         print(f"  {method}")
 
-    # Get public method names
+    # Gets public method names
     public_methods = get_public_method_names(obj)
 
     print("\nPublic methods of ExampleClass:")
     for method in public_methods:
         print(f"  {method}")
 
-    # Verify that private methods are excluded from public methods
+    # Verifies that private methods are excluded from public methods
     private_methods = [m for m in all_methods if m.startswith("_")]
 
     print("\nPrivate methods of ExampleClass:")
     for method in private_methods:
         print(f"  {method}")
 
-    # Verify that all methods = public methods + private methods
+    # Verifies that all methods = public methods + private methods
     print("\nVerification:")
     print(f"  All methods count: {len(all_methods)}")
     print(f"  Public methods count: {len(public_methods)}")
@@ -126,10 +127,10 @@ def basic_usage_example() -> None:
 
 
 def iterator_example() -> None:
-    """Demonstrate using iter_method_names and iter_public_method_names."""
+    """Demonstrates using iter_method_names and iter_public_method_names."""
     print("\nIterator Example:")
 
-    # Create an instance of ExampleClass
+    # Creates an instance of ExampleClass
     obj = ExampleClass(10)
 
     # Use iter_method_names to iterate over all methods
@@ -163,14 +164,14 @@ def iterator_example() -> None:
 
 
 def comparing_objects_example() -> None:
-    """Demonstrate comparing method names between different objects."""
+    """Demonstrates comparing method names between different objects."""
     print("\nComparing Objects Example:")
 
-    # Create instances of different classes
+    # Creates instances of different classes
     base_obj = ExampleClass(10)
     derived_obj = DerivedClass(20)
 
-    # Get method names for both objects
+    # Gets method names for both objects
     base_methods = get_method_names(base_obj)
     derived_methods = get_method_names(derived_obj)
 
@@ -182,21 +183,21 @@ def comparing_objects_example() -> None:
     for method in derived_methods:
         print(f"  {method}")
 
-    # Find methods that are in the derived class but not in the base class
+    # Finds methods that are in the derived class but not in the base class
     new_methods = [m for m in derived_methods if m not in base_methods]
 
     print("\nMethods added in the derived class:")
     for method in new_methods:
         print(f"  {method}")
 
-    # Find common methods
+    # Finds common methods
     common_methods = [m for m in derived_methods if m in base_methods]
 
     print("\nMethods common to both classes:")
     for method in common_methods:
         print(f"  {method}")
 
-    # Compare public methods
+    # Compares public methods
     base_public = get_public_method_names(base_obj)
     derived_public = get_public_method_names(derived_obj)
 
@@ -206,10 +207,10 @@ def comparing_objects_example() -> None:
 
 
 def built_in_objects_example() -> None:
-    """Demonstrate using method name functions with built-in objects."""
+    """Demonstrates using method name functions with built-in objects."""
     print("\nBuilt-in Objects Example:")
 
-    # Get method names for different built-in objects
+    # Gets method names for different built-in objects
     string_methods = get_method_names("Hello, World!")
     list_methods = get_method_names([1, 2, 3])
     dict_methods = get_method_names({"a": 1, "b": 2})
@@ -218,14 +219,14 @@ def built_in_objects_example() -> None:
     print(f"List has {len(list_methods)} methods")
     print(f"Dictionary has {len(dict_methods)} methods")
 
-    # Find methods that are common to all three types
+    # Finds methods that are common to all three types
     common_methods = set(string_methods) & set(list_methods) & set(dict_methods)
 
     print("\nMethods common to strings, lists, and dictionaries:")
     for method in sorted(common_methods):
         print(f"  {method}")
 
-    # Find methods unique to each type
+    # Finds methods unique to each type
     string_unique = set(string_methods) - set(list_methods) - set(dict_methods)
     list_unique = set(list_methods) - set(string_methods) - set(dict_methods)
     dict_unique = set(dict_methods) - set(string_methods) - set(list_methods)
@@ -244,14 +245,14 @@ def built_in_objects_example() -> None:
 
 
 def standard_library_example() -> None:
-    """Demonstrate using method name functions with standard library objects."""
+    """Demonstrates using method name functions with standard library objects."""
     print("\nStandard Library Example:")
 
-    # Create some standard library objects
-    dt = datetime.datetime.now(datetime.timezone.utc)
+    # Creates some standard library objects
+    dt = datetime.datetime.now(datetime.UTC)
     js = json.JSONEncoder()
 
-    # Get their method names
+    # Gets their method names
     dt_methods = get_public_method_names(dt)
     js_methods = get_public_method_names(js)
 
@@ -263,29 +264,29 @@ def standard_library_example() -> None:
     for method in sorted(js_methods):
         print(f"  {method}")
 
-    # Check if specific methods exist
+    # Checks if specific methods exist
     print("\nChecking for specific methods:")
     print(f"  datetime has 'strftime': {'strftime' in dt_methods}")
     print(f"  JSONEncoder has 'encode': {'encode' in js_methods}")
 
 
 def practical_example() -> None:
-    """Demonstrate a practical use case for method name functions."""
+    """Demonstrates a practical use case for method name functions."""
     print("\nPractical Example - Simple Object Inspector:")
 
     def inspect_object(obj: object) -> None:
         """A simple object inspector function."""
-        # Get basic object information
+        # Gets basic object information
         obj_type = type(obj).__name__
         obj_module = type(obj).__module__
 
-        # Get method counts
+        # Gets method counts
         all_methods = get_method_names(obj)
         public_methods = get_public_method_names(obj)
         private_methods = [m for m in all_methods if m.startswith("_") and not m.startswith("__")]
         special_methods = [m for m in all_methods if m.startswith("__") and m.endswith("__")]
 
-        # Print the inspection results
+        # Prints the inspection results
         print(f"Object Inspection for: {obj}")
         print(f"  Type: {obj_type}")
         print(f"  Module: {obj_module}")
@@ -295,7 +296,7 @@ def practical_example() -> None:
         print(f"    Private methods: {len(private_methods)}")
         print(f"    Special methods: {len(special_methods)}")
 
-        # Print some example methods from each category
+        # Prints some example methods from each category
         if public_methods:
             print(f"  Public method examples: {', '.join(sorted(public_methods)[:3])}")
         if private_methods:
@@ -303,7 +304,7 @@ def practical_example() -> None:
         if special_methods:
             print(f"  Special method examples: {', '.join(sorted(special_methods)[:3])}")
 
-        # Check for common special methods
+        # Checks for common special methods
         common_special = ["__str__", "__repr__", "__eq__", "__hash__"]
         implemented = [m for m in common_special if m in special_methods]
 
@@ -324,24 +325,24 @@ def practical_example() -> None:
 
 
 def method_calling_example() -> None:
-    """Demonstrate calling methods discovered through method name functions."""
+    """Demonstrates calling methods discovered through method name functions."""
     print("\nMethod Calling Example:")
 
-    # Create an object
+    # Creates an object
     obj = ExampleClass(5)
 
-    # Get its public methods
+    # Gets its public methods
     public_methods = get_public_method_names(obj)
 
     print(f"Public methods of ExampleClass: {public_methods}")
 
-    # Call each public method and show the result
+    # Calls each public method and show the result
     print("\nCalling each public method:")
     for method_name in public_methods:
-        # Get the method object
+        # Gets the method object
         method = getattr(obj, method_name)
 
-        # Check if it's callable
+        # Checks if it's callable
         if callable(method):
             try:
                 # Try to call the method with no arguments
@@ -355,7 +356,7 @@ def method_calling_example() -> None:
                 except TypeError as e:
                     print(f"  {method_name} => Error: {e}")
 
-    # Demonstrate dynamic method calling based on user input
+    # Demonstrates dynamic method calling based on user input
     print("\nDynamic method calling:")
 
     # Simulate user input
@@ -364,12 +365,12 @@ def method_calling_example() -> None:
     for user_input in user_inputs:
         print(f"User requested method: {user_input}")
 
-        # Check if the method exists
+        # Checks if the method exists
         if user_input in public_methods:
-            # Get the method
+            # Gets the method
             method = getattr(obj, user_input)
 
-            # Call the method with appropriate arguments
+            # Calls the method with appropriate arguments
             if user_input == "another_public_method":
                 result = method(10)
                 print(f"  Result: {result}")
@@ -382,7 +383,7 @@ def method_calling_example() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     basic_usage_example()
     iterator_example()
     comparing_objects_example()

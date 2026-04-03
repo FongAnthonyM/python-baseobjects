@@ -26,7 +26,7 @@ Collections operations (illustrative)
 -------------------------------------
 .. code-block:: python
 
-   # For concrete collection classes, see API reference for your version
+   # For concrete collection classes, see the API reference for the installed version
    # Example only
    # d = OrderableDict({"a": 1, "b": 2})
    # d.move_after("a", "b")

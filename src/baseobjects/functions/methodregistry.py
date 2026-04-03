@@ -174,7 +174,7 @@ class BoundMethodRegistry(BaseMethodRegistry):
                 tuple[dict, dict]: __dict__ is present and __slots__ is present.
         """
         state = super().__getstate__()
-        # Convert weak reference to strong reference for pickling
+        # Converts weak reference to strong reference for pickling
         match state:
             case dict():
                 state["_self_"] = self.__self__

@@ -39,7 +39,7 @@ class SimpleVersion(Version):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        """Initialize a SimpleVersion object.
+        """Initializes a SimpleVersion object.
 
         Args:
             version: An object to derive a version from.
@@ -62,7 +62,7 @@ class SimpleVersion(Version):
 
     # Comparison #
     def __eq__(self, other: Any) -> bool:
-        """Compare this version with another for equality.
+        """Compares this version with another for equality.
 
         Args:
             other: The object to compare to this object.
@@ -82,7 +82,7 @@ class SimpleVersion(Version):
                 return super().__eq__(other)
 
     def __ne__(self, other: Any) -> bool:
-        """Compare this version with another for inequality.
+        """Compares this version with another for inequality.
 
         Args:
             other: The object to compare to this object.
@@ -102,7 +102,7 @@ class SimpleVersion(Version):
                 return super().__ne__(other)
 
     def __lt__(self, other: Any) -> bool:
-        """Compare if this version is less than another.
+        """Compares if this version is less than another.
 
         Args:
             other: The object to compare to this object.
@@ -122,7 +122,7 @@ class SimpleVersion(Version):
                 return super().__lt__(other)
 
     def __gt__(self, other: Any) -> bool:
-        """Compare if this version is greater than another.
+        """Compares if this version is greater than another.
 
         Args:
             other: The object to compare to this object.
@@ -142,7 +142,7 @@ class SimpleVersion(Version):
                 return super().__gt__(other)
 
     def __le__(self, other: Any) -> bool:
-        """Compare if this version is less than or equal to another.
+        """Compares if this version is less than or equal to another.
 
         Args:
             other: The object to compare to this object.
@@ -162,7 +162,7 @@ class SimpleVersion(Version):
                 return super().__le__(other)
 
     def __ge__(self, other: Any) -> bool:
-        """Compare if this version is greater than or equal to another.
+        """Compares if this version is greater than or equal to another.
 
         Args:
             other: The object to compare to this object.
@@ -209,7 +209,7 @@ class SimpleVersion(Version):
 
     # Type Conversion #
     def list(self) -> list[int]:
-        """Convert the version to a list.
+        """Converts the version to a list.
 
         Returns:
             A list containing the version number.
@@ -217,7 +217,7 @@ class SimpleVersion(Version):
         return [self.number]
 
     def tuple(self) -> tuple[int]:
-        """Convert the version to a tuple.
+        """Converts the version to a tuple.
 
         Returns:
             A tuple containing the version number.
@@ -225,7 +225,7 @@ class SimpleVersion(Version):
         return (self.number,)
 
     def str(self) -> str:
-        """Convert the version to a string.
+        """Converts the version to a string.
 
         Returns:
             A string representation of the version number.
@@ -235,10 +235,10 @@ class SimpleVersion(Version):
 
 # Example Sections #
 def creating_version_subclass_example() -> None:
-    """Demonstrate how to create a concrete subclass of Version."""
+    """Demonstrates how to create a concrete subclass of Version."""
     print("\nCreating a Version Subclass:")
 
-    # Create a SimpleVersion instance
+    # Creates a SimpleVersion instance
     version = SimpleVersion(1)
 
     print(f"Created SimpleVersion with number: {version.number} == 1")
@@ -248,10 +248,10 @@ def creating_version_subclass_example() -> None:
 
 
 def version_comparison_example() -> None:
-    """Demonstrate version comparison operations."""
+    """Demonstrates version comparison operations."""
     print("\nVersion Comparison:")
 
-    # Create versions for comparison
+    # Creates versions for comparison
     v1 = SimpleVersion(1)
     v2 = SimpleVersion(2)
     v3 = SimpleVersion(1)
@@ -284,13 +284,13 @@ def version_comparison_example() -> None:
 
 
 def version_conversion_example() -> None:
-    """Demonstrate version conversion operations."""
+    """Demonstrates version conversion operations."""
     print("\nVersion Conversion:")
 
-    # Create a version
+    # Creates a version
     version = SimpleVersion(5)
 
-    # Convert to different formats
+    # Converts to different formats
     print(f"Version number: {version.number} == 5")
     print(f"String representation: {version!s} == '5'")
     print(f"List representation: {version.list()} == [5]")
@@ -298,7 +298,7 @@ def version_conversion_example() -> None:
 
 
 def version_casting_example() -> None:
-    """Demonstrate version casting operations."""
+    """Demonstrates version casting operations."""
     print("\nVersion Casting:")
 
     # Cast from different types
@@ -325,7 +325,7 @@ def version_casting_example() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     creating_version_subclass_example()
     version_comparison_example()
     version_conversion_example()

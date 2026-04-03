@@ -6,14 +6,14 @@ This project uses pytest and nox to run tests and ensure code quality.
 Running the Test Suite
 ----------------------
 
-You can run the tests locally with pytest:
+Run the tests locally with pytest:
 
 .. code-block:: bash
 
    pip install -e .[tests]
    pytest -q
 
-Alternatively, you can use the provided nox sessions (recommended):
+Alternatively, use the provided nox sessions (recommended):
 
 .. code-block:: bash
 

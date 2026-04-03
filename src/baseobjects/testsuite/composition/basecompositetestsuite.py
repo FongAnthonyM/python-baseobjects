@@ -17,7 +17,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import copy
 import pickle
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -37,11 +37,12 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
 
     Attributes:
         UnitTestClass: The class that the test suite is testing.
+        UnitTestComponent: The component class to use for testing.
     """
 
-    UnitTestComponent: ClassVar[type[Any]]
-
+    # Attributes #
     UnitTestClass: type[BaseComposite]
+    UnitTestComponent: type[Any]
 
     # Helper Methods #
     def create_components(
@@ -179,7 +180,7 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
             component_kwargs: A dictionary mapping component names to a dictionary of keyword arguments to pass to
                 component constructor.
         """
-        # Create Composite
+        # Creates Composite
         composite = self.UnitTestClass(component_kwargs=component_kwargs)
 
         # Validate
@@ -193,11 +194,11 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
         This test verifies that an empty composite can be created and has no components.
         """
 
-        # Define an empty composite class
+        # Defines an empty composite class
         class EmptyComposite(self.UnitTestClass):  # type: ignore[name-defined, misc]
-            default_component_types: ClassVar[dict[str, Any]] = {}
+            default_component_types: dict[str, Any] = {}
 
-        # Create composite
+        # Creates composite
         composite = EmptyComposite()
 
         # Validate
@@ -209,20 +210,20 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
         This test verifies that components are constructed with the provided keyword arguments.
         """
 
-        # Define component and composite classes
+        # Defines component and composite classes
         class ValueComponent(self.UnitTestComponent):  # type: ignore[name-defined, misc]
             def __init__(self, value: int = 0, **kwargs: Any) -> None:
                 self.value = value
                 super().__init__(**kwargs)
 
         class ValueComposite(self.UnitTestClass):  # type: ignore[name-defined, misc]
-            default_component_types: ClassVar[dict[str, Any]] = {"value_component": (ValueComponent, {"value": 1})}
+            default_component_types: dict[str, Any] = {"value_component": (ValueComponent, {"value": 1})}
 
-        # Create composite with default kwargs
+        # Creates composite with default kwargs
         composite = ValueComposite()
         assert composite.components["value_component"].value == 1
 
-        # Create composite with overridden kwargs
+        # Creates composite with overridden kwargs
         composite = ValueComposite(component_kwargs={"value_component": {"value": 2}})
         assert composite.components["value_component"].value == 2
 
@@ -232,11 +233,11 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
         This test verifies that components can be constructed using custom types provided at initialization.
         """
 
-        # Define a custom component
+        # Defines a custom component
         class CustomComponent(self.UnitTestComponent):  # type: ignore[name-defined, misc]
             pass
 
-        # Create composite with component_types
+        # Creates composite with component_types
         composite = self.UnitTestClass(
             component_types={"custom_component": (CustomComponent, {})},
         )
@@ -250,11 +251,11 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
 
         This test verifies that existing components can be added during initialization.
         """
-        # Create components
+        # Creates components
         component1 = self.UnitTestComponent()
         component2 = self.UnitTestComponent()
 
-        # Create composite with components
+        # Creates composite with components
         composite = self.UnitTestClass(
             components={"comp1": component1, "comp2": component2},
         )
@@ -271,9 +272,9 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
         This test verifies that default components can be overridden by providing component_types or components.
         """
 
-        # Define a composite with a default component
+        # Defines a composite with a default component
         class DefaultComposite(self.UnitTestClass):  # type: ignore[name-defined, misc]
-            default_component_types: ClassVar[dict[str, Any]] = {"comp": (self.UnitTestComponent, {})}
+            default_component_types: dict[str, Any] = {"comp": (self.UnitTestComponent, {})}
 
         # Override with component_types
         class CustomComponent(self.UnitTestComponent):  # type: ignore[name-defined, misc]
@@ -375,7 +376,7 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
         assert component is not None
         assert component.composite is composite
 
-        # Remove
+        # Removes
         composite.remove_component("test_name")
 
         # Validate

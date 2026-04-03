@@ -50,7 +50,7 @@ class TimedLRUCacheCallable(TimedCacheCallable):
             self.priority.move_node_start(cache_item.priority_link)
             return cache_item.result
         else:
-            result = self.__wrapped__(*args, **kwargs)  # type:ignore[misc]
+            result = self.call_wrapped(*args, **kwargs)
             self.cache_container[key] = item = self.cache_item_type(key=key, result=result)
             priority_link = self.priority.insert(item, 0)
             item.priority_link = priority_link
@@ -72,7 +72,7 @@ class TimedLRUCacheCallable(TimedCacheCallable):
             self.priority.move_node_start(cache_item.priority_link)
             return cache_item.result
         else:
-            result = self.__wrapped__(*args, **kwargs)  # type:ignore[misc]
+            result = self.call_wrapped(*args, **kwargs)
             self.cache_container[key] = item = self.cache_item_type(key=key, result=result)
             if self._maxsize is not None and len(self.cache_container) <= self._maxsize:
                 item.priority_link = self.priority.insert(item, 0)
@@ -90,7 +90,7 @@ class TimedLRUCacheCallable(TimedCacheCallable):
             return result
 
 
-class TimedLRUCacheMethod(TimedLRUCacheCallable, TimedCacheMethod):
+class TimedLRUCacheMethod(TimedCacheMethod, TimedLRUCacheCallable):
     """A method class for TimedLRUCache."""
 
     def construct(self, func: Any | None = None, *args: Any, **kwargs: Any) -> None:

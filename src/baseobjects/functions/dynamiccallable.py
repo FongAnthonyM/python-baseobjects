@@ -88,7 +88,7 @@ class DynamicCallable(BaseCallable):
         if (multiplexer := d_state.pop("call_multiplexer", None)) is not None:
             d_state["_call_method"] = multiplexer.selected
 
-        # Return in the same structural shape as BaseReducible returns
+        # Returns in the same structural shape as BaseReducible returns
         if slots is None:
             return d_state
         return (d_state, slots)
@@ -191,29 +191,35 @@ class DynamicCallable(BaseCallable):
             init: When True, construct the instance immediately.
             **kwargs: Additional keyword arguments forwarded to BaseCallable.
         """
+        # Parent Initialization #
+        super().__init__(func=func, *args, init=False, **kwargs)
+
         # Attributes #
         self.bind_multiplexer = MethodMultiplexer(instance=self, select=self.default_bind_method, is_binding=False)
         self.call_multiplexer = MethodMultiplexer(instance=self, select=self.default_call_method, is_binding=False)
 
-        # Parent Initialization #
-        super().__init__(*args, init=False, **kwargs)
-
         # Object Construction #
         if init:
-            self.construct(func, *args, bind_method=bind_method, call_method=call_method, **kwargs)
+            self.construct(
+                func=func,
+                bind_method=bind_method,
+                call_method=call_method,
+                *args,
+                **kwargs,
+            )
 
     # Descriptor
-    def __get__(self, *args: Any, **kwargs: Any) -> Any:
+    def __get__(self, instance: Any = None, owner: type[Any] | None = None) -> Any:
         """This call delegates callback to a CallableMultiplexer.
 
         Args:
-            *args: Positional arguments of the wrapped function.
-            **kwargs: Keyword arguments of the wrapped function.
+            instance: The object to bind the method to.
+            owner: The class of the object to bind the method to.
 
         Returns:
-            The output of the wrapped function.
+            The bound method or itself.
         """
-        return self.bind_multiplexer(*args, **kwargs)
+        return self.bind_multiplexer(instance, owner)
 
     # Calling
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
@@ -263,6 +269,7 @@ class DynamicMethod(DynamicCallable, BaseMethod):
     default_bind_method: str = "bind_self"
     default_call_method: str = "call_wrapped"
 
+    # Magic Methods #
     # Calling
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
         """This call delegates callback to a MethodMultiplexer.
@@ -274,16 +281,16 @@ class DynamicMethod(DynamicCallable, BaseMethod):
         Returns:
             The output of the wrapped function.
         """
-        try:
-            if self._self_ is not None:
-                return self.call_multiplexer(self._self_(), *args, **kwargs)
-        except AttributeError:
-            pass
+        if (instance := getattr(self, "__self__", None)) is not None:
+            return self.call_multiplexer(instance, *args, **kwargs)
+
         return self.call_multiplexer(*args, **kwargs)
 
 
-class DynamicFunction(DynamicCallable, BaseFunction):
+class DynamicFunction(BaseFunction, DynamicCallable):
     """An abstract function class that has multiplexed bind and callback."""
 
     # Attributes #
+    default_bind_method: str = "bind_builtin"
+    default_call_method: str = "call_wrapped"
     method_type: type[BaseMethod] = DynamicMethod

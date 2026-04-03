@@ -16,7 +16,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import ClassVar
+# from typing import
 
 # Third-Party Packages #
 import pytest

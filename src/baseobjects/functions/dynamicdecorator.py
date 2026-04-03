@@ -14,6 +14,9 @@ __version__ = "1.12.0"
 
 
 # Imports #
+# Standard Libraries #
+from typing import Any
+
 # Local Packages #
 from .basedecorator import BaseDecorator
 from .dynamiccallable import DynamicFunction

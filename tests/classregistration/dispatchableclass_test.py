@@ -15,7 +15,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar, Optional, cast
+from typing import Any, Optional, cast
 
 # Third-Party Packages #
 import pytest
@@ -67,11 +67,15 @@ class TestDispatchableClass(DispatchableClassTestSuite):
         """A base test subclass of DispatchableClass for testing purposes."""
 
         # Class Attributes #
-        class_registry_type: ClassVar[type[BaseClassRegistry]] = ConcreteClassRegistry
-        class_registration: ClassVar[bool] = True
+        class_registry_type: type[BaseClassRegistry] = ConcreteClassRegistry
+        class_registration: bool = True
 
         @classmethod
-        def get_class_information(cls, *args: Any, **kwargs: Any) -> tuple[str]:
+        def get_class_information(
+            cls,
+            *args: Any,
+            **kwargs: Any,
+        ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
             """Gets a class's lookup information from a given set of arguments.
 
             Args:
@@ -79,13 +83,14 @@ class TestDispatchableClass(DispatchableClassTestSuite):
                 **kwargs: Keyword arguments to get the name from.
 
             Returns:
-                A tuple containing the class name to look up.
+                The keyword arguments for class lookup and the keyword arguments to pass to the class constructor or
+                None if not found.
             """
             if args and isinstance(args[0], str):
-                return (args[0],)
+                return {"name": args[0]}, None
             if "type" in kwargs and isinstance(kwargs["type"], str):
-                return (kwargs["type"],)
-            return (cls.__name__,)
+                return {"name": kwargs["type"]}, None
+            return {"name": cls.__name__}, None
 
         @classmethod
         def register_class(cls, *args: Any, **kwargs: Any) -> None:
@@ -131,12 +136,17 @@ class TestDispatchableClass(DispatchableClassTestSuite):
     @pytest.mark.parametrize(
         ("args", "kwargs", "expected"),
         [
-            (("TypeADispatchable",), {}, ("TypeADispatchable",)),
-            ((), {"type": "TypeBDispatchable"}, ("TypeBDispatchable",)),
-            ((123,), {"irrelevant": "value"}, ("ConcreteDispatchableClass",)),
+            (("TypeADispatchable",), {}, ({"name": "TypeADispatchable"}, None)),
+            ((), {"type": "TypeBDispatchable"}, ({"name": "TypeBDispatchable"}, None)),
+            ((123,), {"irrelevant": "value"}, ({"name": "ConcreteDispatchableClass"}, None)),
         ],
     )
-    def test_get_class_information(self, args: tuple[Any, ...], kwargs: dict[str, Any], expected: tuple[str]) -> None:
+    def test_get_class_information(
+        self,
+        args: tuple[Any, ...],
+        kwargs: dict[str, Any],
+        expected: tuple[dict[str, Any] | None, dict[str, Any] | None],
+    ) -> None:
         """Tests the get_class_information method.
 
         This test verifies that the get_class_information method correctly extracts class information from arguments.
@@ -229,7 +239,72 @@ class TestDispatchableClassCoverage:
         # Dispatcher is head_class (created by class_registration=True)
         # Instantiate with args to trigger dispatch logic
         with pytest.raises(NotImplementedError, match=r"This method needs to be implemented to dispatch classes\."):
-            Dispatcher("arg")
+            Dispatcher("arg")  # type: ignore[abstract]
+
+    def test_get_registered_class_not_implemented(self) -> None:
+        """Tests that get_registered_class raises NotImplementedError when not overridden."""
+
+        class Dispatcher(DispatchableClass):
+            class_registry_type = DispatchMockRegistry
+            class_registration = True
+
+            @classmethod
+            def get_class_information(
+                cls,
+                *args: Any,
+                **kwargs: Any,
+            ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+                """Gets class info.
+
+                Returns:
+                    The class information.
+                """
+                return {"name": "test"}, None
+
+            @classmethod
+            def register_class(cls, *args: Any, **kwargs: Any) -> None:
+                """Registers this class with the registry."""
+                return
+
+        # Dispatcher is head_class
+        with pytest.raises(
+            NotImplementedError,
+            match=r"This method needs to be implemented to get the registered class\.",
+        ):
+            Dispatcher("arg")  # type: ignore[abstract]
+
+    def test_get_class_information_returns_none(self) -> None:
+        """Tests that dispatching is skipped when get_class_information returns None."""
+
+        class Dispatcher(DispatchableClass):
+            class_registry_type = DispatchMockRegistry
+            class_registration = True
+
+            @classmethod
+            def get_class_information(
+                cls,
+                *args: Any,
+                **kwargs: Any,
+            ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+                """Gets class info.
+
+                Returns:
+                    None.
+                """
+                return None, None
+
+            @classmethod
+            def get_registered_class(cls, *args: Any, **kwargs: Any) -> None:
+                """Gets registered class."""
+                return
+
+            @classmethod
+            def register_class(cls, *args: Any, **kwargs: Any) -> None:
+                """Registers this class."""
+                return
+
+        instance = Dispatcher("arg")
+        assert type(instance) is Dispatcher
 
 
 # Main #

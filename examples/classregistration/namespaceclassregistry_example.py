@@ -12,7 +12,7 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any, cast
+from typing import Any
 
 # Source Packages #
 from baseobjects.bases import SEARCHSENTINEL
@@ -26,11 +26,11 @@ class DataProcessor:
     """Base class for data processors."""
 
     def __init__(self, name: str) -> None:
-        """Initialize the data processor with a name."""
+        """Initializes the data processor with a name."""
         self.name = name
 
     def process(self, data: Any) -> Any:
-        """Process data according to the processor's implementation.
+        """Processes data according to the processor's implementation.
 
         Args:
             data: The data to process.
@@ -41,7 +41,7 @@ class DataProcessor:
         return data
 
     def __str__(self) -> str:
-        """Return a human-readable representation of the processor."""
+        """Returns a human-readable representation of the processor."""
         return f"{self.name} (Base Processor)"
 
 
@@ -49,7 +49,7 @@ class TextProcessor(DataProcessor):
     """A processor for text data."""
 
     def process(self, data: str) -> str:
-        """Process text data.
+        """Processes text data.
 
         Args:
             data: The text to process.
@@ -60,7 +60,7 @@ class TextProcessor(DataProcessor):
         return data.strip().upper()
 
     def __str__(self) -> str:
-        """Return a human-readable representation of the text processor."""
+        """Returns a human-readable representation of the text processor."""
         return f"{self.name} (Text Processor)"
 
 
@@ -68,7 +68,7 @@ class NumberProcessor(DataProcessor):
     """A processor for numeric data."""
 
     def __init__(self, name: str, multiplier: float = 1.0) -> None:
-        """Initialize a NumberProcessor.
+        """Initializes a NumberProcessor.
 
         Args:
             name: The processor name.
@@ -78,7 +78,7 @@ class NumberProcessor(DataProcessor):
         self.multiplier = multiplier
 
     def process(self, data: float) -> float:
-        """Process numeric data.
+        """Processes numeric data.
 
         Args:
             data: The number to process.
@@ -89,7 +89,7 @@ class NumberProcessor(DataProcessor):
         return data * self.multiplier
 
     def __str__(self) -> str:
-        """Return a human-readable representation of the number processor."""
+        """Returns a human-readable representation of the number processor."""
         return f"{self.name} (Number Processor, multiplier={self.multiplier})"
 
 
@@ -97,7 +97,7 @@ class ListProcessor(DataProcessor):
     """A processor for list data."""
 
     def process(self, data: list[Any]) -> list[Any]:
-        """Process list data.
+        """Processes list data.
 
         Args:
             data: The list to process.
@@ -108,7 +108,7 @@ class ListProcessor(DataProcessor):
         return sorted(data)
 
     def __str__(self) -> str:
-        """Return a human-readable representation of the list processor."""
+        """Returns a human-readable representation of the list processor."""
         return f"{self.name} (List Processor)"
 
 
@@ -116,7 +116,7 @@ class DictionaryProcessor(DataProcessor):
     """A processor for dictionary data."""
 
     def process(self, data: dict[Any, Any]) -> dict[Any, Any]:
-        """Process dictionary data.
+        """Processes dictionary data.
 
         Args:
             data: The dictionary to process.
@@ -127,7 +127,7 @@ class DictionaryProcessor(DataProcessor):
         return {k.upper(): v for k, v in data.items()}
 
     def __str__(self) -> str:
-        """Return a human-readable representation of the dictionary processor."""
+        """Returns a human-readable representation of the dictionary processor."""
         return f"{self.name} (Dictionary Processor)"
 
 
@@ -137,18 +137,18 @@ def basic_namespace_registry_usage() -> None:
     """Demonstrates basic usage of a namespace class registry."""
     print("Basic Namespace Registry Usage:\n")
 
-    # Create a registry
+    # Creates a registry
     print("Creating a namespace class registry...")
     registry = NamespaceClassRegistry()
 
-    # Register classes with namespaces
+    # Registers classes with namespaces
     print("Registering classes with namespaces...")
     registry.register_class(TextProcessor, namespace="text", name="TextProcessor")
     registry.register_class(NumberProcessor, namespace="numeric", name="NumberProcessor")
     registry.register_class(ListProcessor, namespace="collections", name="ListProcessor")
     registry.register_class(DictionaryProcessor, namespace="collections", name="DictionaryProcessor")
 
-    # Print the registry structure
+    # Prints the registry structure
     print("\nRegistry structure:")
     for namespace, classes in registry.items():
         print(f"Namespace: {namespace}")
@@ -156,13 +156,13 @@ def basic_namespace_registry_usage() -> None:
             print(f"  - {name}: {cls.__name__}")
     print()
 
-    # Get classes from the registry
+    # Gets classes from the registry
     print("Getting classes from the registry...")
     text_processor_class = registry.get_class("text", "TextProcessor")
     number_processor_class = registry.get_class("numeric", "NumberProcessor")
     list_processor_class = registry.get_class("collections", "ListProcessor")
 
-    # Create instances
+    # Creates instances
     print("Creating instances of retrieved classes...")
     text_processor = text_processor_class("Text Processor 1")
     number_processor = number_processor_class("Number Processor 1", multiplier=2.0)
@@ -184,11 +184,11 @@ def default_values_and_error_handling() -> None:
     """Demonstrates handling missing classes and namespaces."""
     print("Default Values and Error Handling:\n")
 
-    # Create a registry
+    # Creates a registry
     print("Creating a namespace class registry...")
     registry = NamespaceClassRegistry()
 
-    # Register a class
+    # Registers a class
     print("Registering a class...")
     registry.register_class(TextProcessor, namespace="text", name="TextProcessor")
 
@@ -235,11 +235,11 @@ def class_kwargs_and_instantiation() -> None:
     """Demonstrates using class_kwargs and creating instances directly."""
     print("Class Kwargs and Instantiation:\n")
 
-    # Create a registry
+    # Creates a registry
     print("Creating a namespace class registry...")
     registry = NamespaceClassRegistry()
 
-    # Register classes with class_kwargs
+    # Registers classes with class_kwargs
     print("Registering classes with class_kwargs...")
     registry.register_class(
         NumberProcessor,
@@ -262,7 +262,7 @@ def class_kwargs_and_instantiation() -> None:
         class_kwargs={"multiplier": 0.5},
     )
 
-    # Get classes with their kwargs
+    # Gets classes with their kwargs
     print("\nGetting classes with their kwargs...")
     double_class, double_kwargs = registry.get_class("numeric", "DoubleProcessor", with_kwargs=True)
     triple_class, triple_kwargs = registry.get_class("numeric", "TripleProcessor", with_kwargs=True)
@@ -272,7 +272,7 @@ def class_kwargs_and_instantiation() -> None:
     print(f"TripleProcessor kwargs: {triple_kwargs}")
     print(f"HalfProcessor kwargs: {half_kwargs}")
 
-    # Create instances using the kwargs
+    # Creates instances using the kwargs
     print("\nCreating instances using the kwargs...")
     double_processor = double_class("Double Processor", **double_kwargs)
     triple_processor = triple_class("Triple Processor", **triple_kwargs)
@@ -286,7 +286,7 @@ def class_kwargs_and_instantiation() -> None:
     print(f"Triple processor: {triple_processor.process(number_data)} == 30.0")
     print(f"Half processor: {half_processor.process(number_data)} == 5.0")
 
-    # Create instances directly using get_new
+    # Creates instances directly using get_new
     print("\nCreating instances directly using get_new...")
     direct_double = registry.get_new("numeric", "DoubleProcessor", class_kwargs={"name": "Direct Double"})
     direct_triple = registry.get_new("numeric", "TripleProcessor", class_kwargs={"name": "Direct Triple"})
@@ -315,7 +315,7 @@ def multiple_registration_methods() -> None:
     """Demonstrates different ways to register classes."""
     print("Multiple Registration Methods:\n")
 
-    # Create a registry
+    # Creates a registry
     print("Creating a namespace class registry...")
     registry = NamespaceClassRegistry()
 
@@ -336,7 +336,7 @@ def multiple_registration_methods() -> None:
     print("\nMethod 3: Register classes using a dictionary in the constructor...")
     new_registry = NamespaceClassRegistry(classes={"data": {"DictionaryProcessor": (DictionaryProcessor, {})}})
 
-    # Print the registry structures
+    # Prints the registry structures
     print("\nFirst registry structure:")
     for namespace, classes in registry.items():
         print(f"Namespace: {namespace}")
@@ -365,11 +365,11 @@ def module_import_feature() -> None:
     """Demonstrates the module import feature."""
     print("Module Import Feature:\n")
 
-    # Create a registry
+    # Creates a registry
     print("Creating a namespace class registry...")
     registry = NamespaceClassRegistry()
 
-    # Register a class
+    # Registers a class
     print("Registering a class...")
     registry.register_class(TextProcessor, namespace="text", name="TextProcessor")
 
@@ -381,7 +381,9 @@ def module_import_feature() -> None:
     def simulate_import(namespace: str, name: str, module: str) -> type:
         print(f"Simulating import of module '{module}'...")
         registry.register_class(NumberProcessor, namespace=namespace, name=name)
-        return cast(type, registry.get_class(namespace, name))
+        result = registry.get_class(namespace, name)
+        assert isinstance(result, type)
+        return result
 
     # First attempt (would normally fail and try to import)
     number_processor_class = registry.get_class("numeric", "NumberProcessor", default=None)
@@ -389,7 +391,7 @@ def module_import_feature() -> None:
         print("Class not found in registry, would attempt to import module...")
         number_processor_class = simulate_import("numeric", "NumberProcessor", "numeric.processors")
 
-    # Create and use the instance
+    # Creates and use the instance
     print("\nCreating and using the instance...")
     number_processor = number_processor_class("Imported Processor")
     number_data = 7.0
@@ -401,18 +403,18 @@ def processor_factory() -> None:
     """Demonstrates using the registry as a factory for processors."""
     print("Processor Factory:\n")
 
-    # Create a registry
+    # Creates a registry
     print("Creating a namespace class registry...")
     registry = NamespaceClassRegistry()
 
-    # Register classes
+    # Registers classes
     print("Registering classes...")
     registry.register_class(TextProcessor, namespace="text", name="TextProcessor")
     registry.register_class(NumberProcessor, namespace="numeric", name="NumberProcessor")
     registry.register_class(ListProcessor, namespace="collections", name="ListProcessor")
     registry.register_class(DictionaryProcessor, namespace="collections", name="DictionaryProcessor")
 
-    # Create a factory function
+    # Creates a factory function
     def create_processor(data_type: str, processor_name: str, **kwargs: Any) -> DataProcessor:
         """Factory function to create data processors.
 
@@ -424,7 +426,9 @@ def processor_factory() -> None:
         Returns:
             An instance of the requested processor type.
         """
-        return cast(DataProcessor, registry.get_new(data_type, processor_name, class_kwargs=kwargs))
+        result = registry.get_new(data_type, processor_name, class_kwargs=kwargs)
+        assert isinstance(result, DataProcessor)
+        return result
 
     # Use the factory to create processors
     print("Using the factory to create processors...")
@@ -444,7 +448,7 @@ def processor_factory() -> None:
         except KeyError as e:
             print(f"\nError creating {processor_name}: {e}")
 
-    # Process some data with the created processors
+    # Processes some data with the created processors
     print("\nProcessing data with the created processors...")
 
     text_processor = create_processor("text", "TextProcessor", name="Text Processor")

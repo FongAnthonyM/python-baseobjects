@@ -14,16 +14,17 @@ This example demonstrates:
 # Source Packages #
 from baseobjects.operations import bytes_to_bin
 
-
 # Example Sections #
+
+
 def basic_usage_example() -> None:
-    """Demonstrate basic usage of bytes_to_bin."""
+    """Demonstrates basic usage of bytes_to_bin."""
     print("\nBasic bytes_to_bin Usage:")
 
-    # Create some sample bytes
+    # Creates some sample bytes
     sample_bytes = b"\x0f\xa0"  # 00001111 10100000 in binary
 
-    # Convert to binary using default settings (big endian, int output)
+    # Converts to binary using default settings (big endian, int output)
     binary_values = bytes_to_bin(sample_bytes)
 
     print(f"Sample bytes: {sample_bytes.hex()} (hex)")
@@ -31,7 +32,7 @@ def basic_usage_example() -> None:
     print(f"  {binary_values}")
     print("  Expected: (0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0)")
 
-    # Print in a more readable format
+    # Prints in a more readable format
     first_byte = binary_values[:8]
     second_byte = binary_values[8:]
 
@@ -40,16 +41,16 @@ def basic_usage_example() -> None:
 
 
 def byte_order_example() -> None:
-    """Demonstrate using different byte orders with bytes_to_bin."""
+    """Demonstrates using different byte orders with bytes_to_bin."""
     print("\nByte Order Example:")
 
-    # Create a sample byte
+    # Creates a sample byte
     sample_byte = b"\x0f"  # 00001111 in binary
 
-    # Convert using big endian (default)
+    # Converts using big endian (default)
     big_endian = bytes_to_bin(sample_byte, byteorder="big")
 
-    # Convert using little endian
+    # Converts using little endian
     little_endian = bytes_to_bin(sample_byte, byteorder="little")
 
     print(f"Sample byte: {sample_byte.hex()} (hex)")
@@ -61,10 +62,10 @@ def byte_order_example() -> None:
     # Example where the results differ
     sample_byte = b"\x81"  # 10000001 in binary
 
-    # Convert using big endian (default)
+    # Converts using big endian (default)
     big_endian = bytes_to_bin(sample_byte, byteorder="big")
 
-    # Convert using little endian
+    # Converts using little endian
     little_endian = bytes_to_bin(sample_byte, byteorder="little")
 
     print(f"\nSample byte: {sample_byte.hex()} (hex)")
@@ -76,10 +77,10 @@ def byte_order_example() -> None:
     # Example with multiple bytes where the results differ
     sample_bytes = b"\x0f\xa0"  # 00001111 10100000 in binary
 
-    # Convert using big endian (default)
+    # Converts using big endian (default)
     big_endian = bytes_to_bin(sample_bytes, byteorder="big")
 
-    # Convert using little endian
+    # Converts using little endian
     little_endian = bytes_to_bin(sample_bytes, byteorder="little")
 
     print(f"\nSample bytes: {sample_bytes.hex()} (hex)")
@@ -90,19 +91,19 @@ def byte_order_example() -> None:
 
 
 def output_type_example() -> None:
-    """Demonstrate different output types with bytes_to_bin."""
+    """Demonstrates different output types with bytes_to_bin."""
     print("\nOutput Type Example:")
 
-    # Create a sample byte
+    # Creates a sample byte
     sample_byte = b"\xa5"  # 10100101 in binary
 
-    # Convert to int (default)
+    # Converts to int (default)
     int_output = bytes_to_bin(sample_byte, out_type=int)
 
-    # Convert to bool
+    # Converts to bool
     bool_output = bytes_to_bin(sample_byte, out_type=bool)
 
-    # Convert to str
+    # Converts to str
     str_output = bytes_to_bin(sample_byte, out_type=str)
 
     print(f"Sample byte: {sample_byte.hex()} (hex)")
@@ -115,7 +116,7 @@ def output_type_example() -> None:
 
 
 def edge_cases_example() -> None:
-    """Demonstrate edge cases with bytes_to_bin."""
+    """Demonstrates edge cases with bytes_to_bin."""
     print("\nEdge Cases Example:")
 
     # Empty bytes
@@ -153,10 +154,10 @@ def edge_cases_example() -> None:
 
 
 def practical_example() -> None:
-    """Demonstrate a practical use case for bytes_to_bin."""
+    """Demonstrates a practical use case for bytes_to_bin."""
     print("\nPractical Example - Parsing a Flag Byte:")
 
-    # Define a flag byte where each bit represents a different setting
+    # Defines a flag byte where each bit represents a different setting
     # Bit 0 (LSB): Read permission
     # Bit 1: Write permission
     # Bit 2: Execute permission
@@ -168,7 +169,7 @@ def practical_example() -> None:
 
     flag_byte = b"\x93"  # 10010011 in binary
 
-    # Convert to binary
+    # Converts to binary
     flags = bytes_to_bin(flag_byte, out_type=bool)
 
     # Parse the flags
@@ -223,7 +224,7 @@ def practical_example() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     basic_usage_example()
     byte_order_example()
     output_type_example()

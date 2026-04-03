@@ -26,10 +26,8 @@ from typing import Any, TypeVar
 # Local Packages #
 from ..bases import BaseFunction
 
+
 # Definitions #
-D = TypeVar("D", bound="BaseDecorator")
-
-
 # Classes #
 class BaseDecorator(BaseFunction):
     """An abstract class which implements the basic structure for creating decorators.
@@ -42,11 +40,11 @@ class BaseDecorator(BaseFunction):
     # Static Methods #
     @staticmethod
     def create_decorator(
-        cls: type[D],
+        cls: type[BaseDecorator],
         func: Any,
         args: tuple[Any, ...],
         kwargs: dict[str, Any],
-    ) -> D:
+    ) -> BaseDecorator:
         """A static method for creating a decorator instance.
 
         This method is used internally by the decorator factory mechanism to create decorator instances when the
@@ -64,15 +62,14 @@ class BaseDecorator(BaseFunction):
         """
         return cls(func, *args, **kwargs)
 
-    # Magic Methods #
     # Construction/Destruction
     def __new__(  # type: ignore[misc]
-        cls: type[D],
+        cls,
         *args: Any,
         func: Any | None = None,
         _return_partial: bool = True,
         **kwargs: Any,
-    ) -> D | Callable[..., D]:
+    ) -> BaseDecorator | Callable[..., BaseDecorator]:
         """Creates either a decorator instance or a factory for creating decorator instances.
 
         This method implements the dual-mode behavior of decorators:
@@ -104,7 +101,6 @@ class BaseDecorator(BaseFunction):
         else:
             return super().__new__(cls)
 
-    # Reduction/Pickling
     def __reduce__(self) -> tuple[Any, tuple[Any, ...], Any]:
         """Reduces the decorator to be picklable.
 

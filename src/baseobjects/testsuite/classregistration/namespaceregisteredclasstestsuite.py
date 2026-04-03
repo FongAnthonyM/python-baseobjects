@@ -44,11 +44,11 @@ class NamespaceRegisteredClassTestSuite(BaseRegisteredClassTestSuite):
     def test_init_subclass_with_registration(self) -> None:
         """Tests that subclasses are registered when class_registration is True."""
 
-        # Create a subclass with registration enabled
+        # Creates a subclass with registration enabled
         class RegisteredSubclass(self.UnitTestClass):  # type: ignore[misc, name-defined]
             class_registration = True
 
-        # Verify subclass was registered
+        # Verifies subclass was registered
         namespace = RegisteredSubclass.__module__
         namespace = namespace[4:] if namespace.split(".")[0] == "src" else namespace
 
@@ -60,11 +60,11 @@ class NamespaceRegisteredClassTestSuite(BaseRegisteredClassTestSuite):
     def test_init_subclass_with_custom_namespace_and_name(self) -> None:
         """Tests that subclasses are registered with custom namespace and name."""
 
-        # Create a subclass with custom namespace and name
+        # Creates a subclass with custom namespace and name
         class CustomNamespaceAndNameClass(self.UnitTestClass, namespace="custom_namespace", name="CustomName"):  # type: ignore[misc, call-arg, name-defined]
             class_registration = True
 
-        # Verify subclass was registered with custom namespace and name
+        # Verifies subclass was registered with custom namespace and name
         assert CustomNamespaceAndNameClass.class_registry is not None
         assert "custom_namespace" in CustomNamespaceAndNameClass.class_registry
         assert "CustomName" in CustomNamespaceAndNameClass.class_registry["custom_namespace"]
@@ -76,13 +76,13 @@ class NamespaceRegisteredClassTestSuite(BaseRegisteredClassTestSuite):
     def test_init_subclass_with_class_registry_namespace_and_name(self) -> None:
         """Tests that subclasses are registered with class_registry_namespace and class_registry_name."""
 
-        # Create a subclass with class_registry_namespace and class_registry_name
+        # Creates a subclass with class_registry_namespace and class_registry_name
         class ClassRegistryNamespaceAndNameClass(self.UnitTestClass):  # type: ignore[misc, name-defined]
             class_registration = True
             class_registry_namespace = "registry_namespace"
             class_registry_name = "RegistryName"
 
-        # Verify subclass was registered with class_registry_namespace and class_registry_name
+        # Verifies subclass was registered with class_registry_namespace and class_registry_name
         assert ClassRegistryNamespaceAndNameClass.class_registry is not None
         assert "registry_namespace" in ClassRegistryNamespaceAndNameClass.class_registry
         assert "RegistryName" in ClassRegistryNamespaceAndNameClass.class_registry["registry_namespace"]
@@ -97,11 +97,11 @@ class NamespaceRegisteredClassTestSuite(BaseRegisteredClassTestSuite):
         self.UnitTestClass.class_registry = None
         self.UnitTestClass.create_class_registry()
 
-        # Create a subclass with registration disabled
+        # Creates a subclass with registration disabled
         class UnregisteredSubclass(self.UnitTestClass):  # type: ignore[misc, name-defined]
             class_registration = False
 
-        # Verify subclass was not registered
+        # Verifies subclass was not registered
         namespace = UnregisteredSubclass.__module__
         namespace = namespace[4:] if namespace.split(".")[0] == "src" else namespace
 
@@ -122,10 +122,10 @@ class NamespaceRegisteredClassTestSuite(BaseRegisteredClassTestSuite):
         class NewTestSubclass(self.UnitTestClass):  # type: ignore[misc, name-defined]
             class_registration = False
 
-        # Register class
+        # Registers class
         NewTestSubclass.register_class(namespace="test_namespace", name="NewClass")
 
-        # Verify class was registered
+        # Verifies class was registered
         assert self.UnitTestClass.class_registry is not None
         assert "test_namespace" in self.UnitTestClass.class_registry
         assert "NewClass" in self.UnitTestClass.class_registry["test_namespace"]
@@ -137,13 +137,13 @@ class NamespaceRegisteredClassTestSuite(BaseRegisteredClassTestSuite):
         self.UnitTestClass.class_registry = None
         self.UnitTestClass.create_class_registry()
 
-        # Register class
+        # Registers class
         self.UnitTestClass.register_class(namespace="test_namespace", name="UnitTestClass")
 
-        # Get registered class
+        # Gets registered class
         retrieved_class = self.UnitTestClass.get_registered_class("test_namespace", "UnitTestClass")
 
-        # Verify class was retrieved
+        # Verifies class was retrieved
         assert retrieved_class is self.UnitTestClass
 
     def test_get_registered_class_with_nonexistent_class(self) -> None:
@@ -152,14 +152,14 @@ class NamespaceRegisteredClassTestSuite(BaseRegisteredClassTestSuite):
         self.UnitTestClass.class_registry = None
         self.UnitTestClass.create_class_registry()
 
-        # Get non-existent registered class
+        # Gets non-existent registered class
         with pytest.raises(KeyError):
             self.UnitTestClass.get_registered_class("non_existent_namespace", "NonExistentClass")
 
     def test_module_attribute(self) -> None:
         """Tests the _module_ attribute."""
 
-        # Create a subclass with _module_ attribute
+        # Creates a subclass with _module_ attribute
         class ModuleAttributeClass(self.UnitTestClass):  # type: ignore[misc, name-defined]
             class_registration = True
             _module_ = "custom_module"
@@ -168,10 +168,10 @@ class NamespaceRegisteredClassTestSuite(BaseRegisteredClassTestSuite):
         ModuleAttributeClass.class_registry = None
         ModuleAttributeClass.create_class_registry()
 
-        # Register class without specifying namespace
+        # Registers class without specifying namespace
         ModuleAttributeClass.register_class()
 
-        # Verify class was registered with _module_ as namespace
+        # Verifies class was registered with _module_ as namespace
         assert "custom_module" in ModuleAttributeClass.class_registry
         assert ModuleAttributeClass.__name__ in ModuleAttributeClass.class_registry["custom_module"]
         assert (
@@ -201,10 +201,10 @@ class NamespaceRegisteredClassTestSuite(BaseRegisteredClassTestSuite):
         # Manually create registry to isolate test
         TestClass.create_class_registry()
 
-        # Register the class
+        # Registers the class
         TestClass.register_class()
 
-        # Verify it was registered
+        # Verifies it was registered
         registry = TestClass.class_registry
         assert registry is not None
 

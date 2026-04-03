@@ -52,7 +52,7 @@ class BaseDictTestSuite(BaseObjectTestSuite):
         Returns:
             BaseDict: A populated instance of the test class.
         """
-        # Create a dictionary with some initial data
+        # Creates a dictionary with some initial data
         data = {f"key{i}": f"value{i}" for i in range(5)}
         return self.UnitTestClass(data)
 
@@ -65,13 +65,13 @@ class BaseDictTestSuite(BaseObjectTestSuite):
             *args: Positional arguments list to pass to the class constructor.
             **kwargs: Keyword arguments to pass to the class constructor.
         """
-        # Create Object
+        # Creates Object
         obj = self.UnitTestClass(*args, **kwargs)
 
         # Validate
         assert isinstance(obj, self.UnitTestClass)
         assert isinstance(obj, BaseDict)
-        # Check if it behaves like a dict
+        # Checks if it behaves like a dict
         assert hasattr(obj, "data")
         assert isinstance(obj.data, dict)
 
@@ -245,7 +245,7 @@ class BaseDictTestSuite(BaseObjectTestSuite):
 
     def test_dict_initialization(self) -> None:
         """Tests initialization of BaseDict with a dictionary."""
-        # Initialize with a dictionary
+        # Initializes with a dictionary
         init_dict = {"key1": "value1", "key2": "value2"}
         test_dict = self.UnitTestClass(init_dict)
 
@@ -256,7 +256,7 @@ class BaseDictTestSuite(BaseObjectTestSuite):
 
     def test_dict_initialization_with_kwargs(self) -> None:
         """Tests initialization of BaseDict with keyword arguments."""
-        # Initialize with keyword arguments
+        # Initializes with keyword arguments
         test_dict = self.UnitTestClass(key1="value1", key2="value2")
 
         # Validate

@@ -39,6 +39,7 @@ __all__ = [
     "BaseObject",
     "BaseReducible",
     "CallableMultiplexer",
+    "CompositeFactoryClass",
     "DispatchableComposite",
     "DynamicCallable",
     "DynamicDecorator",
@@ -49,5 +50,7 @@ __all__ = [
     "MethodMultiplexer",
     "MethodRegistry",
     "SentinelObject",
+    "default_sentinel",
+    "search_sentinel",
     "singlekwargdispatch",
 ]

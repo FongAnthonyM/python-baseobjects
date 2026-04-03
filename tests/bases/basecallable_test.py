@@ -21,13 +21,13 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import pickle
 from types import MethodType
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
-from baseobjects.bases import BaseCallable
+from baseobjects.bases import BaseCallable, BaseMethod
 from baseobjects.testsuite.bases import BaseCallableTestSuite
 
 
@@ -110,7 +110,7 @@ class TestBaseCallable(BaseCallableTestSuite):
             new_method: Any = test_method_object
 
         instance = BindTarget()
-        assert isinstance(instance.new_method, MethodType)
+        assert isinstance(instance.new_method, (MethodType, BaseMethod))
         assert instance.new_method.__self__ is instance
 
     def test_attribute_copying(self) -> None:

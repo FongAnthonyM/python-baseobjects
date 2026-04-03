@@ -205,17 +205,17 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
         Args:
             test_function_object: A fixture providing a BaseCallable instance that wraps a function.
         """
-        # Call the callable object (select="add")
+        # Calls the callable object (select="add")
         result = test_function_object(3)
 
-        # Verify it returns the expected result (add_function(3, 2))
+        # Verifies it returns the expected result (add_function(3, 2))
         assert result == 5
 
         # Change selection
         test_function_object.select("multiply")
         result = test_function_object(3)
 
-        # Verify it returns the expected result (multiply_function(3, 3))
+        # Verifies it returns the expected result (multiply_function(3, 3))
         assert result == 9
 
     def test_call_wrapped(self, test_function_object: Any) -> None:
@@ -224,10 +224,10 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
         Args:
             test_function_object: A fixture providing a BaseCallable instance that wraps a function.
         """
-        # Call the wrapped function directly
+        # Calls the wrapped function directly
         result = test_function_object.call_wrapped(3)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 5
 
     def test_add_function(self, test_multiplexer: CallableMultiplexer) -> None:
@@ -240,10 +240,10 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
         def subtract(x: int, y: int = 2) -> int:
             return x - y
 
-        # Add function
+        # Adds function
         test_multiplexer.add_function("subtract", subtract)
 
-        # Verify it's in registry
+        # Verifies it's in registry
         assert "subtract" in test_multiplexer.registry
         assert test_multiplexer.registry["subtract"] is subtract
 
@@ -262,16 +262,16 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
             test_multiplexer: A fixture providing a CallableMultiplexer instance.
             test_object_instance: A fixture providing a test object instance.
         """
-        # Add method
+        # Adds method
         test_multiplexer.add_method("method1", test_object_instance.method1)
 
         # Select
         test_multiplexer.select("method1")
 
-        # Bind to instance so unbound method can be called
+        # Binds to instance so unbound method can be called
         test_multiplexer.bind_self(test_object_instance)
 
-        # Call
+        # Calls
         assert test_multiplexer(3) == 13
 
     def test_add_select_function(self, test_multiplexer: CallableMultiplexer) -> None:
@@ -284,10 +284,10 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
         def subtract(x: int, y: int = 2) -> int:
             return x - y
 
-        # Add and select function
+        # Adds and select function
         test_multiplexer.add_select_function("subtract", subtract)
 
-        # Verify it's selected
+        # Verifies it's selected
         assert test_multiplexer.selected == "subtract"
         assert test_multiplexer(5) == 3
 
@@ -302,16 +302,16 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
             test_multiplexer: A fixture providing a CallableMultiplexer instance.
             test_object_instance: A fixture providing a test object instance.
         """
-        # Add and select method
+        # Adds and select method
         test_multiplexer.add_select_method("method1", test_object_instance.method1)
 
-        # Verify it's selected
+        # Verifies it's selected
         assert test_multiplexer.selected == "method1"
 
-        # Bind to instance so unbound method can be called
+        # Binds to instance so unbound method can be called
         test_multiplexer.bind_self(test_object_instance)
 
-        # Call
+        # Calls
         assert test_multiplexer(3) == 13
 
     def test_add_callable_with_str(self) -> None:
@@ -329,7 +329,7 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
         """Tests adding callables with a list of names."""
         # API doesn't seem to support list of names in add_function directly?
         # add_function(name: str, func)
-        # Check source if it iterates? No, name is str.
+        # Checks source if it iterates? No, name is str.
         # So I remove this test or adapt loop.
         cm = self.UnitTestClass()
 
@@ -357,7 +357,7 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
         cm.add_function("a", lambda *args: 1)
         cm.select("a")
 
-        # Bind to dummy to satisfy MethodMultiplexer in environments where unbound __get__ fails
+        # Binds to dummy to satisfy MethodMultiplexer in environments where unbound __get__ fails
         class Dummy:
             pass
 
@@ -380,13 +380,13 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
             *args: Positional arguments list to pass to the class constructor.
             **kwargs: Keyword arguments to pass to the class constructor.
         """
-        # Create an instance with defaults
+        # Creates an instance with defaults
         instance = self.UnitTestClass()
         assert isinstance(instance, self.UnitTestClass)
         assert instance.registry is not None
         assert instance.selected is None
 
-        # Create an instance with a registry
+        # Creates an instance with a registry
         registry = FunctionRegistry()
         instance_with_registry = self.UnitTestClass(registry=registry)
         assert instance_with_registry.registry is registry
@@ -398,14 +398,14 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
         Overrides BaseCallableTestSuite.test_attribute_copying to use create_function_object.
         """
 
-        # Create a temporary function
+        # Creates a temporary function
         def temp_func(x: int, y: int = 2) -> int:
             return x + y
 
-        # Create an attribute in the function
+        # Creates an attribute in the function
         temp_func.new_attribute = "test"  # type: ignore[attr-defined]
 
-        # Create a callable object
+        # Creates a callable object
         test_object = self.create_function_object(temp_func)
 
         # Validate the new attribute is present and the same
@@ -422,7 +422,7 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
         pickled = pickle.dumps(test_multiplexer)
         unpickled = pickle.loads(pickled)
 
-        # Verify state
+        # Verifies state
         assert unpickled.selected == test_multiplexer.selected
         assert "add" in unpickled.registry
         assert unpickled(3) == 5
@@ -447,13 +447,13 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
         Args:
             test_function_object: A fixture providing a BaseCallable instance that wraps a function.
         """
-        # Convert to a standard Python function
+        # Converts to a standard Python function
         func = test_function_object.as_function()
 
-        # Verify it's a function
+        # Verifies it's a function
         assert callable(func)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert func(3) == 5
 
     def test_bind_wrapped(self, test_method_object: Any, test_bind_target: Any) -> None:
@@ -491,7 +491,7 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
         instance = BindTarget()
         bound_multiplexer = instance.new_method
 
-        # Verify it returns the multiplexer (bound to instance)
+        # Verifies it returns the multiplexer (bound to instance)
         assert isinstance(bound_multiplexer, self.UnitTestClass)
         # CallableMultiplexer returns self when bound
         assert bound_multiplexer is test_method_object
@@ -542,10 +542,10 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
         # Select "add" (function)
         test_multiplexer.select("add")
 
-        # Bind selected
+        # Binds selected
         bound_method = test_multiplexer.bind_selected(test_bind_target)
 
-        # Verify binding
+        # Verifies binding
         assert bound_method.__self__ is test_bind_target  # type: ignore[union-attr]
 
     def test_bind_self(self, test_multiplexer: CallableMultiplexer, test_bind_target: Any) -> None:
@@ -555,10 +555,10 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
             test_multiplexer: A fixture providing a CallableMultiplexer instance.
             test_bind_target: A fixture providing an instance to bind the method to.
         """
-        # Bind self
+        # Binds self
         bound_multiplexer = test_multiplexer.bind_self(test_bind_target)
 
-        # Verify binding
+        # Verifies binding
         # CallableMultiplexer returns self when bound
         assert bound_multiplexer is test_multiplexer
         assert isinstance(bound_multiplexer, self.UnitTestClass)
@@ -601,7 +601,7 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
     def test_as_function_coroutine(self) -> None:
         """Tests as_function with a coroutine."""
 
-        # Create directly to test wrapping behavior (which supports coroutines correctly)
+        # Creates directly to test wrapping behavior (which supports coroutines correctly)
         async def coro() -> None:
             pass
 
@@ -632,7 +632,7 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
             pass
 
         cm = self.UnitTestClass(coro)
-        # Initialize _selected_bind_method
+        # Initializes _selected_bind_method
         cm.is_binding_wrapper = True
         assert hasattr(cm, "_selected_bind_method")
 
@@ -722,14 +722,14 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
         # It creates a registry if none provided
         assert cm.registry is not None
 
-        # Bind to dummy to satisfy MethodMultiplexer
+        # Binds to dummy to satisfy MethodMultiplexer
         class Dummy:
             pass
 
         d = Dummy()
         cm.bind_self(d)
 
-        # Call should work
+        # Calls should work
         assert cm() == 1
 
     def test_bind_self_not_binding(self) -> None:
@@ -803,7 +803,7 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
         # Ensure initial state
         assert cm.is_binding
 
-        # Call bind_self with None
+        # Calls bind_self with None
         # This should hit the 'if instance is not None' check and skip the body
         res = cm.bind_self(instance=None)
 

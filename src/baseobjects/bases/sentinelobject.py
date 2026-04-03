@@ -129,4 +129,6 @@ class SentinelObject(BaseReducible):
 
 # Constants #
 DEFAULTSENTINEL = SentinelObject("DEFAULTSENTINEL")
+default_sentinel = DEFAULTSENTINEL
 SEARCHSENTINEL = SentinelObject("SEARCHSENTINEL")
+search_sentinel = SEARCHSENTINEL

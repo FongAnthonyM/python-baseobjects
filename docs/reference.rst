@@ -213,6 +213,12 @@ DispatchableComposite
 .. automodule:: baseobjects.composition.dispatchablecomposite
    :members:
 
+CompositeFactoryClass
+---------------------
+
+.. automodule:: baseobjects.composition.compositefactoryclass
+   :members:
+
 dataclasses
 ---------------------
 
@@ -439,6 +445,9 @@ testsuite.composition
    :members:
 
 .. automodule:: baseobjects.testsuite.composition.dispatchablecompositetestsuite
+   :members:
+
+.. automodule:: baseobjects.testsuite.composition.compositefactoryclasstestsuite
    :members:
 
 

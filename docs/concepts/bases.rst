@@ -3,7 +3,7 @@ Bases
 
 Overview
 --------
-The bases package provides the core building blocks used throughout baseobjects. It supplies foundational abstractions and protocols that standardize object behavior in areas like copying, serialization, metaclass functionality, and callability. These classes are designed to be composed and extended, giving you a consistent, predictable baseline for building your own libraries and applications.
+The bases package provides the core building blocks used throughout baseobjects. It supplies foundational abstractions and protocols that standardize object behavior in areas like copying, serialization, metaclass functionality, and callability. These classes are designed to be composed and extended, giving a consistent, predictable baseline for building libraries and applications.
 
 Purpose
 --------
@@ -93,6 +93,6 @@ Interplay with Other Modules
 
 Best Practices
 --------------
-- Derive your public base classes from BaseObject to inherit consistent copy/deepcopy behavior.
+- Derive public base classes from BaseObject to inherit consistent copy/deepcopy behavior.
 - Prefer SentinelObject instances over None or magic strings to represent exceptional states.
-- Use BaseReducible if your objects need to round-trip through pickle reliably, including across versions (with care).
+- Use BaseReducible if objects need to round-trip through pickle reliably, including across versions (with care).

@@ -24,5 +24,5 @@ When to Use
 
 Tips
 ----
-- Choose timeouts that reflect freshness requirements of your data.
-- Consider thread/process safety requirements for your environment.
+- Choose timeouts that reflect freshness requirements of the data.
+- Consider thread/process safety requirements for the environment.

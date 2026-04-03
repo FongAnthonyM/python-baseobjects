@@ -71,7 +71,7 @@ class BaseRegisteredClass(BaseObject):
         """
         super().__init_subclass__(**kwargs)
 
-        # Add subclass to the registry.
+        # Adds subclass to the registry.
         if cls.class_registration:
             if cls.class_registry is None:
                 cls.create_class_registry()
@@ -80,7 +80,7 @@ class BaseRegisteredClass(BaseObject):
 
             cls.register_class(**(register_kwargs or {}))
 
-    # Register
+    # Registers
     @classmethod
     def create_class_registry(cls) -> None:
         """Creates a class registry for this class."""

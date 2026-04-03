@@ -65,14 +65,14 @@ class BaseReducible(BaseObject):
                 tuple[None, dict]: __dict__ is not present and __slots__ is present.
                 tuple[dict, dict]: __dict__ is present and __slots__ is present.
         """
-        # Get dict
+        # Gets dict
         _dict_: dict[str, Any] | None = getattr(self, "__dict__", None)
         if _dict_:
             _dict_ = _dict_.copy()
         else:
             _dict_ = None
 
-        # Get slots
+        # Gets slots
         _slots_ = getattr(self, "__slots__", None)
         if _slots_:
             temp_slots = {}
@@ -85,7 +85,7 @@ class BaseReducible(BaseObject):
         else:
             _slots_ = None
 
-        # Return the correct state
+        # Returns the correct state
         if _dict_ is not None and _slots_ is not None:
             return _dict_, _slots_
         elif _slots_ is not None:

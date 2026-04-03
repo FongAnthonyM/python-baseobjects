@@ -70,28 +70,28 @@ class OrderableDictTestSuite(BaseDictTestSuite):
     # Magic Methods #
     def test_setitem_getitem(self, empty_dict: OrderableDict) -> None:
         """Tests the __setitem__ and __getitem__ methods."""
-        # Set items
+        # Sets items
         empty_dict["a"] = 1
         empty_dict["b"] = 2
         empty_dict["c"] = 3
 
-        # Verify items and order
+        # Verifies items and order
         assert empty_dict["a"] == 1
         assert empty_dict["b"] == 2
         assert empty_dict["c"] == 3
         assert empty_dict.order == ["a", "b", "c"]
 
-        # Update an existing item
+        # Updates an existing item
         empty_dict["b"] = 20
         assert empty_dict["b"] == 20
         assert empty_dict.order == ["a", "b", "c"]  # Order unchanged
 
     def test_delitem(self, simple_dict: OrderableDict) -> None:
         """Tests the __delitem__ method."""
-        # Delete an item
+        # Deletes an item
         del simple_dict["b"]
 
-        # Verify item is removed and order is updated
+        # Verifies item is removed and order is updated
         assert "b" not in simple_dict
         assert simple_dict.order == ["a", "c"]
 
@@ -104,7 +104,7 @@ class OrderableDictTestSuite(BaseDictTestSuite):
         # Iterate and collect keys
         keys = list(simple_dict)
 
-        # Verify keys match the order
+        # Verifies keys match the order
         assert keys == simple_dict.order
         assert keys == ["a", "b", "c"]
 
@@ -176,7 +176,7 @@ class OrderableDictTestSuite(BaseDictTestSuite):
         assert obj_deepcopy.order == test_object.order
         assert id(obj_deepcopy.order) != id(test_object.order)  # Different list objects
 
-        # Verify that modifying the deepcopy doesn't affect the original
+        # Verifies that modifying the deepcopy doesn't affect the original
         key = "deepcopy_key" if not use_method else "deepcopy_method_key"
         obj_deepcopy[key] = 300
         assert key in obj_deepcopy
@@ -199,7 +199,7 @@ class OrderableDictTestSuite(BaseDictTestSuite):
         assert unpickled == test_object
         assert unpickled.order == test_object.order
 
-        # Check that the values are accessible
+        # Checks that the values are accessible
         assert unpickled["a"] == 1
         assert unpickled["b"] == 2
         assert unpickled["c"] == 3
@@ -225,7 +225,7 @@ class OrderableDictTestSuite(BaseDictTestSuite):
 
     def test_get_index(self, simple_dict: OrderableDict) -> None:
         """Tests the get_index method."""
-        # Get values by index
+        # Gets values by index
         assert simple_dict.get_index(0) == 1  # Value at key "a"
         assert simple_dict.get_index(1) == 2  # Value at key "b"
         assert simple_dict.get_index(2) == 3  # Value at key "c"
@@ -239,11 +239,11 @@ class OrderableDictTestSuite(BaseDictTestSuite):
 
     def test_set_index(self, simple_dict: OrderableDict) -> None:
         """Tests the set_index method."""
-        # Set values by index
+        # Sets values by index
         simple_dict.set_index(0, 10)  # Set value at key "a"
         simple_dict.set_index(1, 20)  # Set value at key "b"
 
-        # Verify values were updated
+        # Verifies values were updated
         assert simple_dict["a"] == 10
         assert simple_dict["b"] == 20
         assert simple_dict["c"] == 3  # Unchanged
@@ -336,10 +336,10 @@ class OrderableDictTestSuite(BaseDictTestSuite):
 
     def test_update(self) -> None:
         """Tests the update method."""
-        # Create a fresh dictionary for this test
+        # Creates a fresh dictionary for this test
         test_dict = self.UnitTestClass({"a": 1, "b": 2, "c": 3})
 
-        # Update with dictionary
+        # Updates with dictionary
         test_dict.update({"b": 20, "d": 4, "e": 5})
         assert test_dict["a"] == 1  # Unchanged
         assert test_dict["b"] == 20  # Updated
@@ -348,7 +348,7 @@ class OrderableDictTestSuite(BaseDictTestSuite):
         assert test_dict["e"] == 5  # New
         assert set(test_dict.order) == {"a", "b", "c", "d", "e"}
 
-        # Create a new dictionary for this test
+        # Creates a new dictionary for this test
         kw_dict = self.UnitTestClass()
         kw_dict.update({"x": 1, "y": 2})
         assert kw_dict["x"] == 1
@@ -447,7 +447,7 @@ class OrderableDictTestSuite(BaseDictTestSuite):
 
     def test_remove(self, simple_dict: OrderableDict) -> None:
         """Tests the remove method."""
-        # Remove existing key
+        # Removes existing key
         simple_dict.remove("b")
         assert "b" not in simple_dict
         assert simple_dict.order == ["a", "c"]
@@ -469,7 +469,7 @@ class OrderableDictTestSuite(BaseDictTestSuite):
         simple_dict.reverse()
         assert simple_dict.order == ["c", "b", "a"]
 
-        # Verify values are still accessible
+        # Verifies values are still accessible
         assert simple_dict["a"] == 1
         assert simple_dict["b"] == 2
         assert simple_dict["c"] == 3

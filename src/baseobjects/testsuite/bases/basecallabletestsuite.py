@@ -30,7 +30,7 @@ from typing import Any
 import pytest
 
 # Local Packages #
-from ...bases import BaseCallable
+from ...bases import BaseCallable, BaseMethod
 from .baseobjecttestsuite import BaseObjectTestSuite
 
 
@@ -288,16 +288,16 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
         Args:
             test_function_object: A fixture providing a BaseCallable instance that wraps a function.
         """
-        # Call the callable object
+        # Calls the callable object
         result = test_function_object(3)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 5  # 3 + 2 (default y)
 
-        # Call with different arguments
+        # Calls with different arguments
         result = test_function_object(3, 4)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 7  # 3 + 4
 
     def test_call_wrapped(self, test_function_object: BaseCallable) -> None:
@@ -306,16 +306,16 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
         Args:
             test_function_object: A fixture providing a BaseFunction instance that wraps a function.
         """
-        # Call the wrapped function directly
+        # Calls the wrapped function directly
         result = test_function_object.call_wrapped(3)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 5  # 3 + 2 (default y)
 
-        # Call with different arguments
+        # Calls with different arguments
         result = test_function_object.call_wrapped(3, 4)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 7  # 3 + 4
 
     # Instantiation #
@@ -326,13 +326,13 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
             *args: Positional arguments list to pass to the class constructor.
             **kwargs: Keyword arguments to pass to the class constructor.
         """
-        # Create an instance with a test function
+        # Creates an instance with a test function
         instance = self.UnitTestClass(concrete_function, *args, **kwargs)
 
-        # Verify it's an instance of the correct class
+        # Verifies it's an instance of the correct class
         assert isinstance(instance, self.UnitTestClass)
 
-        # Verify it has the correct wrapped function
+        # Verifies it has the correct wrapped function
         assert instance.__func__ is concrete_function
 
     # Copying #
@@ -439,17 +439,17 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
         Args:
             test_function_object: A fixture providing a BaseCallable instance that wraps a function.
         """
-        # Convert to a standard Python function
+        # Converts to a standard Python function
         func = test_function_object.as_function()
 
-        # Verify it's a function
+        # Verifies it's a function
         assert callable(func)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert func(3) == 5  # 3 + 2 (default y)
         assert func(3, 4) == 7  # 3 + 4
 
-        # Verify it has the correct attributes
+        # Verifies it has the correct attributes
         assert func.__name__ == test_function_object.__name__  # type: ignore[attr-defined]
         assert func.__doc__ == test_function_object.__doc__
         assert func.__wrapped__ is test_function_object  # type: ignore[attr-defined]
@@ -478,7 +478,7 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
             test_bind_target: A fixture providing an instance to bind the method to.
         """
         bound_method = test_method_object.bind_builtin(test_bind_target, self.BindTargetClass)
-        assert isinstance(bound_method, MethodType)
+        assert isinstance(bound_method, (MethodType, BaseMethod))
         assert bound_method.__func__ is test_method_object
         assert bound_method.__self__ is test_bind_target
 
@@ -495,7 +495,7 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
         assert bound_method.__func__ is test_method_object.__func__
         assert bound_method.__self__ is test_bind_target
 
-        # Verify it works
+        # Verifies it works
         result = bound_method(3)
         assert result == (5, test_bind_target)
 

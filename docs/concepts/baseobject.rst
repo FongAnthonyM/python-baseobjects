@@ -3,7 +3,7 @@ BaseObject
 
 Overview
 --------
-The BaseObject class is the foundation of the library, providing predictable object semantics for copying and deep copying. It serves as a minimal base you can safely derive from when you want consistent behavior across your own types.
+The BaseObject class is the foundation of the library, providing predictable object semantics for copying and deep copying. It serves as a minimal base to safely derive from when consistent behavior across custom types is desired.
 
 Purpose
 ---------
@@ -42,10 +42,10 @@ Basic Usage
 
 When to Use
 -----------
-- As the base class for your public object hierarchies where consistent copy/deepcopy matters.
+- As the base class for public object hierarchies where consistent copy/deepcopy matters.
 - In combination with other baseobjects features (composition, wrappers, registries) to get uniform behavior.
 
 Best Practices
 --------------
 - Derive from BaseObject instead of reinventing copy/deepcopy.
-- Prefer deepcopy() when your objects keep internal mutable containers that should not be shared.
+- Prefer deepcopy() when objects keep internal mutable containers that should not be shared.

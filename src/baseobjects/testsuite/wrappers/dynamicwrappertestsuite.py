@@ -15,7 +15,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -33,7 +33,7 @@ class ConcreteDynamicWrapperWithGetAttr(DynamicWrapper):
     This class is used to test how DynamicWrapper handles objects with __getattr__.
     """
 
-    _wrapped_map_: ClassVar[list[str]] = ["_wrapped_obj"]
+    _wrapped_map_: list[str] = ["_wrapped_obj"]
 
     def __init__(self, wrapped: Any = None) -> None:
         """Initializes with a wrapped object.
@@ -90,17 +90,17 @@ class DynamicWrapperTestSuite(WrapperTestSuite):
         This test verifies that wrappers can be nested, with one wrapper wrapping another wrapper, and that attribute
         access works correctly through multiple levels of wrapping.
         """
-        # Create a wrapper
+        # Creates a wrapper
         wrapper1 = self.UnitTestClass(self.ConcreteOne())
 
-        # Create a wrapper that wraps the first wrapper
+        # Creates a wrapper that wraps the first wrapper
         wrapper2 = self.UnitTestClass(wrapper1)
 
-        # Verify that attribute access works through multiple levels of wrapping
+        # Verifies that attribute access works through multiple levels of wrapping
         assert wrapper2.one == "one"  # type: ignore[attr-defined, unused-ignore]
         assert wrapper2.method() == "one"  # type: ignore[attr-defined, unused-ignore]
 
-        # Verify that setting attributes works through multiple levels of wrapping
+        # Verifies that setting attributes works through multiple levels of wrapping
         wrapper2.one = "nested"  # type: ignore[attr-defined, unused-ignore]
 
         # DynamicWrapper sets on self, does not delegate set
@@ -178,7 +178,7 @@ class DynamicWrapperTestSuite(WrapperTestSuite):
         """Tests deleting an attribute when a wrapped object container is missing."""
 
         class TestMissingMap(self.UnitTestClass):  # type: ignore[misc, name-defined]
-            _wrapped_map_: ClassVar[list[str]] = ["_missing"]
+            _wrapped_map_: list[str] = ["_missing"]
 
         obj = TestMissingMap()
 

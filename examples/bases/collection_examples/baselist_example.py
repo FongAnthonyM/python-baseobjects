@@ -23,7 +23,7 @@ class SortedList(BaseList):
     """A custom list that maintains its elements in sorted order."""
 
     def __init__(self, initlist: list[Any] | None = None, *args: Any, **kwargs: Any) -> None:
-        """Initialize a SortedList object.
+        """Initializes a SortedList object.
 
         Args:
             initlist: Initial list data
@@ -44,7 +44,7 @@ class SortedList(BaseList):
             self.data.sort()
 
     def append(self, item: Any) -> None:
-        """Add an item to the list and maintain sorted order.
+        """Adds an item to the list and maintain sorted order.
 
         Args:
             item: The item to add
@@ -78,7 +78,7 @@ class UniqueList(BaseList):
     """A custom list that only contains unique elements."""
 
     def __init__(self, initlist: list[Any] | None = None, *args: Any, **kwargs: Any) -> None:
-        """Initialize a UniqueList object.
+        """Initializes a UniqueList object.
 
         Args:
             initlist: Initial list data
@@ -97,13 +97,13 @@ class UniqueList(BaseList):
             **kwargs: Additional keyword arguments for parent classes
         """
         if initlist:
-            # Add each item only if it's not already in the list
+            # Adds each item only if it's not already in the list
             for item in initlist:
                 if item not in self.data:
                     self.data.append(item)
 
     def append(self, item: Any) -> None:
-        """Add an item to the list if it's not already present.
+        """Adds an item to the list if it's not already present.
 
         Args:
             item: The item to add
@@ -134,10 +134,10 @@ class UniqueList(BaseList):
 
 # Example Sections #
 def basic_baselist_example() -> None:
-    """Demonstrate basic usage of BaseList."""
+    """Demonstrates basic usage of BaseList."""
     print("\nBasic BaseList Example:")
 
-    # Create a BaseList instance
+    # Creates a BaseList instance
     base_list = BaseList(["apple", "banana", "cherry"])
     print(f"BaseList: {base_list}")
 
@@ -149,7 +149,7 @@ def basic_baselist_example() -> None:
     base_list[1] = "blueberry"
     print(f"After modification: {base_list} == ['apple', 'blueberry', 'cherry']")
 
-    # Add items
+    # Adds items
     base_list.append("date")
     print(f"After append: {base_list} == ['apple', 'blueberry', 'cherry', 'date']")
 
@@ -161,7 +161,7 @@ def basic_baselist_example() -> None:
     base_list.extend(["elderberry", "fig"])
     print(f"After extend: {base_list} == ['apple', 'blueberry', 'cantaloupe', 'cherry', 'date', 'elderberry', 'fig']")
 
-    # Remove items
+    # Removes items
     base_list.remove("cherry")
     print(f"After remove: {base_list} == ['apple', 'blueberry', 'cantaloupe', 'date', 'elderberry', 'fig']")
 
@@ -177,14 +177,14 @@ def basic_baselist_example() -> None:
 
 
 def sorted_list_example() -> None:
-    """Demonstrate using a custom SortedList class."""
+    """Demonstrates using a custom SortedList class."""
     print("\nSorted List Example:")
 
-    # Create a SortedList with unsorted data
+    # Creates a SortedList with unsorted data
     sorted_list = SortedList([5, 2, 8, 1, 9, 3])
     print(f"Initial sorted list: {sorted_list} == [1, 2, 3, 5, 8, 9]")
 
-    # Add items
+    # Adds items
     sorted_list.append(4)
     print(f"After append(4): {sorted_list} == [1, 2, 3, 4, 5, 8, 9]")
 
@@ -196,20 +196,20 @@ def sorted_list_example() -> None:
     sorted_list.extend([6, 0])
     print(f"After extend([6, 0]): {sorted_list} == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
 
-    # Remove items
+    # Removes items
     sorted_list.remove(5)
     print(f"After remove(5): {sorted_list} == [0, 1, 2, 3, 4, 6, 7, 8, 9]")
 
 
 def unique_list_example() -> None:
-    """Demonstrate using a custom UniqueList class."""
+    """Demonstrates using a custom UniqueList class."""
     print("\nUnique List Example:")
 
-    # Create a UniqueList with duplicate data
+    # Creates a UniqueList with duplicate data
     unique_list = UniqueList(["apple", "banana", "apple", "cherry", "banana"])
     print(f"Initial unique list: {unique_list} == ['apple', 'banana', 'cherry']")
 
-    # Add items
+    # Adds items
     unique_list.append("date")
     print(f"After append('date'): {unique_list} == ['apple', 'banana', 'cherry', 'date']")
 
@@ -232,10 +232,10 @@ def unique_list_example() -> None:
 
 
 def baseobject_features_example() -> None:
-    """Demonstrate BaseObject features with BaseList."""
+    """Demonstrates BaseObject features with BaseList."""
     print("\nBaseObject Features Example:")
 
-    # Create a list with nested structures
+    # Creates a list with nested structures
     original = BaseList([1, 2, [3, 4], {"key": "value"}])
     print(f"Original list: {original}")
 
@@ -267,7 +267,7 @@ def baseobject_features_example() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     basic_baselist_example()
     sorted_list_example()
     unique_list_example()

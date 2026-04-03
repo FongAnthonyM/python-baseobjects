@@ -182,13 +182,13 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
 
         for name, obj in wrapped:
             if obj is not None:
-                # Create an attribute name to store the wrapped object
+                # Creates an attribute name to store the wrapped object
                 store_name = f"_{name}"
 
-                # Set wrapped property
+                # Sets wrapped property
                 setattr(cls, name, property(*cls._wrapped_factory(store_name)))
 
-                # Set attributes properties
+                # Sets attributes properties
                 obj_set = set(dir(obj)) | set(get_type_hints(obj if isinstance(obj, type) else type(obj)))
                 cls._wrapped_attributes[store_name] = add_dir = obj_set - remove_names
                 remove_names |= obj_set
@@ -240,11 +240,11 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
         remove_names = original | self._exclude_attributes
         cls = self.__class__
         for name, _ in self._wrapped_map_:
-            # Create an attribute name to store the wrapped object
+            # Creates an attribute name to store the wrapped object
             store_name = f"_{name}"
 
             if (obj := getattr(self, store_name, None)) is not None:
-                # Set attributes properties
+                # Sets attributes properties
                 old_obj_set = self._wrapped_attributes.get(store_name, set())
                 obj_set = set(dir(obj)) | set(get_type_hints(obj if isinstance(obj, type) else type(obj)))
                 new_obj_set = obj_set | old_obj_set
@@ -277,11 +277,11 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             value: The wrapped object.
             name: The attribute name to set the wrapped object to.
         """
-        # Get wrapped attribute names
+        # Gets wrapped attribute names
         wrapped_names = self._wrapped_attributes[name]
         old_attributes: dict[str, Any] = {}
 
-        # Get the previous wrapped's attributes as temporary attributes
+        # Gets the previous wrapped's attributes as temporary attributes
         if self._get_previous_wrapped:
             previous_wrapped = getattr(self, name, None)
             if value is None and previous_wrapped is not None:
@@ -291,7 +291,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             elif self._set_next_wrapped and previous_wrapped is not None:
                 old_attributes.update((a, getattr(previous_wrapped, a, SEARCHSENTINEL)) for a in wrapped_names)
 
-        # Set new attributes
+        # Sets new attributes
         if self._set_next_wrapped and value is not None:
             for attribute_name in wrapped_names:
                 temp_name = f"__{name}_{attribute_name}_"

@@ -78,13 +78,13 @@ class BaseDecoratorTestSuite(BaseFunctionTestSuite):
             *args: Positional arguments list to pass to the class constructor.
             **kwargs: Keyword arguments to pass to the class constructor.
         """
-        # Create an instance with a test function
+        # Creates an instance with a test function
         instance = self.UnitTestClass(concrete_function)
 
-        # Verify it's an instance of the correct class
+        # Verifies it's an instance of the correct class
         assert isinstance(instance, self.UnitTestClass)
 
-        # Verify it has the correct wrapped function
+        # Verifies it has the correct wrapped function
         assert instance.__func__ is concrete_function
 
     # Pickling #

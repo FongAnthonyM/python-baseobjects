@@ -128,12 +128,12 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
         This test verifies that the call_async method correctly calls an async function.
         """
 
-        # Define a test async function
+        # Defines a test async function
         async def test_async_function(*args: Any, **kwargs: Any) -> str:
             await asyncio.sleep(0)
             return "async function called"
 
-        # Call the async function
+        # Calls the async function
         result = await test_object.call_async(test_async_function)
 
         # Validate
@@ -145,7 +145,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
 
         This test verifies that an async callback is only called when the condition is True.
         """
-        # Define test async callback and conditions
+        # Defines test async callback and conditions
         result = []
 
         async def test_async_callback(*args: Any, **kwargs: Any) -> str:
@@ -185,7 +185,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
             test_object: A fixture providing a test object instance.
             is_task: Whether the callback returns a task.
         """
-        # Define test async callback and condition
+        # Defines test async callback and condition
         call_count = 0
         tasks: deque[Any] | None = deque() if is_task else None
 
@@ -206,7 +206,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
             condition_calls += 1
             return condition_calls <= 2
 
-        # Call while condition
+        # Calls while condition
         if is_task:
             await test_object.call_while_condition_task_async(condition_async, test_async_callback, tasks)  # type: ignore[arg-type, unused-ignore]
         else:
@@ -223,7 +223,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
         This test verifies that call_while_condition correctly calls a callback repeatedly
         while a condition is true.
         """
-        # Define test callback and condition
+        # Defines test callback and condition
         call_count = 0
 
         def test_callback(*args: Any, **kwargs: Any) -> str:
@@ -239,7 +239,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
             condition_calls += 1
             return condition_calls <= 2
 
-        # Call while condition
+        # Calls while condition
         test_object.call_while_condition(condition, test_callback)
 
         # Validate
@@ -345,14 +345,14 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
         This test verifies that registering a callback with an existing name overwrites the previous callback.
         """
 
-        # Define a new callback
+        # Defines a new callback
         def new_callback(*args: Any, **kwargs: Any) -> str:
             return "new callback called"
 
-        # Register the new callback with an existing name
+        # Registers the new callback with an existing name
         test_object_with_callbacks.register_callback("callback1", new_callback)
 
-        # Call the callback
+        # Calls the callback
         result = test_object_with_callbacks.call_callback("callback1")
 
         # Validate
@@ -365,12 +365,12 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
         This test verifies that an async callback can be registered and retrieved.
         """
 
-        # Define a test async callback
+        # Defines a test async callback
         async def test_async_callback(*args: Any, **kwargs: Any) -> str:
             await asyncio.sleep(0)
             return "async callback called"
 
-        # Register the async callback
+        # Registers the async callback
         test_object.register_callback("test_async_callback", test_async_callback, is_async=True)
 
         # Validate
@@ -382,7 +382,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
 
         This test verifies that a scheduler can be created and has the expected type.
         """
-        # Create a scheduler
+        # Creates a scheduler
         scheduler = test_object.create_scheduler()
 
         # Validate
@@ -393,7 +393,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
 
         This test verifies that a scheduler can be registered and retrieved.
         """
-        # Register a scheduler
+        # Registers a scheduler
         test_object.register_scheduler("test_scheduler")
 
         # Validate
@@ -405,17 +405,17 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
 
         This test verifies that a callback can be registered with a scheduler.
         """
-        # Register a scheduler
+        # Registers a scheduler
         test_object.register_scheduler("test_scheduler")
 
-        # Register the callback with the scheduler
+        # Registers the callback with the scheduler
         test_object.register_scheduler_callback("test_callback", "test_scheduler")
 
         # Validate
-        # Check that the callbacks are registered
+        # Checks that the callbacks are registered
         assert "test_callback" in test_object.callbacks
         assert "test_callback" in test_object.callbacks_async
-        # Check that the task queue is created
+        # Checks that the task queue is created
         assert "test_callback" in test_object.tasks
 
     @pytest.mark.asyncio
@@ -425,7 +425,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
         This test verifies that join_tasks_async waits for all tasks to complete.
         """
 
-        # Create some tasks
+        # Creates some tasks
         async def async_task() -> str:
             await asyncio.sleep(0.1)
             return "task completed"
@@ -433,7 +433,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
         task1 = asyncio.create_task(async_task())
         task2 = asyncio.create_task(async_task())
 
-        # Add tasks to the manager
+        # Adds tasks to the manager
         test_object.tasks["test_tasks"] = deque([task1, task2])
 
         # Join tasks
@@ -449,7 +449,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
 
         This test verifies that cancel_tasks cancels all tasks.
         """
-        # Create a task that can be cancelled
+        # Creates a task that can be cancelled
         cancel_requested = False
 
         async def cancellable_task() -> None:
@@ -461,17 +461,17 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
                 cancel_requested = True
                 raise
 
-        # Create the task and add it to the manager
+        # Creates the task and add it to the manager
         task = asyncio.create_task(cancellable_task())
         test_object.tasks["test_tasks"] = deque([task])
 
-        # Wait a bit to ensure the task is running
+        # Waits a bit to ensure the task is running
         await asyncio.sleep(0.2)
 
         # Cancel tasks
         test_object.cancel_tasks()
 
-        # Wait for the task to be fully cancelled
+        # Waits for the task to be fully cancelled
         try:
             await asyncio.wait_for(task, timeout=0.5)
         except TimeoutError, asyncio.CancelledError:
@@ -494,7 +494,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
         This test verifies that format_conditional_callback correctly formats the callback, condition, and caller.
         """
 
-        # Define test callback, condition, and caller
+        # Defines test callback, condition, and caller
         def test_callback(*args: Any, **kwargs: Any) -> str:
             return "test callback called"
 
@@ -506,7 +506,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
                 return callback()
             return None
 
-        # Format the conditional callback
+        # Formats the conditional callback
         callback, condition, caller = test_object.format_conditional_callback(
             test_callback,
             test_condition,
@@ -529,7 +529,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
         This test verifies that create_conditional_callback correctly creates a callable that combines
         the condition and callback.
         """
-        # Define test callback, condition, and caller
+        # Defines test callback, condition, and caller
         result = []
 
         def test_callback(*args: Any, **kwargs: Any) -> str:
@@ -544,7 +544,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
                 return callback()
             return None
 
-        # Create the conditional callback
+        # Creates the conditional callback
         conditional_callback = test_object.create_conditional_callback(test_callback, test_condition, test_caller)
 
         # Validate
@@ -561,7 +561,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
         the specified conditional callbacks.
         """
 
-        # Define test callbacks and conditions
+        # Defines test callbacks and conditions
         async def test_callback1(*args: Any, **kwargs: Any) -> str:
             await asyncio.sleep(0)
             return "test callback1 called"
@@ -574,17 +574,17 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
             await asyncio.sleep(0)
             return True
 
-        # Register conditional callbacks with is_async=True
+        # Registers conditional callbacks with is_async=True
         test_object.register_conditional_callback("test_conditional1", test_callback1, test_condition, is_async=True)
         test_object.register_conditional_callback("test_conditional2", test_callback2, test_condition, is_async=True)
 
-        # Create a conditional scheduler
+        # Creates a conditional scheduler
         scheduler = test_object.create_conditional_scheduler(["test_conditional1", "test_conditional2"])
 
         # Validate
         assert isinstance(scheduler, CallbackScheduler)
         assert len(scheduler.callback_map) == 2
-        # Check that the callbacks in the scheduler are the ones we registered
+        # Checks that the callbacks in the scheduler are the ones we registered
         for callback, _ in scheduler.callback_map:
             assert callable(callback)
 
@@ -594,7 +594,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
         This test verifies that register_conditional_callbacks correctly registers multiple callbacks.
         """
 
-        # Define test callbacks and conditions
+        # Defines test callbacks and conditions
         def test_callback1(*args: Any, **kwargs: Any) -> str:
             return "test callback1 called"
 
@@ -604,7 +604,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
         def test_condition(*args: Any, **kwargs: Any) -> bool:
             return True
 
-        # Register conditional callbacks
+        # Registers conditional callbacks
         callbacks = [
             ("test_conditional1", {"callback": test_callback1, "condition": test_condition}),
             ("test_conditional2", {"callback": test_callback2, "condition": test_condition}),
@@ -624,7 +624,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
         with the specified conditional callbacks.
         """
 
-        # Define test callbacks and conditions
+        # Defines test callbacks and conditions
         async def test_callback1(*args: Any, **kwargs: Any) -> str:
             await asyncio.sleep(0)
             return "test callback1 called"
@@ -637,11 +637,11 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
             await asyncio.sleep(0)
             return True
 
-        # Register conditional callbacks with is_async=True
+        # Registers conditional callbacks with is_async=True
         test_object.register_conditional_callback("test_conditional1", test_callback1, test_condition, is_async=True)
         test_object.register_conditional_callback("test_conditional2", test_callback2, test_condition, is_async=True)
 
-        # Register a conditional scheduler
+        # Registers a conditional scheduler
         test_object.register_conditional_scheduler(
             "test_conditional_scheduler",
             condition_names=["test_conditional1", "test_conditional2"],
@@ -659,7 +659,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
         to an existing scheduler.
         """
 
-        # Define test callbacks and conditions
+        # Defines test callbacks and conditions
         def test_callback1(*args: Any, **kwargs: Any) -> str:
             return "test callback1 called"
 
@@ -669,7 +669,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
         def test_condition(*args: Any, **kwargs: Any) -> bool:
             return True
 
-        # Register conditional callbacks and a scheduler
+        # Registers conditional callbacks and a scheduler
         test_object.register_conditional_callback("test_conditional1", test_callback1, test_condition, is_async=True)
         test_object.register_conditional_callback("test_conditional2", test_callback2, test_condition, is_async=True)
         test_object.register_scheduler("test_scheduler")
@@ -679,7 +679,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
 
         # Validate
         assert len(test_object.schedulers["test_scheduler"].callback_map) == 2
-        # Check that task queues were created
+        # Checks that task queues were created
         assert "test_conditional1_conditional_caller" in test_object.tasks
         assert "test_conditional2_conditional_caller" in test_object.tasks
 
@@ -699,7 +699,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
             test_object: A fixture providing a test object instance.
             is_task: Whether the callback returns a task.
         """
-        # Define test async callback and condition
+        # Defines test async callback and condition
         call_count = 0
         tasks: deque[Any] = deque()
 
@@ -721,7 +721,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
             condition_calls += 1
             return condition_calls <= 2
 
-        # Call while condition
+        # Calls while condition
         if is_task:
             await test_object.enqueue_call_while_condition_task_async(condition_async, test_async_callback, tasks)
         else:
@@ -738,7 +738,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
         This test verifies that join_tasks waits for all tasks to complete.
         """
 
-        # Create some completed tasks
+        # Creates some completed tasks
         async def dummy_task(result: str) -> str:
             await asyncio.sleep(0)
             return result
@@ -750,7 +750,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
         await asyncio.sleep(0)
         await asyncio.sleep(0)
 
-        # Add tasks to the manager
+        # Adds tasks to the manager
         test_object.tasks["test_tasks"] = deque([task1, task2])
 
         # Join tasks
@@ -765,7 +765,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
 
         This test verifies that true_condition always returns True.
         """
-        # Call the method
+        # Calls the method
         result = CallbackManager.true_condition()
 
         # Validate
@@ -777,7 +777,7 @@ class CallbackManagerTestSuite(BaseObjectTestSuite):
 
         This test verifies that true_condition_async always returns True.
         """
-        # Call the method
+        # Calls the method
         result = await CallbackManager.true_condition_async()
 
         # Validate

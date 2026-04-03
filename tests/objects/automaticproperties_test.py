@@ -21,7 +21,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 import pickle
 from collections.abc import Callable
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -37,7 +37,7 @@ class ConcreteAutomaticPropertiesClass(AutomaticProperties):
     """A concrete implementation of AutomaticProperties for testing."""
 
     # Class Attributes #
-    properties: ClassVar[dict[str, str | tuple[Any, ...]]] = {
+    properties: dict[str, str | tuple[Any, ...]] = {
         "test_prop": "_test_prop",
         "another_prop": "_another_prop",
         "complex_prop": ("property_method_factory", "_complex_prop", {}),
@@ -134,7 +134,7 @@ class TestAutomaticProperties(AutomaticPropertiesTestSuite):
         """Tests that complex property definitions work correctly."""
 
         class ComplexPropertyClass(ConcreteAutomaticPropertiesClass):
-            properties: ClassVar[dict[str, Any]] = {
+            properties: dict[str, Any] = {
                 "complex_prop_2": ("property_method_factory", "_complex_prop_2", {}),
             }
 
@@ -152,7 +152,7 @@ class TestAutomaticProperties(AutomaticPropertiesTestSuite):
             """A test class for default_property_function_factory."""
 
             default_property_function_factory = "property_class_method_factory"
-            properties: ClassVar[dict[str, Any]] = {"default_factory_prop": "_default_factory_prop"}
+            properties: dict[str, Any] = {"default_factory_prop": "_default_factory_prop"}
 
         obj: Any = DefaultFactoryClass()
         obj._default_factory_prop = "default factory value"
@@ -165,12 +165,12 @@ class TestAutomaticProperties(AutomaticPropertiesTestSuite):
         """Tests that properties are inherited correctly."""
 
         class ParentClass(ConcreteAutomaticPropertiesClass):
-            properties: ClassVar[dict[str, Any]] = {"parent_prop": "_parent_prop"}
+            properties: dict[str, Any] = {"parent_prop": "_parent_prop"}
 
         class ChildClass(ParentClass):
             """Child class for testing property inheritance."""
 
-            properties: ClassVar[dict[str, Any]] = {"child_prop": "_child_prop"}
+            properties: dict[str, Any] = {"child_prop": "_child_prop"}
 
         obj: Any = ChildClass()
         obj._parent_prop = "parent value"
@@ -194,7 +194,7 @@ class TestAutomaticProperties(AutomaticPropertiesTestSuite):
         class CallableFactoryClass(ConcreteAutomaticPropertiesClass):
             """A test class for callable factory."""
 
-            properties: ClassVar[dict[str, Any]] = {
+            properties: dict[str, Any] = {
                 "callable_prop": (custom_factory, "_callable_prop", {}),
             }
 

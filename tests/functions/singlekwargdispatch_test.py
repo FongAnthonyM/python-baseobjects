@@ -15,7 +15,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any
+from typing import Any, Literal
 from unittest.mock import patch
 
 # Third-Party Packages #
@@ -261,7 +261,7 @@ class TestSingleKwargDispatch:
 
         with pytest.raises(TypeError, match="not all arguments are classes"):
             @func.register
-            def _(arg: int | list[int]) -> None: ...
+            def _(arg: int | Literal[1]) -> None: ...
 
     def test_pickling(self) -> None:
         """Tests pickling of component."""

@@ -23,7 +23,7 @@ import gc
 # Imports #
 import pickle
 import weakref
-from typing import Any, ClassVar, cast
+from typing import Any, cast
 
 # Third-Party Packages #
 import pytest

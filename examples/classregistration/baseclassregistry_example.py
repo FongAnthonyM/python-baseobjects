@@ -11,7 +11,7 @@ This example demonstrates:
 
 # Imports #
 # Standard Libraries #
-from typing import Any, cast
+from typing import Any
 
 # Source Packages #
 from baseobjects.classregistration import BaseClassRegistry
@@ -48,7 +48,9 @@ class SimpleClassRegistry(BaseClassRegistry):
         Returns:
             The requested class, or the default value if not found.
         """
-        return cast(type, self.get(name, default))
+        result = self.get(name, default)
+        assert isinstance(result, type)
+        return result
 
 
 # Example classes to register
@@ -56,7 +58,7 @@ class Animal:
     """Base class for animals."""
 
     def __init__(self, name: str) -> None:
-        """Initialize the animal with a name."""
+        """Initializes the animal with a name."""
         self.name = name
 
     def speak(self) -> str:
@@ -94,11 +96,11 @@ def basic_registry_usage() -> None:
     """Demonstrates basic usage of a class registry."""
     print("Basic Class Registry Usage:\n")
 
-    # Create a registry
+    # Creates a registry
     print("Creating a class registry...")
     registry = SimpleClassRegistry()
 
-    # Register classes
+    # Registers classes
     print("Registering classes...")
     registry.register_class(Dog)
     registry.register_class(Cat)
@@ -109,12 +111,12 @@ def basic_registry_usage() -> None:
         print(f"  - {name}: {cls.__name__}")
     print()
 
-    # Get classes from the registry
+    # Gets classes from the registry
     print("Getting classes from the registry...")
     dog_class = registry.get_class("Dog")
     cat_class = registry.get_class("Cat")
 
-    # Create instances
+    # Creates instances
     print("Creating instances of retrieved classes...")
     dog = dog_class("Buddy")
     cat = cat_class("Whiskers")
@@ -134,11 +136,11 @@ def custom_registry_keys() -> None:
     """Demonstrates using custom keys for class registration."""
     print("Custom Registry Keys:\n")
 
-    # Create a registry
+    # Creates a registry
     print("Creating a class registry...")
     registry = SimpleClassRegistry()
 
-    # Register classes with custom names
+    # Registers classes with custom names
     print("Registering classes with custom names...")
     registry.register_class(Dog, name="canine")
     registry.register_class(Cat, name="feline")
@@ -149,13 +151,13 @@ def custom_registry_keys() -> None:
         print(f"  - {name}: {cls.__name__}")
     print()
 
-    # Get classes from the registry using custom names
+    # Gets classes from the registry using custom names
     print("Getting classes from the registry using custom names...")
     dog_class = registry.get_class("canine")
     cat_class = registry.get_class("feline")
     bird_class = registry.get_class("avian")
 
-    # Create instances
+    # Creates instances
     print("Creating instances of retrieved classes...")
     dog = dog_class("Rex")
     cat = cat_class("Felix")
@@ -172,17 +174,17 @@ def factory_pattern() -> None:
     """Demonstrates using a class registry as a factory."""
     print("Factory Pattern with Class Registry:\n")
 
-    # Create a registry
+    # Creates a registry
     print("Creating a class registry...")
     registry = SimpleClassRegistry()
 
-    # Register classes
+    # Registers classes
     print("Registering classes...")
     registry.register_class(Dog)
     registry.register_class(Cat)
     registry.register_class(Bird)
 
-    # Create a factory function
+    # Creates a factory function
     def create_animal(animal_type: str, name: str) -> Animal:
         """Factory function to create animals.
 
@@ -196,11 +198,13 @@ def factory_pattern() -> None:
         Raises:
             ValueError: If the animal type is not found in the registry.
         """
-        animal_class = cast(Any, registry.get_class(animal_type))
+        animal_class: Any = registry.get_class(animal_type)
         if animal_class is None:
             msg = f"Unknown animal type: {animal_type}"
             raise ValueError(msg)
-        return cast(Animal, animal_class(name))
+        result = animal_class(name)
+        assert isinstance(result, Animal)
+        return result
 
     # Use the factory to create animals
     print("Using the factory to create animals...")
@@ -232,11 +236,11 @@ def registry_with_head_class() -> None:
     """Demonstrates using a registry with a head class."""
     print("Registry with Head Class:\n")
 
-    # Create a registry with a head class
+    # Creates a registry with a head class
     print("Creating a class registry with Animal as the head class...")
     registry = SimpleClassRegistry(head_class=Animal)
 
-    # Register classes
+    # Registers classes
     print("Registering classes...")
     registry.register_class(Dog)
     registry.register_class(Cat)
@@ -249,10 +253,12 @@ def registry_with_head_class() -> None:
         print(f"  - {name}: {cls.__name__}")
     print()
 
-    # Create instances using the head class as a base
+    # Creates instances using the head class as a base
     print("Creating instances and checking if they are instances of the head class...")
-    dog = cast(Any, registry.get_class("Dog"))("Fido")
-    cat = cast(Any, registry.get_class("Cat"))("Garfield")
+    dog_class: Any = registry.get_class("Dog")
+    dog = dog_class("Fido")
+    cat_class: Any = registry.get_class("Cat")
+    cat = cat_class("Garfield")
 
     print(f"Is dog an instance of Animal? {isinstance(dog, Animal)} == True")
     print(f"Is cat an instance of Animal? {isinstance(cat, Animal)} == True")

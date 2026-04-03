@@ -19,10 +19,11 @@ from typing import Any
 # Source Packages #
 from baseobjects.operations import parse_parentheses
 
-
 # Example Sections #
+
+
 def basic_usage_example() -> None:
-    """Demonstrate basic usage of parse_parentheses."""
+    """Demonstrates basic usage of parse_parentheses."""
     print("\nBasic parse_parentheses Usage:")
 
     # Simple expression with parentheses
@@ -45,7 +46,7 @@ def basic_usage_example() -> None:
 
 
 def nested_parentheses_example() -> None:
-    """Demonstrate parsing expressions with nested parentheses."""
+    """Demonstrates parsing expressions with nested parentheses."""
     print("\nNested Parentheses Example:")
 
     # Expression with nested parentheses
@@ -76,7 +77,7 @@ def nested_parentheses_example() -> None:
 
 
 def filtering_example() -> None:
-    """Demonstrate filtering parsed elements."""
+    """Demonstrates filtering parsed elements."""
     print("\nFiltering Example:")
 
     # Expression with various elements
@@ -113,13 +114,13 @@ def filtering_example() -> None:
 
 
 def casting_example() -> None:
-    """Demonstrate casting parsed elements to different types."""
+    """Demonstrates casting parsed elements to different types."""
     print("\nCasting Example:")
 
     # Expression with numeric values
     expression = "calculate(1, 2, 3, 4)"
 
-    # Define a cast function to convert strings to integers where possible
+    # Defines a cast function to convert strings to integers where possible
     def cast_to_int(s: str) -> int | str:
         try:
             return int(s)
@@ -136,7 +137,7 @@ def casting_example() -> None:
     # Expression with mixed types
     expression = "mixed(1, 2.5, 'text', True)"
 
-    # Define a more complex cast function
+    # Defines a more complex cast function
     def smart_cast(s: str) -> int | float | bool | str:
         s = s.strip()
         try:
@@ -161,7 +162,7 @@ def casting_example() -> None:
 
 
 def different_input_types_example() -> None:
-    """Demonstrate parsing different input types."""
+    """Demonstrates parsing different input types."""
     print("\nDifferent Input Types Example:")
 
     # String input (default)
@@ -190,7 +191,7 @@ def different_input_types_example() -> None:
 
 
 def error_handling_example() -> None:
-    """Demonstrate error handling with parse_parentheses."""
+    """Demonstrates error handling with parse_parentheses."""
     print("\nError Handling Example:")
 
     # Unbalanced parentheses (missing closing parenthesis)
@@ -228,7 +229,7 @@ def error_handling_example() -> None:
 
 
 def quoted_strings_example() -> None:
-    """Demonstrate handling quoted strings in expressions."""
+    """Demonstrates handling quoted strings in expressions."""
     print("\nQuoted Strings Example:")
 
     # Expression with quoted strings
@@ -253,10 +254,10 @@ def quoted_strings_example() -> None:
 
 
 def practical_example() -> None:
-    """Demonstrate a practical use case for parse_parentheses."""
+    """Demonstrates a practical use case for parse_parentheses."""
     print("\nPractical Example - Simple Expression Evaluator:")
 
-    # Define a simple expression evaluator
+    # Defines a simple expression evaluator
     def evaluate_expression(expr: str) -> float:
         # Parse the expression
         parsed = parse_parentheses(expr)
@@ -330,7 +331,7 @@ def practical_example() -> None:
         print(f"Expression: '{expr}'")
         print(f"Evaluated result: {result}")
 
-        # Calculate expected result for verification
+        # Calculates expected result for verification
         expected: float | str
         if expr == "(+ 1 2 3)":
             expected = 1 + 2 + 3
@@ -353,7 +354,7 @@ def practical_example() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     basic_usage_example()
     nested_parentheses_example()
     filtering_example()

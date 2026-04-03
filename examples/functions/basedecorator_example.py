@@ -33,7 +33,7 @@ class TimerDecorator(BaseDecorator):
     """
 
     def __init__(self, func: AnyCallable | None = None, decimal_places: int = 4) -> None:
-        """Initialize the timer decorator.
+        """Initializes the timer decorator.
 
         Args:
             func: The function to decorate.
@@ -43,7 +43,7 @@ class TimerDecorator(BaseDecorator):
         self.decimal_places = decimal_places
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        """Execute the decorated function and measure its execution time.
+        """Executes the decorated function and measure its execution time.
 
         Args:
             *args: Positional arguments to pass to the decorated function.
@@ -72,7 +72,7 @@ class RepeatDecorator(BaseDecorator):
     """
 
     def __init__(self, func: AnyCallable | None = None, times: int = 1, show_iteration: bool = True) -> None:
-        """Initialize the repeat decorator.
+        """Initializes the repeat decorator.
 
         Args:
             func: The function to decorate.
@@ -84,7 +84,7 @@ class RepeatDecorator(BaseDecorator):
         self.show_iteration = show_iteration
 
     def __call__(self, *args: Any, **kwargs: Any) -> list[Any]:
-        """Execute the decorated function multiple times.
+        """Executes the decorated function multiple times.
 
         Args:
             *args: Positional arguments to pass to the decorated function.
@@ -112,7 +112,7 @@ class AsyncRetryDecorator(BaseDecorator):
     """
 
     def __init__(self, func: AnyCallable | None = None, max_retries: int = 3, delay: float = 1.0) -> None:
-        """Initialize the async retry decorator.
+        """Initializes the async retry decorator.
 
         Args:
             func: The coroutine function to decorate.
@@ -124,7 +124,7 @@ class AsyncRetryDecorator(BaseDecorator):
         self.delay = delay
 
     async def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        """Execute the decorated coroutine function with retry logic.
+        """Executes the decorated coroutine function with retry logic.
 
         Args:
             *args: Positional arguments to pass to the decorated function.
@@ -162,7 +162,7 @@ class CounterDecorator(BaseDecorator):
     """
 
     def __init__(self, func: AnyCallable | None = None) -> None:
-        """Initialize the counter decorator.
+        """Initializes the counter decorator.
 
         Args:
             func: The function to decorate.
@@ -171,7 +171,7 @@ class CounterDecorator(BaseDecorator):
         self.call_count = 0
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        """Execute the decorated function and increment the call counter.
+        """Executes the decorated function and increment the call counter.
 
         Args:
             *args: Positional arguments to pass to the decorated function.
@@ -192,7 +192,7 @@ class CounterDecorator(BaseDecorator):
         self.call_count = 0
 
     def __getstate__(self) -> dict[str, Any]:
-        """Get the state of the decorator for pickling.
+        """Gets the state of the decorator for pickling.
 
         Returns:
             A dictionary containing the state of the decorator.
@@ -204,7 +204,7 @@ class CounterDecorator(BaseDecorator):
         return {"call_count": self.call_count}
 
     def __setstate__(self, state: dict[str, Any]) -> None:
-        """Set the state of the decorator from unpickling.
+        """Sets the state of the decorator from unpickling.
 
         Args:
             state: A dictionary containing the state of the decorator.
@@ -215,7 +215,7 @@ class CounterDecorator(BaseDecorator):
 
 # Example Functions #
 def add(a: int, b: int) -> int:
-    """Add two numbers together.
+    """Adds two numbers together.
 
     Args:
         a: The first number.
@@ -228,7 +228,7 @@ def add(a: int, b: int) -> int:
 
 
 def fibonacci(n: int) -> int:
-    """Calculate the nth Fibonacci number recursively.
+    """Calculates the nth Fibonacci number recursively.
 
     Args:
         n: The position in the Fibonacci sequence.
@@ -271,7 +271,7 @@ async def fetch_data(url: str, timeout: float = 1.0) -> dict[str, Any]:
         msg = f"Request timed out after {timeout} seconds"
         raise TimeoutError(msg)
 
-    # Return simulated data
+    # Returns simulated data
     return {"url": url, "timestamp": time.time(), "data": f"Data from {url}"}
 
 
@@ -280,10 +280,10 @@ def basic_decorator_example() -> None:
     """Demonstrates basic usage of BaseDecorator."""
     print("Basic Decorator Example:\n")
 
-    # Create a decorated function using TimerDecorator
+    # Creates a decorated function using TimerDecorator
     timed_fibonacci = TimerDecorator(fibonacci)
 
-    # Call the decorated function
+    # Calls the decorated function
     print("Calculating Fibonacci numbers with timing:")
     result = timed_fibonacci(10)
     print(f"fibonacci(10) = {result} == 55")
@@ -294,14 +294,14 @@ def basic_decorator_example() -> None:
     # Use the decorator as a function decorator
     @TimerDecorator
     def calculate_sum(n: int) -> int:
-        """Calculate the sum of numbers from 1 to n.
+        """Calculates the sum of numbers from 1 to n.
 
         Returns:
             The sum of numbers.
         """
         return sum(range(1, n + 1))
 
-    # Call the decorated function
+    # Calls the decorated function
     print("\nCalculating sums with timing:")
     result = calculate_sum(1000)
     print(f"sum(1-1000) = {result} == 500500")
@@ -316,10 +316,10 @@ def decorator_with_arguments_example() -> None:
     """Demonstrates creating decorators that accept arguments."""
     print("Decorator with Arguments Example:\n")
 
-    # Create a decorated function with arguments
+    # Creates a decorated function with arguments
     repeated_add = RepeatDecorator(add, times=3, show_iteration=True)
 
-    # Call the decorated function
+    # Calls the decorated function
     print("Repeating add function 3 times:")
     results = repeated_add(5, 7)
     print(f"Results: {results} == [12, 12, 12]")
@@ -336,7 +336,7 @@ def decorator_with_arguments_example() -> None:
         print(greeting)
         return greeting
 
-    # Call the decorated function
+    # Calls the decorated function
     print("\nRepeating greet function 2 times (without showing iterations):")
     results = greet("World")  # type: ignore[operator]
     print(f"Results: {results} == ['Hello, World!', 'Hello, World!']")
@@ -351,7 +351,7 @@ def decorator_with_arguments_example() -> None:
         """
         return x * x
 
-    # Call the decorated function
+    # Calls the decorated function
     print("\nRepeating square function once (default):")
     results = square(4)
     print(f"Results: {results} == [16]")
@@ -363,10 +363,10 @@ async def async_decorator_example() -> None:
     """Demonstrates using BaseDecorator with async functions."""
     print("Async Decorator Example:\n")
 
-    # Create a decorated async function
+    # Creates a decorated async function
     retry_fetch = AsyncRetryDecorator(fetch_data, max_retries=3, delay=0.5)
 
-    # Call the decorated function with a valid URL
+    # Calls the decorated function with a valid URL
     print("Fetching data from a valid URL:")
     try:
         result = await retry_fetch("https://example.com/api/data")
@@ -374,7 +374,7 @@ async def async_decorator_example() -> None:
     except Exception as e:
         print(f"Failed: {e}")
 
-    # Call the decorated function with an error URL
+    # Calls the decorated function with an error URL
     print("\nFetching data from an error URL (should retry and fail):")
     try:
         result = await retry_fetch("https://example.com/api/error")
@@ -392,7 +392,7 @@ async def async_decorator_example() -> None:
         """
         return await fetch_data(url, timeout)
 
-    # Call the decorated function with a timeout that's too short
+    # Calls the decorated function with a timeout that's too short
     print("\nFetching data with a short timeout (should retry and succeed with default delay):")
     try:
         result = await fetch_with_timeout("https://example.com/api/data", timeout=0.1)  # type: ignore[operator]
@@ -407,10 +407,10 @@ def decorator_with_state_example() -> None:
     """Demonstrates creating decorators with state."""
     print("Decorator with State Example:\n")
 
-    # Create a decorated function with state
+    # Creates a decorated function with state
     counted_add = CounterDecorator(add)
 
-    # Call the decorated function multiple times
+    # Calls the decorated function multiple times
     print("Calling the add function multiple times:")
     result = counted_add(1, 2)
     print(f"1 + 2 = {result} == 3")
@@ -428,7 +428,7 @@ def decorator_with_state_example() -> None:
     counted_add.reset_counter()
     print(f"After reset, total calls: {counted_add.call_count} == 0")
 
-    # Call again after reset
+    # Calls again after reset
     result = counted_add(7, 8)
     print(f"7 + 8 = {result} == 15")
     print(f"Total calls after reset: {counted_add.call_count} == 1")
@@ -440,10 +440,10 @@ def pickling_decorator_example() -> None:
     """Demonstrates pickling and unpickling decorators."""
     print("Pickling Decorator Example:\n")
 
-    # Create a decorated function with state
+    # Creates a decorated function with state
     counted_fibonacci = CounterDecorator(fibonacci)
 
-    # Call the decorated function a few times
+    # Calls the decorated function a few times
     print("Calling the fibonacci function multiple times:")
     result = counted_fibonacci(5)
     print(f"fibonacci(5) = {result} == 5")
@@ -451,7 +451,7 @@ def pickling_decorator_example() -> None:
     result = counted_fibonacci(7)
     print(f"fibonacci(7) = {result} == 13")
 
-    # Check the state before pickling
+    # Checks the state before pickling
     print(f"\nTotal calls before pickling: {counted_fibonacci.call_count} == 2")
 
     # Pickle the decorator
@@ -462,10 +462,10 @@ def pickling_decorator_example() -> None:
     print("Unpickling the decorator...")
     unpickled_decorator = pickle.loads(pickled_decorator)
 
-    # Check the state after unpickling
+    # Checks the state after unpickling
     print(f"Total calls after unpickling: {unpickled_decorator.call_count} == 2")
 
-    # Call the unpickled decorator
+    # Calls the unpickled decorator
     result = unpickled_decorator(10)
     print(f"fibonacci(10) = {result} == 55")
     print(f"Total calls after additional call: {unpickled_decorator.call_count} == 3")

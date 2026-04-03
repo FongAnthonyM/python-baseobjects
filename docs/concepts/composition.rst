@@ -14,6 +14,14 @@ Core Classes
 ------------
 - BaseComposite: Manages a set of named components and provides the coordination surface.
 - BaseComponent: A component that receives a reference to its composite for collaboration.
+- CompositeFactoryClass: A specialized composite that intercepts its own construction to return a pre-configured instance of its head class, acting as a "preset" factory.
+
+Factory Patterns
+----------------
+Beyond simple composition, the module provides specialized dispatching patterns:
+
+- **DispatchableComposite**: Dynamically selects which specialized subclass to instantiate based on constructor arguments.
+- **CompositeFactoryClass**: Enables subclasses to act as named "presets." When a preset subclass is instantiated, it returns an instance of the "head class" pre-configured with the subclass's component types. This is ideal for complex objects with many optional component configurations.
 
 Basic Example
 -------------

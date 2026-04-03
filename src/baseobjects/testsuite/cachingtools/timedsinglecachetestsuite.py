@@ -64,20 +64,20 @@ class TimedSingleCacheTestSuite(TimedCacheTestSuite):
 
         assert cache(1) == 2
 
-        # Wait almost lifetime
+        # Waits almost lifetime
         time.sleep(lifetime * 0.6)
 
         # Refresh expiration
         cache.refresh_expiration()
 
-        # Wait another chunk (total > original lifetime)
+        # Waits another chunk (total > original lifetime)
         time.sleep(lifetime * 0.6)
 
         # Should still be cached because we refreshed
         assert cache(1) == 2
         assert get_call_count() == 1
 
-        # Wait until full expiration
+        # Waits until full expiration
         time.sleep(lifetime)
 
         # Should be expired now

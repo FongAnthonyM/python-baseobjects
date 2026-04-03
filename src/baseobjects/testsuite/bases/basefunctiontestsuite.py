@@ -54,16 +54,16 @@ class BaseFunctionTestSuite(BaseCallableTestSuite):
         Args:
             test_function_object: A fixture providing a BaseFunction instance that wraps a function.
         """
-        # Call the callable object
+        # Calls the callable object
         result = test_function_object(3)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 5  # 3 + 2 (default y)
 
-        # Call with different arguments
+        # Calls with different arguments
         result = test_function_object(3, 4)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 7  # 3 + 4
 
     def test_call_wrapped(self, test_function_object: BaseFunction) -> None:  # type: ignore[override]
@@ -72,16 +72,16 @@ class BaseFunctionTestSuite(BaseCallableTestSuite):
         Args:
             test_function_object: A fixture providing a BaseFunction instance that wraps a function.
         """
-        # Call the wrapped function directly
+        # Calls the wrapped function directly
         result = test_function_object.call_wrapped(3)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 5  # 3 + 2 (default y)
 
-        # Call with different arguments
+        # Calls with different arguments
         result = test_function_object.call_wrapped(3, 4)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 7  # 3 + 4
 
     # Instantiation #
@@ -92,13 +92,13 @@ class BaseFunctionTestSuite(BaseCallableTestSuite):
             *args: Positional arguments list to pass to the class constructor.
             **kwargs: Keyword arguments to pass to the class constructor.
         """
-        # Create an instance with a test function
+        # Creates an instance with a test function
         instance = self.UnitTestClass(concrete_function)
 
-        # Verify it's an instance of the correct class
+        # Verifies it's an instance of the correct class
         assert isinstance(instance, self.UnitTestClass)
 
-        # Verify it has the correct wrapped function
+        # Verifies it has the correct wrapped function
         assert instance.__func__ is concrete_function
 
     # Functionality #
@@ -108,17 +108,17 @@ class BaseFunctionTestSuite(BaseCallableTestSuite):
         Args:
             test_function_object: A fixture providing a BaseFunction instance that wraps a function.
         """
-        # Convert to a standard Python function
+        # Converts to a standard Python function
         func = test_function_object.as_function()
 
-        # Verify it's a function
+        # Verifies it's a function
         assert callable(func)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert func(3) == 5  # 3 + 2 (default y)
         assert func(3, 4) == 7  # 3 + 4
 
-        # Verify it has the correct attributes
+        # Verifies it has the correct attributes
         assert func.__name__ == test_function_object.__name__  # type: ignore[attr-defined]
         assert func.__doc__ == test_function_object.__doc__
         assert func.__wrapped__ is test_function_object  # type: ignore[attr-defined]
@@ -136,7 +136,7 @@ class BaseFunctionTestSuite(BaseCallableTestSuite):
         assert isinstance(bound_method, test_method_object.method_type)
         assert bound_method.__self__ is test_bind_target
 
-        # Verify it returns the expected result when called
+        # Verifies it returns the expected result when called
         result = bound_method(3)
         assert result == (5, test_bind_target)  # (3 + 2, instance)
 
@@ -165,7 +165,7 @@ class BaseFunctionTestSuite(BaseCallableTestSuite):
         assert bound_method.__self__ is new_bind_target
         assert hasattr(new_bind_target, expected_name)
 
-        # Verify it returns the expected result when called through the attribute
+        # Verifies it returns the expected result when called through the attribute
         result = getattr(new_bind_target, expected_name)(3)
         assert result == (5, new_bind_target)  # (3 + 2, instance)
 

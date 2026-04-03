@@ -37,12 +37,12 @@ class DataRoutingProcessor:
     """
 
     def __init__(self) -> None:
-        """Initialize with data and a callback manager."""
+        """Initializes with data and a callback manager."""
         self.point_a: str | int | None = None
         self.point_b: str | int | None = None
         self.callback_manager = CallbackManager()
 
-        # Register some default callbacks
+        # Registers some default callbacks
         self.callback_manager.register_conditional_callback(
             "all_strings",
             self.print_data_strings,
@@ -65,7 +65,7 @@ class DataRoutingProcessor:
         )
 
     def all_strings(self) -> bool:
-        """Check if all data points are strings.
+        """Checks if all data points are strings.
 
         Returns:
             True if all are strings.
@@ -73,7 +73,7 @@ class DataRoutingProcessor:
         return isinstance(self.point_a, str) and isinstance(self.point_b, str)
 
     def all_numbers(self) -> bool:
-        """Check if all data points are numbers.
+        """Checks if all data points are numbers.
 
         Returns:
             True if all are numbers.
@@ -81,7 +81,7 @@ class DataRoutingProcessor:
         return isinstance(self.point_a, int) and isinstance(self.point_b, int)
 
     def a_is_string(self) -> bool:
-        """Check if data point A is a string.
+        """Checks if data point A is a string.
 
         Returns:
             True if A is a string.
@@ -89,7 +89,7 @@ class DataRoutingProcessor:
         return isinstance(self.point_a, str) and isinstance(self.point_b, int)
 
     def b_is_string(self) -> bool:
-        """Check if data point B is a string.
+        """Checks if data point B is a string.
 
         Returns:
             True if B is a string.
@@ -97,26 +97,26 @@ class DataRoutingProcessor:
         return isinstance(self.point_b, str) and isinstance(self.point_a, int)
 
     def print_data_strings(self) -> None:
-        """Print the data points."""
+        """Prints the data points."""
         print(f"Both are strings: {self.point_a} {self.point_b}")
 
     def print_data_numbers(self) -> None:
-        """Print the data points."""
+        """Prints the data points."""
         if isinstance(self.point_a, int) and isinstance(self.point_b, int):
             print(f"Both are numbers: {self.point_a} + {self.point_b} = {self.point_a + self.point_b}")
         else:
             print("Not all data points are numbers")
 
     def print_a_is_string(self) -> None:
-        """Print the data point A."""
+        """Prints the data point A."""
         print(f"A is a string: {self.point_a}")
 
     def print_b_is_string(self) -> None:
-        """Print the data point B."""
+        """Prints the data point B."""
         print(f"B is a string: {self.point_b}")
 
     def run_callbacks(self) -> None:
-        """Run all callbacks."""
+        """Runs all callbacks."""
         self.callback_manager.conditional_callbacks["all_strings"]()
         self.callback_manager.conditional_callbacks["all_numbers"]()
         self.callback_manager.conditional_callbacks["a_is_string"]()
@@ -125,31 +125,31 @@ class DataRoutingProcessor:
 
 # Example Sections #
 def basic_callback_example() -> None:
-    """Demonstrate basic usage of CallbackManager with simple callbacks."""
+    """Demonstrates basic usage of CallbackManager with simple callbacks."""
     print("\nBasic Callback Example:")
 
-    # Create a callback manager
+    # Creates a callback manager
     callback_manager = CallbackManager()
 
-    # Define some simple callback functions
+    # Defines some simple callback functions
     def on_event(message: str) -> None:
         print(f"Event received: {message}")
 
     def on_notification(sender: str, message: str) -> None:
         print(f"Notification from {sender}: {message}")
 
-    # Register callbacks
+    # Registers callbacks
     callback_manager.register_callback("event", on_event)
     callback_manager.register_callback("notification", on_notification)
 
-    # Call callbacks
+    # Calls callbacks
     print("Calling 'event' callback:")
     callback_manager.call_callback("event", "Something happened!")
 
     print("\nCalling 'notification' callback:")
     callback_manager.call_callback("notification", "System", "Server is running")
 
-    # Register multiple callbacks at once
+    # Registers multiple callbacks at once
     def on_warning(message: str) -> None:
         print(f"Warning: {message}")
 
@@ -165,20 +165,20 @@ def basic_callback_example() -> None:
 
 
 def conditional_callback_example() -> None:
-    """Demonstrate conditional callbacks with CallbackManager."""
+    """Demonstrates conditional callbacks with CallbackManager."""
     print("\nConditional Callback Example:")
 
-    # Create a callback manager
+    # Creates a callback manager
     callback_manager = CallbackManager()
 
-    # Define condition and callback function
+    # Defines condition and callback function
     def is_important(priority: int) -> bool:
         return priority >= 5
 
     def process_message(message: str, priority: int) -> None:
         print(f"Processing message with priority {priority}: {message}")
 
-    # Demonstrate using call_conditional directly
+    # Demonstrates using call_conditional directly
     print("Using call_conditional directly with static methods:")
     print("Calling with priority 3 (should not execute):")
     callback_manager.call_conditional(lambda: is_important(3), lambda: process_message("Low priority message", 3))
@@ -187,7 +187,7 @@ def conditional_callback_example() -> None:
     print("Calling with priority 7 (should execute):")
     callback_manager.call_conditional(lambda: is_important(7), lambda: process_message("High priority message", 7))
 
-    # Define condition and callback function
+    # Defines condition and callback function
     mutable_state: dict[str, int] = {}
 
     def check_for_code() -> bool:
@@ -196,7 +196,7 @@ def conditional_callback_example() -> None:
     def process_message_with_code(message: str) -> None:
         print(f"Code {mutable_state['code']}: {message}")
 
-    # Demonstrate registering
+    # Demonstrates registering
     print("Using call_conditional to check state:")
     callback_manager.register_conditional_callback(
         name="code_printer",
@@ -215,10 +215,10 @@ def conditional_callback_example() -> None:
 
 
 def data_processor_example() -> None:
-    """Demonstrate using CallbackManager in a class."""
+    """Demonstrates using CallbackManager in a class."""
     print("\nData Processor Example:")
 
-    # Create a data processor with callbacks
+    # Creates a data processor with callbacks
     processor = DataRoutingProcessor()
 
     print("Call conditional callbacks:")
@@ -254,13 +254,13 @@ def data_processor_example() -> None:
 
 # Asynchronous Example Sections #
 async def basic_callback_example_async() -> None:
-    """Demonstrate basic usage of CallbackManager with asynchronous callbacks."""
+    """Demonstrates basic usage of CallbackManager with asynchronous callbacks."""
     print("\nBasic Async Callback Example:")
 
-    # Create a callback manager
+    # Creates a callback manager
     callback_manager = CallbackManager()
 
-    # Define some simple async callback functions
+    # Defines some simple async callback functions
     async def on_event_async(message: str) -> None:
         await asyncio.sleep(0.1)  # Simulate async operation
         print(f"Async event received: {message}")
@@ -269,18 +269,18 @@ async def basic_callback_example_async() -> None:
         await asyncio.sleep(0.1)  # Simulate async operation
         print(f"Async notification from {sender}: {message}")
 
-    # Register async callbacks
+    # Registers async callbacks
     callback_manager.register_callback("event_async", on_event_async, is_async=True)
     callback_manager.register_callback("notification_async", on_notification_async, is_async=True)
 
-    # Call async callbacks
+    # Calls async callbacks
     print("Calling 'event_async' callback:")
     await callback_manager.call_callback_async("event_async", "Something happened asynchronously!")
 
     print("\nCalling 'notification_async' callback:")
     await callback_manager.call_callback_async("notification_async", "System", "Server is running asynchronously")
 
-    # Register multiple async callbacks at once
+    # Registers multiple async callbacks at once
     async def on_warning_async(message: str) -> None:
         await asyncio.sleep(0.1)  # Simulate async operation
         print(f"Async warning: {message}")
@@ -301,13 +301,13 @@ async def basic_callback_example_async() -> None:
 
 
 async def conditional_callback_example_async() -> None:
-    """Demonstrate conditional callbacks with CallbackManager using async methods."""
+    """Demonstrates conditional callbacks with CallbackManager using async methods."""
     print("\nConditional Async Callback Example:")
 
-    # Create a callback manager
+    # Creates a callback manager
     callback_manager = CallbackManager()
 
-    # Define async condition and callback function
+    # Defines async condition and callback function
     async def is_important_async(priority: int) -> bool:
         await asyncio.sleep(0.1)  # Simulate async condition check
         return priority >= 5
@@ -316,7 +316,7 @@ async def conditional_callback_example_async() -> None:
         await asyncio.sleep(0.1)  # Simulate async processing
         print(f"Async processing message with priority {priority}: {message}")
 
-    # Demonstrate using call_conditional_async directly
+    # Demonstrates using call_conditional_async directly
     print("Using call_conditional_async directly:")
     print("Calling with priority 3 (should not execute):")
     await callback_manager.call_conditional_async(
@@ -331,7 +331,7 @@ async def conditional_callback_example_async() -> None:
         lambda: process_message_async("High priority message", 7),
     )
 
-    # Define async condition and callback function with mutable state
+    # Defines async condition and callback function with mutable state
     mutable_state: dict[str, int] = {}
 
     async def check_for_code_async() -> bool:
@@ -342,7 +342,7 @@ async def conditional_callback_example_async() -> None:
         await asyncio.sleep(0.1)  # Simulate async processing
         print(f"Async code {mutable_state['code']}: {message}")
 
-    # Demonstrate registering async conditional callback
+    # Demonstrates registering async conditional callback
     print("Using async conditional callbacks with state:")
     callback_manager.register_conditional_callback(
         name="code_printer_async",
@@ -363,14 +363,14 @@ async def conditional_callback_example_async() -> None:
 
 
 async def task_management_example_async() -> None:
-    """Demonstrate task management with CallbackManager."""
+    """Demonstrates task management with CallbackManager."""
     print("\nTask Management Example:")
 
-    # Create a callback manager
+    # Creates a callback manager
     callback_manager = CallbackManager()
     tasks: deque[Any] = deque()
 
-    # Define async condition and callback functions
+    # Defines async condition and callback functions
     class State:
         count: int = 0
         counter: int = 1
@@ -396,7 +396,7 @@ async def task_management_example_async() -> None:
         await asyncio.sleep(0.2)  # Simulate work
         print(f"Completed task {task_id}")
 
-    # Demonstrate call_while_condition_async
+    # Demonstrates call_while_condition_async
     print("Using call_while_condition_async to run 5 tasks:")
     await callback_manager.call_while_condition_async(limited_true_async, task_callback_async, tasks)
     print("All tasks completed")
@@ -405,15 +405,15 @@ async def task_management_example_async() -> None:
     state.count = 0
     state.counter = 1
 
-    # Demonstrate enqueue_call_while_condition_async
+    # Demonstrates enqueue_call_while_condition_async
     print("\nUsing enqueue_call_while_condition_async to run 5 tasks concurrently:")
     await callback_manager.enqueue_call_while_condition_async(limited_true_async, task_callback_async, tasks)
     print("All tasks completed")
 
-    # Demonstrate join_tasks_async with timeout
+    # Demonstrates join_tasks_async with timeout
     print("\nDemonstrating join_tasks_async with timeout:")
 
-    # Create a long-running task
+    # Creates a long-running task
     async def long_running_task() -> None:
         print("Starting long-running task")
         try:
@@ -423,7 +423,7 @@ async def task_management_example_async() -> None:
             print("Long-running task was cancelled")
             raise
 
-    # Register and start the task
+    # Registers and start the task
     task = create_task(long_running_task())
     task.add_done_callback(lambda t: tasks.remove(t) if t in tasks else None)
     tasks.append(task)
@@ -432,23 +432,23 @@ async def task_management_example_async() -> None:
         print("Waiting for tasks with a 0.5 second timeout...")
         async with asyncio.timeout(0.5):
             await asyncio.gather(*tasks)
-    except asyncio.TimeoutError:
+    except TimeoutError:
         print("Timeout occurred while waiting for tasks")
         callback_manager.cancel_tasks()
 
-    # Wait a moment for the cancellation to complete
+    # Waits a moment for the cancellation to complete
     await asyncio.sleep(0.1)
     print("Task management example completed")
 
 
 async def scheduler_example_async() -> None:
-    """Demonstrate using schedulers with CallbackManager asynchronously."""
+    """Demonstrates using schedulers with CallbackManager asynchronously."""
     print("\nAsync Scheduler Example:")
 
-    # Create a callback manager
+    # Creates a callback manager
     callback_manager = CallbackManager()
 
-    # Define some async callback functions
+    # Defines some async callback functions
     async def async_task1() -> None:
         await asyncio.sleep(0.1)  # Simulate async work
         print("Executing async task 1")
@@ -457,28 +457,28 @@ async def scheduler_example_async() -> None:
         await asyncio.sleep(0.1)  # Simulate async work
         print("Executing async task 2")
 
-    # Create task queues
+    # Creates task queues
     task1_queue: deque[Any] = deque()
     task2_queue: deque[Any] = deque()
 
-    # Create a basic scheduler for async tasks
+    # Creates a basic scheduler for async tasks
     print("Creating a scheduler for async tasks:")
     async_scheduler = callback_manager.create_scheduler()
 
-    # Add async callbacks to the scheduler
+    # Adds async callbacks to the scheduler
     async_scheduler.callback_map.extend([(async_task1, task1_queue), (async_task2, task2_queue)])
 
-    # Execute the async scheduler
+    # Executes the async scheduler
     print("Executing schedule_async_callbacks:")
     async_scheduler.schedule_async_callbacks()
 
-    # Wait for tasks to complete
+    # Waits for tasks to complete
     await asyncio.sleep(0.2)
 
-    # Create and register a conditional scheduler
+    # Creates and register a conditional scheduler
     print("\nCreating a conditional scheduler:")
 
-    # Define condition functions
+    # Defines condition functions
     async def condition1() -> bool:
         await asyncio.sleep(0.1)
         return True
@@ -487,7 +487,7 @@ async def scheduler_example_async() -> None:
         await asyncio.sleep(0.1)
         return False
 
-    # Register conditional callbacks
+    # Registers conditional callbacks
     callback_manager.register_conditional_callback(
         "async_condition1",
         async_task1,
@@ -504,25 +504,25 @@ async def scheduler_example_async() -> None:
         is_async=True,
     )
 
-    # Create a conditional scheduler
+    # Creates a conditional scheduler
     print("Creating and registering a conditional scheduler:")
     callback_manager.register_conditional_scheduler(
         "conditional_scheduler",
         condition_names=["async_condition1", "async_condition2"],
     )
 
-    # Start the conditional scheduler
+    # Starts the conditional scheduler
     print("Starting the conditional scheduler:")
     tasks: deque[Any] = deque()
     await callback_manager.start_scheduler_async(callback_manager.schedulers["conditional_scheduler"], tasks)
 
-    # Wait for tasks to complete
+    # Waits for tasks to complete
     await asyncio.sleep(0.3)
 
     # Map additional conditionals to an existing scheduler
     print("\nMapping additional conditionals to existing scheduler:")
 
-    # Register another conditional callback
+    # Registers another conditional callback
     async def async_task3() -> None:
         await asyncio.sleep(0.1)
         print("Executing async task 3")
@@ -538,11 +538,11 @@ async def scheduler_example_async() -> None:
     # Map the new conditional to the existing scheduler
     callback_manager.map_conditionals_to_scheduler("conditional_scheduler", ["async_condition3"])
 
-    # Start the scheduler again
+    # Starts the scheduler again
     print("Starting the updated scheduler:")
     await callback_manager.start_scheduler_async(callback_manager.schedulers["conditional_scheduler"], tasks)
 
-    # Wait for tasks to complete
+    # Waits for tasks to complete
     await asyncio.sleep(0.3)
 
     print("Async scheduler example completed")
@@ -550,12 +550,12 @@ async def scheduler_example_async() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Run synchronous examples
+    # Runs synchronous examples
     basic_callback_example()
     conditional_callback_example()
     data_processor_example()
 
-    # Run asynchronous examples
+    # Runs asynchronous examples
     asyncio.run(basic_callback_example_async())
     asyncio.run(conditional_callback_example_async())
     asyncio.run(task_management_example_async())

@@ -37,7 +37,7 @@ class Person(AutomaticProperties):
     email: str
 
     def __init__(self, name: str = "", age: int = 0, email: str = "") -> None:
-        """Initialize a person with name, age, and email.
+        """Initializes a person with name, age, and email.
 
         Args:
             name: The person's name
@@ -65,7 +65,7 @@ class ValidatedPerson(AutomaticProperties):
     email: str
 
     def __init__(self, name: str = "", age: int = 0, email: str = "") -> None:
-        """Initialize a person with name, age, and email.
+        """Initializes a person with name, age, and email.
 
         Args:
             name: The person's name
@@ -113,7 +113,7 @@ class CustomPropertyPerson(AutomaticProperties):
     email: str
 
     def __init__(self, name: str = "", age: int = 0, email: str = "") -> None:
-        """Initialize a person with name, age, and email.
+        """Initializes a person with name, age, and email.
 
         Args:
             name: The person's name
@@ -137,17 +137,17 @@ class CustomPropertyPerson(AutomaticProperties):
         """
         name = info
 
-        def _get(self: "CustomPropertyPerson") -> Any:
+        def _get(self: CustomPropertyPerson) -> Any:
             # Track access count
             if name not in self._access_count:
                 self._access_count[name] = 0
             self._access_count[name] += 1
             return getattr(self, name)
 
-        def _set(self: "CustomPropertyPerson", value: Any) -> None:
+        def _set(self: CustomPropertyPerson, value: Any) -> None:
             setattr(self, name, value)
 
-        def _del(self: "CustomPropertyPerson") -> None:
+        def _del(self: CustomPropertyPerson) -> None:
             delattr(self, name)
 
         return _get, _set, _del
@@ -169,7 +169,7 @@ class ReadOnlyPerson(AutomaticProperties):
     email: str
 
     def __init__(self, name: str = "", age: int = 0, email: str = "") -> None:
-        """Initialize a person with name, age, and email.
+        """Initializes a person with name, age, and email.
 
         Args:
             name: The person's name
@@ -208,10 +208,10 @@ class ReadOnlyPerson(AutomaticProperties):
 
 # Example Sections #
 def basic_automaticproperties_example() -> None:
-    """Demonstrate basic usage of AutomaticProperties."""
+    """Demonstrates basic usage of AutomaticProperties."""
     print("\nBasic AutomaticProperties Example:")
 
-    # Create a person with automatic properties
+    # Creates a person with automatic properties
     person = Person(name="John Doe", age=30, email="john@example.com")
 
     # Access properties
@@ -232,10 +232,10 @@ def basic_automaticproperties_example() -> None:
 
 
 def validated_properties_example() -> None:
-    """Demonstrate properties with validation."""
+    """Demonstrates properties with validation."""
     print("\nValidated Properties Example:")
 
-    # Create a person with validated properties
+    # Creates a person with validated properties
     person = ValidatedPerson(name="John Doe", age=30, email="john@example.com")
 
     # Access properties
@@ -269,10 +269,10 @@ def validated_properties_example() -> None:
 
 
 def custom_property_factory_example() -> None:
-    """Demonstrate custom property factory methods."""
+    """Demonstrates custom property factory methods."""
     print("\nCustom Property Factory Example:")
 
-    # Create a person with custom property factory
+    # Creates a person with custom property factory
     person = CustomPropertyPerson(name="John Doe", age=30, email="john@example.com")
 
     # Access properties multiple times
@@ -281,7 +281,7 @@ def custom_property_factory_example() -> None:
     print(f"Age: {person.age} == 30")
     print(f"Email: {person.email} == 'john@example.com'")
 
-    # Check access counts
+    # Checks access counts
     print("\nAccess counts:")
     print(f"Name access count: {person._access_count.get('_name', 0)} == 2")
     print(f"Age access count: {person._access_count.get('_age', 0)} == 1")
@@ -289,10 +289,10 @@ def custom_property_factory_example() -> None:
 
 
 def readonly_properties_example() -> None:
-    """Demonstrate read-only properties."""
+    """Demonstrates read-only properties."""
     print("\nRead-Only Properties Example:")
 
-    # Create a person with read-only properties
+    # Creates a person with read-only properties
     person = ReadOnlyPerson(name="John Doe", age=30, email="john@example.com")
 
     # Access properties
@@ -325,7 +325,7 @@ def readonly_properties_example() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     basic_automaticproperties_example()
     validated_properties_example()
     custom_property_factory_example()

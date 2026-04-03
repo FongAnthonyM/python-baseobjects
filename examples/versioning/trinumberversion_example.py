@@ -14,42 +14,43 @@ This example demonstrates:
 # Source Packages #
 from baseobjects.versioning import TriNumberVersion
 
-
 # Example Sections #
+
+
 def basic_usage_example() -> None:
-    """Demonstrate basic usage of TriNumberVersion."""
+    """Demonstrates basic usage of TriNumberVersion."""
     print("\nBasic TriNumberVersion Usage:")
 
-    # Create a TriNumberVersion with default values (0.0.0)
+    # Creates a TriNumberVersion with default values (0.0.0)
     version1 = TriNumberVersion()
     print(f"Default version: {version1} == '0.0.0'")
 
-    # Create a TriNumberVersion with specific values
+    # Creates a TriNumberVersion with specific values
     version2 = TriNumberVersion(1, 2, 3)
     print(f"Specific version: {version2} == '1.2.3'")
 
-    # Create a TriNumberVersion from a string
+    # Creates a TriNumberVersion from a string
     version3 = TriNumberVersion("2.3.4")
     print(f"From string: {version3} == '2.3.4'")
 
-    # Create a TriNumberVersion from a tuple
+    # Creates a TriNumberVersion from a tuple
     version4 = TriNumberVersion((3, 4, 5))
     print(f"From tuple: {version4} == '3.4.5'")
 
-    # Create a TriNumberVersion from a list
+    # Creates a TriNumberVersion from a list
     version5 = TriNumberVersion([4, 5, 6])
     print(f"From list: {version5} == '4.5.6'")
 
-    # Create a TriNumberVersion with named parameters
+    # Creates a TriNumberVersion with named parameters
     version6 = TriNumberVersion(major=5, minor=6, patch=7)
     print(f"With named parameters: {version6} == '5.6.7'")
 
 
 def version_components_example() -> None:
-    """Demonstrate accessing and modifying version components."""
+    """Demonstrates accessing and modifying version components."""
     print("\nVersion Components:")
 
-    # Create a version
+    # Creates a version
     version = TriNumberVersion(1, 2, 3)
     print(f"Initial version: {version} == '1.2.3'")
 
@@ -68,16 +69,16 @@ def version_components_example() -> None:
     version.patch = 4
     print(f"After changing patch: {version} == '2.3.4'")
 
-    # Set a new version
+    # Sets a new version
     version.set_version("3.4.5")
     print(f"After set_version: {version} == '3.4.5'")
 
 
 def version_comparison_example() -> None:
-    """Demonstrate version comparison operations."""
+    """Demonstrates version comparison operations."""
     print("\nVersion Comparison:")
 
-    # Create versions for comparison
+    # Creates versions for comparison
     v1 = TriNumberVersion(1, 0, 0)
     v2 = TriNumberVersion(1, 1, 0)
     v3 = TriNumberVersion(1, 0, 0)
@@ -111,25 +112,25 @@ def version_comparison_example() -> None:
     print(f"v2 >= v1: {v2 >= v1} == True")
     print(f"v1 >= v2: {v1 >= v2} == False")
 
-    # Compare with string
+    # Compares with string
     print(f"v1 == '1.0.0': {v1 == '1.0.0'} == True")
     print(f"v1 < '1.1.0': {v1 < '1.1.0'} == True")
     print(f"v2 > '1.0.0': {v2 > '1.0.0'} == True")
 
-    # Compare with tuple
+    # Compares with tuple
     print(f"v1 == (1, 0, 0): {v1 == (1, 0, 0)} == True")
     print(f"v1 < (1, 1, 0): {v1 < (1, 1, 0)} == True")
     print(f"v2 > (1, 0, 0): {v2 > (1, 0, 0)} == True")
 
 
 def version_conversion_example() -> None:
-    """Demonstrate version conversion operations."""
+    """Demonstrates version conversion operations."""
     print("\nVersion Conversion:")
 
-    # Create a version
+    # Creates a version
     version = TriNumberVersion(2, 3, 4)
 
-    # Convert to different formats
+    # Converts to different formats
     print(f"Version: {version} == '2.3.4'")
     print(f"As string: {version.str()} == '2.3.4'")
     print(f"As list: {version.list()} == [2, 3, 4]")
@@ -141,7 +142,7 @@ def version_conversion_example() -> None:
 
 
 def semantic_versioning_example() -> None:
-    """Demonstrate using TriNumberVersion for semantic versioning."""
+    """Demonstrates using TriNumberVersion for semantic versioning."""
     print("\nSemantic Versioning Example:")
 
     # Initial version
@@ -165,10 +166,10 @@ def semantic_versioning_example() -> None:
 
 
 def version_management_example() -> None:
-    """Demonstrate practical version management."""
+    """Demonstrates practical version management."""
     print("\nVersion Management Example:")
 
-    # Define a dictionary of software components and their versions
+    # Defines a dictionary of software components and their versions
     components: dict[str, TriNumberVersion] = {
         "api": TriNumberVersion(1, 2, 3),
         "database": TriNumberVersion(2, 0, 1),
@@ -181,12 +182,12 @@ def version_management_example() -> None:
     for name, version in components.items():
         print(f"  {name}: {version}")
 
-    # Check compatibility (example: api must be at least 1.2.0)
+    # Checks compatibility (example: api must be at least 1.2.0)
     min_api_version = TriNumberVersion(1, 2, 0)
     is_api_compatible = components["api"] >= min_api_version
     print(f"\nAPI compatibility check: {is_api_compatible} == True")
 
-    # Find components that need updates (example: all components should be at least 2.0.0)
+    # Finds components that need updates (example: all components should be at least 2.0.0)
     min_version = TriNumberVersion(2, 0, 0)
     needs_update = [name for name, version in components.items() if version < min_version]
     print(f"Components needing updates: {needs_update} == ['api', 'ui']")
@@ -199,7 +200,7 @@ def version_management_example() -> None:
 
 
 def error_handling_example() -> None:
-    """Demonstrate error handling with TriNumberVersion."""
+    """Demonstrates error handling with TriNumberVersion."""
     print("\nError Handling Example:")
 
     # Try to create a version with invalid string
@@ -232,7 +233,7 @@ def error_handling_example() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     basic_usage_example()
     version_components_example()
     version_comparison_example()

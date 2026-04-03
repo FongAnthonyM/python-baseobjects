@@ -93,7 +93,7 @@ class TimedDict(BaseDict):
         """
         inst = self.__class__.__new__(self.__class__)
         inst.__dict__.update(self.__dict__)
-        # Create a copy and avoid triggering descriptors
+        # Creates a copy and avoid triggering descriptors
         inst.__dict__["_data"] = self.__dict__["_data"].copy()
         return inst
 

@@ -171,16 +171,16 @@ class WrapperPerformanceTestSuite(BasePerformanceTestSuite):
             _ = test_object._first.two
             _ = test_object._first.common
 
-        # Calculate the mean time in microseconds for the wrapper access
+        # Calculates the mean time in microseconds for the wrapper access
         new_time = timeit.timeit(wrapper_access, number=self.timeit_runs)
         mean_new = new_time / self.timeit_runs * 1000000
 
-        # Calculate the mean time in microseconds for direct access
+        # Calculates the mean time in microseconds for direct access
         old_time = timeit.timeit(direct_access, number=self.timeit_runs)
         mean_old = old_time / self.timeit_runs * 1000000
         percent = (mean_new / mean_old) * 100
 
-        # Print the performance comparison
+        # Prints the performance comparison
         print(f"""
             \n{self.UnitTestClass.__name__} attribute access: {mean_new:.3f} μs ({percent:.3f}% of direct access time)
         """)
@@ -205,16 +205,16 @@ class WrapperPerformanceTestSuite(BasePerformanceTestSuite):
             test_object._first.two = "one"
             test_object._first.common = "example_one"
 
-        # Calculate the mean time in microseconds for the wrapper set
+        # Calculates the mean time in microseconds for the wrapper set
         new_time = timeit.timeit(wrapper_set, number=self.timeit_runs)
         mean_new = new_time / self.timeit_runs * 1000000
 
-        # Calculate the mean time in microseconds for direct set
+        # Calculates the mean time in microseconds for direct set
         old_time = timeit.timeit(direct_set, number=self.timeit_runs)
         mean_old = old_time / self.timeit_runs * 1000000
         percent = (mean_new / mean_old) * 100
 
-        # Print the performance comparison
+        # Prints the performance comparison
         print(f"\n{self.UnitTestClass.__name__} attribute set: {mean_new:.3f} μs ({percent:.3f}% of direct set time)")
         assert percent < self.speed_tolerance
 
@@ -233,15 +233,15 @@ class WrapperPerformanceTestSuite(BasePerformanceTestSuite):
         def direct_call() -> None:
             _ = test_object._first.method()
 
-        # Calculate the mean time in microseconds for the wrapper call
+        # Calculates the mean time in microseconds for the wrapper call
         new_time = timeit.timeit(wrapper_call, number=self.timeit_runs)
         mean_new = new_time / self.timeit_runs * 1000000
 
-        # Calculate the mean time in microseconds for direct call
+        # Calculates the mean time in microseconds for direct call
         old_time = timeit.timeit(direct_call, number=self.timeit_runs)
         mean_old = old_time / self.timeit_runs * 1000000
         percent = (mean_new / mean_old) * 100
 
-        # Print the performance comparison
+        # Prints the performance comparison
         print(f"\n{self.UnitTestClass.__name__} method call: {mean_new:.3f} μs ({percent:.3f}% of direct call time)")
         assert percent < self.speed_tolerance

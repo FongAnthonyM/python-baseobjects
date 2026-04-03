@@ -9,9 +9,10 @@ This example demonstrates:
 4. Running tests on the custom object
 5. Extending the test suite with additional tests
 """
+from __future__ import annotations
 
-# Imports #
 # Standard Libraries #
+# Imports #
 import copy
 import pickle
 from typing import Any
@@ -33,7 +34,7 @@ class Person(BaseObject):
     """
 
     def __init__(self, name: str, age: int, email: str | None = None) -> None:
-        """Initialize a person with a name, age, and optional email.
+        """Initializes a person with a name, age, and optional email.
 
         Args:
             name: The person's name.
@@ -46,8 +47,8 @@ class Person(BaseObject):
         self.friends: list[Person] = []  # Mutable attribute for testing deep copy
         self.id = id(self)  # Immutable attribute for testing deep copy
 
-    def add_friend(self, friend: "Person") -> None:
-        """Add a friend to this person's friend list.
+    def add_friend(self, friend: Person) -> None:
+        """Adds a friend to this person's friend list.
 
         Args:
             friend: The person to add as a friend.
@@ -55,7 +56,7 @@ class Person(BaseObject):
         self.friends.append(friend)
 
     def get_info(self) -> str:
-        """Get a string representation of the person's information.
+        """Gets a string representation of the person's information.
 
         Returns:
             A string with the person's information.
@@ -66,7 +67,7 @@ class Person(BaseObject):
         return info
 
     def has_friend(self, name: str) -> bool:
-        """Check if this person has a friend with the given name.
+        """Checks if this person has a friend with the given name.
 
         Args:
             name: The name to check for.
@@ -92,7 +93,7 @@ class Employee(Person):
         department: str,
         salary: float,
     ) -> None:
-        """Initialize an employee with personal and employment information.
+        """Initializes an employee with personal and employment information.
 
         Args:
             name: The employee's name.
@@ -108,7 +109,7 @@ class Employee(Person):
         self.salary = salary
 
     def get_info(self) -> str:
-        """Get a string representation of the employee's information.
+        """Gets a string representation of the employee's information.
 
         Returns:
             A string with the employee's information.
@@ -126,7 +127,7 @@ class PersonTestSuite(BaseObjectTestSuite):
     # Fixtures
     @pytest.fixture
     def test_object(self) -> Person:
-        """Create a test person object.
+        """Creates a test person object.
 
         Returns:
             A Person instance for testing.
@@ -135,7 +136,7 @@ class PersonTestSuite(BaseObjectTestSuite):
 
     @pytest.fixture
     def test_employee(self) -> Employee:
-        """Create a test employee object.
+        """Creates a test employee object.
 
         Returns:
             An Employee instance for testing.
@@ -144,7 +145,7 @@ class PersonTestSuite(BaseObjectTestSuite):
 
     @pytest.fixture
     def friend_object(self) -> Person:
-        """Create a friend object for testing relationships.
+        """Creates a friend object for testing relationships.
 
         Returns:
             A Person instance to use as a friend.
@@ -159,14 +160,14 @@ class PersonTestSuite(BaseObjectTestSuite):
             *args: Positional arguments for the constructor.
             **kwargs: Keyword arguments for the constructor.
         """
-        # Create default arguments if none provided
+        # Creates default arguments if none provided
         if not args and not kwargs:
             args = ("Test Person", 30, "test@example.com")
 
-        # Create instance
+        # Creates instance
         instance = self.UnitTestClass(*args, **kwargs)
 
-        # Verify instance
+        # Verifies instance
         assert isinstance(instance, self.UnitTestClass)
         assert instance.name == args[0]
         assert instance.age == args[1]
@@ -182,14 +183,14 @@ class PersonTestSuite(BaseObjectTestSuite):
         # Cast to Person for type checking
         person: Person = test_object
 
-        # Add a friend to test mutable attribute copying
+        # Adds a friend to test mutable attribute copying
         friend = Person("Friend", 25)
         person.add_friend(friend)
 
         # Copy object
         obj_copy = copy.copy(person)
 
-        # Verify copy
+        # Verifies copy
         assert obj_copy is not person
         assert obj_copy.name == person.name
         assert obj_copy.age == person.age
@@ -207,14 +208,14 @@ class PersonTestSuite(BaseObjectTestSuite):
         # Cast to Person for type checking
         person: Person = test_object
 
-        # Add a friend to test mutable attribute copying
+        # Adds a friend to test mutable attribute copying
         friend = Person("Friend", 25)
         person.add_friend(friend)
 
         # Copy object using method
         obj_copy = person.copy()
 
-        # Verify copy
+        # Verifies copy
         assert obj_copy is not person
         assert obj_copy.name == person.name
         assert obj_copy.age == person.age
@@ -233,7 +234,7 @@ class PersonTestSuite(BaseObjectTestSuite):
         # Cast to Person for type checking
         person: Person = test_object
 
-        # Add a friend to test mutable attribute copying
+        # Adds a friend to test mutable attribute copying
         friend = Person("Friend", 25)
         person.add_friend(friend)
 
@@ -242,7 +243,7 @@ class PersonTestSuite(BaseObjectTestSuite):
             memo = {}
         obj_deepcopy = copy.deepcopy(person, memo=memo)
 
-        # Verify deep copy
+        # Verifies deep copy
         assert obj_deepcopy is not person
         assert obj_deepcopy.name == person.name
         assert obj_deepcopy.age == person.age
@@ -264,7 +265,7 @@ class PersonTestSuite(BaseObjectTestSuite):
         # Cast to Person for type checking
         person: Person = test_object
 
-        # Add a friend to test mutable attribute copying
+        # Adds a friend to test mutable attribute copying
         friend = Person("Friend", 25)
         person.add_friend(friend)
 
@@ -273,7 +274,7 @@ class PersonTestSuite(BaseObjectTestSuite):
             memo = {}
         obj_deepcopy = person.deepcopy(memo=memo)
 
-        # Verify deep copy
+        # Verifies deep copy
         assert obj_deepcopy is not person
         assert obj_deepcopy.name == person.name
         assert obj_deepcopy.age == person.age
@@ -291,7 +292,7 @@ class PersonTestSuite(BaseObjectTestSuite):
         Args:
             test_object: A fixture providing a test Person instance.
         """
-        # Add a friend to test mutable attribute pickling
+        # Adds a friend to test mutable attribute pickling
         friend = Person("Friend", 25)
         test_object.add_friend(friend)
 
@@ -299,7 +300,7 @@ class PersonTestSuite(BaseObjectTestSuite):
         pickled = pickle.dumps(test_object)
         unpickled = pickle.loads(pickled)
 
-        # Verify unpickled object
+        # Verifies unpickled object
         assert unpickled is not test_object
         assert unpickled.name == test_object.name
         assert unpickled.age == test_object.age
@@ -317,10 +318,10 @@ class PersonTestSuite(BaseObjectTestSuite):
         Args:
             test_object: A fixture providing a test Person instance.
         """
-        # Get info
+        # Gets info
         info = test_object.get_info()
 
-        # Verify info
+        # Verifies info
         expected = f"{test_object.name}, {test_object.age} years old, Email: {test_object.email}"
         assert info == expected
 
@@ -331,10 +332,10 @@ class PersonTestSuite(BaseObjectTestSuite):
             test_object: A fixture providing a test Person instance.
             friend_object: A fixture providing a friend Person instance.
         """
-        # Add friend
+        # Adds friend
         test_object.add_friend(friend_object)
 
-        # Verify friend was added
+        # Verifies friend was added
         assert len(test_object.friends) == 1
         assert test_object.friends[0] is friend_object
         assert test_object.has_friend(friend_object.name)
@@ -345,10 +346,10 @@ class PersonTestSuite(BaseObjectTestSuite):
         Args:
             test_employee: A fixture providing a test Employee instance.
         """
-        # Get info
+        # Gets info
         info = test_employee.get_info()
 
-        # Verify info
+        # Verifies info
         expected = (
             f"{test_employee.name}, {test_employee.age} years old, "
             f"Email: {test_employee.email}, ID: {test_employee.employee_id}, "
@@ -363,11 +364,11 @@ def test_suite_overview() -> None:
     """Demonstrates the basic structure and usage of the test suite."""
     print("Test Suite Overview:\n")
 
-    # Create test suite instance
+    # Creates test suite instance
     print("Creating a test suite instance...")
     test_suite = PersonTestSuite()
 
-    # Show test class
+    # Shows test class
     print(f"Test class: {test_suite.UnitTestClass.__name__}")
 
     # List available test methods
@@ -378,7 +379,7 @@ def test_suite_overview() -> None:
     for method in test_methods:
         print(f"  - {method}")
 
-    # Create test objects
+    # Creates test objects
     print("\nCreating test objects...")
     person = Person("John Doe", 35, "john@example.com")
     employee = Employee("Jane Smith", 42, "jane@example.com", "E54321", "Marketing", 85000.0)
@@ -395,7 +396,7 @@ def testing_object_copying() -> None:
     """Demonstrates testing object copying functionality."""
     print("Testing Object Copying:\n")
 
-    # Create test objects
+    # Creates test objects
     print("Creating test objects...")
     person = Person("John Doe", 35, "john@example.com")
     friend = Person("Jane Smith", 32, "jane@example.com")
@@ -445,7 +446,7 @@ def testing_object_pickling() -> None:
     """Demonstrates testing object pickling functionality."""
     print("Testing Object Pickling:\n")
 
-    # Create test objects
+    # Creates test objects
     print("Creating test objects...")
     person = Person("John Doe", 35, "john@example.com")
     friend = Person("Jane Smith", 32, "jane@example.com")
@@ -474,10 +475,10 @@ def running_tests_manually() -> None:
     """Demonstrates how to run tests manually without pytest."""
     print("Running Tests Manually:\n")
 
-    # Create test suite instance
+    # Creates test suite instance
     test_suite = PersonTestSuite()
 
-    # Create test objects
+    # Creates test objects
     def create_person() -> Person:
         return Person("Test Person", 30, "test@example.com")
 
@@ -485,7 +486,7 @@ def running_tests_manually() -> None:
     employee = Employee("Test Employee", 35, "employee@example.com", "E12345", "Engineering", 75000.0)
     friend = Person("Test Friend", 28, "friend@example.com")
 
-    # Run tests manually
+    # Runs tests manually
     print("Running test_instance_creation...")
     test_suite.test_instance_creation("Manual Test", 40, "manual@example.com")
     print("[PASS] test_instance_creation passed")
@@ -538,7 +539,7 @@ def extending_test_suite() -> None:
     """Demonstrates how to extend the test suite with additional tests."""
     print("Extending Test Suite:\n")
 
-    # Define an extended test suite
+    # Defines an extended test suite
     class ExtendedPersonTestSuite(PersonTestSuite):
         """Extended test suite with additional tests."""
 
@@ -551,11 +552,11 @@ def extending_test_suite() -> None:
             # Original age
             original_age = test_object.age
 
-            # Update age
+            # Updates age
             new_age = original_age + 1
             test_object.age = new_age
 
-            # Verify age update
+            # Verifies age update
             assert test_object.age == new_age
             assert test_object.age != original_age
 
@@ -565,23 +566,23 @@ def extending_test_suite() -> None:
             Args:
                 test_object: A fixture providing a test Person instance.
             """
-            # Create friends
+            # Creates friends
             friend1 = Person("Friend 1", 25)
             friend2 = Person("Friend 2", 30)
             friend3 = Person("Friend 3", 35)
 
-            # Add friends
+            # Adds friends
             test_object.add_friend(friend1)
             test_object.add_friend(friend2)
             test_object.add_friend(friend3)
 
-            # Verify friends were added
+            # Verifies friends were added
             assert len(test_object.friends) == 3
             assert test_object.has_friend("Friend 1")
             assert test_object.has_friend("Friend 2")
             assert test_object.has_friend("Friend 3")
 
-    # Create extended test suite instance
+    # Creates extended test suite instance
     print("Creating an extended test suite instance...")
     extended_test_suite = ExtendedPersonTestSuite()
 
@@ -595,10 +596,10 @@ def extending_test_suite() -> None:
     for method in test_methods:
         print(f"  - {method}")
 
-    # Create test object
+    # Creates test object
     person = Person("Extended Test Person", 45, "extended@example.com")
 
-    # Run extended tests manually
+    # Runs extended tests manually
     print("\nRunning extended tests...")
     print("Running test_age_update...")
     extended_test_suite.test_age_update(person)
@@ -617,17 +618,17 @@ def extending_test_suite() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Demonstrate test suite overview
+    # Demonstrates test suite overview
     test_suite_overview()
 
-    # Demonstrate testing object copying
+    # Demonstrates testing object copying
     testing_object_copying()
 
-    # Demonstrate testing object pickling
+    # Demonstrates testing object pickling
     testing_object_pickling()
 
-    # Demonstrate running tests manually
+    # Demonstrates running tests manually
     running_tests_manually()
 
-    # Demonstrate extending the test suite
+    # Demonstrates extending the test suite
     extending_test_suite()

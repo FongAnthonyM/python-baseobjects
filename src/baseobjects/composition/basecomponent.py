@@ -61,6 +61,7 @@ class BaseComponent(BaseReducible):
     def __init__(
         self,
         composite: Any = None,
+        *,
         init: bool = True,
         **kwargs: Any,
     ) -> None:
@@ -119,17 +120,17 @@ class BaseComponent(BaseReducible):
         Args:
             state: An object which can be used to set the state of this object.
         """
-        # Remove strong reference
+        # Removes strong reference
         composite = None
         if isinstance(state, dict):
             composite = state.pop("_composite", None)
         elif isinstance(state, tuple) and state[0] is not None:
             composite = state[0].pop("_composite", None)
 
-        # Set State
+        # Sets State
         super().__setstate__(state)
 
-        # Set weak reference
+        # Sets weak reference
         self.composite = composite
 
     # Instance Methods #

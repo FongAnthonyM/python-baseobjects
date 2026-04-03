@@ -15,6 +15,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
+# from typing import
 
 # Local Packages #
 from ...classregistration import DispatchableClass

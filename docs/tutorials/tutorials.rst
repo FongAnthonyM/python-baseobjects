@@ -5,7 +5,7 @@ Tutorials and Examples
    :local:
    :backlinks: none
 
-This project includes additional tutorials and examples in the repository to help you learn by doing.
+This project includes additional tutorials and examples in the repository for learning by doing.
 
 Jupyter Tutorials
 -----------------
@@ -19,6 +19,7 @@ The following Jupyter notebooks are available in the ``tutorials/`` directory of
 - ``functions``: Tutorials of dynamic functions and decorators.
 - ``objects``: Tutorials of object helpers and properties.
 - ``operations``: Tutorials of general-purpose operations.
+- ``state``: Tutorials of state-dependent objects.
 - ``testsuite``: Tutorials related to testing foundations.
 - ``versioning``: Tutorials of version handling.
 - ``wrappers``: Tutorials of object wrappers.
@@ -45,6 +46,7 @@ The ``examples/`` directory contains Python scripts demonstrating key features:
 - ``functions``: Examples of dynamic functions and decorators.
 - ``objects``: Examples of object helpers and properties.
 - ``operations``: Examples of general-purpose operations.
+- ``state``: Examples of state-dependent objects.
 - ``testsuite``: Examples related to testing foundations.
 - ``versioning``: Examples of version handling.
 - ``wrappers``: Examples of object wrappers.

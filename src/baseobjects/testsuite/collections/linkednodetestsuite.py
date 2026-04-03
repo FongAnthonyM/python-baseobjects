@@ -144,7 +144,7 @@ class LinkedNodeTestSuite(BaseReducibleTestSuite):
             use_method: Boolean indicating whether to use the deepcopy method or deepcopy function.
             memo: A memo dictionary to pass to deepcopy.
         """
-        # Set up a mutable data object
+        # Sets up a mutable data object
         test_object.data = ["mutable", "data"]
 
         # Deep Copy Object
@@ -229,21 +229,21 @@ class LinkedNodeTestSuite(BaseReducibleTestSuite):
         node1 = self.UnitTestClass(data="node1")
         node2 = self.UnitTestClass(data="node2")
 
-        # Set neighbor
+        # Sets neighbor
         setattr(node1, direction, node2)
 
-        # Verify
+        # Verifies
         assert getattr(node1, direction) is node2
 
-        # Set to None
+        # Sets to None
         setattr(node1, direction, None)
 
-        # Verify
+        # Verifies
         assert getattr(node1, direction) is None
 
     def test_construct_method(self) -> None:
         """Tests the construct method."""
-        # Create nodes
+        # Creates nodes
         node1 = self.UnitTestClass(data="node1")
         node2 = self.UnitTestClass()
         node3 = self.UnitTestClass()
@@ -251,30 +251,30 @@ class LinkedNodeTestSuite(BaseReducibleTestSuite):
         # Construct node2 with data and links
         node2.construct(data="node2", previous=node1, next_=node3)
 
-        # Verify
+        # Verifies
         assert node2.data == "node2"
         assert node2.previous is node1
         assert node2.next is node3
 
     def test_circular_reference(self) -> None:
         """Tests circular references between nodes."""
-        # Create nodes
+        # Creates nodes
         node1 = self.UnitTestClass(data="node1")
         node2 = self.UnitTestClass(data="node2")
 
-        # Create circular reference
+        # Creates circular reference
         node1.next = node2
         node2.previous = node1
         node2.next = node1
         node1.previous = node2
 
-        # Verify circular reference
+        # Verifies circular reference
         assert node1.next is node2
         assert node2.next is node1
         assert node1.previous is node2
         assert node2.previous is node1
 
-        # Verify we can traverse the circle
+        # Verifies we can traverse the circle
         current: LinkedNode | None = node1
         for _ in range(4):  # Traverse the circle twice
             assert current is not None

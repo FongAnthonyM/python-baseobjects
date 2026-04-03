@@ -42,4 +42,4 @@ Best Practices
 --------------
 - Keep dispatch predicates small and testable; avoid side effects in registration.
 - Prefer registries/multiplexers over ad-hoc if/elif trees for extensibility.
-- Document selection rules clearly for users extending or integrating your callables.
+- Document selection rules clearly for users extending or integrating custom callables.

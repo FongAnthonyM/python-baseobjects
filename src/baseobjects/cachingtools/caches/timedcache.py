@@ -110,12 +110,12 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         # Object Construction #
         if init:
             self.construct(
-                func,
-                maxsize,
-                typed,
-                lifetime,
-                call_method,
-                instanced,
+                func=func,
+                maxsize=maxsize,
+                typed=typed,
+                lifetime=lifetime,
+                call_method=call_method,
+                instanced=instanced,
                 *args,
                 **kwargs,
             )
@@ -183,7 +183,7 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         if cache_item is not SEARCHSENTINEL:
             return cache_item.result
         else:
-            result = self.__func__(*args, **kwargs)  # type:ignore[misc]
+            result = self.call_wrapped(*args, **kwargs)
             self.cache_container[key] = self.cache_item_type(key=key, result=result)
             return result
 
@@ -203,7 +203,7 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         if cache_item is not SEARCHSENTINEL:
             return cache_item.result
         else:
-            result = self.__func__(*args, **kwargs)  # type:ignore[misc]
+            result = self.call_wrapped(*args, **kwargs)
             if self._maxsize is not None and self.cache_container.__len__() < self._maxsize:
                 self.cache_container[key] = self.cache_item_type(result=result)
             return result
@@ -248,7 +248,7 @@ class TimedCacheCallable(BaseTimedCacheCallable):
         return len(self.cache_container)
 
 
-class TimedCacheMethod(TimedCacheCallable, BaseTimedCacheMethod):  # type: ignore[misc]
+class TimedCacheMethod(BaseTimedCacheMethod, TimedCacheCallable):  # type: ignore[misc]
     """A method class for TimedCache."""
 
 

@@ -9,10 +9,11 @@ This example demonstrates:
 4. Using the class registry for dynamic class selection
 5. Factory pattern implementation using DispatchableClass
 """
+from __future__ import annotations
 
-# Imports #
 # Standard Libraries #
-from typing import Any, ClassVar, cast
+# Imports #
+from typing import Any, ClassVar
 
 # Source Packages #
 from baseobjects.classregistration import BaseClassRegistry, DispatchableClass
@@ -50,7 +51,9 @@ class SimpleClassRegistry(BaseClassRegistry):
         Returns:
             The requested class, or the default value if not found.
         """
-        return cast(type, self.get(name, default))
+        result = self.get(name, default)
+        assert isinstance(result, type)
+        return result
 
 
 class FileHandler(DispatchableClass):
@@ -67,7 +70,7 @@ class FileHandler(DispatchableClass):
     # Class Methods #
     @classmethod
     def register_class(cls, name: str | None = None) -> None:
-        """Register this class in the class registry.
+        """Registers this class in the class registry.
 
         Args:
             name: The name to register the class under. If None, uses the class name.
@@ -82,8 +85,8 @@ class FileHandler(DispatchableClass):
         cls.class_registry.register_class(cls, name=name)
 
     @classmethod
-    def get_registered_class(cls, name: str) -> type["FileHandler"] | None:
-        """Get a registered class by name.
+    def get_registered_class(cls, name: str) -> type[FileHandler] | None:
+        """Gets a registered class by name.
 
         Args:
             name: The name of the class to retrieve.
@@ -94,11 +97,13 @@ class FileHandler(DispatchableClass):
         if cls.class_registry is None:
             return None
 
-        return cast(type["FileHandler"] | None, cls.class_registry.get_class(name))
+        result = cls.class_registry.get_class(name)
+        assert result is None or isinstance(result, type)
+        return result
 
     @classmethod
-    def get_class_information(cls, filename: str, *args: Any, **kwargs: Any) -> tuple[str]:
-        """Get the class information based on the filename.
+    def get_class_information(cls, filename: str, *args: Any, **kwargs: Any) -> tuple[str]:  # type: ignore[override]
+        """Gets the class information based on the filename.
 
         This method extracts the file extension from the filename and returns it as the key to look up the appropriate
         handler class.
@@ -121,7 +126,7 @@ class FileHandler(DispatchableClass):
 
     # Magic Methods #
     def __init__(self, filename: str, *args: Any, **kwargs: Any) -> None:
-        """Initialize a file handler with a filename.
+        """Initializes a file handler with a filename.
 
         Args:
             filename: The name of the file to handle.
@@ -236,7 +241,7 @@ class ImageFileHandler(FileHandler):
     """Handler for image files (.jpg, .png, .gif)."""
 
     def __init__(self, filename: str, image_format: str | None = None) -> None:
-        """Initialize an image file handler with a filename and format.
+        """Initializes an image file handler with a filename and format.
 
         Args:
             filename: The name of the image file to handle.
@@ -269,11 +274,11 @@ class ImageFileHandler(FileHandler):
         print(f"Content: {content}")
 
 
-# Register the file handlers
+# Registers the file handlers
 FileHandler.class_registry = SimpleClassRegistry()
 FileHandler.class_registration = True
 
-# Register the handlers with their extensions
+# Registers the handlers with their extensions
 FileHandler.class_registry.register_class(TextFileHandler, name="txt")
 FileHandler.class_registry.register_class(CSVFileHandler, name="csv")
 FileHandler.class_registry.register_class(JSONFileHandler, name="json")
@@ -289,7 +294,7 @@ def basic_dispatching() -> None:
     """Demonstrates basic dispatching based on file extension."""
     print("Basic Dispatching:\n")
 
-    # Create file handlers for different file types
+    # Creates file handlers for different file types
     print("Creating file handlers for different file types...")
 
     files = [
@@ -307,7 +312,7 @@ def basic_dispatching() -> None:
         # The FileHandler constructor will automatically dispatch to the appropriate subclass
         handler = FileHandler(filename)
 
-        # Print the type of handler that was selected
+        # Prints the type of handler that was selected
         print(f"\nFile: {filename}")
         print(f"Handler type: {type(handler).__name__}")
 
@@ -322,15 +327,15 @@ def manual_handler_selection() -> None:
     """Demonstrates manually selecting a handler class."""
     print("Manual Handler Selection:\n")
 
-    # Get handler classes from the registry
+    # Gets handler classes from the registry
     print("Getting handler classes from the registry...")
 
     assert FileHandler.class_registry is not None
-    txt_handler_class = cast(type, FileHandler.class_registry.get_class("txt"))
-    csv_handler_class = cast(type, FileHandler.class_registry.get_class("csv"))
-    json_handler_class = cast(type, FileHandler.class_registry.get_class("json"))
+    txt_handler_class: Any = FileHandler.class_registry.get_class("txt")
+    csv_handler_class: Any = FileHandler.class_registry.get_class("csv")
+    json_handler_class: Any = FileHandler.class_registry.get_class("json")
 
-    # Create instances manually
+    # Creates instances manually
     print("Creating instances manually...")
 
     txt_handler = txt_handler_class("manual_document.txt")
@@ -356,19 +361,19 @@ def custom_dispatching_logic() -> None:
     """Demonstrates creating a subclass with custom dispatching logic."""
     print("Custom Dispatching Logic:\n")
 
-    # Define a new file handler with custom dispatching logic
+    # Defines a new file handler with custom dispatching logic
     class AdvancedFileHandler(FileHandler):
         """An advanced file handler with custom dispatching logic."""
 
         @classmethod
-        def get_class_information(
+        def get_class_information(  # type: ignore[override]
             cls,
             filename: str,
             content_type: str | None = None,
             *args: Any,
             **kwargs: Any,
         ) -> tuple[str]:
-            """Get the class information based on the filename and content type.
+            """Gets the class information based on the filename and content type.
 
             This method uses the content_type parameter if provided, otherwise falls back
             to the file extension.
@@ -388,7 +393,7 @@ def custom_dispatching_logic() -> None:
             # Fall back to the parent class's logic
             return super().get_class_information(filename, *args, **kwargs)
 
-    # Create instances with explicit content types
+    # Creates instances with explicit content types
     print("Creating instances with explicit content types...")
 
     # These will use the content_type parameter for dispatching, not the file extension
@@ -396,7 +401,7 @@ def custom_dispatching_logic() -> None:
     csv_handler = AdvancedFileHandler("config.dat", content_type="csv")
     json_handler = AdvancedFileHandler("settings.cfg", content_type="json")
 
-    # Print the type of handler that was selected
+    # Prints the type of handler that was selected
     print("\nFile: data.bin, Content Type: txt")
     print(f"Handler type: {type(txt_handler).__name__}")
     print(f"Reading result: {txt_handler.read()}")
@@ -425,16 +430,16 @@ def file_processor_application() -> None:
     """Demonstrates a complete file processing application using DispatchableClass."""
     print("File Processor Application:\n")
 
-    # Define a file processor that uses the file handlers
+    # Defines a file processor that uses the file handlers
     class FileProcessor:
         """A file processor that can process multiple files."""
 
         def __init__(self) -> None:
-            """Initialize a file processor."""
+            """Initializes a file processor."""
             self.results: dict[str, str] = {}
 
         def process_file(self, filename: str, content: str | None = None) -> str:
-            """Process a file by reading or writing.
+            """Processes a file by reading or writing.
 
             Args:
                 filename: The name of the file to process.
@@ -443,7 +448,7 @@ def file_processor_application() -> None:
             Returns:
                 The result of processing the file.
             """
-            # Create a handler for the file (will automatically dispatch to the correct handler)
+            # Creates a handler for the file (will automatically dispatch to the correct handler)
             handler = FileHandler(filename)
 
             if content is None:
@@ -458,7 +463,7 @@ def file_processor_application() -> None:
                 return f"Wrote to {filename}"
 
         def process_files(self, files: dict[str, str | None]) -> dict[str, str]:
-            """Process multiple files.
+            """Processes multiple files.
 
             Args:
                 files: A dictionary mapping filenames to content. If content is None, reads the file.
@@ -471,18 +476,18 @@ def file_processor_application() -> None:
             return self.results
 
         def get_results(self) -> dict[str, str]:
-            """Get the results of processing files.
+            """Gets the results of processing files.
 
             Returns:
                 A dictionary mapping filenames to processing results.
             """
             return self.results
 
-    # Create a file processor
+    # Creates a file processor
     print("Creating a file processor...")
     processor = FileProcessor()
 
-    # Process some files
+    # Processes some files
     print("Processing files...")
     files_to_process = {
         "readme.txt": None,  # Read mode
@@ -494,7 +499,7 @@ def file_processor_application() -> None:
 
     results = processor.process_files(files_to_process)
 
-    # Print the results
+    # Prints the results
     print("\nProcessing results:")
     for filename, result in results.items():
         print(f"  - {filename}: {result}")
@@ -504,14 +509,14 @@ def file_processor_application() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Demonstrate basic dispatching
+    # Demonstrates basic dispatching
     basic_dispatching()
 
-    # Demonstrate manual handler selection
+    # Demonstrates manual handler selection
     manual_handler_selection()
 
-    # Demonstrate custom dispatching logic
+    # Demonstrates custom dispatching logic
     custom_dispatching_logic()
 
-    # Demonstrate a complete file processor application
+    # Demonstrates a complete file processor application
     file_processor_application()

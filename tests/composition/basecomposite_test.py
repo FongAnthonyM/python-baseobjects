@@ -15,7 +15,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -35,7 +35,7 @@ class ConcreteCompositeClass(BaseComposite):
     """A test composite class for testing BaseComposite."""
 
     # Class Attributes #
-    default_component_types: ClassVar[dict[str, tuple[type, dict[str, Any]]]] = {
+    default_component_types: dict[str, tuple[type, dict[str, Any]]] = {
         "default_component": (ConcreteComponentClass, {}),
     }
 
@@ -49,7 +49,7 @@ class TestBaseComposite(BaseCompositeTestSuite):
     """
 
     # Attributes #
-    UnitTestComponent: ClassVar[type[BaseComponent]] = ConcreteComponentClass
+    UnitTestComponent: type[BaseComponent] = ConcreteComponentClass
     UnitTestClass: type[BaseComposite] = ConcreteCompositeClass
 
     # Tests #

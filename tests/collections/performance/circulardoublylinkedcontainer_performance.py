@@ -343,7 +343,7 @@ class TestCircularDoublyLinkedContainerPerformance(BasePerformanceTestSuite):
         def pop_and_repopulate_container() -> None:
             try:
                 populated_test_container.pop()
-            except IndexError, KeyError:
+            except (IndexError, KeyError):
                 # Repopulate if empty
                 for i in range(100):
                     populated_test_container.append(f"value{i}")

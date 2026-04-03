@@ -4,7 +4,7 @@ A ChainMap that updates and deletes items from the first mapping that contains t
 This module provides the DeepChainMap class, which extends the standard library's ChainMap to provide more intuitive
 update and delete behavior. Unlike the standard ChainMap, which always updates or adds items to the first mapping,
 DeepChainMap updates items in the first mapping that contains the key, and only adds new items to the first mapping.
-This behavior is particularly useful for nested configuration scenarios where you want to modify existing values in
+This behavior is particularly useful for nested configuration scenarios where existing values must be modified in
 their original location.
 """
 

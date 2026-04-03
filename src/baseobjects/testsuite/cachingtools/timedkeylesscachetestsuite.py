@@ -41,7 +41,7 @@ class TimedKeylessCacheTestSuite(TimedCacheTestSuite):
         assert result1 == 4
         assert get_call_count() == 1
 
-        # Call with different arg, returns cached result
+        # Calls with different arg, returns cached result
         result2 = caching_func(3)
         assert result2 == 4  # Keyless
         assert get_call_count() == 1

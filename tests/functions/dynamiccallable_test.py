@@ -20,7 +20,7 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 import pickle
-from typing import Any, ClassVar, cast
+from typing import Any, cast
 from unittest.mock import patch
 
 # Third-Party Packages #
@@ -153,7 +153,8 @@ class TestDynamicMethod(DynamicMethodTestSuite):
         class MockDynamicMethod(DynamicMethod):
             @property
             def _self_(self) -> Any:
-                raise AttributeError("Mocked AttributeError")
+                msg = "Mocked AttributeError"
+                raise AttributeError(msg)
 
             @_self_.setter
             def _self_(self, value: Any) -> None:

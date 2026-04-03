@@ -52,17 +52,21 @@ class DispatchableClass(BaseRegisteredClass):
         Returns:
             The requested subclass, or None if not found.
         """
+        msg = "This method needs to be implemented to get the registered class."
+        raise NotImplementedError(msg)
 
     @classmethod
-    def get_class_information(cls, *args: Any, **kwargs: Any) -> Any:
+    @abstractmethod
+    def get_class_information(cls, *args: Any, **kwargs: Any) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
         """Gets a class's lookup information from a given set of arguments.
 
         Args:
             *args: Positional arguments to get the namespace and name from.
             **kwargs: Keyword arguments to get the namespace and name from.
 
-        Raises:
-            NotImplementedError: This method must be implemented by subclasses to enable dispatch.
+        Returns:
+            The keyword arguments for class lookup and the keyword arguments to pass to the class constructor or None
+            if not found.
         """
         msg = "This method needs to be implemented to dispatch classes."
         raise NotImplementedError(msg)
@@ -72,7 +76,9 @@ class DispatchableClass(BaseRegisteredClass):
     def __new__(cls, *args: Any, **kwargs: Any) -> DispatchableClass:
         """With the given input, will return the correct subclass."""
         if cls.class_registry is not None and cls is cls.class_registry.head_class and (kwargs or args):
-            class_ = cls.get_registered_class(*cls.get_class_information(*args, **kwargs))
-            if class_ is not None and class_ is not cls.class_registry.head_class:
-                return class_(*args, **kwargs)
+            get_kwargs, class_kwargs = cls.get_class_information(*args, **kwargs)
+            if get_kwargs is not None:
+                class_ = cls.get_registered_class(**get_kwargs)
+                if class_ is not None and class_ is not cls.class_registry.head_class:
+                    return class_(*args, **((class_kwargs or {}) | kwargs))
         return super().__new__(cls)

@@ -226,13 +226,13 @@ class WrapperTestSuite(BaseObjectTestSuite):
         This test verifies that attributes and methods defined in the wrapper take precedence over those in wrapped
         objects.
         """
-        # Set attributes and methods on the wrapper
+        # Sets attributes and methods on the wrapper
         test_wrapper = self.UnitTestClass(self.ConcreteOne(), self.ConcreteTwo())
         test_wrapper.two = "wrapper"  # type: ignore[attr-defined]
         test_wrapper.four = "wrapper"  # type: ignore[attr-defined]
         test_wrapper.wrap = lambda: "wrapper"  # type: ignore[attr-defined]
 
-        # Verify that wrapper attributes and methods override wrapped objects
+        # Verifies that wrapper attributes and methods override wrapped objects
         assert test_wrapper.two == "wrapper"  # type: ignore[attr-defined]
         assert test_wrapper.four == "wrapper"  # type: ignore[attr-defined]
         assert test_wrapper.wrap() == "wrapper"  # type: ignore[attr-defined]
@@ -284,13 +284,13 @@ class WrapperTestSuite(BaseObjectTestSuite):
         This test verifies that the wrapper can handle None values for wrapped objects without raising exceptions during
         normal operations.
         """
-        # Create a wrapper with None as the wrapped object
+        # Creates a wrapper with None as the wrapped object
         wrapper = self.UnitTestClass(None)
 
-        # Verify that accessing attributes doesn't raise exceptions
+        # Verifies that accessing attributes doesn't raise exceptions
         assert wrapper._first is None  # type: ignore[attr-defined]
 
-        # Verify that accessing non-existent attributes raises AttributeError
+        # Verifies that accessing non-existent attributes raises AttributeError
         with pytest.raises(AttributeError):
             _ = wrapper.non_existent_attribute  # type: ignore[attr-defined]
 
@@ -300,17 +300,17 @@ class WrapperTestSuite(BaseObjectTestSuite):
         This test verifies that wrappers can be nested, with one wrapper wrapping another wrapper, and that attribute
         access works correctly through multiple levels of wrapping.
         """
-        # Create a wrapper
+        # Creates a wrapper
         wrapper1 = self.UnitTestClass(self.ConcreteOne())
 
-        # Create a wrapper that wraps the first wrapper
+        # Creates a wrapper that wraps the first wrapper
         wrapper2 = self.UnitTestClass(wrapper1)
 
-        # Verify that attribute access works through multiple levels of wrapping
+        # Verifies that attribute access works through multiple levels of wrapping
         assert wrapper2.one == "one"  # type: ignore[attr-defined]
         assert wrapper2.method() == "one"  # type: ignore[attr-defined]
 
-        # Verify that setting attributes works through multiple levels of wrapping
+        # Verifies that setting attributes works through multiple levels of wrapping
         wrapper2.one = "nested"  # type: ignore[attr-defined]
         assert wrapper1.one == "nested"  # type: ignore[attr-defined]
         assert wrapper1._first.one == "nested"  # type: ignore[attr-defined]

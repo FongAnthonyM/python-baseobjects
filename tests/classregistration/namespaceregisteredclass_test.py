@@ -15,7 +15,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -31,8 +31,8 @@ class ConcreteNamespaceRegisteredClass(NamespaceRegisteredClass):
     """A base test subclass of NamespaceRegisteredClass for testing purposes."""
 
     # Class Attributes #
-    class_registration: ClassVar[bool] = True
-    class_namespace: ClassVar[str] = "test_namespace"
+    class_registration: bool = True
+    class_namespace: str = "test_namespace"
 
 
 # Tests #

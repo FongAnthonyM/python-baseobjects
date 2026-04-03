@@ -10,10 +10,11 @@ This example demonstrates:
 5. Combining class and component dispatching in a single object
 6. Factory pattern implementation with composite structure
 """
+from __future__ import annotations
 
-# Imports #
 # Standard Libraries #
-from typing import Any, ClassVar, cast
+# Imports #
+from typing import Any, ClassVar
 
 # Source Packages #
 from baseobjects.classregistration import NamespaceClassRegistry
@@ -27,7 +28,7 @@ class DataSource(BaseComponent):
     """A component that provides data from various sources."""
 
     def get_data(self) -> Any:
-        """Get data from the source.
+        """Gets data from the source.
 
         Returns:
             The data from the source.
@@ -39,7 +40,7 @@ class FileDataSource(DataSource):
     """A component that provides data from a file."""
 
     def __init__(self, composite: Any = None, file_path: str = "data.txt") -> None:
-        """Initialize a file data source.
+        """Initializes a file data source.
 
         Args:
             composite: The composite object this component belongs to.
@@ -49,7 +50,7 @@ class FileDataSource(DataSource):
         self.file_path = file_path
 
     def get_data(self) -> Any:
-        """Get data from the file.
+        """Gets data from the file.
 
         Returns:
             The data from the file.
@@ -61,7 +62,7 @@ class DatabaseDataSource(DataSource):
     """A component that provides data from a database."""
 
     def __init__(self, composite: Any = None, connection_string: str = "localhost:5432") -> None:
-        """Initialize a database data source.
+        """Initializes a database data source.
 
         Args:
             composite: The composite object this component belongs to.
@@ -71,7 +72,7 @@ class DatabaseDataSource(DataSource):
         self.connection_string = connection_string
 
     def get_data(self) -> Any:
-        """Get data from the database.
+        """Gets data from the database.
 
         Returns:
             The data from the database.
@@ -83,7 +84,7 @@ class APIDataSource(DataSource):
     """A component that provides data from an API."""
 
     def __init__(self, composite: Any = None, api_url: str = "https://api.example.com") -> None:
-        """Initialize an API data source.
+        """Initializes an API data source.
 
         Args:
             composite: The composite object this component belongs to.
@@ -93,7 +94,7 @@ class APIDataSource(DataSource):
         self.api_url = api_url
 
     def get_data(self) -> Any:
-        """Get data from the API.
+        """Gets data from the API.
 
         Returns:
             The data from the API.
@@ -105,7 +106,7 @@ class DataProcessor(BaseComponent):
     """A component that processes data."""
 
     def process_data(self, data: Any) -> Any:
-        """Process the data.
+        """Processes the data.
 
         Args:
             data: The data to process.
@@ -120,7 +121,7 @@ class FilterProcessor(DataProcessor):
     """A component that filters data."""
 
     def __init__(self, composite: Any = None, filter_criteria: str = "default") -> None:
-        """Initialize a filter processor.
+        """Initializes a filter processor.
 
         Args:
             composite: The composite object this component belongs to.
@@ -145,7 +146,7 @@ class TransformProcessor(DataProcessor):
     """A component that transforms data."""
 
     def __init__(self, composite: Any = None, transform_type: str = "default") -> None:
-        """Initialize a transform processor.
+        """Initializes a transform processor.
 
         Args:
             composite: The composite object this component belongs to.
@@ -170,7 +171,7 @@ class AggregateProcessor(DataProcessor):
     """A component that aggregates data."""
 
     def __init__(self, composite: Any = None, aggregation_method: str = "sum") -> None:
-        """Initialize an aggregate processor.
+        """Initializes an aggregate processor.
 
         Args:
             composite: The composite object this component belongs to.
@@ -207,7 +208,7 @@ class ConsoleOutput(DataOutput):
     """A component that outputs data to the console."""
 
     def __init__(self, composite: Any = None, format_type: str = "plain") -> None:
-        """Initialize a console output.
+        """Initializes a console output.
 
         Args:
             composite: The composite object this component belongs to.
@@ -229,7 +230,7 @@ class FileOutput(DataOutput):
     """A component that outputs data to a file."""
 
     def __init__(self, composite: Any = None, file_path: str = "output.txt") -> None:
-        """Initialize a file output.
+        """Initializes a file output.
 
         Args:
             composite: The composite object this component belongs to.
@@ -251,7 +252,7 @@ class EmailOutput(DataOutput):
     """A component that outputs data via email."""
 
     def __init__(self, composite: Any = None, email_address: str = "user@example.com") -> None:
-        """Initialize an email output.
+        """Initializes an email output.
 
         Args:
             composite: The composite object this component belongs to.
@@ -297,7 +298,7 @@ class DataPipeline(DispatchableComposite):
     # Class Methods #
     @classmethod
     def register_class(cls, name: str | None = None, namespace: str | None = None) -> None:
-        """Register this class in the class registry.
+        """Registers this class in the class registry.
 
         Args:
             name: The name to register the class under. If None, uses the class name.
@@ -316,8 +317,8 @@ class DataPipeline(DispatchableComposite):
         cls.class_registry.register_class(cls, namespace=namespace, name=name)
 
     @classmethod
-    def get_registered_class(cls, namespace: str, name: str) -> type["DataPipeline"] | None:
-        """Get a registered class by namespace and name.
+    def get_registered_class(cls, namespace: str, name: str) -> type[DataPipeline] | None:
+        """Gets a registered class by namespace and name.
 
         Args:
             namespace: The namespace of the class to retrieve.
@@ -329,11 +330,13 @@ class DataPipeline(DispatchableComposite):
         if cls.class_registry is None:
             return None
 
-        return cast(type["DataPipeline"] | None, cls.class_registry.get_class(namespace, name))
+        result = cls.class_registry.get_class(namespace, name)
+        assert result is None or isinstance(result, type)
+        return result
 
     @classmethod
-    def get_class_information(cls, pipeline_type: str | None = None, *args: Any, **kwargs: Any) -> tuple[str, str]:
-        """Get the class information based on the pipeline type.
+    def get_class_information(cls, pipeline_type: str | None = None, *args: Any, **kwargs: Any) -> tuple[str, str]:  # type: ignore[override]
+        """Gets the class information based on the pipeline type.
 
         Args:
             pipeline_type: The type of pipeline to create. If None, returns the base class.
@@ -393,7 +396,7 @@ class DataPipeline(DispatchableComposite):
         Returns:
             A dictionary of component names, their types, and their keyword arguments.
         """
-        # Start with an empty dictionary for components
+        # Starts with an empty dictionary for components
         components: dict[str, tuple[type[BaseComponent], dict[str, Any]]] = {}
 
         # Determine data source component
@@ -446,14 +449,14 @@ class DataPipeline(DispatchableComposite):
         return components
 
     def process(self) -> None:
-        """Process data through the pipeline.
+        """Processes data through the pipeline.
 
         This method gets data from the data source, processes it, and outputs the result.
         """
-        # Get data from the source
+        # Gets data from the source
         data = self.components["data_source"].get_data()
 
-        # Process the data
+        # Processes the data
         processed_data = self.components["processor"].process_data(data)
 
         # Output the processed data
@@ -464,7 +467,7 @@ class ETLPipeline(DataPipeline):
     """A pipeline for Extract, Transform, Load operations."""
 
     def process(self) -> None:
-        """Process data through the ETL pipeline.
+        """Processes data through the ETL pipeline.
 
         This method extracts data from the source, transforms it, and loads it to the output.
         """
@@ -478,7 +481,7 @@ class ETLPipeline(DataPipeline):
         print("Transforming data...")
         processed_data = self.components["processor"].process_data(data)
 
-        # Load the processed data
+        # Loads the processed data
         print("Loading data...")
         self.components["output"].output_data(processed_data)
         print()
@@ -488,7 +491,7 @@ class ReportingPipeline(DataPipeline):
     """A pipeline for generating reports."""
 
     def process(self) -> None:
-        """Process data through the reporting pipeline.
+        """Processes data through the reporting pipeline.
 
         This method retrieves data, formats it for reporting, and outputs the report.
         """
@@ -498,7 +501,7 @@ class ReportingPipeline(DataPipeline):
         print("Retrieving data...")
         data = self.components["data_source"].get_data()
 
-        # Format for reporting
+        # Formats for reporting
         print("Formatting report...")
         report = self.components["processor"].process_data(data)
 
@@ -512,7 +515,7 @@ class AnalyticsPipeline(DataPipeline):
     """A pipeline for data analytics."""
 
     def process(self) -> None:
-        """Process data through the analytics pipeline.
+        """Processes data through the analytics pipeline.
 
         This method collects data, analyzes it, and outputs the insights.
         """
@@ -532,7 +535,7 @@ class AnalyticsPipeline(DataPipeline):
         print()
 
 
-# Register component classes
+# Registers component classes
 DataPipeline.component_types_registry.register_class(FileDataSource, namespace="source", name="FileDataSource")
 DataPipeline.component_types_registry.register_class(DatabaseDataSource, namespace="source", name="DatabaseDataSource")
 DataPipeline.component_types_registry.register_class(APIDataSource, namespace="source", name="APIDataSource")
@@ -560,7 +563,7 @@ def basic_dispatchable_composite_usage() -> None:
     """Demonstrates basic usage of DispatchableComposite."""
     print("Basic DispatchableComposite Usage:\n")
 
-    # Create a basic data pipeline with default components
+    # Creates a basic data pipeline with default components
     print("Creating a basic data pipeline with default components...")
     pipeline = DataPipeline()
 
@@ -568,7 +571,7 @@ def basic_dispatchable_composite_usage() -> None:
     for name, component in pipeline.components.items():
         print(f"  - {name}: {type(component).__name__}")
 
-    # Process data through the pipeline
+    # Processes data through the pipeline
     print("\nProcessing data through the pipeline:")
     pipeline.process()
     print()
@@ -578,7 +581,7 @@ def class_dispatching() -> None:
     """Demonstrates class dispatching based on pipeline type."""
     print("Class Dispatching Based on Pipeline Type:\n")
 
-    # Create different types of pipelines
+    # Creates different types of pipelines
     print("Creating different types of pipelines...")
 
     # The pipeline_type parameter will be used to dispatch to the appropriate subclass
@@ -586,12 +589,12 @@ def class_dispatching() -> None:
     reporting_pipeline = DataPipeline(pipeline_type="ReportingPipeline")
     analytics_pipeline = DataPipeline(pipeline_type="AnalyticsPipeline")
 
-    # Verify the types of the created pipelines
+    # Verifies the types of the created pipelines
     print(f"ETL Pipeline type: {type(etl_pipeline).__name__}")
     print(f"Reporting Pipeline type: {type(reporting_pipeline).__name__}")
     print(f"Analytics Pipeline type: {type(analytics_pipeline).__name__}")
 
-    # Process data through each pipeline
+    # Processes data through each pipeline
     print("\nProcessing data through each pipeline:")
     etl_pipeline.process()
     reporting_pipeline.process()
@@ -602,7 +605,7 @@ def component_dispatching() -> None:
     """Demonstrates component dispatching based on parameters."""
     print("Component Dispatching Based on Parameters:\n")
 
-    # Create a pipeline with specific component types
+    # Creates a pipeline with specific component types
     print("Creating a pipeline with specific component types...")
     pipeline = DataPipeline(
         source_type="database",
@@ -623,7 +626,7 @@ def component_dispatching() -> None:
         elif name == "output" and isinstance(component, FileOutput):
             print(f"    - Output File: {component.file_path}")
 
-    # Process data through the pipeline
+    # Processes data through the pipeline
     print("\nProcessing data through the pipeline:")
     pipeline.process()
     print()
@@ -633,7 +636,7 @@ def combined_dispatching() -> None:
     """Demonstrates combined class and component dispatching."""
     print("Combined Class and Component Dispatching:\n")
 
-    # Create different types of pipelines with specific components
+    # Creates different types of pipelines with specific components
     print("Creating different types of pipelines with specific components...")
 
     # ETL Pipeline with database source, transform processor, and file output
@@ -669,7 +672,7 @@ def combined_dispatching() -> None:
         format_type="json",
     )
 
-    # Process data through each pipeline
+    # Processes data through each pipeline
     print("\nProcessing data through the ETL pipeline:")
     etl_pipeline.process()
 
@@ -684,22 +687,22 @@ def custom_pipeline_creation() -> None:
     """Demonstrates creating a custom pipeline with manual component creation."""
     print("Custom Pipeline Creation:\n")
 
-    # Create a custom ETL pipeline
+    # Creates a custom ETL pipeline
     print("Creating a custom ETL pipeline...")
     custom_pipeline = ETLPipeline()
 
     # Manually create and add components
     print("Manually creating and adding components...")
 
-    # Create a custom data source
+    # Creates a custom data source
     custom_source = APIDataSource(api_url="https://custom-api.example.com/data")
     custom_pipeline.add_component("data_source", custom_source)
 
-    # Create a custom processor
+    # Creates a custom processor
     custom_processor = TransformProcessor(transform_type="custom_transform")
     custom_pipeline.add_component("processor", custom_processor)
 
-    # Create a custom output
+    # Creates a custom output
     custom_output = EmailOutput(email_address="custom@example.com")
     custom_pipeline.add_component("output", custom_output)
 
@@ -713,7 +716,7 @@ def custom_pipeline_creation() -> None:
         elif name == "output" and isinstance(component, EmailOutput):
             print(f"    - Email Address: {component.email_address}")
 
-    # Process data through the custom pipeline
+    # Processes data through the custom pipeline
     print("\nProcessing data through the custom pipeline:")
     custom_pipeline.process()
     print()

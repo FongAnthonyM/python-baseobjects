@@ -87,20 +87,20 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
         # Ensure we have a method that returns the instance (use instance_method)
         test_method_object = self.create_method_object(instance_method)  # type: ignore[assignment]
 
-        # Bind the method to an instance
+        # Binds the method to an instance
         bound_method = test_method_object.bind_self(test_bind_target, type(test_bind_target))
 
-        # Call the wrapped function directly
+        # Calls the wrapped function directly
         result, instance = bound_method.call_binding(3)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 5  # 3 + 2 (default y)
         assert instance is test_bind_target
 
-        # Call with different arguments
+        # Calls with different arguments
         result, instance = bound_method.call_binding(3, 4)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 7  # 3 + 4
         assert instance is test_bind_target
 
@@ -112,7 +112,7 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
         test_method_object = self.create_method_object(instance_method)
         test_bind_target = self.create_bind_target()
 
-        # Bind the method to the instance
+        # Binds the method to the instance
         bound_method = test_method_object.__get__(test_bind_target, type(test_bind_target))
 
         # Test with default call_method
@@ -121,9 +121,9 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
         assert result == 5  # 3 + 2 (default y)
         assert instance is test_bind_target
 
-        # Add a custom call method to the call_multiplexer
+        # Adds a custom call method to the call_multiplexer
         def custom_call(self: Any, *args: Any, **kwargs: Any) -> tuple[int, Any]:
-            # Multiply the result by 2
+            # Multiplies the result by 2
             result, instance = self.call_wrapped(*args, **kwargs)
             return result * 2, instance
 
@@ -148,10 +148,10 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
         test_method_object = self.create_method_object(multiply_method)
         test_bind_target = self.create_bind_target()
 
-        # Bind
+        # Binds
         bound_method = test_method_object.__get__(test_bind_target, type(test_bind_target))
 
-        # Add multiple call methods to the call_multiplexer
+        # Adds multiple call methods to the call_multiplexer
         # They receive (self, instance, *args, **kwargs) because DynamicMethod passes instance
         def call_double(self: Any, instance: Any, *args: Any, **kwargs: Any) -> tuple[int, Any]:
             result, inst = self.call_wrapped(instance, *args, **kwargs)
@@ -168,7 +168,7 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
         test_method_object.call_method = "call_double"  # type: ignore[attr-defined]
         assert test_method_object.call_method == "call_double"  # type: ignore[attr-defined]
 
-        # Call bound method
+        # Calls bound method
         result, instance = bound_method(3)
         assert result == 18  # (3 * 3) * 2 = 18. Default y=3. multiply_method(x, y=3) -> 3*3=9. *2 -> 18.
         assert instance is test_bind_target
@@ -194,13 +194,13 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
             *args: Positional arguments list to pass to the class constructor.
             **kwargs: Keyword arguments to pass to the class constructor.
         """
-        # Create an instance with a function
+        # Creates an instance with a function
         instance = self.UnitTestClass(instance_method)
 
-        # Verify it's an instance of the correct class
+        # Verifies it's an instance of the correct class
         assert isinstance(instance, self.UnitTestClass)
 
-        # Verify it has the correct function
+        # Verifies it has the correct function
         assert instance.__func__ is instance_method
 
     # Functionality #
@@ -208,20 +208,20 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
         """Tests that the bind_method property correctly gets and sets the binding method."""
         test_method_object = self.create_method_object()
 
-        # Verify the initial bind_method
+        # Verifies the initial bind_method
         assert test_method_object.bind_method == "bind_self"  # type: ignore[attr-defined]
 
-        # Set the bind_method property to bind_wrapped
+        # Sets the bind_method property to bind_wrapped
         test_method_object.bind_method = "bind_wrapped"  # type: ignore[attr-defined]
 
-        # Verify the property was set correctly
+        # Verifies the property was set correctly
         assert test_method_object.bind_method == "bind_wrapped"  # type: ignore[attr-defined]
         assert test_method_object.bind_multiplexer.selected == "bind_wrapped"  # type: ignore[attr-defined]
 
-        # Set it back to the default
+        # Sets it back to the default
         test_method_object.bind_method = "bind_self"  # type: ignore[attr-defined]
 
-        # Verify it was set back correctly
+        # Verifies it was set back correctly
         assert test_method_object.bind_method == "bind_self"  # type: ignore[attr-defined]
         assert test_method_object.bind_multiplexer.selected == "bind_self"  # type: ignore[attr-defined]
 
@@ -234,13 +234,13 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
         assert test_method_object.bind_method == "bind_self"
         bound_method = test_method_object.__get__(test_bind_target, type(test_bind_target))
 
-        # Verify the binding
+        # Verifies the binding
         assert bound_method.__self__ is test_bind_target
 
-        # Call the bound method
+        # Calls the bound method
         result, instance = bound_method(5)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 7  # 5 + 2 (default y)
         assert instance is test_bind_target
 
@@ -251,14 +251,14 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
         # Test with bind_wrapped
         bound_method = test_method_object.__get__(test_bind_target, type(test_bind_target))
 
-        # Verify the binding
+        # Verifies the binding
         assert bound_method.__func__ is test_method_object.__func__
         assert bound_method.__self__ is test_bind_target
 
-        # Call the bound method
+        # Calls the bound method
         result, instance = bound_method(5)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 7  # 5 + 2 (default y)
         assert instance is test_bind_target
 
@@ -266,22 +266,22 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
         """Tests that the method object correctly handles coroutine functions."""
         test_coroutine_object = self.create_method_object(add_method_coroutine)
 
-        # Bind the method to an instance
+        # Binds the method to an instance
         bound_method = test_coroutine_object.__get__(test_bind_target, type(test_bind_target))
 
-        # Call the coroutine function and run it in an event loop
+        # Calls the coroutine function and run it in an event loop
         coro = bound_method(3)
         result, instance = asyncio.run(coro)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 5  # 3 + 2 (default y)
         assert instance is test_bind_target
 
-        # Call with different arguments
+        # Calls with different arguments
         coro = bound_method(3, 4)
         result, instance = asyncio.run(coro)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 7  # 3 + 4
         assert instance is test_bind_target
 
@@ -289,45 +289,45 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
         """Tests that the method object wrapping a coroutine can be converted to a coroutine function."""
         test_coroutine_object = self.create_method_object(add_method_coroutine)
 
-        # Bind the method to an instance
+        # Binds the method to an instance
         bound_method = test_coroutine_object.__get__(test_bind_target, type(test_bind_target))
 
-        # Convert to a standard Python function
+        # Converts to a standard Python function
         func = bound_method.as_function()
 
-        # Verify it's a function
+        # Verifies it's a function
         assert callable(func)
 
-        # Call the function and run it in an event loop
+        # Calls the function and run it in an event loop
         coro = func(3)
         result, instance = asyncio.run(coro)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 5  # 3 + 2 (default y)
         assert instance is test_bind_target
 
-        # Call with different arguments
+        # Calls with different arguments
         coro = func(3, 4)
         result, instance = asyncio.run(coro)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 7  # 3 + 4
         assert instance is test_bind_target
 
     def test_no_function(self) -> None:
         """Tests the edge case where no function is provided."""
-        # Create an instance without a function
+        # Creates an instance without a function
         instance = self.UnitTestClass()
 
-        # Verify it's an instance of the correct class
+        # Verifies it's an instance of the correct class
         assert isinstance(instance, self.UnitTestClass)
 
-        # Verify it has no function
+        # Verifies it has no function
         assert instance.__func__ is None
 
         test_bind_target = self.create_bind_target()
 
-        # Bind the method to the instance
+        # Binds the method to the instance
         bound_method = instance.__get__(test_bind_target, type(test_bind_target))
 
         # Try to call the instance (should raise an error)
@@ -336,16 +336,16 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
 
     def test_change_function(self, test_bind_target: Any) -> None:
         """Tests the edge case where the function is changed after creation."""
-        # Create an instance with a function
+        # Creates an instance with a function
         instance = self.UnitTestClass(instance_method)
 
-        # Verify it has the correct function
+        # Verifies it has the correct function
         assert instance.__func__ is instance_method
 
-        # Bind the method to the instance
+        # Binds the method to the instance
         bound_method = instance.__get__(test_bind_target, type(test_bind_target))
 
-        # Call the function
+        # Calls the function
         result, instance_returned = bound_method(3)
         assert result == 5  # 3 + 2 (default y)
         assert instance_returned is test_bind_target
@@ -353,30 +353,30 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
         # Change the function
         bound_method.__func__ = multiply_method
 
-        # Verify it has the new function
+        # Verifies it has the new function
         assert bound_method.__func__ is multiply_method
 
-        # Call the new function
+        # Calls the new function
         result, instance_returned = bound_method(3)
         assert result == 9  # 3 * 3 (default y)
         assert instance_returned is test_bind_target
 
     def test_method_binding_to_attribute(self, test_bind_target: Any) -> None:
         """Tests that the DynamicMethod can be bound to an instance attribute."""
-        # Create a test method object with a method that works with an instance
+        # Creates a test method object with a method that works with an instance
         test_method_object = self.UnitTestClass(instance_method)
 
-        # Bind the method to an attribute of the instance
+        # Binds the method to an attribute of the instance
         test_method_object.bind_to_attribute(test_bind_target, name="custom_method")
 
-        # Verify the binding
+        # Verifies the binding
         assert hasattr(test_bind_target, "custom_method")
         assert callable(test_bind_target.custom_method)
 
-        # Call the bound method
+        # Calls the bound method
         result, instance = test_bind_target.custom_method(5)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == 7  # 5 + 2 (default y)
         assert instance is test_bind_target
 

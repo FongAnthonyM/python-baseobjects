@@ -28,7 +28,7 @@ from typing import Any
 
 # Local Packages #
 from ...bases import BaseObject
-from ...functions import DynamicCallable, DynamicDecorator, DynamicMethod, MethodMultiplexer
+from ...functions import DynamicCallable, DynamicDecorator, DynamicFunction, DynamicMethod, MethodMultiplexer
 from ...typing import AnyCallable
 
 # Definitions #
@@ -131,7 +131,7 @@ class CacheItem(BaseObject):
         self.result = result
 
 
-class BaseTimedCacheCallable(DynamicCallable):
+class BaseTimedCacheCallable(DynamicFunction):
     """A base cache wrapper object for a function which resets its cache periodically.
 
     Attributes:
@@ -154,6 +154,8 @@ class BaseTimedCacheCallable(DynamicCallable):
     default_call_method: str = "call_caching"
 
     _instanced_cache: bool = False
+
+    _is_cache: bool = True
 
     typed: bool = False
     is_timed: bool = True
@@ -185,7 +187,7 @@ class BaseTimedCacheCallable(DynamicCallable):
         else:
             d = state.copy()
             slots = None
-        # Save and drop cache multiplexer
+        # Saves and drop cache multiplexer
         try:
             d["_saved_cache_method"] = None if self.cache is None else self.cache.selected
         except AttributeError:
@@ -216,12 +218,29 @@ class BaseTimedCacheCallable(DynamicCallable):
 
     # Properties #
     @property
+    def is_cache(self) -> bool:
+        """Determines if caching is enabled."""
+        return self._is_cache
+
+    @is_cache.setter
+    def is_cache(self, value: bool) -> None:
+        self._is_cache = value
+
+    @property
     def instanced_cache(self) -> bool:
         """Determines if the cache exists in the main function or in the method instances."""
         return self._instanced_cache
 
     @instanced_cache.setter
     def instanced_cache(self, value: bool) -> None:
+        """Determines if the cache exists in the main function or in the method instances.
+
+        When set, the __get__ method will be changed to match the chosen style.
+        """
+        if value:
+            self.bind_multiplexer.select("bind_to_attribute")
+        else:
+            self.bind_multiplexer.select("bind_builtin")
         self._instanced_cache = value
 
     @property
@@ -233,6 +252,16 @@ class BaseTimedCacheCallable(DynamicCallable):
     def cache_method(self, value: str) -> None:
         self.cache.select(value)
         self._cache_method = value
+
+    @property
+    def call_method(self) -> str:
+        """The name of the method used when calling."""
+        return self.default_call_method
+
+    @call_method.setter
+    def call_method(self, value: str) -> None:
+        self.call_multiplexer.select(value)
+        self.default_call_method = value
 
     # Magic Methods #
     # Construction/Destruction
@@ -269,11 +298,11 @@ class BaseTimedCacheCallable(DynamicCallable):
         # Object Construction #
         if init:
             self.construct(
-                func,
-                typed,
-                lifetime,
-                call_method,
-                instanced,
+                func=func,
+                typed=typed,
+                lifetime=lifetime,
+                call_method=call_method,
+                instanced=instanced,
                 *args,
                 **kwargs,
             )
@@ -312,6 +341,13 @@ class BaseTimedCacheCallable(DynamicCallable):
 
         if instanced is not None:
             self.instanced_cache = instanced
+        else:
+            self.instanced_cache = self._instanced_cache
+
+        if not self.instanced_cache:
+            self.cache_container = {}
+
+        self.expiration = 0
 
         super().construct(func, *args, **kwargs)
 
@@ -326,7 +362,7 @@ class BaseTimedCacheCallable(DynamicCallable):
         Returns:
             The result of the wrapped function.
         """
-        return self.__wrapped__(*args, **kwargs)  # type:ignore[misc]
+        return self.call_wrapped(*args, **kwargs)
 
     # Cache Control
     def create_key(
@@ -399,16 +435,35 @@ class BaseTimedCacheCallable(DynamicCallable):
         """Clear the cache and update the expiration of the cache."""
         if self.lifetime is not None:
             self.expiration = perf_counter() + self.lifetime
+        if hasattr(self.__wrapped__, "clear_cache"):
+            self.__wrapped__.clear_cache()
+
+    def enable_caching(self) -> None:
+        """Enables caching for this object."""
+        self._is_cache = True
+        if hasattr(self.__wrapped__, "enable_caching"):
+            self.__wrapped__.enable_caching()
+
+    def disable_caching(self) -> None:
+        """Disables caching for this object."""
+        self._is_cache = False
+        self.clear_cache()
+        if hasattr(self.__wrapped__, "disable_caching"):
+            self.__wrapped__.disable_caching()
 
     def stop_caching(self) -> None:
         """Stops using the cache, storing the method used."""
         self._previous_cache_method = self.cache_method
         self.cache_method = "no_cache"
         self.clear_cache()
+        if hasattr(self.__wrapped__, "stop_caching"):
+            self.__wrapped__.stop_caching()
 
     def resume_caching(self) -> None:
         """Resumes caching by setting the call method to the previous call method."""
         self.cache_method = self._previous_cache_method
+        if hasattr(self.__wrapped__, "resume_caching"):
+            self.__wrapped__.resume_caching()
 
     @contextmanager
     def pause_caching(self) -> Iterator[None]:
@@ -432,6 +487,9 @@ class BaseTimedCacheCallable(DynamicCallable):
         Returns:
             The result or the cache.
         """
+        if not self.is_cache:
+            return self.call_wrapped(*args, **kwargs)
+
         if self.clear_condition():
             self.clear_cache()
 
@@ -448,7 +506,6 @@ class BaseTimedCacheCallable(DynamicCallable):
             The result or the cache.
         """
         self.clear_cache()
-
         return self.cache(*args, **kwargs)
 
 
@@ -470,6 +527,48 @@ def _rebind_method(owner: type[Any], name: str, instance: Any) -> Any:
 class BaseTimedCacheMethod(BaseTimedCacheCallable, DynamicMethod):  # type: ignore[misc]
     """An abstract method class for timed caches."""
 
+    # Magic Methods #
+    __call__ = DynamicMethod.__call__
+
+    # Instance Methods #
+    # Constructors/Destructors
+    def construct(
+        self,
+        func: AnyCallable | None = None,
+        typed: bool | None = None,
+        lifetime: int | float | None = None,
+        call_method: str | None = None,
+        instanced: bool | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
+        """Constructs this object with the given arguments.
+
+        Args:
+            func: The function to wrap.
+            typed: Determines if the cache is typed.
+            lifetime: The lifetime of the cache.
+            call_method: The name of the call method.
+            instanced: Determines if the cache is instanced.
+            *args: Arguments for inheritance.
+            **kwargs: Keyword arguments for inheritance.
+        """
+        # Attributes #
+        self._previous_cache_method: str = self._cache_method
+        self.cache: MethodMultiplexer = MethodMultiplexer(instance=self, select=self._cache_method)
+
+        BaseTimedCacheCallable.construct(
+            self,
+            func=func,
+            typed=typed,
+            lifetime=lifetime,
+            call_method=call_method,
+            instanced=instanced,
+            *args,
+            **kwargs,
+        )
+        DynamicMethod.construct(self, func=func, *args, **kwargs)
+
     # Pickling
     def __reduce__(self) -> str | tuple[Any, ...]:
         """Support for pickling.
@@ -487,77 +586,93 @@ class BaseTimedCacheMethod(BaseTimedCacheCallable, DynamicMethod):  # type: igno
             if isinstance(state, dict):
                 state = state.copy()
                 state.pop("__wrapped__", None)
+                state.pop("cache", None)
+                state.pop("bind_multiplexer", None)
+                state.pop("call_multiplexer", None)
             elif isinstance(state, tuple):
                 d = state[0]
                 if d is not None:
                     d = d.copy()
                     d.pop("__wrapped__", None)
+                    d.pop("cache", None)
+                    d.pop("bind_multiplexer", None)
+                    d.pop("call_multiplexer", None)
                     state = (d, state[1])
 
             return (_rebind_method, (self.__owner__, self.__wrapped__.__name__, self.__self__), state)
         return super().__reduce__()
 
-    # Instance Methods #
     # Cache Control
-    @abc.abstractmethod
+    def enable_caching(self) -> None:
+        """Enables caching for this method and the wrapped function."""
+        super().enable_caching()
+        if self.__self__ is not None:
+            try:
+                inner_decorator = getattr(self.__wrapped__, "__wrapped__", None)
+                if inner_decorator is not None:
+                    inner_bound = inner_decorator.__get__(self.__self__, self.__owner__)
+                    if inner_bound is not self and hasattr(inner_bound, "enable_caching"):
+                        inner_bound.enable_caching()
+            except (AttributeError, TypeError):
+                pass
+
+    def disable_caching(self) -> None:
+        """Disables caching for this method and the wrapped function."""
+        super().disable_caching()
+        if self.__self__ is not None:
+            try:
+                inner_decorator = getattr(self.__wrapped__, "__wrapped__", None)
+                if inner_decorator is not None:
+                    inner_bound = inner_decorator.__get__(self.__self__, self.__owner__)
+                    if inner_bound is not self and hasattr(inner_bound, "disable_caching"):
+                        inner_bound.disable_caching()
+            except (AttributeError, TypeError):
+                pass
+
+    def stop_caching(self) -> None:
+        """Stops the wrapped function from caching."""
+        super().stop_caching()
+        if self.__self__ is not None:
+            try:
+                inner_decorator = getattr(self.__wrapped__, "__wrapped__", None)
+                if inner_decorator is not None:
+                    inner_bound = inner_decorator.__get__(self.__self__, self.__owner__)
+                    if inner_bound is not self and hasattr(inner_bound, "stop_caching"):
+                        inner_bound.stop_caching()
+            except (AttributeError, TypeError):
+                pass
+
+    def resume_caching(self) -> None:
+        """Resumes the wrapped function's caching."""
+        super().resume_caching()
+        if self.__self__ is not None:
+            try:
+                inner_decorator = getattr(self.__wrapped__, "__wrapped__", None)
+                if inner_decorator is not None:
+                    inner_bound = inner_decorator.__get__(self.__self__, self.__owner__)
+                    if inner_bound is not self and hasattr(inner_bound, "resume_caching"):
+                        inner_bound.resume_caching()
+            except (AttributeError, TypeError):
+                pass
+
     def clear_cache(self) -> None:
         """Clear the cache and update the expiration of the cache."""
-        if self.lifetime is not None:
-            self.expiration = perf_counter() + self.lifetime
+        super().clear_cache()
+        if self.__self__ is not None:
+            try:
+                inner_decorator = getattr(self.__wrapped__, "__wrapped__", None)
+                if inner_decorator is not None:
+                    inner_bound = inner_decorator.__get__(self.__self__, self.__owner__)
+                    if inner_bound is not self and hasattr(inner_bound, "clear_cache"):
+                        inner_bound.clear_cache()
+            except (AttributeError, TypeError):
+                pass
 
-    # Calling
-    def call_caching(self, *args: Any, **kwargs: Any) -> Any:
-        """Calls the caching function and clears the cache at a certain time.
-
-        Args:
-            *args: Arguments for the wrapped function.
-            **kwargs: Keyword arguments for the wrapped function.
-
-        Returns:
-            The result or the cache.
-        """
-        if self.clear_condition():
-            self.clear_cache()
-
-        return self.cache(*args, **kwargs)
-
-    def call_clearing(self, *args: Any, **kwargs: Any) -> Any:
-        """Clears the cache then calls the caching function.
-
-        Args:
-            *args: Arguments for the wrapped function.
-            **kwargs: Keyword arguments for the wrapped function.
-
-        Returns:
-            The result or the cache.
-        """
-        self.clear_cache()
-
-        return self.cache(*args, **kwargs)
-
-
-class BaseTimedCache(BaseTimedCacheCallable, DynamicDecorator):
+class BaseTimedCache(DynamicDecorator, BaseTimedCacheCallable):
     """An abstract function class for timed caches."""
 
     # Attributes #
     method_type: type[BaseTimedCacheMethod]
-
-    # Properties #
-    @property
-    def instanced_cache(self) -> bool:
-        """Determines if the cache exists in the main function or in the method instances.
-
-        When set, the __get__ method will be changed to match the chosen style.
-        """
-        return self._instanced_cache
-
-    @instanced_cache.setter
-    def instanced_cache(self, value: bool) -> None:
-        if value:
-            self.bind_multiplexer.select("bind_to_attribute")
-        else:
-            self.bind_multiplexer.select("bind_builtin")
-        self._instanced_cache = value
 
     # Instance Methods #
     # Binding
@@ -601,15 +716,16 @@ class BaseTimedCache(BaseTimedCacheCallable, DynamicDecorator):
             return self
 
         if name is None:
-            name = self.__wrapped__.__name__  # type:ignore[union-attr]
+            try:
+                name = self.__wrapped__.__name__  # type:ignore[union-attr]
+            except AttributeError:
+                name = ""
 
         method = self.bind(instance, owner)
         setattr(instance, name, method)
 
         return method
 
-    @abc.abstractmethod
     def clear_cache(self) -> None:
         """Clear the cache and update the expiration of the cache."""
-        if self.lifetime is not None:
-            self.expiration = perf_counter() + self.lifetime
+        super().clear_cache()

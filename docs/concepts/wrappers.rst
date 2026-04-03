@@ -13,7 +13,7 @@ Purpose
 Key Components
 --------------
 - StaticWrapper: A performant wrapper for objects with a stable, known interface. It creates property descriptors for wrapped attributes via an explicit _wrap() step.
-- DynamicWrapper: A flexible wrapper that adapts to changing attributes/methods at runtime (with higher overhead). If available in your version, use when the wrapped interface is heterogeneous.
+- DynamicWrapper: A flexible wrapper that adapts to changing attributes/methods at runtime (with higher overhead). If available in the installed version, use when the wrapped interface is heterogeneous.
 
 Basic Example with StaticWrapper
 --------------------------------

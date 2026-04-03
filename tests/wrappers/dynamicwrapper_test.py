@@ -16,25 +16,26 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
 from baseobjects.testsuite.wrappers.dynamicwrappertestsuite import DynamicWrapperTestSuite
+from baseobjects.testsuite.wrappers.wrappertestsuite import WrapperTestSuite
 from baseobjects.wrappers import DynamicWrapper
 
 
 # Definitions #
 # Classes #
-class ConcreteDynamicWrapper(DynamicWrapper):
+class ConcreteDynamicWrapper(DynamicWrapper, WrapperTestSuite):
     """A test class that inherits from DynamicWrapper.
 
     This class uses DynamicWrapper to wrap ConcreteOne and ConcreteTwo objects.
     """
 
-    _wrapped_map_: ClassVar[list[str]] = ["_first", "_second"]
+    _wrapped_map_: list[str] = ["_first", "_second"]
 
     def __init__(self, first: Any = None, second: Any = None, init: bool = True, **kwargs: Any) -> None:
         """Initialize with wrapped objects.

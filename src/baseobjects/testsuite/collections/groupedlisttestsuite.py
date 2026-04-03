@@ -109,7 +109,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         # So the total length should be 6 (1, 2, 3, 4, 5, 6)
         assert len(nested_list) == 6
 
-        # Add an item to a child and check that the parent length increases
+        # Adds an item to a child and check that the parent length increases
         nested_list.groups["child1"].append(7)
         assert len(nested_list) == 7
 
@@ -143,7 +143,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         Args:
             nested_list: A GroupedList with nested GroupedLists.
         """
-        # Get groups by name
+        # Gets groups by name
         child1 = nested_list["child1"]
         assert isinstance(child1, GroupedList)
         assert len(child1.data) == 2
@@ -221,11 +221,11 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         Args:
             nested_list: A GroupedList with nested GroupedLists.
         """
-        # Create a new group
+        # Creates a new group
         new_group = self.UnitTestClass([7, 8])
         nested_list["new_group"] = new_group
 
-        # Verify the group was added
+        # Verifies the group was added
         assert "new_group" in nested_list.groups
         assert nested_list["new_group"] is new_group
         assert new_group in nested_list.data
@@ -240,7 +240,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         replacement_group = self.UnitTestClass([9, 10])
         nested_list["child1"] = replacement_group
 
-        # Verify the group was added
+        # Verifies the group was added
         assert nested_list["child1"] is replacement_group
         assert replacement_group in nested_list.data
 
@@ -297,10 +297,10 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         Args:
             nested_list: A GroupedList with nested GroupedLists.
         """
-        # Delete a group
+        # Deletes a group
         del nested_list["child1"]
 
-        # Verify the group was removed
+        # Verifies the group was removed
         assert "child1" not in nested_list.groups
         assert len(nested_list) == 4  # Now only [1, 2, 5, 6] remain
         assert nested_list[2] == 5  # The first item in child2 is now at index 2
@@ -320,7 +320,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         # The nested_list has [1, 2, child1, child2] where child1 is [3, 4] and child2 is [5, 6]
         # So the flattened list is [1, 2, 3, 4, 5, 6]
 
-        # Create a fresh list with simple items for testing slice deletion
+        # Creates a fresh list with simple items for testing slice deletion
         simple_list = self.UnitTestClass([1, 2, 3, 4, 5, 6])
         del simple_list[1:4]
         assert len(simple_list) == 3  # Now only [1, 5, 6] remain
@@ -366,10 +366,10 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         Args:
             empty_list: An empty GroupedList.
         """
-        # Create a group
+        # Creates a group
         group = self.UnitTestClass([1, 2, 3])
 
-        # Add the group
+        # Adds the group
         empty_list.add_group(group, "group1")
         assert "group1" in empty_list.groups
         assert empty_list.groups["group1"] is group
@@ -398,7 +398,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         This test verifies that GroupedList instances can be created with no items, with items,
         and with parent-child relationships.
         """
-        # Create an empty instance
+        # Creates an empty instance
         gl = self.UnitTestClass()
         assert gl is not None
         assert len(gl.data) == 0
@@ -406,7 +406,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         assert isinstance(gl.parents, set)
         assert len(gl.parents) == 0
 
-        # Create an instance with items
+        # Creates an instance with items
         items = [1, 2, 3, 4, 5]
         gl = self.UnitTestClass(items)
         assert gl is not None
@@ -415,7 +415,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         assert len(gl.groups) == 0
         assert len(gl.parents) == 0
 
-        # Create a child instance with a parent
+        # Creates a child instance with a parent
         parent = self.UnitTestClass([1, 2])
         child = self.UnitTestClass([3, 4], parent=parent)
         assert child is not None
@@ -447,7 +447,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         assert len(obj_copy.data) == len(test_object.data)
         assert len(obj_copy.groups) == len(test_object.groups)
 
-        # Check that the data items are the same objects (shallow copy)
+        # Checks that the data items are the same objects (shallow copy)
         for i, item in enumerate(obj_copy.data):
             if not isinstance(item, self.UnitTestClass):
                 assert item == test_object.data[i]
@@ -457,7 +457,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
                 if isinstance(item, self.UnitTestClass):
                     assert obj_copy in item.parents
 
-        # Check that the groups are the same objects
+        # Checks that the groups are the same objects
         for name, group in obj_copy.groups.items():
             assert name in test_object.groups
             assert group is test_object.groups[name]
@@ -488,7 +488,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         assert len(obj_deepcopy.data) == len(test_object.data)
         assert len(obj_deepcopy.groups) == len(test_object.groups)
 
-        # Check that the data items are equal but not the same objects
+        # Checks that the data items are equal but not the same objects
         for i, item in enumerate(obj_deepcopy.data):
             if not isinstance(item, GroupedList):
                 assert item == test_object.data[i]
@@ -496,7 +496,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
                 assert item is not test_object.data[i]  # Different objects in deep copy
                 assert len(item.data) == len(test_object.data[i].data)
 
-        # Check that the groups are different objects
+        # Checks that the groups are different objects
         for name, group in obj_deepcopy.groups.items():
             assert name in test_object.groups
             assert group is not test_object.groups[name]
@@ -520,7 +520,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         assert len(unpickled.data) == len(test_object.data)
         assert len(unpickled.groups) == len(test_object.groups)
 
-        # Check that the data items are equal
+        # Checks that the data items are equal
         for i, item in enumerate(unpickled.data):
             if not isinstance(item, GroupedList):
                 assert item == test_object.data[i]
@@ -528,7 +528,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
                 assert item is not test_object.data[i]
                 assert len(item.data) == len(test_object.data[i].data)
 
-        # Check that the groups are accessible
+        # Checks that the groups are accessible
         for name in test_object.groups:
             assert name in unpickled.groups
 
@@ -603,7 +603,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         Args:
             simple_list: A GroupedList with simple items.
         """
-        # Remove an item
+        # Removes an item
         simple_list.remove(3)
         assert 3 not in simple_list
         assert len(simple_list) == 4
@@ -620,7 +620,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         Args:
             simple_list: A GroupedList with simple items.
         """
-        # Create a fresh list with known values
+        # Creates a fresh list with known values
         test_list = self.UnitTestClass([1, 2, 3, 4, 5])
 
         # Pop from a specific position
@@ -653,7 +653,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         assert len(nested_list.groups) == 0
         assert len(nested_list) == 0
 
-        # Create a new nested list and clear a group
+        # Creates a new nested list and clear a group
         parent = self.UnitTestClass([1, 2])
         child = self.UnitTestClass([3, 4], parent=parent)
         parent.data.append(child)
@@ -764,14 +764,14 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         Args:
             empty_list: An empty GroupedList.
         """
-        # Create a group
+        # Creates a group
         group = empty_list.create_group("group1")
         assert isinstance(group, GroupedList)
         assert "group1" in empty_list.groups
         assert empty_list.groups["group1"] is group
         assert group in empty_list.data
 
-        # Create a group with items
+        # Creates a group with items
         group2 = empty_list.create_group("group2", [1, 2, 3])
         assert len(group2.data) == 3
         assert group2.data == [1, 2, 3]
@@ -799,16 +799,16 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         assert group1_again is group1
 
         # Test simple nested group creation
-        # Create a new empty list for this test
+        # Creates a new empty list for this test
         test_list = self.UnitTestClass()
 
-        # Create a group
+        # Creates a group
         group1 = test_list.require_group("group1")
 
-        # Create a nested group inside group1
+        # Creates a nested group inside group1
         nested_group = group1.require_group("nested")
 
-        # Verify the nested group was created correctly
+        # Verifies the nested group was created correctly
         assert "group1" in test_list.groups
         assert "nested" in group1.groups
         assert group1.groups["nested"] is nested_group
@@ -821,12 +821,12 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         Args:
             nested_list: A GroupedList with nested GroupedLists.
         """
-        # Remove a group by name
+        # Removes a group by name
         nested_list.remove_group("child1")
         assert "child1" not in nested_list.groups
         assert len(nested_list.data) == 3  # [1, 2, child2]
 
-        # Remove a group by object
+        # Removes a group by object
         child2 = nested_list.groups["child2"]
         nested_list.remove_group(child2)
         assert "child2" not in nested_list.groups
@@ -844,7 +844,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         Args:
             nested_list: A GroupedList with nested GroupedLists.
         """
-        # Get a group
+        # Gets a group
         child1 = nested_list.get_group("child1")
         assert child1 is nested_list.groups["child1"]
 
@@ -852,7 +852,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         with pytest.raises(KeyError):
             nested_list.get_group("non_existent")
 
-        # Create a nested group and get it
+        # Creates a nested group and get it
         nested_group = nested_list.require_group(["child1", "nested"])
         retrieved_group = nested_list.get_group(["child1", "nested"])
         assert retrieved_group is nested_group
@@ -957,7 +957,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         assert list3 >= list1
         assert list1 >= list4
 
-        # Compare with other types
+        # Compares with other types
         assert list1 == [1, 2, 3]
         assert list1 < [1, 2, 4]
         assert list1 > [1, 2]
@@ -1063,7 +1063,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         # Slice access
         assert gl[1:3] == [2, 3]
 
-        # Set item
+        # Sets item
         gl[0] = 10
         assert gl[0] == 10
 
@@ -1071,7 +1071,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         with pytest.raises(KeyError):
             gl["child"] = self.UnitTestClass([5, 6])
 
-        # Set slice
+        # Sets slice
         gl[0:2] = [11, 12]
         assert gl[0] == 11
         assert gl[1] == 12
@@ -1094,7 +1094,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         """Tests group management methods."""
         gl = self.UnitTestClass([1])
 
-        # Create group
+        # Creates group
         g1 = gl.create_group("g1", [2, 3])
         assert "g1" in gl.groups
         assert g1 in gl.data
@@ -1118,7 +1118,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         assert sub in g1.data
         assert g1 in sub.parents
 
-        # Remove group
+        # Removes group
         gl.remove_group("g2")
         assert "g2" not in gl.groups
 
@@ -1165,15 +1165,15 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         assert gl.index(1) == 0
         assert gl.index(1, 1) == 2  # Start from index 1
 
-        # Remove item
+        # Removes item
         gl.remove(2)
         assert 2 not in gl
 
-        # Remove from group via parent
+        # Removes from group via parent
         gl.remove(4)
         assert 4 not in child
 
-        # Remove with group name
+        # Removes with group name
         child.append(5)
         gl.remove(5, "child")
         assert 5 not in child
@@ -1215,11 +1215,11 @@ class GroupedListTestSuite(BaseObjectTestSuite):
         """Tests error cases."""
         gl = self.UnitTestClass()
 
-        # Add self
+        # Adds self
         with pytest.raises(ValueError, match="itself"):
             gl.add_group(gl, "self")
 
-        # Add parent
+        # Adds parent
         child = self.UnitTestClass()
         gl.add_group(child, "child")
         # child is child of gl.
@@ -1419,7 +1419,7 @@ class GroupedListTestSuite(BaseObjectTestSuite):
             gl.create_group("child")
 
         # 4. get_group list
-        # Create nested group
+        # Creates nested group
         sub = child.create_group("sub", [5])
         g = gl.get_group(["sub", "child"])
         assert g is sub

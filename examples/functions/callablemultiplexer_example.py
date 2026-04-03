@@ -26,7 +26,7 @@ class MathOperations:
     """
 
     def add(self, a: float, b: float) -> float:
-        """Add two numbers.
+        """Adds two numbers.
 
         Args:
             a: The first number.
@@ -38,7 +38,7 @@ class MathOperations:
         return a + b
 
     def subtract(self, a: float, b: float) -> float:
-        """Subtract the second number from the first.
+        """Subtracts the second number from the first.
 
         Args:
             a: The first number.
@@ -50,7 +50,7 @@ class MathOperations:
         return a - b
 
     def multiply(self, a: float, b: float) -> float:
-        """Multiply two numbers.
+        """Multiplies two numbers.
 
         Args:
             a: The first number.
@@ -62,7 +62,7 @@ class MathOperations:
         return a * b
 
     def divide(self, a: float, b: float) -> float:
-        """Divide the first number by the second.
+        """Divides the first number by the second.
 
         Args:
             a: The first number.
@@ -87,7 +87,7 @@ class StringOperations:
     """
 
     def uppercase(self, text: str) -> str:
-        """Convert text to uppercase.
+        """Converts text to uppercase.
 
         Args:
             text: The text to convert.
@@ -98,7 +98,7 @@ class StringOperations:
         return text.upper()
 
     def lowercase(self, text: str) -> str:
-        """Convert text to lowercase.
+        """Converts text to lowercase.
 
         Args:
             text: The text to convert.
@@ -137,13 +137,13 @@ def basic_callable_multiplexer() -> None:
     """Demonstrates basic usage of CallableMultiplexer."""
     print("Basic CallableMultiplexer Usage:\n")
 
-    # Create a registry and add some functions
+    # Creates a registry and add some functions
     registry = FunctionRegistry()
     registry["add"] = lambda a, b: a + b
     registry["subtract"] = lambda a, b: a - b
     registry["multiply"] = lambda a, b: a * b
 
-    # Create a CallableMultiplexer with the registry
+    # Creates a CallableMultiplexer with the registry
     multiplexer = CallableMultiplexer(registry=registry)
 
     # Select a function to use
@@ -161,14 +161,14 @@ def basic_callable_multiplexer() -> None:
     print("\nSelected function: 'multiply'")
     print(f"multiplexer({a}, {b}) = {result}")
 
-    # Add a new function and select it
+    # Adds a new function and select it
     registry["power"] = lambda a, b: a**b
     multiplexer.select("power")
     result = multiplexer(a, b)
     print("\nAdded and selected function: 'power'")
     print(f"multiplexer({a}, {b}) = {result}")
 
-    # Add and select a function in one step
+    # Adds and select a function in one step
     multiplexer.add_select_function("divide", lambda a, b: a / b if b != 0 else float("inf"))
     result = multiplexer(a, b)
     print("\nAdded and selected function: 'divide'")
@@ -181,16 +181,16 @@ def multiplexer_types_comparison() -> None:
     """Demonstrates the differences between the three multiplexer types."""
     print("Comparing Multiplexer Types:\n")
 
-    # Create instances of operation classes
+    # Creates instances of operation classes
     math_ops = MathOperations()
     string_ops = StringOperations()
 
-    # Create registries for our functions/methods
+    # Creates registries for our functions/methods
     registry1 = FunctionRegistry()
     registry2 = FunctionRegistry()
     registry3 = FunctionRegistry()
 
-    # Add the same methods to all registries
+    # Adds the same methods to all registries
     registry1["add"] = math_ops.add
     registry1["uppercase"] = string_ops.uppercase
 
@@ -200,7 +200,7 @@ def multiplexer_types_comparison() -> None:
     registry3["add"] = math_ops.add
     registry3["uppercase"] = string_ops.uppercase
 
-    # Create the different multiplexer types
+    # Creates the different multiplexer types
     callable_multiplexer = CallableMultiplexer(registry=registry1, instance=math_ops)
     function_multiplexer = FunctionMultiplexer(registry=registry2)
     method_multiplexer = MethodMultiplexer(registry=registry3, instance=math_ops)
@@ -222,7 +222,7 @@ def multiplexer_types_comparison() -> None:
     except TypeError as e:
         print(f"Error: {e}")
 
-    # Set is_binding_wrapper to True to make it work like MethodMultiplexer
+    # Sets is_binding_wrapper to True to make it work like MethodMultiplexer
     callable_multiplexer.is_binding_wrapper = True
     result = callable_multiplexer(10, 5)
     print(f"After setting is_binding_wrapper=True, result: {result}")
@@ -244,11 +244,11 @@ def multiplexer_types_comparison() -> None:
     # Now let's try with standalone functions
     print("\nUsing standalone functions with different multiplexers:")
 
-    # Define a standalone function
+    # Defines a standalone function
     def standalone_add(a: int, b: int) -> int:
         return a + b
 
-    # Add the function to all registries
+    # Adds the function to all registries
     registry1["standalone_add"] = standalone_add
     registry2["standalone_add"] = standalone_add
     registry3["standalone_add"] = standalone_add
@@ -284,13 +284,13 @@ def dynamic_method_selection() -> None:
     """Demonstrates dynamic method selection with CallableMultiplexer."""
     print("Dynamic Method Selection Example:\n")
 
-    # Create a class with instance methods
+    # Creates a class with instance methods
     class DynamicProcessor:
         def __init__(self, name: str) -> None:
             self.name = name
             self.value = 0
 
-            # Create a CallableMultiplexer for this instance
+            # Creates a CallableMultiplexer for this instance
             self.multiplexer = CallableMultiplexer(instance=self)
 
             # No need to add methods to a registry, we'll use the instance's methods directly
@@ -310,10 +310,10 @@ def dynamic_method_selection() -> None:
             return old_value
 
         def process(self) -> int:
-            # Call the currently selected method
+            # Calls the currently selected method
             return int(self.multiplexer())
 
-    # Create an instance
+    # Creates an instance
     processor = DynamicProcessor("Dynamic Processor")
 
     # Use the default selected method (increment)
@@ -351,7 +351,7 @@ if __name__ == "__main__":
     # Basic usage of CallableMultiplexer
     basic_callable_multiplexer()
 
-    # Compare the different multiplexer types
+    # Compares the different multiplexer types
     multiplexer_types_comparison()
 
     # Demonstrating dynamic method selection with CallableMultiplexer

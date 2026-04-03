@@ -1,13 +1,13 @@
 Installation
 ============
 
-PyPI (pip) is the recomended way to install BaseObjects, but Github can also be used. If you want to run the examples
-and Jupyter tutorials included in this repository, you should clone and install from GitHub.
+PyPI (pip) is the recommended way to install BaseObjects, but GitHub can also be used. To run the examples
+and Jupyter tutorials included in this repository, clone and install from GitHub.
 
 
 PyPI
 ----
-You can install baseobjects using pip:
+Install baseobjects using pip:
 
 .. code-block:: bash
 

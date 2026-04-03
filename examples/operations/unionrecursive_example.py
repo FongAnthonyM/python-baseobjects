@@ -18,19 +18,20 @@ from typing import Any
 # Source Packages #
 from baseobjects.operations import union_recursive, update_recursive
 
-
 # Example Sections #
+
+
 def basic_usage_example() -> None:
-    """Demonstrate basic usage of union_recursive."""
+    """Demonstrates basic usage of union_recursive."""
     print("\nBasic union_recursive Usage:")
 
-    # Create a simple dictionary
+    # Creates a simple dictionary
     dict1 = {"a": 1, "b": 2, "c": 3}
 
-    # Create another dictionary
+    # Creates another dictionary
     dict2 = {"b": 22, "d": 4}
 
-    # Create a union of the two dictionaries
+    # Creates a union of the two dictionaries
     result = union_recursive(dict1, dict2)
 
     print(f"Dictionary 1: {dict1}")
@@ -38,31 +39,31 @@ def basic_usage_example() -> None:
     print(f"Union result: {result}")
     print("Expected: {'a': 1, 'b': 22, 'c': 3, 'd': 4}")
 
-    # Verify that the original dictionaries are unchanged
+    # Verifies that the original dictionaries are unchanged
     print(f"Dictionary 1 unchanged: {dict1 == {'a': 1, 'b': 2, 'c': 3}} == True")
     print(f"Dictionary 2 unchanged: {dict2 == {'b': 22, 'd': 4}} == True")
 
-    # Verify that result is a new object
+    # Verifies that result is a new object
     print(f"Result is new object: {result is not dict1 and result is not dict2} == True")
 
 
 def nested_dictionary_example() -> None:
-    """Demonstrate unioning nested dictionaries with union_recursive."""
+    """Demonstrates unioning nested dictionaries with union_recursive."""
     print("\nNested Dictionary Example:")
 
-    # Create a nested dictionary
+    # Creates a nested dictionary
     dict1: dict[str, Any] = {
         "user": {"name": "John", "age": 30, "address": {"city": "New York", "zip": "10001"}},
         "settings": {"theme": "dark", "notifications": True},
     }
 
-    # Create another nested dictionary
+    # Creates another nested dictionary
     dict2: dict[str, Any] = {
         "user": {"age": 31, "address": {"state": "NY"}},  # Different value  # New nested value
         "settings": {"language": "en"},  # New value
     }
 
-    # Create a union of the two dictionaries
+    # Creates a union of the two dictionaries
     result = union_recursive(dict1, dict2)
 
     print("Dictionary 1:")
@@ -87,7 +88,7 @@ def nested_dictionary_example() -> None:
     print("\nExpected:")
     print(f"  {expected}")
 
-    # Verify that nested structures are preserved in the result
+    # Verifies that nested structures are preserved in the result
     print("\nVerifying nested structures in result:")
     print(f"  User name: {result['user']['name']} == 'John'")
     print(f"  User age: {result['user']['age']} == 31")
@@ -95,7 +96,7 @@ def nested_dictionary_example() -> None:
     print(f"  User state: {result['user']['address']['state']} == 'NY'")
     print(f"  Settings language: {result['settings']['language']} == 'en'")
 
-    # Verify that original dictionaries are unchanged
+    # Verifies that original dictionaries are unchanged
     print("\nVerifying original dictionaries are unchanged:")
     print(f"  Dict1 user age: {dict1['user']['age']} == 30")
     print(f"  'state' in Dict1 user address: {'state' in dict1['user']['address']} == False")
@@ -103,13 +104,13 @@ def nested_dictionary_example() -> None:
 
 
 def compare_with_update_recursive_example() -> None:
-    """Compare union_recursive with update_recursive."""
+    """Compares union_recursive with update_recursive."""
     print("\nComparing union_recursive with update_recursive:")
 
-    # Create a nested dictionary
+    # Creates a nested dictionary
     original = {"a": 1, "b": {"x": 10, "y": 20}}
 
-    # Create an update dictionary
+    # Creates an update dictionary
     updates = {"b": {"y": 25, "z": 30}, "c": 3}
 
     # Make a copy for update_recursive
@@ -136,22 +137,22 @@ def compare_with_update_recursive_example() -> None:
     print(f"  Original unchanged: {original != union_result} == True")
     print(f"  New object created: {union_result is not original and union_result is not updates} == True")
 
-    # Verify the results are equivalent
+    # Verifies the results are equivalent
     print("\nVerifying results are equivalent:")
     print(f"  Results equal: {update_result == union_result} == True")
 
 
 def deep_copy_example() -> None:
-    """Demonstrate how union_recursive creates deep copies."""
+    """Demonstrates how union_recursive creates deep copies."""
     print("\nDeep Copy Example:")
 
-    # Create a dictionary with a nested list
+    # Creates a dictionary with a nested list
     dict1: dict[str, Any] = {"name": "John", "scores": [85, 90, 95]}
 
-    # Create another dictionary
+    # Creates another dictionary
     dict2 = {"age": 30}
 
-    # Create a union
+    # Creates a union
     result = union_recursive(dict1, dict2)
 
     print(f"Dictionary 1: {dict1}")
@@ -166,12 +167,12 @@ def deep_copy_example() -> None:
     print(f"Union result: {result}")
     print("Note: The list in the union result is not affected by changes to the original")
 
-    # Verify that the lists are different objects
+    # Verifies that the lists are different objects
     print(f"\nLists are different objects: {id(dict1['scores']) != id(result['scores'])} == True")
 
 
 def practical_example() -> None:
-    """Demonstrate a practical use case for union_recursive."""
+    """Demonstrates a practical use case for union_recursive."""
     print("\nPractical Example - Template System:")
 
     # Base template
@@ -187,7 +188,7 @@ def practical_example() -> None:
         "content": {"main": "About page content", "sidebar": "About page sidebar", "extra_section": "Our history"},
     }
 
-    # Create the final page by unioning the base template with the customizations
+    # Creates the final page by unioning the base template with the customizations
     about_page_final = union_recursive(base_template, about_page)
 
     print("Base template:")
@@ -199,7 +200,7 @@ def practical_example() -> None:
     print("\nFinal page (union of base and customizations):")
     print(f"  {about_page_final}")
 
-    # Verify specific elements
+    # Verifies specific elements
     print("\nVerifying specific elements:")
     print(f"  Title: {about_page_final['header']['title']} == 'About Us'")
     print(f"  Logo: {about_page_final['header']['logo']} == 'default_logo.png'")
@@ -208,13 +209,13 @@ def practical_example() -> None:
     print(f"  Extra section: {about_page_final['content']['extra_section']} == 'Our history'")
     print(f"  Footer copyright_: {about_page_final['footer']['copyright_']} == '© 2023 Company'")
 
-    # Create another page
+    # Creates another page
     contact_page = {
         "header": {"title": "Contact Us"},
         "content": {"main": "Contact page content", "form": {"fields": ["Name", "Email", "Message"], "submit": "Send"}},
     }
 
-    # Create the final contact page
+    # Creates the final contact page
     contact_page_final = union_recursive(base_template, contact_page)
 
     print("\nAnother page customization:")
@@ -223,7 +224,7 @@ def practical_example() -> None:
     print("\nAnother final page:")
     print(f"  {contact_page_final}")
 
-    # Verify the base template is unchanged
+    # Verifies the base template is unchanged
     print("\nVerifying base template is unchanged:")
     print(f"  Base title: {base_template['header']['title']} == 'Default Title'")
     print(f"  'form' in base content: {'form' in base_template['content']} == False")
@@ -231,7 +232,7 @@ def practical_example() -> None:
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     basic_usage_example()
     nested_dictionary_example()
     compare_with_update_recursive_example()

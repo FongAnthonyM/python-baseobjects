@@ -40,11 +40,11 @@ class TimedLRUCacheTestSuite(TimedCacheTestSuite):
         cache = self.UnitTestClass(func=test_function, maxsize=2)
 
         # Fill cache
-        # Add 1
+        # Adds 1
         assert cache(1) == 2
         assert get_call_count() == 1
 
-        # Add 2
+        # Adds 2
         assert cache(2) == 4
         assert get_call_count() == 2
         assert len(cache) == 2
@@ -53,15 +53,15 @@ class TimedLRUCacheTestSuite(TimedCacheTestSuite):
         assert cache(1) == 2
         assert get_call_count() == 2  # Cached
 
-        # Add 3, should evict 2 (LRU)
+        # Adds 3, should evict 2 (LRU)
         assert cache(3) == 6
         assert len(cache) == 2
         assert get_call_count() == 3
 
-        # Check that 1 is still cached
+        # Checks that 1 is still cached
         assert cache(1) == 2
         assert get_call_count() == 3  # Did not increase
 
-        # Check that 2 is evicted (should re-calculate)
+        # Checks that 2 is evicted (should re-calculate)
         assert cache(2) == 4
         assert get_call_count() == 4

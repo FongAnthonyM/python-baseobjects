@@ -15,7 +15,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any, ClassVar, Optional, cast
+from typing import Any, Optional, cast
 
 # Third-Party Packages #
 import pytest
@@ -57,8 +57,8 @@ class ConcreteRegisteredClass(BaseRegisteredClass):
     """A base test subclass of BaseRegisteredClass for testing purposes."""
 
     # Class Attributes #
-    class_registry_type: ClassVar[type[BaseClassRegistry]] = ConcreteClassRegistry
-    class_registration: ClassVar[bool] = True
+    class_registry_type: type[BaseClassRegistry] = ConcreteClassRegistry
+    class_registration: bool = True
 
     @classmethod
     def register_class(cls, *args: Any, **kwargs: Any) -> None:
@@ -90,8 +90,8 @@ class ConcreteRegisteredClass(BaseRegisteredClass):
 class DefaultRegisteredClass(BaseRegisteredClass):
     """A test subclass of BaseRegisteredClass that uses the default register_class implementation."""
 
-    class_registry_type: ClassVar[type[BaseClassRegistry]] = ConcreteClassRegistry
-    class_registration: ClassVar[bool] = True
+    class_registry_type: type[BaseClassRegistry] = ConcreteClassRegistry
+    class_registration: bool = True
 
     @classmethod
     def get_registered_class(cls, *args: Any, **kwargs: Any) -> type[BaseRegisteredClass] | None:

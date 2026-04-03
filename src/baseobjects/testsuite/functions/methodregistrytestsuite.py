@@ -19,7 +19,7 @@ import copy
 import pickle
 import weakref
 from collections.abc import Callable
-from typing import Any, ClassVar
+from typing import Any
 
 # Third-Party Packages #
 import pytest
@@ -93,7 +93,7 @@ class BoundMethodRegistryTestSuite(FunctionRegistryTestSuite):
 
     UnitTestClass: type[BoundMethodRegistry]
 
-    BaseRegistryClass: ClassVar[type[BaseMethodRegistry]] = BaseMethodRegistry
+    BaseRegistryClass: type[BaseMethodRegistry] = BaseMethodRegistry
 
     # Fixtures #
     @pytest.fixture
@@ -125,7 +125,7 @@ class BoundMethodRegistryTestSuite(FunctionRegistryTestSuite):
     def test_getitem_unbound(self) -> None:
         """Tests __getitem__ when not bound."""
         obj = self.UnitTestClass()  # instance=None
-        # Add a function to data so we can retrieve it
+        # Adds a function to data so we can retrieve it
 
         def my_func() -> None:
             pass
@@ -312,7 +312,7 @@ class BoundMethodRegistryTestSuite(FunctionRegistryTestSuite):
             test_instance: A fixture providing a test object instance.
         """
         bound_registry = self.UnitTestClass(instance=test_instance, registry=base_registry)
-        # Check shared data instead of .registry
+        # Checks shared data instead of .registry
         assert bound_registry.data is base_registry.data
         assert bound_registry.__self__ is test_instance
 
@@ -429,5 +429,5 @@ class MethodRegistryTestSuite(BaseMethodRegistryTestSuite):
         assert isinstance(bound_registry, BoundMethodRegistry)
         assert bound_registry.__self__ is instance
 
-        # Check shared data
+        # Checks shared data
         # assert bound_registry.data == test_object.data

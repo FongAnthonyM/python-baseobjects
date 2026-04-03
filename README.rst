@@ -37,7 +37,7 @@ Features
 --------
 
 Baseobjects is a collection of carefully designed, reusable building blocks for Python applications. It provides a
-consistent set of base classes, utilities, and patterns intended for inheritance and composition so you can build
+consistent set of base classes, utilities, and patterns intended for inheritance and composition for building
 reliable, testable, and maintainable software faster. The package focuses on practical foundations: common object
 patterns, light-weight data containers, function helpers, and robust operational utilities.
 
@@ -49,7 +49,7 @@ patterns, light-weight data containers, function helpers, and robust operational
 * functions: Objects for creating function and method objects.
 * metaclasses: Base metaclasses.
 * objects: Uncategorized base objects.
-* operations: An assortment functions for doing specific.
+* operations: An assortment of functions for common operations.
 * typing: Objects to be used when adding typing to python code.
 * versioning: Objects for tracking versions.
 * wrappers: Objects for wrapping other objects.
@@ -63,7 +63,7 @@ Requirements
 Installation
 ------------
 
-You can install *baseobjects* via pip_ from PyPI_:
+Install *baseobjects* via pip_ from PyPI_:
 
 .. code:: console
 
@@ -76,7 +76,7 @@ Documentation
 For comprehensive guides, see the full documentation on Read the Docs:
 https://python-baseobjects.readthedocs.io/
 
-The documentation includes a user guide, API reference, tutorials, and examples to help you get productive quickly.
+The documentation includes a user guide, API reference, tutorials, and examples to help with getting productive quickly.
 
 For project-wide conventions and contribution standards, refer to `Anthony's Python Style Guide`_.
 
@@ -97,7 +97,7 @@ Distributed under the terms of the `MIT license`_, *baseobjects* is free and ope
 Issues
 ------
 
-If you encounter any problems,
+If problems are encountered,
 please `file an issue`_ along with a detailed description.
 
 

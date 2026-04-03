@@ -75,22 +75,22 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
         Args:
             test_method_object: A fixture providing a BaseMethod instance that wraps a method.
         """
-        # Create a bind target
+        # Creates a bind target
         bind_target = self.create_bind_target()
 
-        # Bind the method to the target
+        # Binds the method to the target
         test_method_object.__self__ = bind_target
 
-        # Call the method
+        # Calls the method
         result = test_method_object(3)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == (5, bind_target)  # (3 + 2, instance)
 
-        # Call with different arguments
+        # Calls with different arguments
         result = test_method_object(3, 4)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == (7, bind_target)  # (3 + 4, instance)
 
     def test_call_wrapped(self, test_method_object: BaseMethod) -> None:  # type: ignore[override]
@@ -99,19 +99,19 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
         Args:
             test_method_object: A fixture providing a BaseMethod instance that wraps a method.
         """
-        # Create a bind target
+        # Creates a bind target
         bind_target = self.create_bind_target()
 
-        # Call the wrapped method directly
+        # Calls the wrapped method directly
         result = test_method_object.call_wrapped(bind_target, 3)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == (5, bind_target)  # (3 + 2, instance)
 
-        # Call with different arguments
+        # Calls with different arguments
         result = test_method_object.call_wrapped(bind_target, 3, 4)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == (7, bind_target)  # (3 + 4, instance)
 
     def test_call_binding(self, test_method_object: BaseMethod) -> None:
@@ -120,23 +120,23 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
         Args:
             test_method_object: A fixture providing a BaseMethod instance that wraps a method.
         """
-        # Create a bind target
+        # Creates a bind target
         bind_target = self.create_bind_target()
 
-        # Bind the method to the target
+        # Binds the method to the target
         test_method_object.__self__ = bind_target
         test_method_object.__owner__ = self.BindTargetClass
 
-        # Call the method using call_binding
+        # Calls the method using call_binding
         result = test_method_object.call_binding(3)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == (5, bind_target)  # (3 + 2, instance)
 
-        # Call with different arguments
+        # Calls with different arguments
         result = test_method_object.call_binding(3, 4)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert result == (7, bind_target)  # (3 + 4, instance)
 
     # Instantiation #
@@ -235,11 +235,11 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
 
     def test_pickling_with_instance(self) -> None:
         """Tests pickling and unpickling of the method object with a bound instance."""
-        # Create a method and a bind target
+        # Creates a method and a bind target
         method = self.create_method_object()
         bind_target = self.create_bind_target()
 
-        # Bind the method to the target
+        # Binds the method to the target
         method.__self__ = bind_target  # type: ignore[attr-defined]
         method.__owner__ = self.BindTargetClass  # type: ignore[attr-defined]
 
@@ -248,18 +248,18 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
         pickled = pickle.dumps(items)
         unpickled_method, unpickled_bind_target = pickle.loads(pickled)
 
-        # Verify the unpickled method is a new instance
+        # Verifies the unpickled method is a new instance
         assert unpickled_method is not method
 
-        # Verify it has the correct wrapped function
+        # Verifies it has the correct wrapped function
         assert unpickled_method.__func__ is method.__func__
 
-        # Verify it's bound to the correct instance
+        # Verifies it's bound to the correct instance
         assert unpickled_method.__self__ is not bind_target
         assert unpickled_method.__self__ is unpickled_bind_target
         assert unpickled_method.__owner__ is self.BindTargetClass
 
-        # Verify it returns the expected result when called
+        # Verifies it returns the expected result when called
         result = unpickled_method(3)
         assert result == (5, unpickled_bind_target)  # (3 + 2, instance)
 
@@ -370,23 +370,23 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
         Args:
             test_method_object: A fixture providing a BaseMethod instance that wraps a method.
         """
-        # Create a bind target
+        # Creates a bind target
         bind_target = self.create_bind_target()
 
-        # Bind the method to the target
+        # Binds the method to the target
         test_method_object.__self__ = bind_target
 
-        # Convert to a standard Python function
+        # Converts to a standard Python function
         func = test_method_object.as_function()
 
-        # Verify it's a function
+        # Verifies it's a function
         assert callable(func)
 
-        # Verify it returns the expected result
+        # Verifies it returns the expected result
         assert func(3) == (5, bind_target)  # (3 + 2, instance)
         assert func(3, 4) == (7, bind_target)  # (3 + 4, instance)
 
-        # Verify it has the correct attributes
+        # Verifies it has the correct attributes
         assert func.__name__ == test_method_object.__name__  # type: ignore[attr-defined]
         assert func.__doc__ == test_method_object.__doc__
         assert func.__wrapped__ is test_method_object  # type: ignore[attr-defined]

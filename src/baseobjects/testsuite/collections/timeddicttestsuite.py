@@ -135,7 +135,7 @@ class TimedDictTestSuite(BaseDictTestSuite):
             use_method: Boolean indicating whether to use the deepcopy method or deepcopy function.
             memo: A memo dictionary to pass to deepcopy.
         """
-        # Set a lifetime to test copying of all attributes
+        # Sets a lifetime to test copying of all attributes
         test_object.lifetime = 10.0
 
         # Deep Copy Object
@@ -155,7 +155,7 @@ class TimedDictTestSuite(BaseDictTestSuite):
         assert obj_deepcopy.lifetime == test_object.lifetime
         assert obj_deepcopy.expiration is not None
 
-        # Verify that modifying the deepcopy doesn't affect the original
+        # Verifies that modifying the deepcopy doesn't affect the original
         key = "deepcopy_key" if not use_method else "deepcopy_method_key"
         obj_deepcopy[key] = 300
         assert key in obj_deepcopy
@@ -170,7 +170,7 @@ class TimedDictTestSuite(BaseDictTestSuite):
         Args:
             test_object: A fixture providing a test object instance.
         """
-        # Set a lifetime to test pickling of all attributes
+        # Sets a lifetime to test pickling of all attributes
         test_object.lifetime = 5.0
         test_object["e"] = 5
 
@@ -186,7 +186,7 @@ class TimedDictTestSuite(BaseDictTestSuite):
         assert unpickled.lifetime == test_object.lifetime
         assert unpickled.expiration is not None
 
-        # Check that the values are accessible
+        # Checks that the values are accessible
         assert unpickled["a"] == 1
         assert unpickled["b"] == 2
         assert unpickled["c"] == 3
@@ -221,7 +221,7 @@ class TimedDictTestSuite(BaseDictTestSuite):
         # Default value
         assert empty_dict.lifetime is None
 
-        # Set lifetime
+        # Sets lifetime
         empty_dict.lifetime = 10.0
         assert empty_dict.lifetime == 10.0
         assert empty_dict.expiration is not None  # Should be set when lifetime is set
@@ -231,7 +231,7 @@ class TimedDictTestSuite(BaseDictTestSuite):
         assert empty_dict.lifetime == 5.0
         assert empty_dict.expiration is not None  # Should be updated
 
-        # Set to None
+        # Sets to None
         empty_dict.lifetime = None
         assert empty_dict.lifetime is None
 
@@ -243,7 +243,7 @@ class TimedDictTestSuite(BaseDictTestSuite):
         Args:
             simple_dict: A TimedDict with a few items.
         """
-        # Check data property
+        # Checks data property
         data = simple_dict.data
         assert isinstance(data, dict)
         assert len(data) == 3
@@ -251,7 +251,7 @@ class TimedDictTestSuite(BaseDictTestSuite):
         assert data["b"] == 2
         assert data["c"] == 3
 
-        # Set data property
+        # Sets data property
         new_data = {"x": 10}
         simple_dict.data = new_data  # type: ignore[assignment]
         assert simple_dict.data == new_data
@@ -265,17 +265,17 @@ class TimedDictTestSuite(BaseDictTestSuite):
         Args:
             simple_dict: A TimedDict with a few items.
         """
-        # Set a lifetime
+        # Sets a lifetime
         simple_dict.lifetime = 10.0
         old_expiration = simple_dict.expiration
 
         # Clear dictionary
         simple_dict.clear()
 
-        # Verify dictionary is empty
+        # Verifies dictionary is empty
         assert len(simple_dict) == 0
 
-        # Verify expiration was reset
+        # Verifies expiration was reset
         assert simple_dict.expiration is not None
         assert simple_dict.expiration != old_expiration
 
@@ -287,17 +287,17 @@ class TimedDictTestSuite(BaseDictTestSuite):
         Args:
             timed_dict: A TimedDict with a lifetime.
         """
-        # Get initial expiration
+        # Gets initial expiration
         initial_expiration = timed_dict.expiration
         assert initial_expiration is not None
 
-        # Wait a bit
+        # Waits a bit
         time.sleep(0.1)
 
         # Reset expiration
         timed_dict.reset_expiration()
 
-        # Verify expiration was updated
+        # Verifies expiration was updated
         assert timed_dict.expiration is not None
         assert timed_dict.expiration > initial_expiration
 
@@ -323,7 +323,7 @@ class TimedDictTestSuite(BaseDictTestSuite):
             assert td.expiration is None
             initial_expiration = None
 
-        # Execute context manager
+        # Executes context manager
         if manager_name == "pause_timer":
             cm = td.pause_timer()
         else:
@@ -337,7 +337,7 @@ class TimedDictTestSuite(BaseDictTestSuite):
             # Modify
             td["d"] = 4
 
-        # Verify after
+        # Verifies after
         assert td.is_timed is True
         if has_lifetime:  # type: ignore[unreachable]
             assert td.expiration is not None
@@ -359,7 +359,7 @@ class TimedDictTestSuite(BaseDictTestSuite):
         # Initially, condition should be False
         assert timed_dict.clear_condition() is False
 
-        # Wait for expiration
+        # Waits for expiration
         time.sleep(1.1)  # Slightly more than the 1.0 second lifetime
 
         # Now condition should be True
@@ -384,13 +384,13 @@ class TimedDictTestSuite(BaseDictTestSuite):
         # Initially, dictionary should have items
         assert len(timed_dict) == 3
 
-        # Wait for expiration
+        # Waits for expiration
         time.sleep(1.1)  # Slightly more than the 1.0 second lifetime
 
-        # Call verify (this should clear the dictionary)
+        # Calls verify (this should clear the dictionary)
         timed_dict.verify()
 
-        # Verify dictionary is now empty
+        # Verifies dictionary is now empty
         assert len(timed_dict) == 0
 
     def test_auto_clearing(self, timed_dict: TimedDict) -> None:
@@ -402,13 +402,13 @@ class TimedDictTestSuite(BaseDictTestSuite):
         # Initially, dictionary should have items
         assert len(timed_dict) == 3
 
-        # Wait for expiration
+        # Waits for expiration
         time.sleep(1.1)  # Slightly more than the 1.0 second lifetime
 
         # Access the data property (should trigger verify)
         data = timed_dict.data
 
-        # Verify dictionary is now empty
+        # Verifies dictionary is now empty
         assert len(data) == 0
         assert len(timed_dict) == 0
 
@@ -420,11 +420,11 @@ class TimedDictTestSuite(BaseDictTestSuite):
             lifetime: The lifetime value to test.
             should_clear: Whether the dictionary should clear immediately or on verification.
         """
-        # Create dictionary
+        # Creates dictionary
         td = self.UnitTestClass({"a": 1, "b": 2})
         assert len(td) == 2
 
-        # Set lifetime
+        # Sets lifetime
         td.lifetime = lifetime
 
         if should_clear:

@@ -25,13 +25,13 @@ class ExampleMeta(BaseMeta):
     registry: ClassVar[dict[str, type]] = {}
 
     def __new__(mcs, name: str, bases: tuple[type, ...], namespace: dict[str, Any]) -> type:
-        """Create a new class and register it in the registry."""
+        """Creates a new class and register it in the registry."""
         cls = super().__new__(mcs, name, bases, namespace)
         mcs.registry[name] = cls
         return cls
 
     def get_registered_classes(self) -> list[str]:
-        """Get a list of all registered class names.
+        """Gets a list of all registered class names.
 
         Returns:
             A list of registered class names.
@@ -43,7 +43,7 @@ class BaseWithMeta(metaclass=ExampleMeta):
     """A base class that uses ExampleMeta as its metaclass."""
 
     def __init__(self, name: str) -> None:
-        """Initialize the base instance.
+        """Initializes the base instance.
 
         Args:
             name: The name for this instance.
@@ -57,7 +57,7 @@ class ChildClass(BaseWithMeta):
     """A child class that inherits from BaseWithMeta."""
 
     def __init__(self, name: str, value: int) -> None:
-        """Initialize the child instance.
+        """Initializes the child instance.
 
         Args:
             name: The name for this instance.
@@ -70,14 +70,14 @@ class ChildClass(BaseWithMeta):
 
 # Example Sections #
 def metaclass_creation_example() -> None:
-    """Demonstrate creating and using a metaclass with BaseMeta."""
+    """Demonstrates creating and using a metaclass with BaseMeta."""
     print("\nMetaclass Creation Example:")
 
-    # Show registered classes
+    # Shows registered classes
     registered = BaseWithMeta.get_registered_classes()
     print(f"Registered classes: {registered} == ['BaseWithMeta', 'ChildClass']")
 
-    # Create instances of classes with our metaclass
+    # Creates instances of classes with our metaclass
     base_instance = BaseWithMeta("base_example")
     child_instance = ChildClass("child_example", 42)
 
@@ -85,12 +85,12 @@ def metaclass_creation_example() -> None:
     print(f"Child instance name: {child_instance.name} == 'child_example'")
     print(f"Child instance value: {child_instance.value} == 42")
 
-    # Verify metaclass
+    # Verifies metaclass
     print(f"BaseWithMeta's metaclass: {type(BaseWithMeta).__name__} == 'ExampleMeta'")
     print(f"ChildClass's metaclass: {type(ChildClass).__name__} == 'ExampleMeta'")
 
 
 # Main #
 if __name__ == "__main__":
-    # Run examples
+    # Runs examples
     metaclass_creation_example()
