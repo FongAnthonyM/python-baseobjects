@@ -416,7 +416,8 @@ class staterestriction(BaseDecorator):  # noqa: N801
             instance: The instance to set the value on.
             value: The value to set.
         """
-        instance.__dict__[self.__wrapped__.__name__] = value
+        if self.__wrapped__ is not None:
+            instance.__dict__[self.__wrapped__.__name__] = value
 
     # Instance Methods #
     # Constructors/Destructors
@@ -461,7 +462,7 @@ class staterestriction(BaseDecorator):  # noqa: N801
             self.all_modes = False
 
     # Method Overrides #
-    __call__: CallMethod = call_wrapped  # type: ignore[assignment]
+    __call__: CallMethod = call_wrapped
 
 
 class asopen(BaseDecorator):  # noqa: N801
@@ -543,7 +544,8 @@ class asopen(BaseDecorator):  # noqa: N801
         self.kwargs = kwargs
 
     # Method Overrides #
-    __call__: "CallMethod" = call_wrapped  # type: ignore[assignment]
+    __call__: CallMethod = call_wrapped
+
 
 class asopenasync(BaseDecorator):  # noqa: N801
     """A decorator that asynchronously ensures the object is open for the duration of the wrapped function call.
@@ -599,7 +601,7 @@ class asopenasync(BaseDecorator):  # noqa: N801
         if args:
             parent_call = super().call_wrapped
 
-            async def wrap():
+            async def wrap() -> Any:
                 async with args[0].as_open_async(*self.args, **self.kwargs):
                     return await parent_call(*args, **kwargs)
 
@@ -630,4 +632,4 @@ class asopenasync(BaseDecorator):  # noqa: N801
         self.kwargs = kwargs
 
     # Method Overrides #
-    __call__: "CallMethod" = call_wrapped  # type: ignore[assignment]
+    __call__: CallMethod = call_wrapped

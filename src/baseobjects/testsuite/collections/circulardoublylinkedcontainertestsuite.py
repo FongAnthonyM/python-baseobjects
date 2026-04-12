@@ -1,5 +1,7 @@
 """circulardoublylinkedcontainertestsuite.py
 Base class for test suites which test CircularDoublyLinkedContainer and its subclasses.
+
+This module contains the base class for test suites which test CircularDoublyLinkedContainer and its subclasses.
 """
 
 # Header #

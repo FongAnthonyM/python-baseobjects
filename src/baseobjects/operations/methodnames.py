@@ -1,5 +1,7 @@
 """methodnames.py
 Functions for getting method names from objects.
+
+This module contains the functions for getting method names from objects.
 """
 
 # Header #

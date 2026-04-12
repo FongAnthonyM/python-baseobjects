@@ -28,8 +28,6 @@ from baseobjects.testsuite import BasePerformanceTestSuite
 # from typing import
 
 
-
-
 # Definitions #
 # Classes #
 class TestCallableMultiplexerPerformance(BasePerformanceTestSuite):
@@ -86,7 +84,7 @@ class TestCallableMultiplexerPerformance(BasePerformanceTestSuite):
         return multiplexer
 
     @pytest.fixture
-    def test_class_instance(self) -> "TestCallableMultiplexerPerformance.ConcreteClass":
+    def test_class_instance(self) -> TestCallableMultiplexerPerformance.ConcreteClass:
         """Create a test class instance for use in tests.
 
         Returns:
@@ -242,7 +240,7 @@ class TestMethodMultiplexerPerformance(BasePerformanceTestSuite):
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_class_instance(self) -> "TestMethodMultiplexerPerformance.ConcreteInstanceClass":
+    def test_class_instance(self) -> TestMethodMultiplexerPerformance.ConcreteInstanceClass:
         """Create a test class instance for use in tests.
 
         Returns:
@@ -253,7 +251,7 @@ class TestMethodMultiplexerPerformance(BasePerformanceTestSuite):
     @pytest.fixture
     def test_multiplexer(
         self,
-        test_class_instance: "TestMethodMultiplexerPerformance.ConcreteInstanceClass",
+        test_class_instance: TestMethodMultiplexerPerformance.ConcreteInstanceClass,
     ) -> MethodMultiplexer:
         """Create a test multiplexer instance for use in tests.
 
@@ -270,7 +268,7 @@ class TestMethodMultiplexerPerformance(BasePerformanceTestSuite):
     # Tests
     def test_instance_creation(
         self,
-        test_class_instance: "TestMethodMultiplexerPerformance.ConcreteInstanceClass",
+        test_class_instance: TestMethodMultiplexerPerformance.ConcreteInstanceClass,
     ) -> None:
         """Test that instances of MethodMultiplexer can be created efficiently.
 
@@ -308,7 +306,7 @@ class TestMethodMultiplexerPerformance(BasePerformanceTestSuite):
     def test_call_speed(
         self,
         test_multiplexer: MethodMultiplexer,
-        test_class_instance: "TestMethodMultiplexerPerformance.ConcreteInstanceClass",
+        test_class_instance: TestMethodMultiplexerPerformance.ConcreteInstanceClass,
     ) -> None:
         """Test the performance of the __call__ method of MethodMultiplexer.
 

@@ -1,5 +1,7 @@
 """__init__.py
 Provides test suite classes for composition.
+
+This module contains the provides test suite classes for composition.
 """
 
 # Header #

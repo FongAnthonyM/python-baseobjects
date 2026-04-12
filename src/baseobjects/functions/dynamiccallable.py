@@ -1,5 +1,7 @@
 """dynamiccallable.py
 Abstract classes for creating callable classes that has multiplexed callback.
+
+This module contains the abstract classes for creating callable classes that has multiplexed callback.
 """
 
 # Header #
@@ -192,7 +194,7 @@ class DynamicCallable(BaseCallable):
             **kwargs: Additional keyword arguments forwarded to BaseCallable.
         """
         # Parent Initialization #
-        super().__init__(func=func, *args, init=False, **kwargs)
+        super().__init__(*args, func=func, init=False, **kwargs)  # type: ignore[misc]
 
         # Attributes #
         self.bind_multiplexer = MethodMultiplexer(instance=self, select=self.default_bind_method, is_binding=False)
@@ -200,11 +202,11 @@ class DynamicCallable(BaseCallable):
 
         # Object Construction #
         if init:
-            self.construct(
+            self.construct(  # type: ignore[misc]
+                *args,
                 func=func,
                 bind_method=bind_method,
                 call_method=call_method,
-                *args,
                 **kwargs,
             )
 
@@ -281,8 +283,8 @@ class DynamicMethod(DynamicCallable, BaseMethod):
         Returns:
             The output of the wrapped function.
         """
-        if (instance := getattr(self, "__self__", None)) is not None:
-            return self.call_multiplexer(instance, *args, **kwargs)
+        if (reference := self._self_) is not None:
+            return self.call_multiplexer(reference(), *args, **kwargs)
 
         return self.call_multiplexer(*args, **kwargs)
 
@@ -293,4 +295,4 @@ class DynamicFunction(BaseFunction, DynamicCallable):
     # Attributes #
     default_bind_method: str = "bind_builtin"
     default_call_method: str = "call_wrapped"
-    method_type: type[BaseMethod] = DynamicMethod
+    bind_method_type: type[BaseMethod] = DynamicMethod

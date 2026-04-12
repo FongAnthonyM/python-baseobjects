@@ -1,5 +1,7 @@
 """unionrecursive.py
 Unions a mapping object and its contained mappings within another mapping.
+
+This module contains the unions a mapping object and its contained mappings within another mapping.
 """
 
 # Header #

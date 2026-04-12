@@ -1,5 +1,7 @@
 """methodregistrytestsuite.py
 Base test suite for MethodRegistry and its subclasses.
+
+This module contains the base test suite for MethodRegistry and its subclasses.
 """
 
 # Header #

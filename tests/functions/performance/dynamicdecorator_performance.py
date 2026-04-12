@@ -103,7 +103,7 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_dynamic_decorator(self) -> "TestDynamicDecoratorPerformance.TestDynamicDecorator":
+    def test_dynamic_decorator(self) -> TestDynamicDecoratorPerformance.TestDynamicDecorator:
         """Create a test dynamic decorator instance for use in tests.
 
         Returns:
@@ -112,7 +112,7 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
         return self.UnitTestClass()
 
     @pytest.fixture
-    def test_base_decorator(self) -> "TestDynamicDecoratorPerformance.TestBaseDecorator":
+    def test_base_decorator(self) -> TestDynamicDecoratorPerformance.TestBaseDecorator:
         """Create a test base decorator instance for use in tests.
 
         Returns:
@@ -175,8 +175,8 @@ class TestDynamicDecoratorPerformance(BasePerformanceTestSuite):
 
     def test_call_speed(
         self,
-        test_dynamic_decorator: "TestDynamicDecoratorPerformance.TestDynamicDecorator",
-        test_base_decorator: "TestDynamicDecoratorPerformance.TestBaseDecorator",
+        test_dynamic_decorator: TestDynamicDecoratorPerformance.TestDynamicDecorator,
+        test_base_decorator: TestDynamicDecoratorPerformance.TestBaseDecorator,
     ) -> None:
         """Test the performance of the __call__ method of DynamicDecorator.
 

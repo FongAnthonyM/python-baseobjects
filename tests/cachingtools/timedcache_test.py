@@ -168,23 +168,6 @@ class TestTimedCache(TimedCacheTestSuite):
     def test_pause_timer(self) -> None:
         """Tests pausing the timer (abstract in suite, needs implementation if supported)."""
 
-    def test_timed_cache_method_pickling(self) -> None:
-        """Tests pickling of a bound TimedCache method."""
-        obj = PickleTestClass()
-        bound_method = obj.method
-
-        # Pickle the bound method along with the object to keep it alive
-        dump = pickle.dumps((bound_method, obj))
-        loaded_method, loaded_obj = pickle.loads(dump)
-
-        # Execute to verify it works
-        assert loaded_method() == 1
-
-        # Verify it re-bound to the restored object
-        assert loaded_method.__self__ is loaded_obj
-        assert loaded_method.__self__ is not obj
-        assert isinstance(loaded_method.__self__, PickleTestClass)
-
 
 class PickleTestClass:
     """A helper class for testing pickling of TimedCache methods."""

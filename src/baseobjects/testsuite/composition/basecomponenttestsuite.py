@@ -1,5 +1,7 @@
 """basecomponenttestsuite.py
 Base test suite for BaseComponent and its subclasses.
+
+This module contains the base test suite for BaseComponent and its subclasses.
 """
 
 # Header #

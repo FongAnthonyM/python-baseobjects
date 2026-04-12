@@ -1,5 +1,7 @@
 """staticwrappertestsuite.py
 Test suite for the StaticWrapper class.
+
+This module contains the test suite for the StaticWrapper class.
 """
 
 # Header #
@@ -15,7 +17,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any
+from typing import Any, ClassVar
 
 # Third-Party Packages #
 import pytest
@@ -46,7 +48,7 @@ class StaticWrapperTestSuite(BaseObjectTestSuite):
         """Tests getting the previously wrapped object."""
 
         class SimpleGetPreviousWrapper(StaticWrapper):
-            _wrapped_map_: list[tuple[str, type[Any] | None]] = [("_wrapped_obj", Any)]
+            _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = [("_wrapped_obj", Any)]
 
             def __init__(self, wrapped: Any = None) -> None:
                 self._wrapped_obj = wrapped
@@ -60,7 +62,7 @@ class StaticWrapperTestSuite(BaseObjectTestSuite):
         """Tests re-wrapping the class."""
 
         class UnitTestClassRewrap(StaticWrapper):
-            _wrapped_map_: list[tuple[str, type[Any] | None]] = [("_first", Any), ("_second", Any)]
+            _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = [("_first", Any), ("_second", Any)]
 
             def __init__(self, first: Any = None, second: Any = None) -> None:
                 self._first = first
@@ -74,7 +76,7 @@ class StaticWrapperTestSuite(BaseObjectTestSuite):
         """Tests wrapping objects with method descriptors (e.g. built-ins like list)."""
 
         class ListWrapper(StaticWrapper):
-            _wrapped_map_: list[tuple[str, type[Any] | None]] = [("_list", list)]
+            _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = [("_list", list)]
 
             def __init__(self, inner: list) -> None:  # type: ignore[type-arg]
                 self._list = inner
@@ -94,7 +96,7 @@ class StaticWrapperTestSuite(BaseObjectTestSuite):
             attr = "default"
 
         class PersistenceWrapper(StaticWrapper):
-            _wrapped_map_: list[tuple[str, type[Any] | None]] = [("obj", Simple)]
+            _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = [("obj", Simple)]
 
             def __init__(self) -> None:
                 pass
@@ -122,7 +124,7 @@ class StaticWrapperTestSuite(BaseObjectTestSuite):
         class TransferWrapper(StaticWrapper):
             _get_previous_wrapped = True
             _set_next_wrapped = True
-            _wrapped_map_: list[tuple[str, type[Any] | None]] = [("obj", Simple)]
+            _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = [("obj", Simple)]
 
             def __init__(self, obj: Any) -> None:
                 self.obj = obj
@@ -145,7 +147,7 @@ class StaticWrapperTestSuite(BaseObjectTestSuite):
 
         class SaveWrapper(StaticWrapper):
             _get_previous_wrapped = True
-            _wrapped_map_: list[tuple[str, type[Any] | None]] = [("obj", Simple)]
+            _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = [("obj", Simple)]
 
             def __init__(self, obj: Any) -> None:
                 self.obj = obj
@@ -163,7 +165,7 @@ class StaticWrapperTestSuite(BaseObjectTestSuite):
         """Tests explicitly re-wrapping the class."""
 
         class RewrapTest(StaticWrapper):
-            _wrapped_map_: list[tuple[str, type[Any] | None]] = []
+            _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = []
 
         # Initially empty
         wrapper = RewrapTest()
@@ -183,7 +185,7 @@ class StaticWrapperTestSuite(BaseObjectTestSuite):
 
         class SaveWrapper(StaticWrapper):
             _get_previous_wrapped = True
-            _wrapped_map_: list[tuple[str, type[Any] | None]] = [("obj", Simple)]
+            _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = [("obj", Simple)]
 
             def __init__(self, obj: Any) -> None:
                 self.obj = obj
@@ -204,7 +206,7 @@ class StaticWrapperTestSuite(BaseObjectTestSuite):
             pass
 
         class InstanceWrapTest(StaticWrapper):
-            _wrapped_map_: list[tuple[str, type[Any] | None]] = [("obj", DynamicSimple)]
+            _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = [("obj", DynamicSimple)]
 
             def __init__(self, obj: Any) -> None:
                 self.obj = obj
@@ -229,7 +231,7 @@ class StaticWrapperTestSuite(BaseObjectTestSuite):
             pass
 
         class DelTest(StaticWrapper):
-            _wrapped_map_: list[tuple[str, type[Any] | None]] = [("obj", Simple)]
+            _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = [("obj", Simple)]
 
             def __init__(self, obj: Any) -> None:
                 self.obj = obj
@@ -255,7 +257,7 @@ class StaticWrapperTestSuite(BaseObjectTestSuite):
             attr = "value"
 
         class FailTest(StaticWrapper):
-            _wrapped_map_: list[tuple[str, type[Any] | None]] = [("obj", Simple)]
+            _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = [("obj", Simple)]
 
             def __init__(self, obj: Any) -> None:
                 self.obj = obj
@@ -287,7 +289,7 @@ class StaticWrapperTestSuite(BaseObjectTestSuite):
             attr_b = "b"
 
         class RewrapRemovalTest(StaticWrapper):
-            _wrapped_map_: list[tuple[str, type[Any] | None]] = [("obj", TypeA)]
+            _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = [("obj", TypeA)]
 
             def __init__(self, obj: Any) -> None:
                 self.obj = obj
@@ -329,7 +331,7 @@ class StaticWrapperTestSuite(BaseObjectTestSuite):
             attr = "default"
 
         class NoneTest(StaticWrapper):
-            _wrapped_map_: list[tuple[str, type[Any] | None]] = [("obj", Simple)]
+            _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = [("obj", Simple)]
 
             def __init__(self, obj: Any = None) -> None:
                 self.obj = obj
@@ -365,7 +367,7 @@ class StaticWrapperTestSuite(BaseObjectTestSuite):
 
         class RestoreTest(StaticWrapper):
             _set_next_wrapped = True
-            _wrapped_map_: list[tuple[str, type[Any] | None]] = [("obj", Simple)]
+            _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = [("obj", Simple)]
 
             def __init__(self, obj: Any = None) -> None:
                 self.obj = obj
@@ -389,7 +391,7 @@ class StaticWrapperTestSuite(BaseObjectTestSuite):
         """Tests _class_wrap with None in wrapped list."""
 
         class NoneWrap(StaticWrapper):
-            _wrapped_map_: list[tuple[str, type[Any] | None]] = [("obj", None)]
+            _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = [("obj", None)]
 
         assert not hasattr(NoneWrap, "_obj")
 
@@ -407,7 +409,7 @@ class StaticWrapperTestSuite(BaseObjectTestSuite):
         """Tests _wrap when attribute is None."""
 
         class WrapNone(StaticWrapper):
-            _wrapped_map_: list[tuple[str, type[Any] | None]] = [("obj", list)]
+            _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = [("obj", list)]
 
         wrapper = WrapNone()
         wrapper._wrap()
@@ -416,7 +418,7 @@ class StaticWrapperTestSuite(BaseObjectTestSuite):
         """Tests _wrap instance method with MethodDescriptorType."""
 
         class SetWrap(StaticWrapper):
-            _wrapped_map_: list[tuple[str, type[Any] | None]] = []
+            _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = []
 
         wrapper = SetWrap()
         SetWrap._wrapped_map_ = [("obj", set)]
@@ -463,7 +465,7 @@ class StaticWrapperTestSuite(BaseObjectTestSuite):
 
         class EdgeCaseWrapper(StaticWrapper):
             _get_previous_wrapped = get_previous_wrapped
-            _wrapped_map_: list[tuple[str, type[Any] | None]] = [("obj", Simple)]
+            _wrapped_map_: ClassVar[list[tuple[str, type[Any] | None]]] = [("obj", Simple)]
 
             def __init__(self, obj: Any = None) -> None:
                 self.obj = obj

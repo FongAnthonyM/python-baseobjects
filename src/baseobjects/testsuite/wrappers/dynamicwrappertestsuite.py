@@ -1,5 +1,7 @@
 """dynamicwrappertestsuite.py
 Test suite for the DynamicWrapper class.
+
+This module contains the test suite for the DynamicWrapper class.
 """
 
 # Header #
@@ -15,7 +17,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any
+from typing import Any, ClassVar
 
 # Third-Party Packages #
 import pytest
@@ -33,7 +35,7 @@ class ConcreteDynamicWrapperWithGetAttr(DynamicWrapper):
     This class is used to test how DynamicWrapper handles objects with __getattr__.
     """
 
-    _wrapped_map_: list[str] = ["_wrapped_obj"]
+    _wrapped_map_: ClassVar[list[str]] = ["_wrapped_obj"]
 
     def __init__(self, wrapped: Any = None) -> None:
         """Initializes with a wrapped object.

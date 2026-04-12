@@ -1,5 +1,7 @@
 """baseclassregistrytestsuite.py
 Base test suite for BaseClassRegistry and its subclasses.
+
+This module contains the base test suite for BaseClassRegistry and its subclasses.
 """
 
 # Header #

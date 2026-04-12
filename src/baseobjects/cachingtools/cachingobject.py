@@ -24,7 +24,7 @@ from typing import Any, ClassVar
 # Local Packages #
 from ..bases import BaseReducible
 from ..metaclasses import InitMeta
-from .caches import BaseTimedCache, BaseTimedCacheCallable
+from .caches import BaseTimedCache
 
 
 # Definitions #
@@ -51,12 +51,7 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
         Returns:
             True if it is or contains a cache instance, False otherwise.
         """
-        current = attribute
-        while current is not None:
-            if isinstance(current, BaseTimedCache):
-                return True
-            current = getattr(current, "__wrapped__", None)
-        return False
+        return isinstance(attribute, BaseTimedCache)
 
     # Construction/Destruction
     @classmethod
@@ -76,6 +71,7 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
                 cls._caches_.add(name)
 
     # Attributes #
+    __cache__: dict[Any]
     _is_cache: bool = True
     _caches: set[str]
 
@@ -107,6 +103,7 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
             **kwargs: Keyword arguments forwarded to the parent initializer.
         """
         # Attributes #
+        self.__cache__ = {}
         self._caches = self._caches_.copy()
 
         # Parent Initialization #
@@ -128,13 +125,15 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
         state = super().__getstate__()
         match state:
             case dict():
-                keys = [k for k, v in state.items() if isinstance(v, BaseTimedCacheCallable)]
+                keys = [k for k, v in state.items() if isinstance(v, BaseTimedCache)]
                 for k in keys:
                     del state[k]
+                state.pop("__cache__", None)
             case tuple() if state[0] is not None:
-                keys = [k for k, v in state[0].items() if isinstance(v, BaseTimedCacheCallable)]
+                keys = [k for k, v in state[0].items() if isinstance(v, BaseTimedCache)]
                 for k in keys:
                     del state[0][k]
+                state[0].pop("__cache__", None)
         return state
 
     # Instance Methods #
@@ -147,8 +146,9 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
         """
         for name in dir(self):
             attribute = getattr(type(self), name, None)
-            if self._is_cache_instance(attribute) or (
-                attribute is None and self._is_cache_instance(getattr(self, name))
+            if (
+                self._is_cache_instance(attribute) or
+                (attribute is None and self._is_cache_instance(getattr(self, name)))
             ):
                 self._caches.add(name)
 
@@ -176,13 +176,18 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
             # Try to find the decorator instance and enable it
             cache_inst = getattr(type(self), name, None)
             if cache_inst is not None and hasattr(cache_inst, "resume_caching"):
-                cache_inst.resume_caching()
+                try:
+                    cache_inst.resume_caching(self)
+                except TypeError:
+                    cache_inst.resume_caching()
 
             # ALSO call it on the bound method in case it's in __dict__ or proxies
-            try:
-                getattr(self, name).resume_caching()
-            except AttributeError:
-                pass
+            bound_method = getattr(self, name, None)
+            if bound_method is not None and hasattr(bound_method, "resume_caching"):
+                try:
+                    bound_method.resume_caching(self)
+                except TypeError:
+                    bound_method.resume_caching()
 
         self._is_cache = True
 
@@ -208,13 +213,18 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
             # Try to find the decorator instance and disable it
             cache_inst = getattr(type(self), name, None)
             if cache_inst is not None and hasattr(cache_inst, "stop_caching"):
-                cache_inst.stop_caching()
+                try:
+                    cache_inst.stop_caching(self)
+                except TypeError:
+                    cache_inst.stop_caching()
 
             # ALSO call it on the bound method in case it's in __dict__ or proxies
-            try:
-                getattr(self, name).stop_caching()
-            except AttributeError:
-                pass
+            bound_method = getattr(self, name, None)
+            if bound_method is not None and hasattr(bound_method, "stop_caching"):
+                try:
+                    bound_method.stop_caching(self)
+                except TypeError:
+                    bound_method.stop_caching()
 
         self._is_cache = False
 
@@ -279,10 +289,12 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
                     pass
 
             # ALSO call it on the bound method in case it's in __dict__ or proxies
-            try:
-                getattr(self, name).is_timed = True
-            except AttributeError:
-                pass
+            bound_method = getattr(self, name, None)
+            if bound_method is not None:
+                try:
+                    bound_method.is_timed = True
+                except AttributeError:
+                    pass
 
     def set_lifetimes(
         self,
@@ -318,10 +330,12 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
                     pass
 
             # ALSO call it on the bound method in case it's in __dict__ or proxies
-            try:
-                getattr(self, name).lifetime = lifetime
-            except AttributeError:
-                pass
+            bound_method = getattr(self, name, None)
+            if bound_method is not None:
+                try:
+                    bound_method.lifetime = lifetime
+                except AttributeError:
+                    pass
 
     def clear_caches(self, exclude: set[str] | None = None, get_caches: bool = False) -> None:
         """Clears all caches in this object.
@@ -345,10 +359,15 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
             # Try to find the decorator instance
             cache_inst = getattr(type(self), name, None)
             if cache_inst is not None and hasattr(cache_inst, "clear_cache"):
-                cache_inst.clear_cache()
+                try:
+                    cache_inst.clear_cache(self)
+                except TypeError:
+                    cache_inst.clear_cache()
 
             # ALSO call it on the bound method in case it's in __dict__ or proxies
-            try:
-                getattr(self, name).clear_cache()
-            except AttributeError:
-                pass
+            bound_method = getattr(self, name, None)
+            if bound_method is not None and hasattr(bound_method, "clear_cache"):
+                try:
+                    bound_method.clear_cache(self)
+                except TypeError:
+                    bound_method.clear_cache()

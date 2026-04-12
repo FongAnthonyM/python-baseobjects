@@ -301,7 +301,7 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
 
         bound_method = method_object.bind_to_attribute(*args, **kwargs)  # type: ignore[attr-defined]
 
-        assert method_object is bound_method
+        assert method_object is not bound_method
         assert bound_method.__self__ is new_bind_target
         assert bound_method.__owner__ is self.BindTargetClass
         assert hasattr(new_bind_target, expected_name)
@@ -310,6 +310,84 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
         """Tests accessing __self__ when it is None."""
         method = self.UnitTestClass(lambda: None)
         assert method.__self__ is None
+
+    def test_bind(self) -> None:
+        """Tests that bind creates a new bound method."""
+        method_object = self.create_method_object()
+        bind_target = self.create_bind_target()
+
+        bound_method = method_object.bind(bind_target, self.BindTargetClass)
+
+        assert bound_method is not method_object
+        assert bound_method.__self__ is bind_target
+        assert bound_method.__owner__ is self.BindTargetClass
+
+    def test_bind_deepcopy(self) -> None:
+        """Tests that bind_deepcopy creates a new deepcopied bound method."""
+        method_object = self.create_method_object()
+        bind_target = self.create_bind_target()
+
+        bound_method = method_object.bind_deepcopy(bind_target, self.BindTargetClass)
+
+        assert bound_method is not method_object
+        assert bound_method.__self__ is bind_target
+        assert bound_method.__owner__ is self.BindTargetClass
+
+    @pytest.mark.parametrize("name", [None, "named_method"])
+    @pytest.mark.parametrize("use_owner_kwarg", [False, True])
+    def test_bind_self_to_attribute(self, name: str | None, use_owner_kwarg: bool) -> None:
+        """Tests that the method can be bound to an instance and set as an attribute (returning self)."""
+        method_object = self.create_method_object()
+        new_bind_target = self.create_bind_target()
+
+        args: tuple[Any, ...]
+        kwargs: dict[str, Any] = {}
+        if use_owner_kwarg:
+            args = (new_bind_target,)
+            kwargs["owner"] = self.BindTargetClass
+        else:
+            args = (new_bind_target, self.BindTargetClass)
+
+        if name is not None:
+            kwargs["name"] = name
+            expected_name = name
+        else:
+            expected_name = method_object.__wrapped__.__name__  # type: ignore[union-attr]
+
+        bound_method = method_object.bind_self_to_attribute(*args, **kwargs)
+
+        assert method_object is bound_method
+        assert bound_method.__self__ is new_bind_target
+        assert bound_method.__owner__ is self.BindTargetClass
+        assert hasattr(new_bind_target, expected_name)
+
+    @pytest.mark.parametrize("name", [None, "named_method"])
+    @pytest.mark.parametrize("use_owner_kwarg", [False, True])
+    def test_bind_deepcopy_to_attribute(self, name: str | None, use_owner_kwarg: bool) -> None:
+        """Tests that the method can be deepcopied, bound to an instance, and set as an attribute."""
+        method_object = self.create_method_object()
+        new_bind_target = self.create_bind_target()
+
+        args: tuple[Any, ...]
+        kwargs: dict[str, Any] = {}
+        if use_owner_kwarg:
+            args = (new_bind_target,)
+            kwargs["owner"] = self.BindTargetClass
+        else:
+            args = (new_bind_target, self.BindTargetClass)
+
+        if name is not None:
+            kwargs["name"] = name
+            expected_name = name
+        else:
+            expected_name = method_object.__wrapped__.__name__  # type: ignore[union-attr]
+
+        bound_method = method_object.bind_deepcopy_to_attribute(*args, **kwargs)
+
+        assert method_object is not bound_method
+        assert bound_method.__self__ is new_bind_target
+        assert bound_method.__owner__ is self.BindTargetClass
+        assert hasattr(new_bind_target, expected_name)
 
     @pytest.mark.parametrize(
         ("kwargs", "is_binding", "expected_self", "expected_owner"),
@@ -361,8 +439,7 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
     def test_bind_to_attribute_none_instance(self) -> None:
         """Tests bind_to_attribute with None instance."""
         method = self.UnitTestClass(lambda: None)
-        with pytest.raises(AttributeError):
-            method.bind_to_attribute(None)
+        assert method.bind_to_attribute(None) is method
 
     def test_as_function(self, test_method_object: BaseMethod) -> None:  # type: ignore[override]
         """Tests that the method object can be converted to a standard Python function.

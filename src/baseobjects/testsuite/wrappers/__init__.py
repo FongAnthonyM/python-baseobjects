@@ -1,5 +1,7 @@
 """__init__.py
 testsuite provides test suite classes.
+
+This module contains the testsuite provides test suite classes.
 """
 
 # Header #

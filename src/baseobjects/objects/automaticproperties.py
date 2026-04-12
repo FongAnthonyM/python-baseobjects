@@ -1,5 +1,7 @@
 """automaticproperties.py
 An abstract class which creates properties for this class automatically.
+
+This module contains the an abstract class which creates properties for this class automatically.
 """
 
 # Header #

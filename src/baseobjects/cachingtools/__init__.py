@@ -24,8 +24,6 @@ from .cachingobject import CachingObject
 
 __all__ = [
     "BaseTimedCache",
-    "BaseTimedCacheCallable",
-    "BaseTimedCacheMethod",
     "CachingObject",
     "TimedCache",
     "TimedKeylessCache",

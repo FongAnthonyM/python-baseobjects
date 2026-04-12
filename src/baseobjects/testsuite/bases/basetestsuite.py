@@ -1,5 +1,7 @@
 """basetestsuite.py
 Base class for test suites.
+
+This module contains the base class for test suites.
 """
 
 # Header #

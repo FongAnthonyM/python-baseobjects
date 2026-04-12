@@ -20,7 +20,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Local Packages #
-from .basetimedcache import BaseTimedCache, BaseTimedCacheCallable, BaseTimedCacheMethod
+from .basetimedcache import BaseTimedCache
 from .timedcache import TimedCache, timed_cache
 from .timedkeylesscache import TimedKeylessCache, timed_keyless_cache
 from .timedlrucache import TimedLRUCache, timed_lru_cache
@@ -28,8 +28,6 @@ from .timedsinglecache import TimedSingleCache, timed_single_cache
 
 __all__ = [
     "BaseTimedCache",
-    "BaseTimedCacheCallable",
-    "BaseTimedCacheMethod",
     "TimedCache",
     "TimedKeylessCache",
     "TimedLRUCache",

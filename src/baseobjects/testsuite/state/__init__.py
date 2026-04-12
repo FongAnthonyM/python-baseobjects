@@ -1,5 +1,7 @@
 """__init__.py
 Test suites for the baseobjects state tools.
+
+This module contains the test suites for the baseobjects state tools.
 """
 
 # Header #

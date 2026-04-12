@@ -260,9 +260,9 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
         assert percent < self.speed_tolerance * 1.5  # Allow some overhead for method call
 
     def test_method_type_customization_performance(self) -> None:
-        """Test the performance impact of customizing the method_type attribute.
+        """Test the performance impact of customizing the bind_method_type attribute.
 
-        This test compares the speed of binding with the default method_type versus a custom method_type.
+        This test compares the speed of binding with the default bind_method_type versus a custom bind_method_type.
         """
 
         # Create a custom method type
@@ -274,7 +274,7 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
 
         # Create a function with custom method type
         custom_function = self.TestFunction()
-        custom_function.method_type = CustomMethod
+        custom_function.bind_method_type = CustomMethod
 
         obj = self.ConcreteClass()
 
@@ -295,10 +295,10 @@ class TestBaseFunctionPerformance(BasePerformanceTestSuite):
 
         # Print the performance comparison
         print(
-            f"\nDefault method_type binding: {mean_default:.3f} μs "
+            f"\nDefault bind_method_type binding: {mean_default:.3f} μs "
             f"({self.call_speed:.3f} is the speed of a simple function call)",
         )
-        print(f"Custom method_type binding: {mean_custom:.3f} μs ({percent:.3f}% of default method_type binding time)")
+        print(f"Custom bind_method_type binding: {mean_custom:.3f} μs ({percent:.3f}% of default bind_method_type binding time)")
         # The performance should be similar since the only difference is the class used
         assert percent < 120  # Allow up to 20% overhead for custom method type
 

@@ -1,6 +1,5 @@
 """dispatchablecomposite.py
-A composite object that can dispatch component objects during instantiation and can dispatch itself to the correct
-subclass.
+A composite object that can dispatch components during instantiation and dispatch itself to the correct subclass.
 
 This module provides the DispatchableComposite class which combines the functionality of BaseDispatchingComposite and
 DispatchableClass. It allows for dynamic class selection and component construction, serving as a foundation for

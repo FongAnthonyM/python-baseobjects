@@ -1,5 +1,7 @@
 """parameters.py
 A dataclass (NamedTuple) that holds parameters for any function.
+
+This module contains the a dataclass (NamedTuple) that holds parameters for any function.
 """
 
 # Header #

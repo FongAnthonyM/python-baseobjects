@@ -1,5 +1,7 @@
 """compositefactoryclasstestsuite.py
 Base test suite for CompositeFactoryClass and its subclasses.
+
+This module contains the base test suite for CompositeFactoryClass and its subclasses.
 """
 
 # Header #
@@ -15,9 +17,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from typing import Any
-
-# Third-Party Packages #
+from typing import Any, ClassVar
 
 # Local Packages #
 from ...composition import BaseComponent, CompositeFactoryClass
@@ -34,13 +34,13 @@ class MockComponent(BaseComponent):
 class MockFactory(CompositeFactoryClass):
     """A mock factory for testing."""
 
-    class_registration: bool = True
+    class_registration: ClassVar[bool] = True
 
 
 class MockFactoryPreset(MockFactory):
     """A mock factory preset for testing."""
 
-    default_component_types: dict[str, tuple[type, dict[str, Any]]] = {
+    default_component_types: ClassVar[dict[str, tuple[type, dict[str, Any]]]] = {
         "mock_comp": (MockComponent, {}),
     }
 
@@ -59,7 +59,7 @@ class CompositeFactoryClassTestSuite(BaseDispatchingCompositeTestSuite, Namespac
     """
 
     # Attributes #
-    UnitTestClass: type[CompositeFactoryClass]
+    UnitTestClass: type[CompositeFactoryClass]  # type: ignore[assignment]
     UnitTestComponent: type[BaseComponent] = MockComponent
     MockComponent: type[BaseComponent] = MockComponent
     MockFactoryPreset: type[CompositeFactoryClass]
@@ -87,6 +87,7 @@ class CompositeFactoryClassTestSuite(BaseDispatchingCompositeTestSuite, Namespac
         instance = self.MockFactoryPreset()
 
         # Check that the instance is of the head class, not the subclass
+        assert self.MockFactoryPreset.class_registry is not None
         head_class = self.MockFactoryPreset.class_registry.head_class
         assert type(instance) is head_class
         assert not isinstance(instance, self.MockFactoryPreset)

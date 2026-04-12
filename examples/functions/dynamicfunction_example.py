@@ -234,7 +234,7 @@ def dynamicfunction_vs_dynamiccallable() -> None:
     print(f"DynamicFunction inherits from: {DynamicFunction.__mro__[1:3]}")
     print(f"DynamicCallable inherits from: {DynamicCallable.__mro__[1:2]}")
 
-    # Shows the method_type attribute
+    # Shows the bind_method_type attribute
     print("\nMethod type:")
     print(f"DynamicFunction.method_type = {DynamicFunction.method_type}")
 

@@ -1,5 +1,7 @@
 """versiontestsuite.py
 Specialized test suite for version classes in the Versions package.
+
+This module contains the specialized test suite for version classes in the Versions package.
 """
 
 # Header #

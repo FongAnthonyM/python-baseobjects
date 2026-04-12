@@ -1,5 +1,7 @@
 """exceldatetodatetime.py
 A function to convert an excel date to a datetime.
+
+This module contains the a function to convert an excel date to a datetime.
 """
 
 # Header #

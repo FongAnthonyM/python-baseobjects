@@ -24,12 +24,12 @@ from typing import Any
 
 # Local Packages #
 from ...bases import SEARCHSENTINEL
-from .timedcache import TimedCache, TimedCacheCallable, TimedCacheMethod
+from .timedcache import TimedCache
 
 
 # Definitions #
 # Classes #
-class TimedLRUCacheCallable(TimedCacheCallable):
+class TimedLRUCache(TimedCache):
     """A periodically clearing Least Recently Used (LRU) cache wrapper object for a function."""
 
     # Instance Methods #
@@ -45,14 +45,16 @@ class TimedLRUCacheCallable(TimedCacheCallable):
             The result of the wrapped function.
         """
         key = self.create_key(args, kwargs, self.typed)
+        cache_container = self.get_cache_container(*args, **kwargs)
+        priority = self.get_priority(*args, **kwargs)
 
-        if (cache_item := self.cache_container.get(key, SEARCHSENTINEL)) is not SEARCHSENTINEL:
-            self.priority.move_node_start(cache_item.priority_link)
+        if (cache_item := cache_container.get(key, SEARCHSENTINEL)) is not SEARCHSENTINEL:
+            priority.move_node_start(cache_item.priority_link)
             return cache_item.result
         else:
             result = self.call_wrapped(*args, **kwargs)
-            self.cache_container[key] = item = self.cache_item_type(key=key, result=result)
-            priority_link = self.priority.insert(item, 0)
+            cache_container[key] = item = self.cache_item_type(key=key, result=result)
+            priority_link = priority.insert(item, 0)
             item.priority_link = priority_link
             return result
 
@@ -67,48 +69,29 @@ class TimedLRUCacheCallable(TimedCacheCallable):
             The result of the wrapped function.
         """
         key = self.create_key(args, kwargs, self.typed)
+        cache_container = self.get_cache_container(*args, **kwargs)
+        priority = self.get_priority(*args, **kwargs)
 
-        if (cache_item := self.cache_container.get(key, SEARCHSENTINEL)) is not SEARCHSENTINEL:
-            self.priority.move_node_start(cache_item.priority_link)
+        if (cache_item := cache_container.get(key, SEARCHSENTINEL)) is not SEARCHSENTINEL:
+            priority.move_node_start(cache_item.priority_link)
             return cache_item.result
         else:
             result = self.call_wrapped(*args, **kwargs)
-            self.cache_container[key] = item = self.cache_item_type(key=key, result=result)
-            if self._maxsize is not None and len(self.cache_container) <= self._maxsize:
-                item.priority_link = self.priority.insert(item, 0)
+            cache_container[key] = item = self.cache_item_type(key=key, result=result)
+            if self._maxsize is not None and len(cache_container) <= self._maxsize:
+                item.priority_link = priority.insert(item, 0)
             else:
-                priority_link = self.priority.last_node
+                priority_link = priority.last_node
                 old_key = priority_link.data.key
 
                 priority_link.data = item
                 item.priority_link = priority_link
 
-                del self.cache_container[old_key]
+                del cache_container[old_key]
 
-                self.priority.shift_right()
+                priority.shift_right()
 
             return result
-
-
-class TimedLRUCacheMethod(TimedCacheMethod, TimedLRUCacheCallable):
-    """A method class for TimedLRUCache."""
-
-    def construct(self, func: Any | None = None, *args: Any, **kwargs: Any) -> None:
-        """Constructs this object with the given arguments.
-
-        Args:
-            func: The function to wrap.
-            *args: Arguments for inheritance.
-            **kwargs: Keyword arguments for inheritance.
-        """
-        super().construct(func, *args, **kwargs)
-
-
-class TimedLRUCache(TimedLRUCacheCallable, TimedCache):
-    """A function class for TimedLRUCache."""
-
-    # Attributes #
-    method_type: type[TimedLRUCacheMethod] = TimedLRUCacheMethod
 
 
 # Aliases #

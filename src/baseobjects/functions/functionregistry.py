@@ -1,5 +1,7 @@
 """functionregistry.py
 A registry which holds functions.
+
+This module contains the a registry which holds functions.
 """
 
 # Header #

@@ -64,7 +64,7 @@ class TestBaseFunction(BaseFunctionTestSuite):
         assert result == (5, instance)  # (3 + 2, instance)
 
     def test_custom_method_type(self) -> None:
-        """Test that the method_type attribute can be customized."""
+        """Test that the bind_method_type attribute can be customized."""
 
         # Create a custom method type
         class CustomMethod(BaseMethod):
@@ -72,7 +72,7 @@ class TestBaseFunction(BaseFunctionTestSuite):
 
         # Create a function with the custom method type
         function = self.UnitTestClass(concrete_function)
-        function.method_type = CustomMethod
+        function.bind_method_type = CustomMethod
 
         # Create a bind target
         bind_target = self.create_bind_target()

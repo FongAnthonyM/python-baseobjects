@@ -1,5 +1,7 @@
 """basedispatchingcompositetestsuite.py
 Base test suite for BaseDispatchingComposite and its subclasses.
+
+This module contains the base test suite for BaseDispatchingComposite and its subclasses.
 """
 
 # Header #

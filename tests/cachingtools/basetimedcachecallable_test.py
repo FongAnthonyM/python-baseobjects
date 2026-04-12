@@ -1,8 +1,8 @@
 """basetimedcachecallable_test.py
-Tests for the BaseTimedCacheCallable class in the baseobjects package.
+Tests for the BaseTimedCache class in the baseobjects package.
 
-This module provides tests for the BaseTimedCacheCallable class, which is a base cache wrapper object for a function
-that resets its cache periodically. It tests the core functionality of BaseTimedCacheCallable, including instance
+This module provides tests for the BaseTimedCache class, which is a base cache wrapper object for a function
+that resets its cache periodically. It tests the core functionality of BaseTimedCache, including instance
 creation, caching behavior, cache expiration, and cache clearing.
 """
 
@@ -31,12 +31,11 @@ import pytest
 # Source Packages #
 from baseobjects.cachingtools.caches.basetimedcache import (
     BaseTimedCache,
-    BaseTimedCacheCallable,
-    BaseTimedCacheMethod,
+    BaseTimedCache,
     CacheItem,
     _HashedSeq,
 )
-from baseobjects.testsuite.cachingtools.basetimedcachecallabletestsuite import BaseTimedCacheCallableTestSuite
+from baseobjects.testsuite.cachingtools.basetimedcachecallabletestsuite import BaseTimedCacheTestSuite
 
 
 # Definitions #
@@ -60,14 +59,12 @@ def multiply_function(x: int, y: int = 3) -> int:
 
 
 # Helper Classes #
-class ConcreteTimedCacheCallable(BaseTimedCacheCallable):
-    """A concrete implementation of BaseTimedCacheCallable for testing.
+class ConcreteTimedCacheCallable(BaseTimedCache):
+    """A concrete implementation of BaseTimedCache for testing.
 
-    This class implements the abstract clear_cache method required by BaseTimedCacheCallable and provides a basic
+    This class implements the abstract clear_cache method required by BaseTimedCache and provides a basic
     caching implementation.
     """
-
-    method_type = BaseTimedCacheMethod
 
     _cache_method: str = "cache_dict"
 
@@ -168,8 +165,8 @@ class TimedCacheTestObject:
 
 
 # Tests #
-class SlottedConcreteTimedCacheCallable(BaseTimedCacheCallable):
-    """A slotted concrete implementation of BaseTimedCacheCallable for testing."""
+class SlottedConcreteTimedCacheCallable(BaseTimedCache):
+    """A slotted concrete implementation of BaseTimedCache for testing."""
 
     __slots__ = ("_cache_method", "_instanced_cache", "cache_container")
 
@@ -186,15 +183,15 @@ class SlottedConcreteTimedCacheCallable(BaseTimedCacheCallable):
         self.cache_container = {}
 
 
-class TestBaseTimedCacheCallable(BaseTimedCacheCallableTestSuite):
-    """Tests the BaseTimedCacheCallable class.
+class TestBaseTimedCacheCallable(BaseTimedCacheTestSuite):
+    """Tests the BaseTimedCache class.
 
-    This class tests the functionality of the BaseTimedCacheCallable class, which is a base cache wrapper object for a
+    This class tests the functionality of the BaseTimedCache class, which is a base cache wrapper object for a
     function that resets its cache periodically.
     """
 
     # Attributes #
-    UnitTestClass: type[BaseTimedCacheCallable] = ConcreteTimedCacheCallable
+    UnitTestClass: type[BaseTimedCache] = ConcreteTimedCacheCallable
 
     # Instance Methods #
     # Fixtures
@@ -298,6 +295,106 @@ class TestBaseTimedCacheCallable(BaseTimedCacheCallableTestSuite):
         loaded = pickle.loads(dump)
         assert isinstance(loaded, SlottedConcreteTimedCacheCallable)
 
+    def test_cache_control_propagation_callable(self) -> None:
+        """Tests the cache control methods propagating to wrapped function."""
+        class MockWrapped:
+            def __init__(self) -> None:
+                self.enabled = False
+                self.disabled = False
+                self.stopped = False
+                self.resumed = False
+                self.cleared = False
+                self.__name__ = "mock"
+
+            def enable_caching(self) -> None:
+                self.enabled = True
+
+            def disable_caching(self) -> None:
+                self.disabled = True
+
+            def stop_caching(self) -> None:
+                self.stopped = True
+
+            def resume_caching(self) -> None:
+                self.resumed = True
+
+            def clear_cache(self) -> None:
+                self.cleared = True
+
+            def __call__(self, *args: Any, **kwargs: Any) -> Any:
+                pass
+
+        wrapped = MockWrapped()
+        callable_obj = self.UnitTestClass(func=wrapped)
+
+        callable_obj.enable_caching()
+        assert wrapped.enabled
+
+        callable_obj.disable_caching()
+        assert wrapped.disabled
+
+        callable_obj.stop_caching()
+        assert wrapped.stopped
+
+        callable_obj.resume_caching()
+        assert wrapped.resumed
+
+        callable_obj.clear_cache()
+        assert wrapped.cleared
+
+    def test_call_caching_disabled(self) -> None:
+        """Tests call_caching when cache is disabled."""
+        class MockFunc:
+            def __init__(self) -> None:
+                self.called = False
+                self.__name__ = "mock"
+
+            def __call__(self, *args: Any, **kwargs: Any) -> Any:
+                self.called = True
+                return "called_wrapped"
+
+        mock_func = MockFunc()
+        callable_obj = self.UnitTestClass(func=mock_func)
+        callable_obj.is_cache = False
+
+        assert callable_obj.call_caching() == "called_wrapped"
+        assert mock_func.called
+
+    def test_call_type_error_no_args(self) -> None:
+        """Tests call_caching raising TypeError with no args."""
+        callable_obj = self.UnitTestClass(func=lambda x: x)
+
+        def raise_type_error(*args: Any, **kwargs: Any) -> Any:
+            raise TypeError("test error")
+
+        callable_obj.cache = raise_type_error
+
+        with pytest.raises(TypeError):
+            callable_obj.call_caching()
+
+        with pytest.raises(TypeError):
+            callable_obj.call_clearing()
+
+    def test_call_type_error_with_args(self) -> None:
+        """Tests call_clearing raising TypeError with args."""
+        callable_obj = self.UnitTestClass(func=lambda x: x)
+
+        def raise_type_error(*args: Any, **kwargs: Any) -> Any:
+            raise TypeError("test error")
+
+        callable_obj.cache = raise_type_error
+
+        with pytest.raises(TypeError):
+            callable_obj.call_clearing(1)
+
+    def test_instanced_cache_setter_branch(self) -> None:
+        """Tests instanced_cache setter branches."""
+        callable_obj = self.UnitTestClass(func=lambda: None)
+        callable_obj.instanced_cache = True
+        assert callable_obj._instanced_cache is True
+        callable_obj.instanced_cache = False
+        assert callable_obj._instanced_cache is False
+
     def test_getstate_none_mock(self) -> None:
         """Tests __getstate__ when super() returns None."""
         obj = self.UnitTestClass(func=lambda: None)
@@ -319,178 +416,8 @@ class TestCacheItem:
         assert item.priority_link == "link"
 
 
-class TestBaseTimedCacheMethod:
-    """Tests the BaseTimedCacheMethod class."""
-
-    class ConcreteTimedCacheMethod(BaseTimedCacheMethod):
-        """Concrete implementation for testing."""
-
-        def clear_cache(self) -> None:
-            """Clears the cache."""
-            super().clear_cache()
-
-    def test_delegation(self) -> None:
-        """Tests delegation to the function object."""
-
-        class MockFunc:
-            def __init__(self) -> None:
-                self.called = False
-                self.__name__ = "mock"
-                self.__qualname__ = "mock"
-
-            def __call__(self, *args: Any, **kwargs: Any) -> Any:
-                self.called = True
-                return "called"
-
-        mock_func = MockFunc()
-        method = self.ConcreteTimedCacheMethod(func=mock_func, instance=None, owner=None)
-
-        # Test clear_cache (updates expiration, doesn't delegate)
-        method.lifetime = 100
-        method.clear_cache()
-        assert method.expiration is not None
-
-        # Test call_caching
-        assert method.call_caching() == "called"
-        assert mock_func.called
-
-        # Test call_clearing
-        mock_func.called = False
-        assert method.call_clearing() == "called"
-        assert mock_func.called
-
-    def test_clear_cache_no_lifetime(self) -> None:
-        """Tests clear_cache with no lifetime."""
-        method = self.ConcreteTimedCacheMethod(func=lambda: None, instance=None, owner=None)
-        method.lifetime = None
-        method.expiration = 123
-        method.clear_cache()
-        assert method.expiration == 123  # Should not change
-
-    def test_call_caching_condition(self) -> None:
-        """Tests call_caching triggers clear_cache."""
-
-        class MockFunc:
-            def __init__(self) -> None:
-                self.__name__ = "mock"
-                self.__qualname__ = "mock"
-
-            def __call__(self, *args: Any, **kwargs: Any) -> Any:
-                pass
-
-        method = self.ConcreteTimedCacheMethod(func=MockFunc(), instance=None, owner=None)
-        method.lifetime = 10
-        # Force clear condition
-        method.expiration = 0
-
-        # Mock clear_cache to verify call
-        with patch.object(method, "clear_cache", wraps=method.clear_cache) as mock_clear:
-            method.call_caching()
-            mock_clear.assert_called_once()
-
-    def test_pickle_reduce(self) -> None:
-        """Tests the __reduce__ method for pickling coverage."""
-
-        class MockFunc:
-            def __init__(self) -> None:
-                self.__name__ = "mock"
-                self.__qualname__ = "mock"
-
-            def __call__(self, *args: Any, **kwargs: Any) -> Any:
-                pass
-
-        # Case 1: Fallback pickle (owner is None)
-        method = self.ConcreteTimedCacheMethod(func=MockFunc(), instance=None, owner=None)
-        # Ensure __reduce__ runs and returns something (likely from super())
-        assert method.__reduce__() is not None
-
-        # Case 2: Tuple state
-        class TupleStateMethod(TestBaseTimedCacheMethod.ConcreteTimedCacheMethod):
-            def __getstate__(self) -> tuple[dict[str, Any], dict[str, Any]]:
-                return ({"a": 1}, {"b": 2})
-
-        class Owner:
-            pass
-
-        owner_instance = Owner()
-        method_tuple = TupleStateMethod(func=MockFunc(), instance=owner_instance, owner=Owner)
-
-        # Verify attributes are set correctly for custom reduce path
-        assert method_tuple.__self__ is not None
-        assert method_tuple.__owner__ is not None
-        assert hasattr(method_tuple.__wrapped__, "__name__")
-
-        # Verify __reduce__ returns expected tuple structure
-        reduce_result = method_tuple.__reduce__()
-        assert isinstance(reduce_result, tuple)
-        assert len(reduce_result) >= 3
-        state = reduce_result[2]
-        assert isinstance(state, tuple)
-        assert state[0] == {"a": 1}
-        assert state[1] == {"b": 2}
-
-        # Case 3: State is None
-        class NoneStateMethod(TestBaseTimedCacheMethod.ConcreteTimedCacheMethod):
-            def __getstate__(self) -> None:
-                return None
-
-        method_none = NoneStateMethod(func=MockFunc(), instance=owner_instance, owner=Owner)
-        reduce_result_none = method_none.__reduce__()
-        assert reduce_result_none[2] is None
-
-        # Case 4: Tuple state with None dict
-        class TupleNoneStateMethod(TestBaseTimedCacheMethod.ConcreteTimedCacheMethod):
-            def __getstate__(self) -> tuple[None, dict[str, Any]]:
-                return (None, {"b": 2})
-
-        method_tuple_none = TupleNoneStateMethod(func=MockFunc(), instance=owner_instance, owner=Owner)
-        reduce_result_tuple_none = method_tuple_none.__reduce__()
-        assert isinstance(reduce_result_tuple_none[2], tuple)
-        assert reduce_result_tuple_none[2][0] is None
-
-        # Case 5: Dict state
-        class DictStateMethod(TestBaseTimedCacheMethod.ConcreteTimedCacheMethod):
-            def __getstate__(self) -> dict[str, Any]:
-                return {"a": 1, "__wrapped__": "something"}
-
-        method_dict = DictStateMethod(func=MockFunc(), instance=owner_instance, owner=Owner)
-        reduce_result_dict = method_dict.__reduce__()
-        state_dict = reduce_result_dict[2]
-        assert isinstance(state_dict, dict)
-        assert state_dict == {"a": 1}
-        assert "__wrapped__" not in state_dict
-
-    def test_call_exception_handling(self) -> None:
-        """Tests exception handling in call_caching and call_clearing."""
-        def func(x: int) -> int:
-            return x
-
-        # Wrapped function takes 1 arg (x)
-        # We will call it with 2 args (instance and x) to trigger TypeError
-        class Dummy:
-            pass
-        dummy = Dummy()
-        method = self.ConcreteTimedCacheMethod(func=func, instance=dummy, owner=None)
-
-        # Test call_caching
-        assert method.call_caching(5) == 5
-
-        # Test call_clearing
-        assert method.call_clearing(5) == 5
-
-
-class ConcreteTimedCacheMethod(BaseTimedCacheMethod):
-    """Concrete implementation for testing."""
-
-    def clear_cache(self) -> None:
-        """Clears the cache."""
-        super().clear_cache()
-
-
 class ConcreteTimedCache(BaseTimedCache):
     """Concrete implementation for testing."""
-
-    method_type: type[BaseTimedCacheMethod] = ConcreteTimedCacheMethod
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initializes the concrete timed cache."""
@@ -520,8 +447,8 @@ class TestBaseTimedCache:
             pass
 
         instance = Target()
-        bound = cache.bind(instance=instance, owner=Target)
-        assert isinstance(bound, BaseTimedCacheMethod)
+        bound = cache.__get__(instance, Target)
+        assert bound is not None
 
     def test_bind_to_attribute_no_instance(self) -> None:
         """Tests bind_to_attribute with no instance."""
@@ -552,6 +479,21 @@ class TestBaseTimedCache:
             cache.bind_to_attribute(instance=instance, owner=Target, name=name)
 
         assert hasattr(instance, expected_attr)
+
+    def test_bind_to_attribute_attribute_error(self) -> None:
+        """Tests bind_to_attribute when func has no __name__."""
+        class MockFunc:
+            def __call__(self, *args: Any, **kwargs: Any) -> Any:
+                pass
+
+        cache = ConcreteTimedCache(MockFunc())
+
+        class Target:
+            pass
+
+        target = Target()
+        cache.bind_to_attribute(target)
+        assert hasattr(target, "")
 
     @pytest.mark.parametrize("lifetime", [10, None])
     def test_clear_cache_expiration_update(self, lifetime: int | None) -> None:

@@ -3,7 +3,7 @@ Package initialization for the baseobjects.testsuite.cachingtools package.
 
 This module serves as an initialization file for the testsuite.cachingtools package, which provides test suite
 classes for testing the cachingtools functionality. It imports and exposes classes like
-BaseTimedCacheCallableTestSuite, making them available for direct import from the testsuite.cachingtools package.
+BaseTimedCacheTestSuite, making them available for direct import from the testsuite.cachingtools package.
 These test suites ensure the proper functioning of caching mechanisms in the baseobjects package.
 """
 
@@ -20,7 +20,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Local Packages #
-from .basetimedcachecallabletestsuite import BaseTimedCacheCallableTestSuite
+from .basetimedcachecallabletestsuite import BaseTimedCacheTestSuite
 from .cachingobjecttestsuite import CachingObjectTestSuite
 from .cachingtoolstestsuite import TimedCacheTestSuite
 from .timedkeylesscachetestsuite import TimedKeylessCacheTestSuite
@@ -28,7 +28,7 @@ from .timedlrucachetestsuite import TimedLRUCacheTestSuite
 from .timedsinglecachetestsuite import TimedSingleCacheTestSuite
 
 __all__ = [
-    "BaseTimedCacheCallableTestSuite",
+    "BaseTimedCacheTestSuite",
     "CachingObjectTestSuite",
     "TimedCacheTestSuite",
     "TimedKeylessCacheTestSuite",

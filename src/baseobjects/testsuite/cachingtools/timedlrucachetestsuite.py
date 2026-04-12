@@ -1,5 +1,7 @@
 """timedlrucachetestsuite.py
 Test suite for the TimedLRUCache class.
+
+This module contains the test suite for the TimedLRUCache class.
 """
 
 # Header #

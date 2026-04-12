@@ -189,8 +189,7 @@ class TestBaseMethod(BaseMethodTestSuite):
     def test_bind_to_attribute_none_instance(self) -> None:
         """Tests bind_to_attribute with None instance."""
         method = self.UnitTestClass(lambda: None)
-        with pytest.raises(AttributeError):
-            method.bind_to_attribute(None)
+        assert method.bind_to_attribute(None) is method
 
     def test_weak_reference(self) -> None:
         """Tests that the method maintains a weak reference to the bound instance."""
@@ -293,6 +292,45 @@ class TestBaseMethod(BaseMethodTestSuite):
             expected_name = name
         else:
             bound_method = method.bind_to_attribute(bind_target, self.BindTargetClass)
+            expected_name = method.__wrapped__.__name__
+
+        # Verify it's not the same method (a new instance)
+        assert bound_method is not method
+
+        # Verify it's bound to the correct instance
+        assert bound_method.__self__ is bind_target
+        assert bound_method.__owner__ is self.BindTargetClass
+
+        # Verify it's set as an attribute on the instance
+        assert method.__wrapped__ is not None
+        assert hasattr(bind_target, expected_name)
+
+        # Verify it returns the expected result when called through the attribute
+        result = getattr(bind_target, expected_name)(3)
+        assert result == (5, bind_target)  # (3 + 2, instance)
+
+    @pytest.mark.parametrize("name", [None, "custom_method"])
+    @pytest.mark.parametrize("use_owner_kwarg", [False, True])
+    def test_bind_self_to_attribute(self, name: str | None, use_owner_kwarg: bool) -> None:
+        """Tests that the method can be bound to an instance and set as an attribute (returning self).
+
+        This test verifies that a bound method is returned and bound to the target instance's attribute,
+        and that it functions correctly.
+        """
+        # Call the parent test method
+        super().test_bind_self_to_attribute(name, use_owner_kwarg)
+
+        # Create a method and a bind target
+        method = cast(BaseMethod, self.create_method_object())
+        bind_target = self.create_bind_target()
+
+        # Bind the method to the target and set it as an attribute
+        assert method.__wrapped__ is not None
+        if name:
+            bound_method = method.bind_self_to_attribute(bind_target, self.BindTargetClass, name=name)
+            expected_name = name
+        else:
+            bound_method = method.bind_self_to_attribute(bind_target, self.BindTargetClass)
             expected_name = method.__wrapped__.__name__
 
         # Verify it's the same method (not a new instance)

@@ -1,5 +1,7 @@
 """trinumberversiontestsuite.py
 Test suite for the TriNumberVersion class.
+
+This module contains the test suite for the TriNumberVersion class.
 """
 
 # Header #

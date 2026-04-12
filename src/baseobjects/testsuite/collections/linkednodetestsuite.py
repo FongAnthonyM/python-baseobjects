@@ -1,5 +1,7 @@
 """linkednodetestsuite.py
 Base class for test suites which test LinkedNode and its subclasses.
+
+This module contains the base class for test suites which test LinkedNode and its subclasses.
 """
 
 # Header #

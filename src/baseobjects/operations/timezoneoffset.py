@@ -1,5 +1,7 @@
 """timezoneoffset.py
 A function that gets the offset of a give timezone.
+
+This module contains the a function that gets the offset of a give timezone.
 """
 
 # Header #

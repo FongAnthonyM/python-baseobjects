@@ -64,7 +64,7 @@ class BaseReducibleTestSuite(BaseObjectTestSuite):
             obj_copy = test_object.copy()
 
         assert obj_copy is not test_object
-        assert isinstance(obj_copy, self.UnitTestClass)  # type: ignore[arg-type]
+        assert isinstance(obj_copy, self.UnitTestClass)
         assert obj_copy.__getstate__() == test_object.__getstate__()
 
     @pytest.mark.parametrize("method", ["copy", "method"])
@@ -92,7 +92,7 @@ class BaseReducibleTestSuite(BaseObjectTestSuite):
             obj_deepcopy = test_object.deepcopy(memo=memo)
 
         assert obj_deepcopy is not test_object
-        assert isinstance(obj_deepcopy, self.UnitTestClass)  # type: ignore[arg-type]
+        assert isinstance(obj_deepcopy, self.UnitTestClass)
         assert obj_deepcopy.__getstate__() == test_object.__getstate__()
 
     # Pickling #
@@ -101,7 +101,7 @@ class BaseReducibleTestSuite(BaseObjectTestSuite):
         pickled = pickle.dumps(test_object)
         unpickled = pickle.loads(pickled)
         assert unpickled is not test_object
-        assert isinstance(unpickled, self.UnitTestClass)  # type: ignore[arg-type]
+        assert isinstance(unpickled, self.UnitTestClass)
         assert unpickled.__getstate__() == test_object.__getstate__()
 
     # Functionality #

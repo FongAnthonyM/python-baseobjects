@@ -1,5 +1,7 @@
 """callbackschedulertestsuite.py
 Base test suite for ~baseobjects.objects.CallbackScheduler and its subclasses.
+
+This module contains the base test suite for ~baseobjects.objects.CallbackScheduler and its subclasses.
 """
 
 # Header #

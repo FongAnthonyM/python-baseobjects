@@ -1,5 +1,7 @@
 """groupedlisttestsuite.py
 Base class for test suites which test GroupedList and its subclasses.
+
+This module contains the base class for test suites which test GroupedList and its subclasses.
 """
 
 # Header #

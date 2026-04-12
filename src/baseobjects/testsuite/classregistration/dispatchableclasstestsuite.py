@@ -1,5 +1,7 @@
 """dispatchableclasstestsuite.py
 Base test suite for DispatchableClass and its subclasses.
+
+This module contains the base test suite for DispatchableClass and its subclasses.
 """
 
 # Header #

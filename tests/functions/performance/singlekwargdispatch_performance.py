@@ -161,7 +161,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_class_instance(self) -> "TestSingleKwargDispatchPerformance.DispatchUnitTestClass":
+    def test_class_instance(self) -> TestSingleKwargDispatchPerformance.DispatchUnitTestClass:
         """Create a test class instance for use in tests.
 
         Returns:
@@ -172,7 +172,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
     # Tests
     def test_dispatch_call_speed_with_arg(
         self,
-        test_class_instance: "TestSingleKwargDispatchPerformance.DispatchUnitTestClass",
+        test_class_instance: TestSingleKwargDispatchPerformance.DispatchUnitTestClass,
     ) -> None:
         """Test the performance of the dispatch_call method with a positional argument.
 
@@ -223,7 +223,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
 
     def test_dispatch_call_speed_with_kwarg(
         self,
-        test_class_instance: "TestSingleKwargDispatchPerformance.DispatchUnitTestClass",
+        test_class_instance: TestSingleKwargDispatchPerformance.DispatchUnitTestClass,
     ) -> None:
         """Test the performance of the dispatch_call method with a keyword argument.
 
@@ -278,7 +278,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
 
     def test_edge_case_multiple_types(
         self,
-        test_class_instance: "TestSingleKwargDispatchPerformance.DispatchUnitTestClass",
+        test_class_instance: TestSingleKwargDispatchPerformance.DispatchUnitTestClass,
     ) -> None:
         """Test the performance with an edge case of multiple registered types.
 
@@ -506,7 +506,7 @@ class TestSingleKwargDispatchPerformance(BasePerformanceTestSuite):
 
     def test_edge_case_nested_dispatch(
         self,
-        test_class_instance: "TestSingleKwargDispatchPerformance.DispatchUnitTestClass",
+        test_class_instance: TestSingleKwargDispatchPerformance.DispatchUnitTestClass,
     ) -> None:
         """Test the performance with an edge case of nested dispatch.
 

@@ -1,5 +1,7 @@
 """wrapperperformancetestsuite.py
 Base performance test suite for wrapper classes.
+
+This module contains the base performance test suite for wrapper classes.
 """
 
 # Header #

@@ -1,5 +1,7 @@
 """parseparentheses.py
 Parses expressions with parentheses and returns a nested list of extracted elements.
+
+This module contains the parses expressions with parentheses and returns a nested list of extracted elements.
 """
 
 # Header #

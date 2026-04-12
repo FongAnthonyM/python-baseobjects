@@ -39,6 +39,7 @@ __version__ = "1.12.0"
 # Standard Libraries #
 from functools import WRAPPER_ASSIGNMENTS
 from inspect import iscoroutinefunction
+from sys import getrecursionlimit
 from types import MethodType
 from typing import Any
 from weakref import ReferenceType
@@ -118,7 +119,7 @@ class BaseCallable(BaseReducible):
                 pass
 
             if is_base_callable:
-                self._is_coroutine_marker = value._is_coroutine_marker
+                self._is_coroutine_marker = object.__getattribute__(value, "_is_coroutine_marker")
             elif iscoroutinefunction(value):
                 self._is_coroutine_marker = True
             else:
@@ -210,7 +211,7 @@ class BaseCallable(BaseReducible):
 
         # Object Construction #
         if init:
-            self.construct(*args, func=func, **kwargs)
+            self.construct(func, *args, **kwargs)
 
     # Instance Methods #
     # Constructors/Destructors
@@ -359,15 +360,20 @@ class BaseMethod(BaseCallable):
             references that could lead to memory leaks.
         __owner__: The class of the object this method is bound to. This is used for proper method binding and to
             support inheritance.
+        _recursion_limit: The recursion limit for unwrapping the method. Defaults to the system's recursion limit.
         is_binding: Determines if this callable will bind to another object when accessed as an attribute. If False, the
             method behaves more like a static method. Default is True.
+        bind_method_type: The type of callable to use when binding this method. This is used to create new method
+            instances. Defaults to BaseMethod.
     """
 
     # Attributes #
-    _self_: ReferenceType[Any] | None = None
+    _self_: ReferenceType | None = None
     __owner__: type[Any] | None = None
+    _recursion_limit: int = getrecursionlimit()
 
     is_binding: bool = True
+    bind_method_type: type[BaseMethod]
 
     # Properties #
     @property
@@ -504,6 +510,20 @@ class BaseMethod(BaseCallable):
         super().construct(func, *args, **kwargs)
 
     # Binding
+    def bind(self, instance: Any, owner: type[Any] | None = None) -> BaseMethod:
+        """Creates a method of this function which is bound to another object.
+
+        Args:
+            instance: The object to bind the method to. This becomes the 'self' parameter when the method is called.
+            owner: The class of the object being bound to. This is used for proper method binding and to support
+                inheritance.
+
+        Returns:
+            A new method object of type bind_method_type that wraps this function and is bound to the specified instance
+            and owner class.
+        """
+        return self.bind_method_type(func=self, instance=instance, owner=owner)
+
     def bind_self(self, instance: Any = None, owner: type[Any] | None = None) -> BaseMethod:
         """Binds this method to an instance and/or owner class.
 
@@ -522,7 +542,51 @@ class BaseMethod(BaseCallable):
                 self.__owner__ = owner
         return self
 
+    def bind_deepcopy(self, instance: Any = None, owner: type[Any] | None = None) -> BaseMethod:
+        """Binds this method to an instance and/or owner class.
+
+        Args:
+            instance: The object to bind this method to. This becomes the 'self' parameter when the method is called.
+            owner: The class of the object being bound to. This is used for proper method binding and to support
+                inheritance.
+
+        Returns:
+            This method object, now bound to the specified instance and/or owner class.
+        """
+        return self.deepcopy().bind_self(instance, owner)
+
     def bind_to_attribute(
+        self,
+        instance: Any = None,
+        owner: type[Any] | None = None,
+        name: str | None = None,
+    ) -> BaseMethod:
+        """Creates a method of this function which is bound to another object and sets it as an attribute.
+
+        Args:
+            instance: The object to bind the method to and set the attribute on. If None, this function is returned
+                unchanged.
+            owner: The class of the object being bound to. This is used for proper method binding and to support
+                inheritance.
+            name: The name of the attribute to set on the instance. If None, a unique cache name is used.
+
+        Returns:
+            If instance is None, this function is unchanged. Otherwise, the new method object that was created and set
+            as an attribute on the instance.
+        """
+        if instance is None:
+            return self
+
+        if name is None:
+            name = getattr(self.__wrapped__, "__name__", "")
+
+        # Create a new method bound to the instance
+        method = self.bind_method_type(func=self, instance=instance, owner=owner)
+        setattr(instance, name, method)
+
+        return method
+
+    def bind_self_to_attribute(
         self,
         instance: Any = None,
         owner: type[Any] | None = None,
@@ -551,72 +615,7 @@ class BaseMethod(BaseCallable):
 
         return self
 
-    def call_binding(self, *args: Any, **kwargs: Any) -> Any:
-        """Binds the wrapped function to the stored instance and calls it.
-
-        Args:
-            *args: Positional arguments to pass to the wrapped function.
-            **kwargs: Keyword arguments to pass to the wrapped function.
-
-        Returns:
-            The result of calling the wrapped function with the bound instance and the provided arguments.
-        """
-        try:
-            return self.__wrapped__.__get__(self._self_(), self.__owner__)(*args, **kwargs)  # type: ignore[union-attr, misc]
-        except AttributeError:
-            if (instance := self.__self__) is not None:
-                return self.__wrapped__(instance, *args, **kwargs)  # type: ignore[misc]
-            return self.__wrapped__(*args, **kwargs)  # type: ignore[misc]
-        except TypeError:
-            return self.__wrapped__(*args, **kwargs)  # type: ignore[misc]
-
-    # Method Overrides #
-    # Special method overriding which leads to less overhead.
-    __get__: DescriptorGetMethod = bind_self
-    __call__: CallMethod = call_binding  # type: ignore[assignment]
-
-
-class BaseFunction(BaseCallable):
-    """An abstract class that implements the structure for creating function-like callable objects.
-
-    BaseFunction extends BaseCallable to create callable objects that behave like functions but can be converted to
-    methods when bound to instances. This class is particularly useful for creating decorators, function factories, and
-    other callable objects that need to support both function-like and method-like behavior.
-
-    When a BaseFunction is accessed through an instance (e.g., `instance.func`), it creates a new method of type
-    `method_type` that is bound to the instance. This allows BaseFunction objects to behave like regular functions
-    when called directly, but like methods when accessed through an instance attribute.
-
-    BaseFunction provides methods for explicitly binding to instances (`bind`) and for binding to an instance and
-    setting the result as an attribute on the instance (`bind_to_attribute`). These methods give fine-grained
-    control over the binding process, which is useful for implementing decorators and other advanced patterns.
-
-    Attributes:
-        method_type: The type of method to create when binding this function to an instance. By default, this is
-                    BaseMethod, but it can be customized to use different method implementations. This allows
-                    for customizing the behavior of bound methods.
-    """
-
-    # Attributes #
-    method_type: type[BaseMethod] = BaseMethod
-
-    # Instance Methods #
-    # Binding
-    def bind(self, instance: Any, owner: type[Any] | None = None) -> BaseMethod:
-        """Creates a method of this function which is bound to another object.
-
-        Args:
-            instance: The object to bind the method to. This becomes the 'self' parameter when the method is called.
-            owner: The class of the object being bound to. This is used for proper method binding and to support
-                inheritance.
-
-        Returns:
-            A new method object of type method_type that wraps this function and is bound to the specified instance and
-            owner class.
-        """
-        return self.method_type(func=self, instance=instance, owner=owner)
-
-    def bind_to_attribute(
+    def bind_deepcopy_to_attribute(
         self,
         instance: Any = None,
         owner: type[Any] | None = None,
@@ -635,14 +634,103 @@ class BaseFunction(BaseCallable):
             If instance is None, this function is unchanged. Otherwise, the new method object that was created and set
             as an attribute on the instance.
         """
+        return self.deepcopy().bind_to_attribute(instance, owner, name)
+
+    def call_binding(self, *args: Any, **kwargs: Any) -> Any:
+        """Binds the wrapped function to the stored instance and calls it.
+
+        Args:
+            *args: Positional arguments to pass to the wrapped function.
+            **kwargs: Keyword arguments to pass to the wrapped function.
+
+        Returns:
+            The result of calling the wrapped function with the bound instance and the provided arguments.
+        """
+        if (reference := self._self_) is not None:
+            try:
+                return self.__wrapped__.__get__(reference(), self.__owner__)(*args, **kwargs)  # type: ignore[misc]
+            except AttributeError:
+                return self.__wrapped__(reference(), *args, **kwargs)  # type: ignore[misc]
+
+        return self.__wrapped__(*args, **kwargs)  # type: ignore[misc]
+
+    # Method Overrides #
+    # Special method overriding which leads to less overhead.
+    __get__: DescriptorGetMethod = bind_self
+    __call__: CallMethod = call_binding
+
+
+class BaseFunction(BaseCallable):
+    """An abstract class that implements the structure for creating function-like callable objects.
+
+    BaseFunction extends BaseCallable to create callable objects that behave like functions but can be converted to
+    methods when bound to instances. This class is particularly useful for creating decorators, function factories, and
+    other callable objects that need to support both function-like and method-like behavior.
+
+    When a BaseFunction is accessed through an instance (e.g., `instance.func`), it creates a new method of type
+    `method_type` that is bound to the instance. This allows BaseFunction objects to behave like regular functions
+    when called directly, but like methods when accessed through an instance attribute.
+
+    BaseFunction provides methods for explicitly binding to instances (`bind`) and for binding to an instance and
+    setting the result as an attribute on the instance (`bind_to_attribute`). These methods give fine-grained
+    control over the binding process, which is useful for implementing decorators and other advanced patterns.
+
+    Attributes:
+        bind_method_type: The type of method to create when binding this function to an instance. By default, this is
+                    BaseMethod, but it can be customized to use different method implementations. This allows
+                    for customizing the behavior of bound methods.
+    """
+
+    # Attributes #
+    bind_method_type: type[BaseMethod] = BaseMethod
+
+    # Instance Methods #
+    # Binding
+    def bind(self, instance: Any, owner: type[Any] | None = None) -> BaseMethod:
+        """Creates a method of this function which is bound to another object.
+
+        Args:
+            instance: The object to bind the method to. This becomes the 'self' parameter when the method is called.
+            owner: The class of the object being bound to. This is used for proper method binding and to support
+                inheritance.
+
+        Returns:
+            A new method object of type bind_method_type that wraps this function and is bound to the specified instance
+            and owner class.
+        """
+        return self.bind_method_type(func=self, instance=instance, owner=owner)
+
+    def bind_to_attribute(
+        self,
+        instance: Any = None,
+        owner: type[Any] | None = None,
+        name: str | None = None,
+    ) -> BaseMethod:
+        """Creates a method of this function which is bound to another object and sets it as an attribute.
+
+        Args:
+            instance: The object to bind the method to and set the attribute on. If None, this function is returned
+                unchanged.
+            owner: The class of the object being bound to. This is used for proper method binding and to support
+                inheritance.
+            name: The name of the attribute to set on the instance. If None, a unique cache name is used.
+
+        Returns:
+            If instance is None, this function is unchanged. Otherwise, the new method object that was created and set
+            as an attribute on the instance.
+        """
         if instance is None:
             return self
 
         if name is None:
-            name = self.__wrapped__.__name__  # type:ignore[union-attr]
+            name = getattr(self.__wrapped__, "__name__", "")
 
         # Create a new method bound to the instance
-        method = self.method_type(func=self, instance=instance, owner=owner)
+        method = self.bind_method_type(func=self, instance=instance, owner=owner)
         setattr(instance, name, method)
 
         return method
+
+
+# Cyclic Definitions
+BaseMethod.bind_method_type = BaseMethod

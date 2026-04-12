@@ -1,5 +1,7 @@
 """deepchainmaptestsuite.py
 Base class for test suites which test DeepChainMap and its subclasses.
+
+This module contains the base class for test suites which test DeepChainMap and its subclasses.
 """
 
 # Header #

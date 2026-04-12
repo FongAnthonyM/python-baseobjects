@@ -1,5 +1,7 @@
 """dispatchablecompositetestsuite.py
 Base test suite for DispatchableComposite and its subclasses.
+
+This module contains the base test suite for DispatchableComposite and its subclasses.
 """
 
 # Header #

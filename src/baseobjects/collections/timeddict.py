@@ -1,5 +1,7 @@
 """timeddict.py
 A dictionary that clears its contents after a specified time has passed.
+
+This module contains the a dictionary that clears its contents after a specified time has passed.
 """
 
 # Header #

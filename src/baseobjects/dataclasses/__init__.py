@@ -1,5 +1,7 @@
 """__init__.py
 Base and/or common dataclasses.
+
+This module contains the base and/or common dataclasses.
 """
 
 # Header #

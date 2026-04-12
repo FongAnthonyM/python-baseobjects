@@ -1,5 +1,7 @@
 """__init__.py
 Test suites for collections.
+
+This module contains the test suites for collections.
 """
 
 # Header #

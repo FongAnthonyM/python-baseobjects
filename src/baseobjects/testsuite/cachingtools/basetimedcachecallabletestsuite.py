@@ -1,7 +1,7 @@
 """basetimedcachecallabletestsuite.py
-Base test suite for BaseTimedCacheCallable and its subclasses.
+Base test suite for BaseTimedCache and its subclasses.
 
-This module provides a base test suite for testing the BaseTimedCacheCallable class and its subclasses. It defines
+This module provides a base test suite for testing the BaseTimedCache class and its subclasses. It defines
 methods for testing the core functionality of timed cache callable objects, including caching behavior, cache
 expiration, and cache clearing.
 """
@@ -28,8 +28,8 @@ from typing import Any
 import pytest
 
 # Local Packages #
-from ...cachingtools.caches.basetimedcache import BaseTimedCacheCallable
-from ..functions.dynamiccallabletestsuite import DynamicCallableTestSuite
+from ...cachingtools.caches.basetimedcache import BaseTimedCache
+from ..functions.dynamicdecoratortestsuite import DynamicDecoratorTestSuite
 
 
 # Definitions #
@@ -62,7 +62,7 @@ class MethodCallCounter:
         return self.count
 
 
-class SlotTimedCacheCallable(BaseTimedCacheCallable):
+class SlotTimedCacheCallable(BaseTimedCache):
     """A subclass with slots for testing."""
 
     __slots__ = ("extra",)
@@ -95,23 +95,27 @@ class MockObj:
         self.value = value
 
     def method(self, x: int) -> int:
-        """A simple method for testing."""
+        """A simple method for testing.
+
+        Returns:
+            The added value.
+        """
         return self.value + x
 
 
-class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
-    """Base test suite for BaseTimedCacheCallable and its subclasses.
+class BaseTimedCacheTestSuite(DynamicDecoratorTestSuite):
+    """Base test suite for BaseTimedCache and its subclasses.
 
     This class provides common test functionality for timed cache callables, including tests for caching behavior,
     cache expiration, and cache clearing. Subclasses should set the UnitTestClass attribute and may override or extend
     the test methods.
 
     Attributes:
-        UnitTestClass: The class that the test suite is testing, which should be BaseTimedCacheCallable or a subclass.
+        UnitTestClass: The class that the test suite is testing, which should be BaseTimedCache or a subclass.
     """
 
     # Attributes #
-    UnitTestClass: type[BaseTimedCacheCallable]
+    UnitTestClass: type[BaseTimedCache]
 
     # Helper Methods #
     def create_test_function(self) -> tuple[Callable[..., Any], Callable[..., Any]]:
@@ -144,35 +148,35 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
     def test_function_object(
         self,
         test_function: tuple[Callable[..., Any], Callable[..., Any]],
-    ) -> BaseTimedCacheCallable:
+    ) -> BaseTimedCache:
         """Creates a test function object.
 
         Args:
             test_function: A fixture providing a test function and call counter.
 
         Returns:
-            BaseTimedCacheCallable: An instance of the test object.
+            BaseTimedCache: An instance of the test object.
         """
         func, _ = test_function
         return self.UnitTestClass(func=func, lifetime=60)
 
     # Tests #
     # Magic Methods #
-    def test_call(self, test_function_object: BaseTimedCacheCallable) -> None:  # type: ignore[override]
+    def test_call(self, test_function_object: BaseTimedCache) -> None:  # type: ignore[override]
         """Tests that the callable object can be called and correctly delegates to the wrapped function.
 
         Args:
-            test_function_object: A fixture providing a BaseTimedCacheCallable instance that wraps a function.
+            test_function_object: A fixture providing a BaseTimedCache instance that wraps a function.
         """
         # Calls the function and verify the result
         result = test_function_object(5)
         assert result == 7
 
-    def test_call_wrapped(self, test_function_object: BaseTimedCacheCallable) -> None:  # type: ignore[override]
+    def test_call_wrapped(self, test_function_object: BaseTimedCache) -> None:  # type: ignore[override]
         """Tests that the wrapped function can be called directly.
 
         Args:
-            test_function_object: A fixture providing a BaseTimedCacheCallable instance that wraps a function.
+            test_function_object: A fixture providing a BaseTimedCache instance that wraps a function.
         """
         # Calls the wrapped function directly
         result = test_function_object.call_wrapped(5)
@@ -293,7 +297,7 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         assert instance.lifetime == 60
 
     # Copying #
-    def test_deepcopy(self, test_function_object: BaseTimedCacheCallable, memo: dict[Any, Any] | None = None) -> None:
+    def test_deepcopy(self, test_function_object: BaseTimedCache, memo: dict[Any, Any] | None = None) -> None:
         """Tests deep copying of the callable object."""
         if memo is None:
             memo = {}
@@ -304,7 +308,7 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         # Relaxed check for function identity
         assert obj_deepcopy(5) == 7
 
-    def test_deepcopy_method(self, test_method_object: BaseTimedCacheCallable, test_bind_target: Any) -> None:
+    def test_deepcopy_method(self, test_method_object: BaseTimedCache, test_bind_target: Any) -> None:
         """Tests deep copying of a bound method."""
         # Standard Libraries #
         import copy
@@ -329,7 +333,7 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         if state:
             assert isinstance(state, dict)
 
-    def test_pickling(self, test_function_object: BaseTimedCacheCallable) -> None:  # type: ignore[override]
+    def test_pickling(self, test_function_object: BaseTimedCache) -> None:  # type: ignore[override]
         """Tests pickling and unpickling of the callable object."""
         pickled = pickle.dumps(test_function_object)
         unpickled = pickle.loads(pickled)
@@ -340,11 +344,11 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         assert unpickled(5) == 7
 
     # Functionality #
-    def test_as_function(self, test_function_object: BaseTimedCacheCallable) -> None:  # type: ignore[override]
+    def test_as_function(self, test_function_object: BaseTimedCache) -> None:  # type: ignore[override]
         """Tests that the callable object can be converted to a standard Python function.
 
         Args:
-            test_function_object: A fixture providing a BaseTimedCacheCallable instance that wraps a function.
+            test_function_object: A fixture providing a BaseTimedCache instance that wraps a function.
         """
         # Converts to a function and call it
         func = test_function_object.as_function()
@@ -425,13 +429,13 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         assert result2 == 4
         assert get_call_count() == 2  # The function should be called each time with no_cache
 
-    def test_cache_clearing(self, test_function_object: BaseTimedCacheCallable) -> None:
+    def test_cache_clearing(self, test_function_object: BaseTimedCache) -> None:
         """Tests clearing the cache.
 
         This test verifies that the clear_cache method clears the cache.
 
         Args:
-            test_function_object: A fixture providing a BaseTimedCacheCallable instance that wraps a function.
+            test_function_object: A fixture providing a BaseTimedCache instance that wraps a function.
         """
         test_function_object.clear_cache()
         assert test_function_object.expiration is not None
@@ -441,7 +445,7 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
             assert not test_function_object.cache_container
 
     def test_clear_condition(self) -> None:
-        """Tests the clear_condition method of BaseTimedCacheCallable.
+        """Tests the clear_condition method of BaseTimedCache.
 
         This test verifies that the clear_condition method returns True when the cache should be cleared.
         """
@@ -471,13 +475,13 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         cache_func.expiration = time.perf_counter() + 2
         assert not cache_func.clear_condition()
 
-    def test_cache_method_property(self, test_function_object: BaseTimedCacheCallable) -> None:
+    def test_cache_method_property(self, test_function_object: BaseTimedCache) -> None:
         """Tests the cache_method property.
 
         This test verifies that the cache_method property correctly gets and sets the caching method.
 
         Args:
-            test_function_object: A fixture providing a BaseTimedCacheCallable instance that wraps a function.
+            test_function_object: A fixture providing a BaseTimedCache instance that wraps a function.
         """
         # Sets the cache_method property
         test_function_object.cache_method = "no_cache"
@@ -501,16 +505,17 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         # because func only takes 1 argument but will be called with 2 (instance and x)
         class Dummy:
             pass
+
         dummy = Dummy()
 
         bound_method = cache_func.bind(instance=dummy)
-        bound_method.call_method = "call_caching"
+        bound_method.call_method = "call_caching"  # type: ignore[attr-defined]
 
         # Should not raise TypeError, should fall back to calling without instance
         result = bound_method(5)
         assert result == 5
 
-        bound_method.call_method = "call_clearing"
+        bound_method.call_method = "call_clearing"  # type: ignore[attr-defined]
         result = bound_method(5)
         assert result == 5
 
@@ -523,7 +528,7 @@ class BaseTimedCacheCallableTestSuite(DynamicCallableTestSuite):
         # Create a cache decorator and bind it
         cache_decorator = self.UnitTestClass(func=MockObj.method)
         # We MUST set it as the method in the class for _rebind_method to find it
-        MockObj.method = cache_decorator
+        MockObj.method = cache_decorator  # type: ignore[method-assign]
 
         bound_method = cache_decorator.bind(instance=obj, owner=MockObj)
 

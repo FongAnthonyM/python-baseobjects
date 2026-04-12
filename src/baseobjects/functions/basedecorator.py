@@ -21,15 +21,16 @@ __version__ = "1.12.0"
 # Standard Libraries #
 from collections.abc import Callable
 from functools import partial
-from typing import Any, TypeVar
+from typing import Any
 
 # Local Packages #
-from ..bases import BaseFunction
+from ..typing import DescriptorGetMethod
+from ..bases import BaseMethod
 
 
 # Definitions #
 # Classes #
-class BaseDecorator(BaseFunction):
+class BaseDecorator(BaseMethod):
     """An abstract class which implements the basic structure for creating decorators.
 
     BaseDecorator provides a foundation for creating Python decorators with extended functionality. It can be used
@@ -101,20 +102,15 @@ class BaseDecorator(BaseFunction):
         else:
             return super().__new__(cls)
 
-    def __reduce__(self) -> tuple[Any, tuple[Any, ...], Any]:
-        """Reduces the decorator to be picklable.
-
-        This method enables decorator instances to be properly pickled and unpickled.
-
-        The reduction strategy:
-        1. Uses a partial function with __new__ to create a new instance without returning a partial
-        2. Provides an empty tuple as the second element (no positional args for __new__)
-        3. Includes the instance state from __getstate__ as the third element
+    # Pickling
+    def __getnewargs_ex__(self) -> tuple[tuple[Any, ...], dict[str, Any]]:
+        """Provides the arguments needed to recreate this object during unpickling.
 
         Returns:
-            A tuple containing:
-            - A partial function that will create a new instance
-            - An empty tuple (no positional args for __new__)
-            - The instance state from __getstate__
+            The arguments needed to recreate this object during unpickling.
         """
-        return partial(self.__new__, self.__class__, _return_partial=False), (), self.__getstate__()
+        return (), {"_return_partial": False}
+
+    # Method Overrides #
+    # Special method overriding which leads to less overhead.
+    __get__: DescriptorGetMethod = BaseMethod.bind_builtin

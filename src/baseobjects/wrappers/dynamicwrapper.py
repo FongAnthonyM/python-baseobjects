@@ -1,8 +1,10 @@
 """dynamicwrapper.py
 DynamicWrapper calls wrapped attribute functions by changing the __getattribute__ method to check the wrapped classes
-after checking itself. This makes DynamicWrapper very flexible with its wrapped objects. DynamicWrapper does not have
-any usage limitation, but it is significantly slower than normal object attribute/method access, because it handles
-every get, set, and delete. Performance would be better if DynamicWrapper was written in C.
+after checking itself.
+
+This makes DynamicWrapper very flexible with its wrapped objects. DynamicWrapper does not have any usage limitation, but
+it is significantly slower than normal object attribute/method access, because it handles every get, set, and delete.
+Performance would be better if DynamicWrapper was written in C.
 """
 
 # Header #

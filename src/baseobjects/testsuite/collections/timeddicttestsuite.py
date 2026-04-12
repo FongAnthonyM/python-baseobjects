@@ -1,5 +1,7 @@
 """timeddicttestsuite.py
 Test suite for the TimedDict class.
+
+This module contains the test suite for the TimedDict class.
 """
 
 # Header #

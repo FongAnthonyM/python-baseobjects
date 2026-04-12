@@ -285,11 +285,7 @@ class TestDynamicDecorator(DynamicDecoratorTestSuite):
         result = test_func(3)
         assert result == 5  # 3 + 2 (default y)
 
-    def test_bind_multiplexer(
-        self,
-        test_method_object: Any = None,
-        test_bind_target: Any = None,
-    ) -> None:
+    def test_bind_multiplexer(self) -> None:  # type: ignore[override]
         """Test that the bind_multiplexer correctly delegates to the selected binding method."""
         # Create a test function object
         test_function_object = self.UnitTestClass(add_function)
@@ -316,7 +312,7 @@ class TestDynamicDecorator(DynamicDecoratorTestSuite):
         bound_func = test_function_object.__get__(None, None)
         assert bound_func is add_function
 
-    def test_call_multiplexer(self, test_function_object: Any = None) -> None:
+    def test_call_multiplexer(self) -> None:  # type: ignore[override]
         """Test that the call_multiplexer correctly delegates to the selected call method."""
         # Create a test function object
         test_function_object = self.UnitTestClass(add_function)

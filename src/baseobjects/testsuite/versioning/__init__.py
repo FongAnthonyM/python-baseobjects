@@ -1,5 +1,7 @@
 """__init__.py
 Test suite for versioning classes.
+
+This module contains the test suite for versioning classes.
 """
 
 # Header #

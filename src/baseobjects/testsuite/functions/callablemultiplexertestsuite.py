@@ -1,5 +1,7 @@
 """callablemultiplexertestsuite.py
 Base test suite for ~baseobjects.functions.CallableMultiplexer and its subclasses.
+
+This module contains the base test suite for ~baseobjects.functions.CallableMultiplexer and its subclasses.
 """
 
 # Header #

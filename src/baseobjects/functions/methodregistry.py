@@ -1,5 +1,7 @@
 """methodregistry.py
 A registry which holds Methods.
+
+This module contains the a registry which holds Methods.
 """
 
 # Header #

@@ -1,5 +1,7 @@
 """basecompositetestsuite.py
 Base test suite for BaseComposite and its subclasses.
+
+This module contains the base test suite for BaseComposite and its subclasses.
 """
 
 # Header #

@@ -23,12 +23,12 @@ __version__ = "1.12.0"
 from typing import Any
 
 # Local Packages #
-from .timedsinglecache import TimedSingleCache, TimedSingleCacheCallable, TimedSingleCacheMethod
+from .timedsinglecache import TimedSingleCache
 
 
 # Definitions #
 # Classes #
-class TimedKeylessCacheCallable(TimedSingleCacheCallable):
+class TimedKeylessCache(TimedSingleCache):
     """A periodically clearing cache wrapper object for a function that only has one result.
 
     Attributes:
@@ -63,13 +63,13 @@ class TimedKeylessCacheCallable(TimedSingleCacheCallable):
         """
         self.args_key = False
 
-        super().construct(
+        super().construct(  # type: ignore[misc]
+            *args,
             func=func,
             typed=typed,
             lifetime=lifetime,
             call_method=call_method,
             instanced=instanced,
-            *args,
             **kwargs,
         )
 
@@ -84,22 +84,11 @@ class TimedKeylessCacheCallable(TimedSingleCacheCallable):
         Returns:
             The result of the wrapped function.
         """
-        if not self.args_key:
-            self.cache_container = self.call_wrapped(*args, **kwargs)
-            self.args_key = True
+        if not self.get_args_key(*args, **kwargs):
+            self.set_cache_container(self.call_wrapped(*args, **kwargs), *args, **kwargs)
+            self.set_args_key(True, *args, **kwargs)
 
-        return self.cache_container
-
-
-class TimedKeylessCacheMethod(TimedKeylessCacheCallable, TimedSingleCacheMethod):
-    """A method class for TimedKeylessCache."""
-
-
-class TimedKeylessCache(TimedKeylessCacheCallable, TimedSingleCache):
-    """A function class for TimedKeylessCache."""
-
-    # Attributes #
-    method_type: type[TimedSingleCacheMethod] = TimedKeylessCacheMethod
+        return self.get_cache_container(*args, **kwargs)
 
 
 # Aliases #

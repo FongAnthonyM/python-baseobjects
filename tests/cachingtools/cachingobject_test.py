@@ -133,6 +133,21 @@ class TestCachingObject(CachingObjectTestSuite):
 
     # Instance Methods #
     # Fixtures
+    @pytest.fixture(autouse=True)
+    def reset_caching_state(self) -> None:
+        """Resets the shared descriptor state before each test."""
+        MyCachingObject.cached_method.cache_method = "unlimited_cache"
+        MyCachingObject.cached_method._previous_cache_method = "unlimited_cache"
+        MyCachingObject.cached_method.is_timed = True
+        MyCachingObject.cached_method.lifetime = None
+        MyCachingObject.cached_method._is_cache = True
+
+        MyCachingObject.lifetime_method.cache_method = "unlimited_cache"
+        MyCachingObject.lifetime_method._previous_cache_method = "unlimited_cache"
+        MyCachingObject.lifetime_method.is_timed = True
+        MyCachingObject.lifetime_method.lifetime = 10
+        MyCachingObject.lifetime_method._is_cache = True
+
     @pytest.fixture
     def test_object(self) -> CachingObject:
         """Creates a test object.
@@ -150,7 +165,7 @@ class TestCachingObject(CachingObjectTestSuite):
 
         # Ensure cached_method is in __dict__ by calling it
         obj.cached_method(1)
-        assert "cached_method" in obj.__dict__
+        assert "__cache__" in obj.__dict__
 
         # Ensure another_cache is NOT in __dict__ to cover the 'not in state[0]' branch
         # (It seems it might be appearing there mysteriously, so we force remove it)
@@ -206,6 +221,29 @@ class TestCachingObject(CachingObjectTestSuite):
         with patch.object(BaseReducible, "__getstate__", return_value=(None, {"some_slot": 1})):
             state = obj.__getstate__()
             assert state == (None, {"some_slot": 1})
+
+    def test_caching_methods_coverage(self) -> None:
+        """Tests coverage of caching methods with abnormal cache configurations."""
+        obj = MyCachingObject()
+        obj.get_caches()
+
+        # Add a dummy cache name that doesn't exist on the class at all
+        obj._caches.add("nonexistent_cache")
+
+        # Add a dummy cache name that exists on the class but has no methods
+        setattr(type(obj), "dummy_cache", "not_a_cache")
+        setattr(obj, "dummy_cache", "not_a_cache")
+        obj._caches.add("dummy_cache")
+
+        obj.enable_caching()
+        obj.disable_caching()
+        obj.timeless_caching()
+        obj.timed_caching()
+        obj.clear_caches()
+        obj.set_lifetimes(10)
+
+        # Cleanup class attribute so it doesn't affect other tests
+        delattr(type(obj), "dummy_cache")
 
 
 # Main #

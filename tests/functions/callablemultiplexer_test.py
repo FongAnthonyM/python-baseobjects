@@ -63,6 +63,30 @@ class TestCallableMultiplexer(CallableMultiplexerTestSuite):
         assert obj.registry is registry2
         assert obj.__func__ is None
 
+    def test_add_select_function_no_get(self) -> None:
+        """Test adding a function that doesn't have __get__."""
+        class MockFunc:
+            def __call__(self, *args, **kwargs):
+                return True
+
+        mock_func = MockFunc()
+        obj = self.UnitTestClass()
+        obj.add_select_function("mock", mock_func)
+        assert obj._selected == "mock"
+        assert getattr(obj, "_selected_bind_method", None) is None
+
+    def test_add_select_method_no_func_no_get(self) -> None:
+        """Test adding a method that has neither __func__ nor __get__."""
+        class MockMethod:
+            def __call__(self, *args, **kwargs):
+                return True
+
+        mock_method = MockMethod()
+        obj = self.UnitTestClass()
+        obj.add_select_method("mock", mock_method)
+        assert obj._selected == "mock"
+        assert obj.registry["mock"] is mock_method
+
 
 class TestFunctionMultiplexer(FunctionMultiplexerTestSuite):
     """Test the FunctionMultiplexer class.
@@ -82,6 +106,21 @@ class TestMethodMultiplexer(MethodMultiplexerTestSuite):
 
     # Attributes #
     UnitTestClass: type[MethodMultiplexer] = MethodMultiplexer
+
+    def test_call_wrapped_present(self) -> None:
+        """Test calling when the selected function has call_wrapped."""
+        class MockWrapped:
+            def call_wrapped(self, instance, *args, **kwargs):
+                return "wrapped_called"
+
+        class MockInstance:
+            pass
+
+        obj = self.UnitTestClass()
+        obj.add_select_function("wrapped", MockWrapped())
+        obj.__self__ = MockInstance()
+
+        assert obj() == "wrapped_called"
 
 
 # Main #

@@ -133,7 +133,7 @@ class BaseFunctionTestSuite(BaseCallableTestSuite):
             test_bind_target: A fixture providing an instance to bind the method to.
         """
         bound_method = test_method_object.bind(test_bind_target, self.BindTargetClass)
-        assert isinstance(bound_method, test_method_object.method_type)
+        assert isinstance(bound_method, test_method_object.bind_method_type)
         assert bound_method.__self__ is test_bind_target
 
         # Verifies it returns the expected result when called
@@ -161,7 +161,7 @@ class BaseFunctionTestSuite(BaseCallableTestSuite):
             expected_name = test_method_object.__wrapped__.__name__  # type:ignore[union-attr]
 
         bound_method = test_method_object.bind_to_attribute(new_bind_target, self.BindTargetClass, **kwargs)
-        assert isinstance(bound_method, test_method_object.method_type)
+        assert isinstance(bound_method, test_method_object.bind_method_type)
         assert bound_method.__self__ is new_bind_target
         assert hasattr(new_bind_target, expected_name)
 

@@ -1,5 +1,7 @@
 """updaterecursive.py
 Updates a mapping object and its contained mappings based on another mapping.
+
+This module contains the updates a mapping object and its contained mappings based on another mapping.
 """
 
 # Header #

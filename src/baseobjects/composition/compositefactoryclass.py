@@ -1,5 +1,8 @@
 """compositefactoryclass.py
 A composite object that dispatches the original class with different components when a subclass is instantiated.
+
+This module contains a composite object that dispatches the original class with different components
+when a subclass is instantiated.
 """
 
 # Header #
@@ -15,17 +18,16 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-from inspect import signature, Parameter
+from inspect import Parameter, signature
 from typing import Any, ClassVar
 
 # Local Packages #
 from ..classregistration import NamespaceClassRegistry, NamespaceRegisteredClass
 from .basecomposite import BaseComposite
 
-
 # Definitions #
 # Constants #
-_arg_only: set = {Parameter.POSITIONAL_OR_KEYWORD, Parameter.POSITIONAL_ONLY}
+_arg_only: set[Any] = {Parameter.POSITIONAL_OR_KEYWORD, Parameter.POSITIONAL_ONLY}
 
 
 # Classes #

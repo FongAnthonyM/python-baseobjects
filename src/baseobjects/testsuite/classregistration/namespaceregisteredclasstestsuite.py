@@ -1,5 +1,7 @@
 """namespaceregisteredclasstestsuite.py
 Base test suite for NamespaceRegisteredClass and its subclasses.
+
+This module contains the base test suite for NamespaceRegisteredClass and its subclasses.
 """
 
 # Header #

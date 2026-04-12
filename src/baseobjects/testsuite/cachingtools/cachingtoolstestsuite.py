@@ -1,5 +1,7 @@
 """cachingtoolstestsuite.py
 Specialized test suite for cache classes in the baseobjects package.
+
+This module contains the specialized test suite for cache classes in the baseobjects package.
 """
 
 # Header #
@@ -650,4 +652,4 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
         cache.instanced_cache = instanced
 
         expected_binding = "bind_to_attribute" if instanced else "bind_builtin"
-        assert cache.bind_multiplexer.selected == expected_binding
+        assert cache.bind_multiplexer.selected == expected_binding, f"Failed: {cache.bind_multiplexer.selected} != {expected_binding}"

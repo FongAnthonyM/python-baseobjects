@@ -1,5 +1,7 @@
 """callablemultiplexer.py
 Callables which select between either functions or methods to be used as the call method.
+
+This module contains the callables which select between either functions or methods to be used as the call method.
 """
 
 # Header #
@@ -15,7 +17,6 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
-import sys
 from types import MethodType
 from typing import Any
 
@@ -183,10 +184,6 @@ class CallableMultiplexer(BaseMethod):
         Returns:
             The output of the wrapped function.
         """
-        print(f"DEBUG: CallableMultiplexer.__call__ for {self} (wrapped={self.__wrapped__}, binding={self.is_binding_wrapper})")
-        if self.__wrapped__ is None:
-            raise TypeError("No function selected")
-
         if self.is_binding_wrapper:
             return self._selected_bind_method(self.__self__, self.__owner__)(*args, **kwargs)
         else:
@@ -379,22 +376,22 @@ class MethodMultiplexer(CallableMultiplexer):
 
         Returns:
             The result of the wrapped function.
+
+        Raises:
+            TypeError: If no function is selected or if method binding fails.
         """
         selected_func = self.__func__
-        print(f"DEBUG: MethodMultiplexer.__call__ for {self} (selected_func={selected_func})")
-        if selected_func is None:
-            raise TypeError("No function selected")
-
         instance = self.__self__
         owner = self.__owner__
 
-        if hasattr(selected_func, "call_wrapped"):
-            return selected_func.call_wrapped(*(instance,) + args, **kwargs)
+        if selected_func is not None and hasattr(selected_func, "call_wrapped"):
+            return selected_func.call_wrapped(instance, *args, **kwargs)
         else:
             try:
                 bound = self._selected_bind_method(instance, owner)
             except TypeError as e:
-                raise TypeError(f"{self._selected_bind_method}({instance}, {owner}) is invalid: {e}")
+                error_msg = f"{self._selected_bind_method}({instance}, {owner}) is invalid: {e}"
+                raise TypeError(error_msg) from e
             return bound(*args, **kwargs)
 
 
@@ -419,14 +416,13 @@ class FunctionMultiplexer(CallableMultiplexer):
         Returns:
             The output of the wrapped function.
         """
-        if self.__wrapped__ is None:
-            raise TypeError("No function selected")
-
         func = self.__wrapped__
         if (
-            hasattr(func, "__func__") and
-            getattr(func, "__self__", None) is self.__self__ and
-            args and args[0] is self.__self__
+            func is not None
+            and hasattr(func, "__func__")
+            and getattr(func, "__self__", None) is self.__self__
+            and args
+            and args[0] is self.__self__
         ):
             func = func.__func__
 

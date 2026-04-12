@@ -1,5 +1,7 @@
 """functionmultiplexertestsuite.py
 Base test suite for ~baseobjects.functions.FunctionMultiplexer and its subclasses.
+
+This module contains the base test suite for ~baseobjects.functions.FunctionMultiplexer and its subclasses.
 """
 
 # Header #

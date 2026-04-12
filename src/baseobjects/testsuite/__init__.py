@@ -49,7 +49,7 @@ __all__ = [
     "BaseReducibleTestSuite",
     "BaseRegisteredClassTestSuite",
     "BaseTestSuite",
-    "BaseTimedCacheCallableTestSuite",
+    "BaseTimedCacheTestSuite",
     "BoundMethodRegistryTestSuite",
     "CachingObjectTestSuite",
     "CallableMultiplexerTestObject",

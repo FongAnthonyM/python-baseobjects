@@ -1,5 +1,7 @@
 """timedsinglecachetestsuite.py
 Test suite for the TimedSingleCache class.
+
+This module contains the test suite for the TimedSingleCache class.
 """
 
 # Header #

@@ -1,5 +1,7 @@
 """baseperformancetestsuite.py
 Base class for test suites which test the performance.
+
+This module contains the base class for test suites which test the performance.
 """
 
 # Header #

@@ -1,5 +1,7 @@
 """orderabledicttestsuite.py
 Test suite for the OrderableDict class.
+
+This module contains the test suite for the OrderableDict class.
 """
 
 # Header #

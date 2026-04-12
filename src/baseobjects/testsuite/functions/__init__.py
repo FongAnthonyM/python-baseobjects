@@ -1,5 +1,7 @@
 """__init__.py
 Functions test suite package.
+
+This module contains the functions test suite package.
 """
 
 # Header #

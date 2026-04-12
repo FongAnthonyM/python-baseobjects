@@ -1,5 +1,7 @@
 """methodmultiplexertestsuite.py
 Base test suite for ~baseobjects.functions.MethodMultiplexer and its subclasses.
+
+This module contains the base test suite for ~baseobjects.functions.MethodMultiplexer and its subclasses.
 """
 
 # Header #

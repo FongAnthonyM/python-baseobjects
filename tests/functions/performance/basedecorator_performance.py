@@ -60,7 +60,7 @@ class TestBaseDecoratorPerformance(BasePerformanceTestSuite):
     # Instance Methods #
     # Fixtures
     @pytest.fixture
-    def test_decorator(self) -> "TestBaseDecoratorPerformance.BaseTestDecorator":
+    def test_decorator(self) -> TestBaseDecoratorPerformance.BaseTestDecorator:
         """Create a test decorator instance for use in tests.
 
         Returns:
@@ -105,7 +105,7 @@ class TestBaseDecoratorPerformance(BasePerformanceTestSuite):
         print(f"BaseDecorator creation: {mean_new:.3f} μs ({percent:.3f}% of normal function creation time)")
         assert percent < self.speed_tolerance
 
-    def test_call_speed(self, test_decorator: "TestBaseDecoratorPerformance.BaseTestDecorator") -> None:
+    def test_call_speed(self, test_decorator: TestBaseDecoratorPerformance.BaseTestDecorator) -> None:
         """Test the performance of the __call__ method of BaseDecorator.
 
         This test compares the speed of BaseDecorator.__call__() with a normal function.

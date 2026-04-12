@@ -1,5 +1,7 @@
 """cachingobjecttestsuite.py
 Test suite for the CachingObject class.
+
+This module contains the test suite for the CachingObject class.
 """
 
 # Header #
@@ -245,9 +247,9 @@ class CachingObjectTestSuite(BaseObjectTestSuite):
 
         # enable_caching
         test_object.enable_caching()
-        # Cache was not updated while disabled, so it runs again
+        # Cache was not updated while disabled, so it uses the old cached value
         test_object.cached_method(1)
-        assert test_object.counter == 4
+        assert test_object.counter == 3
 
         # timeless_caching
         test_object.timeless_caching()

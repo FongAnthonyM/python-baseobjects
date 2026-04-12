@@ -1,5 +1,7 @@
 """wrappertestsuite.py
 Specialized test suite for wrapper classes.
+
+This module contains the specialized test suite for wrapper classes.
 """
 
 # Header #

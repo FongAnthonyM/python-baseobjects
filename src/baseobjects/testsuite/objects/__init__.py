@@ -1,5 +1,7 @@
 """__init__.py
 Test suites for objects in the baseobjects package.
+
+This module contains the test suites for objects in the baseobjects package.
 """
 
 # Header #

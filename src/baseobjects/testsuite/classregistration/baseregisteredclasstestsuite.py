@@ -1,5 +1,7 @@
 """baseregisteredclasstestsuite.py
 Base test suite for BaseRegisteredClass and its subclasses.
+
+This module contains the base test suite for BaseRegisteredClass and its subclasses.
 """
 
 # Header #
