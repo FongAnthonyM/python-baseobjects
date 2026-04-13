@@ -135,5 +135,5 @@ class BaseReducible(BaseObject):
         elif state is None:
             return
         else:
-            msg = f"State must be None, dict, or tuple, not {type(state)}"
+            msg = f"State must be None, dict, or tuple, not {state.__class__}"
             raise TypeError(msg)

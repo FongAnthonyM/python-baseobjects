@@ -98,7 +98,7 @@ class TestTimedCache(TimedCacheTestSuite):
         assert isinstance(cache, self.UnitTestClass)
         # construct was skipped, so no maxsize in __dict__?
         # Use __dict__ check to avoid class attributes or properties masking
-        assert "_maxsize" not in cache.__dict__
+        assert "maxsize" not in cache.__dict__
 
         # Manually construct
         cache.construct(func=lambda x: x)
@@ -118,9 +118,9 @@ class TestTimedCache(TimedCacheTestSuite):
     def test_set_maxsize_none(self) -> None:
         """Tests setting maxsize to None (unlimited)."""
         cache = self.UnitTestClass(func=lambda x: x, maxsize=10)
-        assert cache._maxsize == 10
+        assert cache.maxsize == 10
         cache.maxsize = None
-        assert cache._maxsize is None
+        assert cache.maxsize is None
         assert cache.cache_method == "unlimited_cache"  # type: ignore[unreachable]
 
     def test_poll(self) -> None:

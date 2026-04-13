@@ -236,7 +236,7 @@ class CircularDoublyLinkedContainer(BaseObject):
 
         _nil.append(self)
 
-        new_obj = type(self)()
+        new_obj = self.__class__()
         if self.first_node is not None:
             original_node = self.first_node
             new_obj.append(data=copy.deepcopy(original_node.data, memo=memo))

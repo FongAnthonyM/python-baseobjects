@@ -189,7 +189,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
                 setattr(cls, name, property(*cls._wrapped_factory(store_name)))
 
                 # Sets attributes properties
-                obj_set = set(dir(obj)) | set(get_type_hints(obj if isinstance(obj, type) else type(obj)))
+                obj_set = set(dir(obj)) | set(get_type_hints(obj if isinstance(obj, type) else obj.__class__))
                 cls._wrapped_attributes[store_name] = add_dir = obj_set - remove_names
                 remove_names |= obj_set
                 for attribute in add_dir:
@@ -246,7 +246,7 @@ class StaticWrapper(BaseObject, metaclass=InitMeta):
             if (obj := getattr(self, store_name, None)) is not None:
                 # Sets attributes properties
                 old_obj_set = self._wrapped_attributes.get(store_name, set())
-                obj_set = set(dir(obj)) | set(get_type_hints(obj if isinstance(obj, type) else type(obj)))
+                obj_set = set(dir(obj)) | set(get_type_hints(obj if isinstance(obj, type) else obj.__class__))
                 new_obj_set = obj_set | old_obj_set
                 add_dir = obj_set - old_obj_set - remove_names
                 self._wrapped_attributes[store_name] = new_obj_set - remove_names

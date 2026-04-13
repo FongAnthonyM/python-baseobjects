@@ -23,20 +23,13 @@ __version__ = "1.12.0"
 from typing import Any
 
 # Local Packages #
-from .timedsinglecache import TimedSingleCache
+from .timedsinglecache import TimedSingleCache, TimedSingleCacheInfo
 
 
 # Definitions #
 # Classes #
 class TimedKeylessCache(TimedSingleCache):
-    """A periodically clearing cache wrapper object for a function that only has one result.
-
-    Attributes:
-        args_key: The generated argument key of the current cached result.
-    """
-
-    # Attributes #
-    args_key: bool | None = None
+    """A periodically clearing cache wrapper object for a function that only has one result."""
 
     # Instance Methods #
     # Constructors
@@ -61,8 +54,6 @@ class TimedKeylessCache(TimedSingleCache):
             *args: Arguments for inheritance.
             **kwargs: Keyword arguments for inheritance.
         """
-        self.args_key = False
-
         super().construct(  # type: ignore[misc]
             *args,
             func=func,
@@ -74,21 +65,25 @@ class TimedKeylessCache(TimedSingleCache):
         )
 
     # Caching
-    def caching(self, *args: Any, **kwargs: Any) -> Any:
+    def caching(self, *args: Any, cache_info: TimedSingleCacheInfo | None = None, **kwargs: Any) -> Any:
         """Caching that holds a single result.
 
         Args:
             *args: Arguments of the wrapped function.
+            cache_info: The cache information to use for caching.
             **kwargs: Keyword Arguments of the wrapped function.
 
         Returns:
             The result of the wrapped function.
         """
-        if not self.get_args_key(*args, **kwargs):
-            self.set_cache_container(self.call_wrapped(*args, **kwargs), *args, **kwargs)
-            self.set_args_key(True, *args, **kwargs)
+        if cache_info is None:
+            cache_info = self.get_cache_info(*args)  # type: ignore[assignment]
 
-        return self.get_cache_container(*args, **kwargs)
+        if not cache_info.args_key:
+            cache_info.cache_container = self.call_wrapped(*args, **kwargs)
+            cache_info.args_key = True
+
+        return cache_info.cache_container
 
 
 # Aliases #

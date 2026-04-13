@@ -468,7 +468,7 @@ class CallableMultiplexerTestSuite(BaseCallableTestSuite):
         # This test might not apply directly to CallableMultiplexer as it's more complex,
         # but let's see if we can adapt it or just override it.
         # CallableMultiplexer.bind_wrapped binds the currently selected function.
-        test_method_object.bind_wrapped(test_bind_target, type(test_bind_target))
+        test_method_object.bind_wrapped(test_bind_target, test_bind_target.__class__)
 
     def test_descriptor_protocol(self, test_method_object: CallableMultiplexer) -> None:
         """Tests that the callable implements the descriptor protocol for method binding.

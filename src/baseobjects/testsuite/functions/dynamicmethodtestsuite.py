@@ -88,7 +88,7 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
         test_method_object = self.create_method_object(instance_method)  # type: ignore[assignment]
 
         # Binds the method to an instance
-        bound_method = test_method_object.bind_self(test_bind_target, type(test_bind_target))
+        bound_method = test_method_object.bind_self(test_bind_target, test_bind_target.__class__)
 
         # Calls the wrapped function directly
         result, instance = bound_method.call_binding(3)
@@ -113,7 +113,7 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
         test_bind_target = self.create_bind_target()
 
         # Binds the method to the instance
-        bound_method = test_method_object.__get__(test_bind_target, type(test_bind_target))
+        bound_method = test_method_object.__get__(test_bind_target, test_bind_target.__class__)
 
         # Test with default call_method
         assert bound_method.call_method == "call_wrapped"
@@ -149,7 +149,7 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
         test_bind_target = self.create_bind_target()
 
         # Binds
-        bound_method = test_method_object.__get__(test_bind_target, type(test_bind_target))
+        bound_method = test_method_object.__get__(test_bind_target, test_bind_target.__class__)
 
         # Adds multiple call methods to the call_multiplexer
         # They receive (self, instance, *args, **kwargs) because DynamicMethod passes instance
@@ -232,7 +232,7 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
 
         # Test with default bind_method
         assert test_method_object.bind_method == "bind_self"
-        bound_method = test_method_object.__get__(test_bind_target, type(test_bind_target))
+        bound_method = test_method_object.__get__(test_bind_target, test_bind_target.__class__)
 
         # Verifies the binding
         assert bound_method.__self__ is test_bind_target
@@ -249,7 +249,7 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
         assert test_method_object.bind_method == "bind_wrapped"
 
         # Test with bind_wrapped
-        bound_method = test_method_object.__get__(test_bind_target, type(test_bind_target))
+        bound_method = test_method_object.__get__(test_bind_target, test_bind_target.__class__)
 
         # Verifies the binding
         assert bound_method.__func__ is test_method_object.__func__
@@ -267,7 +267,7 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
         test_coroutine_object = self.create_method_object(add_method_coroutine)
 
         # Binds the method to an instance
-        bound_method = test_coroutine_object.__get__(test_bind_target, type(test_bind_target))
+        bound_method = test_coroutine_object.__get__(test_bind_target, test_bind_target.__class__)
 
         # Calls the coroutine function and run it in an event loop
         coro = bound_method(3)
@@ -290,7 +290,7 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
         test_coroutine_object = self.create_method_object(add_method_coroutine)
 
         # Binds the method to an instance
-        bound_method = test_coroutine_object.__get__(test_bind_target, type(test_bind_target))
+        bound_method = test_coroutine_object.__get__(test_bind_target, test_bind_target.__class__)
 
         # Converts to a standard Python function
         func = bound_method.as_function()
@@ -328,7 +328,7 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
         test_bind_target = self.create_bind_target()
 
         # Binds the method to the instance
-        bound_method = instance.__get__(test_bind_target, type(test_bind_target))
+        bound_method = instance.__get__(test_bind_target, test_bind_target.__class__)
 
         # Try to call the instance (should raise an error)
         with pytest.raises(TypeError):
@@ -343,7 +343,7 @@ class DynamicMethodTestSuite(DynamicCallableTestSuite, BaseMethodTestSuite):
         assert instance.__func__ is instance_method
 
         # Binds the method to the instance
-        bound_method = instance.__get__(test_bind_target, type(test_bind_target))
+        bound_method = instance.__get__(test_bind_target, test_bind_target.__class__)
 
         # Calls the function
         result, instance_returned = bound_method(3)

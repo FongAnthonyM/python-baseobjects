@@ -360,7 +360,7 @@ class ConcreteVersion(Version):
                     msg = f"Cannot convert string '{version}' to ConcreteVersion"
                     raise TypeError(msg) from None
             else:
-                msg = f"Cannot convert {type(version).__name__} to ConcreteVersion"
+                msg = f"Cannot convert {version.__class__.__name__} to ConcreteVersion"
                 raise TypeError(msg)
         else:
             self.value = 0

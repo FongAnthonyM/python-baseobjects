@@ -33,16 +33,16 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
     """An abstract class which has functionality for functions that are caching.
 
     Attributes:
-        _is_cache: Determines if the caching functions of this object will cache.
+        _is_caching: Determines if the caching functions of this object will cache.
         _caches: All the caches within this object.
     """
 
     # Class Attributes #
-    _caches_: ClassVar[set[str]] = set()
+    _caches_: ClassVar[dict[str, BaseTimedCache]] = {}
 
     # Class Methods #
     @staticmethod
-    def _is_cache_instance(attribute: Any) -> bool:
+    def _is_caching_instance(attribute: Any) -> bool:
         """Determines if the given attribute is a cache instance or contains one.
 
         Args:
@@ -66,28 +66,49 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
         # Class Construction #
         cls._caches_ = cls._caches_.copy()
 
+        # Update the class-level caches from the current namespace
         for name, cls_attribute in namespace.items():
-            if cls._is_cache_instance(cls_attribute):
-                cls._caches_.add(name)
+            if cls._is_caching_instance(cls_attribute):
+                cls._caches_[name] = cls_attribute
+            elif name in cls._caches_:
+                # If a subclass overrides a cache with a non-cache, remove it
+                del cls._caches_[name]
 
     # Attributes #
-    __cache__: dict[Any]
-    _is_cache: bool = True
-    _caches: set[str]
+    __cache__: dict[str, Any]
+    _is_caching: bool = True
+    _caches: dict[str, BaseTimedCache]
 
     # Properties #
     @property
-    def is_cache(self) -> bool:
-        """Determines if the caching functions are enabled and puts them in the correct state when set."""
-        return self._is_cache
+    def any_caching(self) -> bool:
+        """Returns if any cache has its caching enabled."""
+        return self.get_any_caching()
 
-    @is_cache.setter
-    def is_cache(self, value: bool) -> None:
-        if value is not self._is_cache:
-            if value:
-                self.enable_caching()
-            else:
-                self.disable_caching()
+    @property
+    def all_caching(self) -> bool:
+        """Returns if all caches have their caching enabled."""
+        return self.get_all_caching()
+
+    @property
+    def any_caches_active(self) -> bool:
+        """Returns if any caches are currently active."""
+        return self.get_any_caches_active()
+
+    @property
+    def all_caches_active(self) -> bool:
+        """Returns if all caches are currently active."""
+        return self.get_all_caches_active()
+
+    @property
+    def any_caches_timed(self) -> bool:
+        """Returns if any cache has timing enabled."""
+        return self.get_any_caches_timed()
+
+    @property
+    def all_caches_timed(self) -> bool:
+        """Returns if all caches have timing enabled."""
+        return self.get_all_caches_timed()
 
     # Magic Methods #
     # Construction/Destruction
@@ -129,245 +150,420 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
                 for k in keys:
                     del state[k]
                 state.pop("__cache__", None)
+                state.pop("_caches", None)
             case tuple() if state[0] is not None:
                 keys = [k for k, v in state[0].items() if isinstance(v, BaseTimedCache)]
                 for k in keys:
                     del state[0][k]
                 state[0].pop("__cache__", None)
+                state[0].pop("_caches", None)
         return state
 
+    def __setstate__(self, state: Any) -> None:
+        """Sets the state of this object.
+
+        Args:
+            state: The state to set.
+        """
+        super().__setstate__(state)
+        self._caches = self._caches_.copy()
+        self.__cache__ = {}
+
     # Instance Methods #
-    # Caches Operators
-    def get_caches(self) -> set[str]:
+    # Inspection
+    def get_caches(self) -> dict[str, BaseTimedCache]:
         """Gets all the caches in this object.
 
         Returns:
             All the cache objects within this object.
         """
-        for name in dir(self):
-            attribute = getattr(type(self), name, None)
-            if (
-                self._is_cache_instance(attribute) or
-                (attribute is None and self._is_cache_instance(getattr(self, name)))
-            ):
-                self._caches.add(name)
+        self._caches.clear()
+
+        # Iterate over MRO in reverse to allow overriding by subclasses
+        slot_names = set()
+        for cls in reversed(self.__class__.mro()):
+            if (cls_dict := getattr(cls, "__dict__", None)) is not None:
+                for name, attribute in cls_dict.items():
+                    if self._is_caching_instance(attribute):
+                        self._caches[name] = getattr(self, name)
+                    elif name in self._caches:
+                        # If a subclass overrides a cache with a non-cache, remove it
+                        del self._caches[name]
+
+            if isinstance((slots := getattr(cls, "__slots__", ())), str):
+                slot_names.add(slots)
+            else:
+                slot_names.update(slots)
+
+        # Check instance-level caches in slots
+        for name in slot_names:
+            if name != "__dict__" and name != "__weakref__":
+                if (attribute := getattr(self, name, None)) is not None:
+                    if self._is_caching_instance(attribute):
+                        self._caches[name] = attribute
+                    elif name in self._caches:
+                        # Instance-level override of a class-level cache
+                        del self._caches[name]
+
+        # Check instance-level caches in __dict__
+        if (instance_dict := getattr(self, "__dict__", None)) is not None:
+            for name, attribute in instance_dict.items():
+                if self._is_caching_instance(attribute):
+                    self._caches[name] = attribute
+                elif name in self._caches:
+                    # Instance-level override of a class-level cache
+                    del self._caches[name]
 
         return self._caches
 
-    def enable_caching(self, exclude: set[str] | None = None, get_caches: bool = False) -> None:
-        """Enables all caches to cache.
+    # State
+    def get_any_caching(self, exclude: set[str] | None = None, caches: bool = False) -> bool:
+        """Checks if any cache has its caching enabled.
 
         Args:
             exclude: The names of the caches to exclude from caching.
-            get_caches: Determines if get_caches will run before setting the caches.
+            caches: Determines if get_caches will run before setting the caches.
+
+        Returns:
+            If any cache has its caching enabled.
         """
-        # Gets caches if needed.
-        if get_caches:
+        if not self._is_caching:
+            return False
+
+        if caches:
             self.get_caches()
 
-        # Exclude caches if needed.
-        if exclude is not None:
-            caches = self._caches.difference(exclude)
+        if exclude:
+            for name, cache in self._caches.items():
+                if (
+                    name not in exclude and
+                    (g_info := getattr(cache, "get_cache_info", None)) is not None and
+                    g_info(self).is_caching
+                ):
+                    return True
         else:
-            caches = self._caches
+            for cache in self._caches.values():
+                if (g_info := getattr(cache, "get_cache_info", None)) is not None and g_info(self).is_caching:
+                    return True
 
-        # Enable caches in the set.
-        for name in caches:
-            # Try to find the decorator instance and enable it
-            cache_inst = getattr(type(self), name, None)
-            if cache_inst is not None and hasattr(cache_inst, "resume_caching"):
-                try:
-                    cache_inst.resume_caching(self)
-                except TypeError:
-                    cache_inst.resume_caching()
+        return False
 
-            # ALSO call it on the bound method in case it's in __dict__ or proxies
-            bound_method = getattr(self, name, None)
-            if bound_method is not None and hasattr(bound_method, "resume_caching"):
-                try:
-                    bound_method.resume_caching(self)
-                except TypeError:
-                    bound_method.resume_caching()
-
-        self._is_cache = True
-
-    def disable_caching(self, exclude: set[str] | None = None, get_caches: bool = False) -> None:
-        """Disables all caches to cache.
+    def get_all_caching(self, exclude: set[str] | None = None, caches: bool = False) -> bool:
+        """Checks if all caches have their caching enabled.
 
         Args:
             exclude: The names of the caches to exclude from caching.
-            get_caches: Determines if get_caches will run before setting the caches.
+            caches: Determines if get_caches will run before setting the caches.
+
+        Returns:
+            If all caches have their caching enabled.
         """
-        # Gets caches if needed.
-        if get_caches:
+        if not self._is_caching:
+            return False
+
+        if caches:
             self.get_caches()
 
-        # Exclude caches if needed.
-        if exclude is not None:
-            caches = self._caches.difference(exclude)
+        if exclude:
+            for name, cache in self._caches.items():
+                if (
+                    name not in exclude and
+                    (g_info := getattr(cache, "get_cache_info", None)) is not None and
+                    not g_info(self).is_caching
+                ):
+                    return False
         else:
-            caches = self._caches
+            for cache in self._caches.values():
+                if (g_info := getattr(cache, "get_cache_info", None)) is not None and not g_info(self).is_caching:
+                    return False
 
-        # Disable caches in the set.
-        for name in caches:
-            # Try to find the decorator instance and disable it
-            cache_inst = getattr(type(self), name, None)
-            if cache_inst is not None and hasattr(cache_inst, "stop_caching"):
-                try:
-                    cache_inst.stop_caching(self)
-                except TypeError:
-                    cache_inst.stop_caching()
+        return True
 
-            # ALSO call it on the bound method in case it's in __dict__ or proxies
-            bound_method = getattr(self, name, None)
-            if bound_method is not None and hasattr(bound_method, "stop_caching"):
-                try:
-                    bound_method.stop_caching(self)
-                except TypeError:
-                    bound_method.stop_caching()
+    def get_any_caches_active(self, exclude: set[str] | None = None, caches: bool = False) -> bool:
+        """Checks if any caches are currently active (not in 'no_cache' mode).
 
-        self._is_cache = False
+        Args:
+            exclude: The names of the caches to exclude from caching.
+            caches: Determines if get_caches will run before setting the caches.
 
-    def timeless_caching(self, exclude: set[str] | None = None, get_caches: bool = False) -> None:
+        Returns:
+            If any caches are currently active.
+        """
+        if not self._is_caching:
+            return False
+
+        if caches:
+            self.get_caches()
+
+        if exclude:
+            for name, cache in self._caches.items():
+                if (
+                    name not in exclude and
+                    (g_info := getattr(cache, "get_cache_info", None)) is not None and
+                    g_info(self).cache_method != "no_cache"
+                ):
+                    return True
+        else:
+            for cache in self._caches.values():
+                if (g_info := getattr(cache, "get_cache_info", None)) is not None and g_info(self).cache_method != "no_cache":
+                    return True
+
+        return False
+
+    def get_all_caches_active(self, exclude: set[str] | None = None, caches: bool = False) -> bool:
+        """Checks if all caches are currently active (not in 'no_cache' mode).
+
+        Args:
+            exclude: The names of the caches to exclude from caching.
+            caches: Determines if get_caches will run before setting the caches.
+
+        Returns:
+            If all caches are currently active.
+        """
+        if not self._is_caching:
+            return False
+
+        if caches:
+            self.get_caches()
+
+        if exclude:
+            for name, cache in self._caches.items():
+                if (
+                    name not in exclude and
+                    (g_info := getattr(cache, "get_cache_info", None)) is not None and
+                    g_info(self).cache_method == "no_cache"
+                ):
+                    return False
+        else:
+            for cache in self._caches.values():
+                if (g_info := getattr(cache, "get_cache_info", None)) is not None and g_info(self).cache_method == "no_cache":
+                    return False
+
+        return True
+
+    def get_any_caches_timed(self, exclude: set[str] | None = None, caches: bool = False) -> bool:
+        """Checks if any cache has timing enabled.
+
+        Args:
+            exclude: The names of the caches to exclude from caching.
+            caches: Determines if get_caches will run before setting the caches.
+
+        Returns:
+            If any cache has timing enabled.
+        """
+        if caches:
+            self.get_caches()
+
+        if exclude:
+            for name, cache in self._caches.items():
+                if (
+                    name not in exclude and
+                    (g_info := getattr(cache, "get_cache_info", None)) is not None and
+                    g_info(self).is_timed
+                ):
+                    return True
+        else:
+            for cache in self._caches.values():
+                if (g_info := getattr(cache, "get_cache_info", None)) is not None and g_info(self).is_timed:
+                    return True
+
+        return False
+
+    def get_all_caches_timed(self, exclude: set[str] | None = None, caches: bool = False) -> bool:
+        """Checks if all caches have timing enabled.
+
+        Args:
+            exclude: The names of the caches to exclude from caching.
+            caches: Determines if get_caches will run before setting the caches.
+
+        Returns:
+            If all caches have timing enabled.
+        """
+        if caches:
+            self.get_caches()
+
+        if exclude:
+            for name, cache in self._caches.items():
+                if (
+                    name not in exclude and
+                    (g_info := getattr(cache, "get_cache_info", None)) is not None and
+                    not g_info(self).is_timed
+                ):
+                    return False
+        else:
+            for cache in self._caches.values():
+                if (g_info := getattr(cache, "get_cache_info", None)) is not None and not g_info(self).is_timed:
+                    return False
+
+        return True
+
+    # Caches Operators
+    def enable_caching(self, exclude: set[str] | None = None, caches: bool = False) -> None:
+        """Enables all caches in this object.
+
+        Args:
+            exclude: The names of the caches to exclude from caching.
+            caches: Determines if get_caches will run before setting the caches.
+        """
+        if not exclude:
+            self._is_caching = True
+
+        if caches:
+            self.get_caches()
+
+        if exclude:
+            for name, cache in self._caches.items():
+                if name not in exclude and (method := getattr(cache, "enable_caching", None)) is not None:
+                    method(self)
+        else:
+            for cache in self._caches.values():
+                if (method := getattr(cache, "enable_caching", None)) is not None:
+                    method(self)
+
+    def disable_caching(self, exclude: set[str] | None = None, caches: bool = False) -> None:
+        """Disables all caches in this object.
+
+        Args:
+            exclude: The names of the caches to exclude from caching.
+            caches: Determines if get_caches will run before setting the caches.
+        """
+        if not exclude:
+            self._is_caching = False
+
+        if caches:
+            self.get_caches()
+
+        if exclude:
+            for name, cache in self._caches.items():
+                if name not in exclude and (method := getattr(cache, "disable_caching", None)) is not None:
+                    method(self)
+        else:
+            for cache in self._caches.values():
+                if (method := getattr(cache, "disable_caching", None)) is not None:
+                    method(self)
+
+    def stop_caching(self, exclude: set[str] | None = None, caches: bool = False) -> None:
+        """Stops all caches in this object.
+
+        Args:
+            exclude: The names of the caches to exclude from caching.
+            caches: Determines if get_caches will run before setting the caches.
+        """
+        if not exclude:
+            self._is_caching = False
+
+        if caches:
+            self.get_caches()
+
+        if exclude:
+            for name, cache in self._caches.items():
+                if name not in exclude and (method := getattr(cache, "stop_caching", None)) is not None:
+                    method(self)
+        else:
+            for cache in self._caches.values():
+                if (method := getattr(cache, "stop_caching", None)) is not None:
+                    method(self)
+
+    def resume_caching(self, exclude: set[str] | None = None, caches: bool = False) -> None:
+        """Resumes all caches in this object.
+
+        Args:
+            exclude: The names of the caches to exclude from caching.
+            caches: Determines if get_caches will run before setting the caches.
+        """
+        if not exclude:
+            self._is_caching = True
+
+        if caches:
+            self.get_caches()
+
+        if exclude:
+            for name, cache in self._caches.items():
+                if name not in exclude and (method := getattr(cache, "resume_caching", None)) is not None:
+                    method(self)
+        else:
+            for cache in self._caches.values():
+                if (method := getattr(cache, "resume_caching", None)) is not None:
+                    method(self)
+
+    def timeless_caching(self, exclude: set[str] | None = None, caches: bool = False) -> None:
         """Sets all caches to have no expiration time.
 
         Args:
             exclude: The names of the caches to exclude from caching.
-            get_caches: Determines if get_caches will run before setting the caches.
+            caches: Determines if get_caches will run before setting the caches.
         """
-        # Gets caches if needed.
-        if get_caches:
+        if caches:
             self.get_caches()
 
-        # Exclude caches if needed.
-        if exclude is not None:
-            caches = self._caches.difference(exclude)
+        if exclude:
+            for name, cache in self._caches.items():
+                if name not in exclude and (g_info := getattr(cache, "get_cache_info", None)) is not None:
+                    g_info(self).is_timed = False
         else:
-            caches = self._caches
+            for cache in self._caches.values():
+                if (g_info := getattr(cache, "get_cache_info", None)) is not None:
+                    g_info(self).is_timed = False
 
-        # Disable expiration all caches in set.
-        for name in caches:
-            # Try to find the decorator instance
-            cache_inst = getattr(type(self), name, None)
-            if cache_inst is not None:
-                try:
-                    cache_inst.is_timed = False
-                except AttributeError:
-                    pass
-
-            # ALSO call it on the bound method in case it's in __dict__ or proxies
-            try:
-                getattr(self, name).is_timed = False
-            except AttributeError:
-                pass
-
-    def timed_caching(self, exclude: set[str] | None = None, get_caches: bool = False) -> None:
+    def timed_caching(self, exclude: set[str] | None = None, caches: bool = False) -> None:
         """Sets all caches to have an expiration time.
 
         Args:
             exclude: The names of the caches to exclude from caching.
-            get_caches: Determines if get_caches will run before setting the caches.
+            caches: Determines if get_caches will run before setting the caches.
         """
-        # Gets caches if needed.
-        if get_caches:
+        if caches:
             self.get_caches()
 
-        # Exclude caches if needed.
-        if exclude is not None:
-            caches = self._caches.difference(exclude)
+        if exclude:
+            for name, cache in self._caches.items():
+                if name not in exclude and (get_cache_info := getattr(cache, "get_cache_info", None)) is not None:
+                    get_cache_info(self).is_timed = True
         else:
-            caches = self._caches
-
-        # Enable expiration for all caches in the set.
-        for name in caches:
-            # Try to find the decorator instance
-            cache_inst = getattr(type(self), name, None)
-            if cache_inst is not None:
-                try:
-                    cache_inst.is_timed = True
-                except AttributeError:
-                    pass
-
-            # ALSO call it on the bound method in case it's in __dict__ or proxies
-            bound_method = getattr(self, name, None)
-            if bound_method is not None:
-                try:
-                    bound_method.is_timed = True
-                except AttributeError:
-                    pass
+            for cache in self._caches.values():
+                if (get_cache_info := getattr(cache, "get_cache_info", None)) is not None:
+                    get_cache_info(self).is_timed = True
 
     def set_lifetimes(
         self,
         lifetime: int | float | None,
         exclude: set[str] | None = None,
-        get_caches: bool = False,
+        caches: bool = False,
     ) -> None:
-        """Sets all caches to have an specific lifetime.
+        """Sets all caches to have a specific lifetime.
 
         Args:
             lifetime: The lifetime for all the caches to have.
             exclude: The names of the caches to exclude from caching.
-            get_caches: Determines if get_caches will run before setting the caches.
+            caches: Determines if get_caches will run before setting the caches.
         """
-        # Gets caches if needed.
-        if get_caches:
+        if caches:
             self.get_caches()
 
-        # Exclude caches if needed.
-        if exclude is not None:
-            caches = self._caches.difference(exclude)
+        if exclude:
+            for name, cache in self._caches.items():
+                if name not in exclude and (get_cache_info := getattr(cache, "get_cache_info", None)) is not None:
+                    get_cache_info(self).lifetime = lifetime
         else:
-            caches = self._caches
+            for cache in self._caches.values():
+                if (get_cache_info := getattr(cache, "get_cache_info", None)) is not None:
+                    get_cache_info(self).lifetime = lifetime
 
-        # Sets all the lifetimes
-        for name in caches:
-            # Try to find the decorator instance
-            cache_inst = getattr(type(self), name, None)
-            if cache_inst is not None:
-                try:
-                    cache_inst.lifetime = lifetime
-                except AttributeError:
-                    pass
-
-            # ALSO call it on the bound method in case it's in __dict__ or proxies
-            bound_method = getattr(self, name, None)
-            if bound_method is not None:
-                try:
-                    bound_method.lifetime = lifetime
-                except AttributeError:
-                    pass
-
-    def clear_caches(self, exclude: set[str] | None = None, get_caches: bool = False) -> None:
+    def clear_caches(self, exclude: set[str] | None = None, caches: bool = False) -> None:
         """Clears all caches in this object.
 
         Args:
             exclude: The names of the caches to exclude from caching.
-            get_caches: Determines if get_caches will run before setting the caches.
+            caches: Determines if get_caches will run before setting the caches.
         """
-        # Gets caches if needed.
-        if get_caches:
+        if caches:
             self.get_caches()
 
-        # Exclude caches if needed.
-        if exclude is not None:
-            caches = self._caches.difference(exclude)
+        if exclude:
+            for name, cache in self._caches.items():
+                if name not in exclude and (method := getattr(cache, "clear_cache", None)) is not None:
+                    method(self)
         else:
-            caches = self._caches
-
-        # Clear caches in the set.
-        for name in caches:
-            # Try to find the decorator instance
-            cache_inst = getattr(type(self), name, None)
-            if cache_inst is not None and hasattr(cache_inst, "clear_cache"):
-                try:
-                    cache_inst.clear_cache(self)
-                except TypeError:
-                    cache_inst.clear_cache()
-
-            # ALSO call it on the bound method in case it's in __dict__ or proxies
-            bound_method = getattr(self, name, None)
-            if bound_method is not None and hasattr(bound_method, "clear_cache"):
-                try:
-                    bound_method.clear_cache(self)
-                except TypeError:
-                    bound_method.clear_cache()
+            for cache in self._caches.values():
+                if (method := getattr(cache, "clear_cache", None)) is not None:
+                    method(self)

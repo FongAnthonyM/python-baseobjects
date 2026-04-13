@@ -342,7 +342,7 @@ class TestDispatchableComposite(DispatchableCompositeTestSuite):
         instance = cls(*args, **kwargs)
         assert isinstance(instance, expected_class)
         if strict_type:
-            assert type(instance) is expected_class
+            assert instance.__class__ is expected_class
 
     @pytest.mark.parametrize(
         ("args", "kwargs", "expected_class", "expected_component_key", "expected_component_type"),

@@ -191,7 +191,7 @@ class TestDispatchableClass(DispatchableClassTestSuite):
         instance = self.UnitTestClass(*args, **kwargs)
         assert isinstance(instance, expected_class)
         if strict_type:
-            assert type(instance) is expected_class
+            assert instance.__class__ is expected_class
 
     def test_class_dispatch_subclass(self) -> None:
         """Tests that dispatching doesn't happen when called from a subclass."""
@@ -304,7 +304,7 @@ class TestDispatchableClassCoverage:
                 return
 
         instance = Dispatcher("arg")
-        assert type(instance) is Dispatcher
+        assert instance.__class__ is Dispatcher
 
 
 # Main #

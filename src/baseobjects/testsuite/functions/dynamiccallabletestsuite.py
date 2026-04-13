@@ -159,7 +159,7 @@ class DynamicCallableTestSuite(BaseCallableTestSuite):
         """
         # Test with default bind_method (bind_builtin)
         assert test_method_object.bind_method == "bind_builtin"
-        bound_method = test_method_object.__get__(test_bind_target, type(test_bind_target))
+        bound_method = test_method_object.__get__(test_bind_target, test_bind_target.__class__)
         assert bound_method.__self__ is test_bind_target
 
         # Change the bind_method to bind_wrapped
@@ -167,7 +167,7 @@ class DynamicCallableTestSuite(BaseCallableTestSuite):
         assert test_method_object.bind_method == "bind_wrapped"
 
         # Test with bind_wrapped
-        bound_method = test_method_object.__get__(test_bind_target, type(test_bind_target))
+        bound_method = test_method_object.__get__(test_bind_target, test_bind_target.__class__)
         assert bound_method.__func__ is test_method_object.__func__
         assert bound_method.__self__ is test_bind_target
 
@@ -194,7 +194,7 @@ class DynamicCallableTestSuite(BaseCallableTestSuite):
         assert test_method_object.bind_method == "bind_custom"
 
         # Test with bind_custom
-        bound_method = test_method_object.__get__(test_bind_target, type(test_bind_target))
+        bound_method = test_method_object.__get__(test_bind_target, test_bind_target.__class__)
 
         # Verifies it returns the fixed value
         assert bound_method() == 42

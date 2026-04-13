@@ -170,7 +170,7 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
 
         # Validate
         assert obj_copy is not test_object
-        assert isinstance(obj_copy, type(test_object))
+        assert isinstance(obj_copy, test_object.__class__)
         assert obj_copy.__func__ is test_object.__func__
         assert obj_copy.__self__ is test_object.__self__
 
@@ -201,7 +201,7 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
 
         # Validate
         assert obj_deepcopy is not test_object
-        assert isinstance(obj_deepcopy, type(test_object))
+        assert isinstance(obj_deepcopy, test_object.__class__)
         assert obj_deepcopy.__func__ is test_object.__func__
         assert obj_deepcopy.__self__ is test_object.__self__
 
@@ -221,7 +221,7 @@ class BaseMethodTestSuite(BaseCallableTestSuite):
 
         # Validate
         assert unpickled is not test_object
-        assert isinstance(unpickled, type(test_object))
+        assert isinstance(unpickled, test_object.__class__)
         assert unpickled.__func__ is test_object.__func__
         assert unpickled.__self__ is test_object.__self__
 

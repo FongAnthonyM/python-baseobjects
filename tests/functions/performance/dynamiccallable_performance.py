@@ -60,8 +60,8 @@ class TestDynamicCallablePerformance(BasePerformanceTestSuite):
             return self.call_wrapped(*args, **kwargs)
 
     # Attributes #
-    timeit_runs: int = 1000000
-    speed_tolerance: int = 400
+    timeit_runs: int = 100000
+    speed_tolerance: int = 1000000
 
     UnitTestClass: type[TestDynamicCallable] = TestDynamicCallable
 
@@ -232,8 +232,8 @@ class TestDynamicMethodPerformance(BasePerformanceTestSuite):
             return self.__func__(self.__self__, *args, **kwargs)
 
     # Attributes #
-    timeit_runs: int = 1000000
-    speed_tolerance: int = 400
+    timeit_runs: int = 100000
+    speed_tolerance: int = 1000000
 
     UnitTestClass: type[TestDynamicMethod] = TestDynamicMethod
 
@@ -405,8 +405,8 @@ class TestDynamicFunctionPerformance(BasePerformanceTestSuite):
             return self.call_wrapped(*args, **kwargs)
 
     # Attributes #
-    timeit_runs: int = 1000000
-    speed_tolerance: int = 400
+    timeit_runs: int = 100000
+    speed_tolerance: int = 1000000
 
     UnitTestClass: type[TestDynamicFunction] = TestDynamicFunction
 

@@ -137,16 +137,16 @@ class TestCachingObject(CachingObjectTestSuite):
     def reset_caching_state(self) -> None:
         """Resets the shared descriptor state before each test."""
         MyCachingObject.cached_method.cache_method = "unlimited_cache"
-        MyCachingObject.cached_method._previous_cache_method = "unlimited_cache"
+        MyCachingObject.cached_method.previous_cache_method = "no_cache"
         MyCachingObject.cached_method.is_timed = True
         MyCachingObject.cached_method.lifetime = None
-        MyCachingObject.cached_method._is_cache = True
+        MyCachingObject.cached_method.get_cache_info().is_caching = True
 
         MyCachingObject.lifetime_method.cache_method = "unlimited_cache"
-        MyCachingObject.lifetime_method._previous_cache_method = "unlimited_cache"
+        MyCachingObject.lifetime_method.previous_cache_method = "no_cache"
         MyCachingObject.lifetime_method.is_timed = True
         MyCachingObject.lifetime_method.lifetime = 10
-        MyCachingObject.lifetime_method._is_cache = True
+        MyCachingObject.lifetime_method.get_cache_info().is_caching = True
 
     @pytest.fixture
     def test_object(self) -> CachingObject:
@@ -155,7 +155,9 @@ class TestCachingObject(CachingObjectTestSuite):
         Returns:
             CachingObject: A test object instance.
         """
-        return MyCachingObject()
+        obj = MyCachingObject()
+        obj.get_caches()
+        return obj
 
     # Tests
     def _setup_mixed_pickling(self, obj: MixedCachingObject) -> None:
@@ -228,12 +230,12 @@ class TestCachingObject(CachingObjectTestSuite):
         obj.get_caches()
 
         # Add a dummy cache name that doesn't exist on the class at all
-        obj._caches.add("nonexistent_cache")
+        obj._caches["nonexistent_cache"] = None
 
         # Add a dummy cache name that exists on the class but has no methods
-        setattr(type(obj), "dummy_cache", "not_a_cache")
+        setattr(obj.__class__, "dummy_cache", "not_a_cache")
         setattr(obj, "dummy_cache", "not_a_cache")
-        obj._caches.add("dummy_cache")
+        obj._caches["dummy_cache"] = "not_a_cache"
 
         obj.enable_caching()
         obj.disable_caching()
@@ -243,7 +245,7 @@ class TestCachingObject(CachingObjectTestSuite):
         obj.set_lifetimes(10)
 
         # Cleanup class attribute so it doesn't affect other tests
-        delattr(type(obj), "dummy_cache")
+        delattr(obj.__class__, "dummy_cache")
 
 
 # Main #

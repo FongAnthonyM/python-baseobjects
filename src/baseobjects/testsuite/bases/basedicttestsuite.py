@@ -95,7 +95,7 @@ class BaseDictTestSuite(BaseObjectTestSuite):
 
         # Validate
         assert id(new) != id(populated_test_dict)
-        assert isinstance(new, type(populated_test_dict))
+        assert isinstance(new, populated_test_dict.__class__)
         assert len(new) == len(populated_test_dict)
         for key in new:
             assert key in populated_test_dict
@@ -130,7 +130,7 @@ class BaseDictTestSuite(BaseObjectTestSuite):
 
         # Validate
         assert id(new) != id(populated_test_dict)
-        assert isinstance(new, type(populated_test_dict))
+        assert isinstance(new, populated_test_dict.__class__)
         assert len(new) == len(populated_test_dict)
         for key in new:
             assert key in populated_test_dict
@@ -153,7 +153,7 @@ class BaseDictTestSuite(BaseObjectTestSuite):
 
         # Validate
         assert unpickled is not populated_test_dict
-        assert isinstance(unpickled, type(populated_test_dict))
+        assert isinstance(unpickled, populated_test_dict.__class__)
         assert len(unpickled) == len(populated_test_dict)
         for key in unpickled:
             assert key in populated_test_dict

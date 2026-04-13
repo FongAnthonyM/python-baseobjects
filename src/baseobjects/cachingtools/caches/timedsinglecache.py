@@ -21,16 +21,30 @@ __version__ = "1.12.0"
 # Imports #
 # Standard Libraries #
 from collections.abc import Hashable
+from dataclasses import dataclass
 from time import perf_counter
 from typing import Any
 
 # Local Packages #
 from ...typing import AnyCallable
-from .basetimedcache import BaseTimedCache
+from .basetimedcache import BaseTimedCache, CacheInfo
 
 
 # Definitions #
 # Classes #
+@dataclass(slots=True)
+class TimedSingleCacheInfo(CacheInfo):
+    """Information about a timed single cache.
+
+    Attributes:
+        args_key: The generated argument key of the current cached result.
+    """
+
+    # Attributes #
+    cache_method: str = "caching"
+    args_key: Hashable | None = None
+
+
 class TimedSingleCache(BaseTimedCache):
     """A periodically clearing single item cache wrapper for a function.
 
@@ -39,11 +53,20 @@ class TimedSingleCache(BaseTimedCache):
     """
 
     # Attributes #
-    _instanced_cache: bool = False
-    args_key: Hashable | None = None
+    cache_info_type: type[TimedSingleCacheInfo] = TimedSingleCacheInfo
 
-    # Instance Methods #
-    # Constructors
+    # Properties #
+    @property
+    def args_key(self) -> Hashable | None:
+        """The generated argument key of the current cached result."""
+        return self.cache_info.args_key
+
+    @args_key.setter
+    def args_key(self, value: Hashable | None) -> None:
+        self.cache_info.args_key = value
+
+    # Magic Methods #
+    # Construction/Destruction
     def __init__(self, *args: Any, init: bool = True, **kwargs: Any) -> None:
         """Initializes this object.
 
@@ -53,7 +76,7 @@ class TimedSingleCache(BaseTimedCache):
             **kwargs: Keyword arguments for inheritance.
         """
         super().__init__(*args, init=False, **kwargs)
-        self.cache_method = "caching"
+
         if init:
             self.construct(*args, **kwargs)
 
@@ -78,8 +101,6 @@ class TimedSingleCache(BaseTimedCache):
             *args: Arguments for inheritance.
             **kwargs: Keyword arguments for inheritance.
         """
-        self.args_key = None
-
         super().construct(  # type: ignore[misc]
             *args,
             func=func,
@@ -91,91 +112,51 @@ class TimedSingleCache(BaseTimedCache):
         )
 
     # Caching Methods
-    def get_args_key(self, *args: Any, **kwargs: Any) -> Any:
-        """Gets the generated argument key of the current cached result.
+    def init_cache_info(self, cache_info: TimedSingleCacheInfo) -> None:  # type: ignore[override]
+        """Initializes the cache information.
 
         Args:
-            *args: Arguments that could be used to determine the key.
-            **kwargs: Keyword arguments that could be used to determine the key.
-
-        Returns:
-            The argument key of the cache.
+            cache_info: The cache information to initialize.
         """
-        if not self.instanced_cache or not args:
-            return self.args_key
+        cache_info.cache_container = None
+        cache_info.args_key = None
 
-        instance = args[0]
-        key_name = getattr(self.__wrapped__, "__name__", "") + "_args_key"
-
-        try:
-            caches = instance.__cache__
-        except AttributeError:
-            caches = {}
-            instance.__cache__ = caches
-
-        if (cache := caches.get(key_name, None)) is None:
-            caches[key_name] = cache = {}
-
-        return cache
-
-    def set_args_key(self, value: Any, *args: Any, **kwargs: Any) -> None:
-        """Sets the generated argument key of the current cached result.
-
-        Args:
-            value: The key to set.
-            *args: Arguments that could be used to determine the key location.
-            **kwargs: Keyword arguments that could be used to determine the key location.
-        """
-        if not self.instanced_cache or not args:
-            self.args_key = value
-            return
-
-        instance = args[0]
-        key_name = getattr(self.__wrapped__, "__name__", "") + "_args_key"
-
-        try:
-            cache = instance.__cache__
-        except AttributeError:
-            cache = {}
-            instance.__cache__ = cache
-
-        cache[key_name] = value
-
-    def caching(self, *args: Any, **kwargs: Any) -> Any:
+    def caching(self, *args: Any, cache_info: TimedSingleCacheInfo | None = None, **kwargs: Any) -> Any:
         """Caching that holds a single result.
 
         Args:
             *args: Arguments of the wrapped function.
+            cache_info: The cache information to use for caching.
             **kwargs: Keyword Arguments of the wrapped function.
 
         Returns:
             The result of the wrapped function.
         """
-        key = self.create_key(args, kwargs, self.typed)
-        args_key = self.get_args_key(*args, **kwargs)
-        if key != args_key:
-            self.set_cache_container(self.call_wrapped(*args, **kwargs), *args, **kwargs)
-            self.set_args_key(key, *args, **kwargs)
+        if cache_info is None:
+            cache_info = self.get_cache_info(*args)  # type: ignore[assignment]
 
-        return self.get_cache_container(*args, **kwargs)
+        key = self.create_key(args, kwargs, cache_info.typed)
+        if key != cache_info.args_key:
+            cache_info.cache_container = self.call_wrapped(*args, **kwargs)
+            cache_info.args_key = key
+
+        return cache_info.cache_container
 
     # Cache Control
-    def refresh_expiration(self) -> None:
-        """Refreshes the expiration to be a lifetime later than now."""
-        if self.lifetime is not None:
-            self.expiration = perf_counter() + self.lifetime
-
-    def clear_cache(self, *args: Any, **kwargs: Any) -> None:
+    def clear_cache(self, *args: Any, cache_info: TimedSingleCacheInfo | None = None, **kwargs: Any) -> None:  # type: ignore[override]
         """Clears the cache and update the expiration of the cache.
 
         Args:
             *args: Arguments that contain the instance if bound.
+            cache_info: The cache information to clear.
             **kwargs: Keyword arguments.
         """
-        self.set_cache_container(None, *args, **kwargs)
-        self.set_args_key(None, *args, **kwargs)
-        if self.lifetime is not None:
-            self.expiration = perf_counter() + self.lifetime
+        if cache_info is None:
+            cache_info = self.get_cache_info(*args)  # type: ignore[assignment]
+
+        cache_info.cache_container = None
+        cache_info.args_key = None
+        super().clear_cache(*args, cache_info=cache_info, **kwargs)
 
 
 # Aliases #

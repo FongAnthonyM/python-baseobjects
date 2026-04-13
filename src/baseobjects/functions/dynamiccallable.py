@@ -283,8 +283,8 @@ class DynamicMethod(DynamicCallable, BaseMethod):
         Returns:
             The output of the wrapped function.
         """
-        if (reference := self._self_) is not None:
-            return self.call_multiplexer(reference(), *args, **kwargs)
+        if (reference := self._self_) is not None and (instance := reference()) is not None:
+            return self.call_multiplexer(instance, *args, **kwargs)
 
         return self.call_multiplexer(*args, **kwargs)
 

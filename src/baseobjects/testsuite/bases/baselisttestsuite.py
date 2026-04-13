@@ -95,7 +95,7 @@ class BaseListTestSuite(BaseObjectTestSuite):
 
         # Validate
         assert id(new) != id(populated_test_list)
-        assert isinstance(new, type(populated_test_list))
+        assert isinstance(new, populated_test_list.__class__)
         assert len(new) == len(populated_test_list)
         for i in range(len(new)):
             assert new[i] == populated_test_list[i]
@@ -129,7 +129,7 @@ class BaseListTestSuite(BaseObjectTestSuite):
 
         # Validate
         assert id(new) != id(populated_test_list)
-        assert isinstance(new, type(populated_test_list))
+        assert isinstance(new, populated_test_list.__class__)
         assert len(new) == len(populated_test_list)
         for i in range(len(new)):
             assert new[i] == populated_test_list[i]
@@ -151,7 +151,7 @@ class BaseListTestSuite(BaseObjectTestSuite):
 
         # Validate
         assert unpickled is not populated_test_list
-        assert isinstance(unpickled, type(populated_test_list))
+        assert isinstance(unpickled, populated_test_list.__class__)
         assert len(unpickled) == len(populated_test_list)
         for i in range(len(unpickled)):
             assert unpickled[i] == populated_test_list[i]

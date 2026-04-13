@@ -84,7 +84,7 @@ class TestCachingObjectPerformance(BasePerformanceTestSuite):
         # No comparison here, just measuring the absolute time
 
     def test_property_switching_performance(self, caching_object: ExampleCachingObject) -> None:
-        """Test the performance of switching the is_cache property.
+        """Test the performance of switching the is_caching property.
 
         This test measures the speed of enabling and disabling caching.
 
@@ -93,7 +93,10 @@ class TestCachingObjectPerformance(BasePerformanceTestSuite):
         """
 
         def switch_property() -> None:
-            caching_object.is_cache = not caching_object.is_cache
+            if caching_object.any_caching:
+                caching_object.disable_caching()
+            else:
+                caching_object.enable_caching()
 
         # Calculate the mean time in microseconds
         time_taken = timeit.timeit(switch_property, number=self.timeit_runs)
@@ -101,7 +104,7 @@ class TestCachingObjectPerformance(BasePerformanceTestSuite):
 
         # Print the performance measurement
         print(
-            f"\nCachingObject is_cache switch: {mean_time:.3f} us ({self.call_speed:.3f} "
+            f"\nCachingObject is_caching switch: {mean_time:.3f} us ({self.call_speed:.3f} "
             f"is the speed of a simple function call)",
         )
 

@@ -123,7 +123,7 @@ class BaseComponentTestSuite(BaseObjectTestSuite):
         assert isinstance(obj_deepcopy, self.UnitTestClass)
         if test_object.composite is not None:
             assert obj_deepcopy.composite is not test_object.composite
-            assert isinstance(obj_deepcopy.composite, type(test_object.composite))
+            assert isinstance(obj_deepcopy.composite, test_object.composite.__class__)
 
     # Pickling #
     def test_pickling(self, test_object: Any) -> None:  # type: ignore[override, unused-ignore]
@@ -151,7 +151,7 @@ class BaseComponentTestSuite(BaseObjectTestSuite):
         assert isinstance(unpickled, self.UnitTestClass)
         if getattr(test_object, "composite", None) is not None:
             assert unpickled.composite is not test_object.composite
-            assert isinstance(unpickled.composite, type(test_object.composite))
+            assert isinstance(unpickled.composite, test_object.composite.__class__)
 
     # Functionality #
     def test_composite_property(self, test_composite: Any) -> None:

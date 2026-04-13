@@ -248,7 +248,7 @@ class SentinelObjectTestSuite(BaseObjectTestSuite):
 
         # Validate
         assert obj.identity == sentinel_id
-        assert isinstance(obj.identity, type(sentinel_id))
+        assert isinstance(obj.identity, sentinel_id.__class__)
 
     def test_registry(self) -> None:
         """Tests that the sentinel registry correctly tracks sentinel objects."""

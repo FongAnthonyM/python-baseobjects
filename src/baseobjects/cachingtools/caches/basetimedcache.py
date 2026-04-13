@@ -30,7 +30,7 @@ from typing import Any
 
 # Local Packages #
 from ...bases import SentinelObject
-from ...functions import DynamicCallable, DynamicDecorator, MethodMultiplexer
+from ...functions import DynamicCallable, DynamicDecorator
 from ...typing import AnyCallable
 
 
@@ -112,7 +112,7 @@ class CacheInfo:
     """Information about a cache.
 
     Attributes:
-        is_cache: Determines if the cache is currently active.
+        is_caching: Determines if the cache is currently active.
         typed: Determines if the function's arguments are type sensitive for caching.
         is_timed: Determines if the cache will be reset periodically.
         lifetime: The period between cache resets in seconds.
@@ -124,7 +124,7 @@ class CacheInfo:
     """
 
     # Attributes #
-    is_cache: bool = True
+    is_caching: bool = True
     typed: bool = False
     is_timed: bool = True
     lifetime: int | float | None = None
@@ -158,6 +158,23 @@ class BaseTimedCache(DynamicDecorator):
 
     # Properties #
     @property
+    def __func__(self) -> AnyCallable | None:
+        """The function which this callable wraps."""
+        return self.__wrapped__
+
+    @__func__.setter
+    def __func__(self, value: AnyCallable | None) -> None:
+        """Sets the function which this callable wraps and clears the cache."""
+        DynamicCallable.__func__.fset(self, value)
+        self.clear_cache()
+
+    @__func__.deleter
+    def __func__(self) -> None:
+        """Deletes the wrapped function and clears the cache."""
+        DynamicCallable.__func__.fdel(self)
+        self.clear_cache()
+
+    @property
     def cache_method(self) -> str:
         """The name of the method used when caching."""
         return self.cache_info.cache_method
@@ -165,6 +182,29 @@ class BaseTimedCache(DynamicDecorator):
     @cache_method.setter
     def cache_method(self, value: str) -> None:
         self.cache_info.cache_method = value
+        if not self.instanced_cache:
+            self.call_multiplexer.select(value)
+
+    @property
+    def is_active(self) -> bool:
+        """Determines if the cache is currently active (not in 'no_cache' mode)."""
+        if (reference := self._self_) is not None and (instance := reference()) is not None:
+            return self.get_cache_info(instance).cache_method != "no_cache"
+        return self.cache_info.cache_method != "no_cache"
+
+    @property
+    def is_caching(self) -> bool:
+        """Determines if the cache is currently enabled."""
+        if (reference := self._self_) is not None and (instance := reference()) is not None:
+            return self.get_is_caching(instance)
+        return self.cache_info.is_caching
+
+    @is_caching.setter
+    def is_caching(self, value: bool) -> None:
+        if (reference := self._self_) is not None and (instance := reference()) is not None:
+            self.get_cache_info(instance).is_caching = value
+        else:
+            self.cache_info.is_caching = value
 
     @property
     def typed(self) -> bool:
@@ -238,7 +278,7 @@ class BaseTimedCache(DynamicDecorator):
         """
         # Attributes #
         self.cache_info = self.cache_info_type()
-        self.cache_info.cache_container = {}
+        self.init_cache_info(self.cache_info)
 
         # Parent Initialization #
         super().__init__(*args, func=func, init=False, **kwargs)  # type: ignore[misc]
@@ -342,15 +382,37 @@ class BaseTimedCache(DynamicDecorator):
         return key
 
     # Caching Methods
-    def cache(self, cache_info: CacheInfo, *args: Any, **kwargs: Any) -> Any:
-        """Caches the result of the wrapped function."""
-        return getattr(self, cache_info.cache_method)(*args, **kwargs)
+    def init_cache_info(self, cache_info: CacheInfo) -> None:
+        """Initializes the cache information.
 
-    def no_cache(self, *args: Any, **kwargs: Any) -> Any:
+        Args:
+            cache_info: The cache information to initialize.
+        """
+        cache_info.cache_item_type = CacheItem
+        cache_info.cache_container = {}
+
+    def cache(self, *args: Any, cache_info: CacheInfo | None = None, **kwargs: Any) -> Any:
+        """Caches the result of the wrapped function.
+
+        Args:
+            *args: Arguments for the wrapped function.
+            cache_info: The cache information to use for caching.
+            **kwargs: Keyword arguments for the wrapped function.
+
+        Returns:
+            The result of the wrapped function or the cached value.
+        """
+        if cache_info is None:
+            cache_info = self.get_cache_info(*args)
+
+        return getattr(self, cache_info.cache_method)(*args, cache_info=cache_info, **kwargs)
+
+    def no_cache(self, *args: Any, cache_info: CacheInfo | None = None, **kwargs: Any) -> Any:
         """No caching is done, the function is evaluated.
 
         Args:
             *args: Arguments of the wrapped function.
+            cache_info: The cache information (ignored).
             **kwargs: Keyword Arguments of the wrapped function.
 
         Returns:
@@ -359,14 +421,14 @@ class BaseTimedCache(DynamicDecorator):
         return self.call_wrapped(*args, **kwargs)
 
     # Cache Control
-    def get_cache_info(self, *args: Any) -> Any:
+    def get_cache_info(self, *args: Any) -> CacheInfo:
         """Gets the cache information for the method.
 
         Args:
             *args: Arguments that contain the instance if bound.
 
         Returns:
-            The cache container.
+            The cache information object.
         """
         if not self.instanced_cache or not args:
             return self.cache_info
@@ -382,8 +444,27 @@ class BaseTimedCache(DynamicDecorator):
 
         if (cache_info := caches.get(method_name, None)) is None:
             caches[method_name] = cache_info = copy(self.cache_info)
+            self.init_cache_info(cache_info)
 
         return cache_info
+
+    def get_is_caching(self, instance: Any = None, cache_info: CacheInfo | None = None) -> bool:
+        """Determines if caching is enabled for this object.
+
+        Args:
+            instance: The instance to check caching for. If None, the cache info will be retrieved from the cache.
+            cache_info: The cache info to check. If None, the cache info will be retrieved.
+
+        Returns:
+            If caching is enabled for this object.
+        """
+        if cache_info is None:
+            cache_info = self.get_cache_info(instance)
+
+        if instance is not None and not getattr(instance, "_is_caching", True):
+            return False
+
+        return cache_info.is_caching
 
     def clear_condition(self, cache_info: CacheInfo, *args: Any, **kwargs: Any) -> bool:
         """The condition used to determine if the cache should be cleared.
@@ -403,80 +484,141 @@ class BaseTimedCache(DynamicDecorator):
         )
 
     @abc.abstractmethod
-    def clear_cache(self, cache_info: CacheInfo, *args: Any, **kwargs: Any) -> None:
+    def clear_cache(self, *args: Any, cache_info: CacheInfo | None = None, **kwargs: Any) -> None:
         """Clear the cache and update the expiration of the cache.
 
         Args:
             *args: Arguments that contain the instance if bound.
+            cache_info: The cache information to clear.
             **kwargs: Keyword arguments.
         """
+        if cache_info is None:
+            cache_info = self.get_cache_info(*args)
+
         if cache_info.lifetime is not None:
             cache_info.expiration = perf_counter() + cache_info.lifetime
-        if (clear_cache := getattr(self.__wrapped__, "clear_cache", None)) is not None:
-            clear_cache(cache_info)
 
-    def enable_caching(self, cache_info: CacheInfo, *args: Any, **kwargs: Any) -> None:
+    def enable_caching(self, *args: Any, cache_info: CacheInfo | None = None, **kwargs: Any) -> None:
         """Enables caching for this object.
 
         Args:
             *args: Arguments that contain the instance if bound.
+            cache_info: The cache information to enable.
             **kwargs: Keyword arguments.
         """
-        cache_info.is_cache = True
-        if (enable_caching := getattr(self.__wrapped__, "enable_caching", None)) is not None:
-            enable_caching(cache_info)
+        if cache_info is None:
+            cache_info = self.get_cache_info(*args)
 
-    def disable_caching(self, cache_info: CacheInfo, *args: Any, **kwargs: Any) -> None:
+        cache_info.is_caching = True
+
+    def disable_caching(self, *args: Any, cache_info: CacheInfo | None = None, **kwargs: Any) -> None:
         """Disables caching for this object.
 
         Args:
             *args: Arguments that contain the instance if bound.
+            cache_info: The cache information to disable.
             **kwargs: Keyword arguments.
         """
-        cache_info.is_cache = False
-        if (disable_caching := getattr(self.__wrapped__, "disable_caching", None)) is not None:
-            disable_caching(cache_info)
+        if cache_info is None:
+            cache_info = self.get_cache_info(*args)
 
-    def stop_caching(self, cache_info: CacheInfo, *args: Any, **kwargs: Any) -> None:
+        cache_info.is_caching = False
+
+    def stop_caching(self, *args: Any, cache_info: CacheInfo | None = None, **kwargs: Any) -> None:
         """Stops using the cache, storing the method used.
 
         Args:
             *args: Arguments that contain the instance if bound.
+            cache_info: The cache information to stop.
             **kwargs: Keyword arguments.
         """
+        if cache_info is None:
+            cache_info = self.get_cache_info(*args)
+
         if cache_info.cache_method != "no_cache":
             cache_info.previous_cache_method = cache_info.cache_method
         cache_info.cache_method = "no_cache"
-        if (stop_caching := getattr(self.__wrapped__, "stop_caching", None)) is not None:
-            stop_caching(cache_info)
 
-    def resume_caching(self, cache_info: CacheInfo, *args: Any, **kwargs: Any) -> None:
+    def resume_caching(self, *args: Any, cache_info: CacheInfo | None = None, **kwargs: Any) -> None:
         """Resumes caching by setting the call method to the previous call method.
 
         Args:
             *args: Arguments that contain the instance if bound.
+            cache_info: The cache information to resume.
             **kwargs: Keyword arguments.
         """
-        cache_info.cache_method = cache_info.previous_cache_method
-        if (resume_caching := getattr(self.__wrapped__, "resume_caching", None)) is not None:
-            resume_caching(cache_info)
+        if cache_info is None:
+            cache_info = self.get_cache_info(*args)
+
+        if cache_info.cache_method == "no_cache":
+            cache_info.cache_method = cache_info.previous_cache_method
 
     @contextmanager
-    def pause_caching(self, cache_info: CacheInfo, *args: Any, **kwargs: Any) -> Iterator[None]:
+    def pause_caching(self, *args: Any, cache_info: CacheInfo | None = None, **kwargs: Any) -> Iterator[None]:
         """Temporarily pause caching within the context manager.
 
         Args:
             *args: Arguments that contain the instance if bound.
+            cache_info: The cache information to pause.
             **kwargs: Keyword arguments.
 
         Yields:
             None: Yields None while caching is paused within the context.
         """
-        self.stop_caching(cache_info, *args, **kwargs)
-        yield None
-        self.resume_caching(cache_info, *args, **kwargs)
+        if cache_info is None:
+            cache_info = self.get_cache_info(*args)
 
-    # Calling
+        self.stop_caching(*args, cache_info=cache_info, **kwargs)
+        yield None
+        self.resume_caching(*args, cache_info=cache_info, **kwargs)
+
+    def refresh_expiration(self, *args: Any, cache_info: CacheInfo | None = None, **kwargs: Any) -> None:
+        """Refreshes the expiration of the cache.
+
+        Args:
+            *args: Arguments that contain the instance if bound.
+            cache_info: The cache information to refresh.
+            **kwargs: Keyword arguments.
+        """
+        if cache_info is None:
+            cache_info = self.get_cache_info(*args)
+
+        if cache_info.lifetime is not None:
+            cache_info.expiration = perf_counter() + cache_info.lifetime
+
+    # Pickling
+    def __getstate__(self) -> dict[str, Any] | tuple[dict[str, Any] | None, dict[str, Any]]:
+        """Gets the state of this object for pickling.
+
+        Returns:
+            The state of this object.
+        """
+        state = super().__getstate__()
+        if state is None:
+            d_state: dict[str, Any] = {}
+            slots: dict[str, Any] | None = None
+        elif isinstance(state, tuple):
+            d_state = {} if state[0] is None else state[0].copy()
+            slots = state[1]
+        else:
+            d_state = state.copy()
+            slots = None
+
+        if slots is None:
+            return d_state
+        return (d_state, slots)
+
+    def __setstate__(self, state: Any) -> None:
+        """Sets the state of this object.
+
+        Args:
+            state: The state to set.
+        """
+        super().__setstate__(state)
+        if not hasattr(self, "cache_info"):
+            self.cache_info = self.cache_info_type()
+            self.init_cache_info(self.cache_info)
+
     def call_caching(self, *args: Any, **kwargs: Any) -> Any:
         """Calls the caching function and clears the cache at a certain time.
 
@@ -488,13 +630,13 @@ class BaseTimedCache(DynamicDecorator):
             The result or the cache.
         """
         cache_info = self.get_cache_info(*args)
-        if not cache_info.is_cache:
-            return self.call_wrapped(*args, **kwargs)
+        if not self.get_is_caching(instance=args[0] if args else None, cache_info=cache_info):
+            return self.no_cache(*args, cache_info=cache_info, **kwargs)
 
         if self.clear_condition(cache_info, *args, **kwargs):
-            self.clear_cache(cache_info, *args, **kwargs)
+            self.clear_cache(*args, cache_info=cache_info, **kwargs)
 
-        return self.cache(cache_info, *args, **kwargs)
+        return self.cache(*args, cache_info=cache_info, **kwargs)
 
     def call_clearing(self, *args: Any, **kwargs: Any) -> Any:
         """Clears the cache then calls the caching function.
@@ -507,5 +649,5 @@ class BaseTimedCache(DynamicDecorator):
             The result or the cache.
         """
         cache_info = self.get_cache_info(*args)
-        self.clear_cache(cache_info, *args, **kwargs)
-        return self.cache(cache_info, *args, **kwargs)
+        self.clear_cache(*args, cache_info=cache_info, **kwargs)
+        return self.cache(*args, cache_info=cache_info, **kwargs)

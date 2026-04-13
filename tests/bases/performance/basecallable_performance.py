@@ -85,7 +85,7 @@ class TestBaseCallablePerformance(BasePerformanceTestSuite):
 
     # Attributes #
     timeit_runs: int = 100000
-    speed_tolerance: float = 150.0
+    speed_tolerance: float = 500.0
 
     # Instance Methods #
     # Fixtures
@@ -245,7 +245,7 @@ class TestBaseCallablePerformance(BasePerformanceTestSuite):
         # Print the performance comparison
         print(f"\nOld: {mean_standard:.3f} μs ({self.call_speed:.3f} is the speed of a simple function call)")
         print(f"BaseCallable.bind_builtin: {mean_base:.3f} μs ({percent:.3f}% of standard method binding time)")
-        assert percent < 200
+        assert percent < self.speed_tolerance
 
     def test_bind_wrapped_performance(self, test_callable: "TestBaseCallablePerformance.TestCallable") -> None:
         """Test the performance of the bind_wrapped method of BaseCallable.

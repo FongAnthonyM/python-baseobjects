@@ -29,7 +29,14 @@ import pytest
 
 # Local Packages #
 from ...cachingtools.caches.basetimedcache import BaseTimedCache
+from ..bases import concrete_function
 from ..functions.dynamicdecoratortestsuite import DynamicDecoratorTestSuite
+
+
+# Helper Functions #
+def add_function(x: int) -> int:
+    """A simple function for testing."""
+    return x + 10
 
 
 # Definitions #
@@ -72,8 +79,9 @@ class SlotTimedCacheCallable(BaseTimedCache):
         self.extra = 1
         super().__init__(*args, **kwargs)
 
-    def clear_cache(self) -> None:
+    def clear_cache(self, cache_info: CacheInfo, *args: Any, **kwargs: Any) -> None:  # type: ignore[override]
         """Clears the cache."""
+        super().clear_cache(cache_info, *args, **kwargs)
 
 
 class _TestFunc:
@@ -161,6 +169,30 @@ class BaseTimedCacheTestSuite(DynamicDecoratorTestSuite):
         return self.UnitTestClass(func=func, lifetime=60)
 
     # Tests #
+    # Instantiation #
+    def test_no_function(self) -> None:
+        """Tests that the callable object can be created with no function."""
+        # Note: BaseTimedCache is a BaseDecorator, so it returns a partial if func is None.
+        # We pass _return_partial=False to get an instance for this test.
+        instance = self.UnitTestClass(init=False, _return_partial=False)
+        assert isinstance(instance, self.UnitTestClass)
+        assert instance.__wrapped__ is None
+
+    def test_instance_creation(self, *args: Any, **kwargs: Any) -> None:
+        """Tests that instances of the class can be created.
+
+        Args:
+            *args: Positional arguments list to pass to the class constructor.
+            **kwargs: Keyword arguments to pass to the class constructor.
+        """
+        # Creates an instance with a test function
+        # We pass func as a keyword argument to ensure it's recognized.
+        instance = self.UnitTestClass(func=concrete_function, *args, **kwargs)
+        # Verifies it's an instance of the correct class
+        assert isinstance(instance, self.UnitTestClass)
+        # Verifies it has the correct wrapped function
+        assert instance.__wrapped__ is concrete_function
+
     # Magic Methods #
     def test_call(self, test_function_object: BaseTimedCache) -> None:  # type: ignore[override]
         """Tests that the callable object can be called and correctly delegates to the wrapped function.
@@ -282,7 +314,9 @@ class BaseTimedCacheTestSuite(DynamicDecoratorTestSuite):
             **kwargs: Keyword arguments to pass to the class constructor.
         """
         # Creates a basic instance
-        instance = self.UnitTestClass(*args, **kwargs)
+        # Note: BaseTimedCache is a BaseDecorator, so it returns a partial if func is None.
+        # We pass _return_partial=False to get an instance for this test.
+        instance = self.UnitTestClass(*args, _return_partial=False, **kwargs)
         assert instance is not None
         assert isinstance(instance, self.UnitTestClass)
 
@@ -304,7 +338,7 @@ class BaseTimedCacheTestSuite(DynamicDecoratorTestSuite):
         obj_deepcopy = test_function_object.deepcopy(memo=memo)
 
         assert obj_deepcopy is not test_function_object
-        assert isinstance(obj_deepcopy, type(test_function_object))
+        assert isinstance(obj_deepcopy, test_function_object.__class__)
         # Relaxed check for function identity
         assert obj_deepcopy(5) == 7
 
@@ -315,7 +349,7 @@ class BaseTimedCacheTestSuite(DynamicDecoratorTestSuite):
 
         obj_deepcopy = copy.deepcopy(test_method_object)
         assert obj_deepcopy is not test_method_object
-        assert isinstance(obj_deepcopy, type(test_method_object))
+        assert isinstance(obj_deepcopy, test_method_object.__class__)
 
         # Result should be the same
         # Use a flexible call in case it's not bound as expected
@@ -339,7 +373,7 @@ class BaseTimedCacheTestSuite(DynamicDecoratorTestSuite):
         unpickled = pickle.loads(pickled)
 
         assert unpickled is not test_function_object
-        assert isinstance(unpickled, type(test_function_object))
+        assert isinstance(unpickled, test_function_object.__class__)
         # Relaxed check for function identity
         assert unpickled(5) == 7
 
@@ -355,6 +389,61 @@ class BaseTimedCacheTestSuite(DynamicDecoratorTestSuite):
         result = func(5)
         assert result == 7
 
+    def test_coroutine(self, test_coroutine_object: BaseTimedCache) -> None:  # type: ignore[override]
+        """Tests that the callable object correctly handles coroutine functions.
+
+        Args:
+            test_coroutine_object: A fixture providing a BaseTimedCache instance that wraps a coroutine function.
+        """
+        # Standard Libraries #
+        import asyncio
+
+        coro = test_coroutine_object(3)
+        assert asyncio.iscoroutine(coro)
+        result = asyncio.run(coro)
+        assert result == 5
+
+    def test_decorator_usage(self) -> None:
+        """Tests using the decorator in the standard Python way."""
+
+        @self.UnitTestClass
+        def test_func(x: int) -> int:
+            return x + 1
+
+        assert isinstance(test_func, self.UnitTestClass)
+        assert test_func(1) == 2
+
+    def test_decorator_with_args(self, *args: Any, **kwargs: Any) -> None:
+        """Tests using the decorator with arguments.
+
+        Args:
+            *args: Positional arguments to pass to the decorator.
+            **kwargs: Keyword arguments to pass to the decorator.
+        """
+
+        @self.UnitTestClass(*args, **kwargs)
+        def test_func(x: int) -> int:
+            return x + 1
+
+        assert isinstance(test_func, self.UnitTestClass)
+        assert test_func(1) == 2
+
+    def test_is_coroutine(self) -> None:
+        """Tests that the callable object correctly identifies if it wraps a coroutine function."""
+        # Regular function
+        def sync_func(x: int) -> int:
+            return x + 1
+
+        sync_obj = self.UnitTestClass(func=sync_func)
+        assert sync_obj._is_coroutine_marker is None
+
+        # Coroutine function
+        async def async_func(x: int) -> int:
+            return x + 2
+
+        async_obj = self.UnitTestClass(func=async_func)
+        assert async_obj._is_coroutine_marker is not None
+
     def test_lifetime_setting(self) -> None:
         """Tests that the lifetime can be set during construction and affects expiration."""
         # Creates a cache with a specific lifetime
@@ -365,7 +454,7 @@ class BaseTimedCacheTestSuite(DynamicDecoratorTestSuite):
         assert cache_func.lifetime == 5
 
         # Calls the function to set the expiration
-        cache_func.clear_cache()
+        cache_func.clear_cache(cache_func.cache_info)
 
         # Verifies the expiration is in the future
         assert cache_func.expiration is not None
@@ -437,12 +526,15 @@ class BaseTimedCacheTestSuite(DynamicDecoratorTestSuite):
         Args:
             test_function_object: A fixture providing a BaseTimedCache instance that wraps a function.
         """
-        test_function_object.clear_cache()
+        test_function_object.clear_cache(test_function_object.cache_info)
         assert test_function_object.expiration is not None
 
         # If the class has a cache_container, verify it's empty
-        if hasattr(test_function_object, "cache_container") and test_function_object.cache_container is not None:
-            assert not test_function_object.cache_container
+        if (
+            hasattr(test_function_object.cache_info, "cache_container")
+            and test_function_object.cache_info.cache_container is not None
+        ):
+            assert not test_function_object.cache_info.cache_container
 
     def test_clear_condition(self) -> None:
         """Tests the clear_condition method of BaseTimedCache.
@@ -456,24 +548,24 @@ class BaseTimedCacheTestSuite(DynamicDecoratorTestSuite):
         # Test with is_timed=True and lifetime=None
         cache_func = self.UnitTestClass(func=test_func, lifetime=None)
         cache_func.is_timed = True
-        assert not cache_func.clear_condition()
+        assert not cache_func.clear_condition(cache_func.cache_info)
 
         # Test with is_timed=False and lifetime=1
         cache_func = self.UnitTestClass(func=test_func, lifetime=1)
         cache_func.is_timed = False
-        assert not cache_func.clear_condition()
+        assert not cache_func.clear_condition(cache_func.cache_info)
 
         # Test with is_timed=True, lifetime=1, and expiration in the past
         cache_func = self.UnitTestClass(func=test_func, lifetime=1)
         cache_func.is_timed = True
         cache_func.expiration = time.perf_counter() - 2
-        assert cache_func.clear_condition()
+        assert cache_func.clear_condition(cache_func.cache_info)
 
         # Test with is_timed=True, lifetime=1, and expiration in the future
         cache_func = self.UnitTestClass(func=test_func, lifetime=1)
         cache_func.is_timed = True
         cache_func.expiration = time.perf_counter() + 2
-        assert not cache_func.clear_condition()
+        assert not cache_func.clear_condition(cache_func.cache_info)
 
     def test_cache_method_property(self, test_function_object: BaseTimedCache) -> None:
         """Tests the cache_method property.
@@ -488,7 +580,6 @@ class BaseTimedCacheTestSuite(DynamicDecoratorTestSuite):
 
         # Verifies the property was set correctly
         assert test_function_object.cache_method == "no_cache"
-        assert test_function_object.cache.selected == "no_cache"
 
     def test_call_exception_handling(self) -> None:
         """Tests the exception handling in call_caching and call_clearing."""
@@ -527,17 +618,16 @@ class BaseTimedCacheTestSuite(DynamicDecoratorTestSuite):
         obj = MockObj()
         # Create a cache decorator and bind it
         cache_decorator = self.UnitTestClass(func=MockObj.method)
-        # We MUST set it as the method in the class for _rebind_method to find it
-        MockObj.method = cache_decorator  # type: ignore[method-assign]
 
         bound_method = cache_decorator.bind(instance=obj, owner=MockObj)
 
-        pickled = pickle.dumps(bound_method)
-        unpickled = pickle.loads(pickled)
+        # Pickle both to ensure the instance stays alive after unpickling
+        pickled = pickle.dumps((obj, bound_method))
+        unpickled_obj, unpickled_method = pickle.loads(pickled)
 
-        assert unpickled is not bound_method
-        assert unpickled(5) == 15
-        assert unpickled.__self__.value == 10
+        assert unpickled_method is not bound_method
+        assert unpickled_method(5) == 15
+        assert unpickled_method.__self__.value == 10
 
     @pytest.mark.parametrize("instanced", [True, False])
     def test_instanced_cache_property(self, instanced: bool) -> None:
@@ -571,13 +661,13 @@ class BaseTimedCacheTestSuite(DynamicDecoratorTestSuite):
 
         # Sets up caching
         cache_func.call_method = "call_caching"
-        active_method = cache_func.cache.selected
+        active_method = cache_func.cache_method
 
         # Use the context manager to temporarily disable caching
         with cache_func.pause_caching():
-            assert cache_func.cache.selected == "no_cache"
+            assert cache_func.cache_method == "no_cache"
 
-        assert cache_func.cache.selected == active_method
+        assert cache_func.cache_method == active_method
 
     def test_stop_resume_caching(self, test_function: tuple[Callable[..., Any], Callable[..., Any]]) -> None:
         """Tests stopping and resuming caching.
@@ -592,30 +682,30 @@ class BaseTimedCacheTestSuite(DynamicDecoratorTestSuite):
 
         # Sets up caching
         cache_func.call_method = "call_caching"
-        active_method = cache_func.cache.selected
+        active_method = cache_func.cache_method
 
         # Stops caching
         cache_func.stop_caching()
-        assert cache_func.cache.selected == "no_cache"
+        assert cache_func.cache_method == "no_cache"
 
         # Resume caching
         cache_func.resume_caching()
-        assert cache_func.cache.selected == active_method
+        assert cache_func.cache_method == active_method
 
     def test_setstate_none(self) -> None:
         """Tests setstate with None."""
-        obj = self.UnitTestClass(init=False)
+        obj = self.UnitTestClass(func=lambda: None, init=False)
         obj.__setstate__(None)
 
     def test_setstate_tuple_none_dict(self) -> None:
         """Tests setstate with tuple (None, dict)."""
-        obj = self.UnitTestClass(init=False)
+        obj = self.UnitTestClass(func=lambda: None, init=False)
         obj.__setstate__((None, {"_lifetime": 10}))
         assert obj._lifetime == 10  # type: ignore[attr-defined]
 
     def test_setstate_no_saved_cache(self) -> None:
         """Tests setstate when no cache was saved."""
-        obj = self.UnitTestClass(init=False)
+        obj = self.UnitTestClass(func=lambda: None, init=False)
         # Assuming setstate handles missing cache reconstruction if needed
         # or just sets what's given.
         obj.__setstate__({"_lifetime": 5})
@@ -623,10 +713,9 @@ class BaseTimedCacheTestSuite(DynamicDecoratorTestSuite):
 
     def test_getstate_none(self) -> None:
         """Tests getstate when object is empty."""
-        obj = self.UnitTestClass(init=False)
+        obj = self.UnitTestClass(func=lambda: None, init=False)
         state = obj.__getstate__()
-        if state:
-            assert isinstance(state, dict)
+        assert isinstance(state, (dict, tuple))
 
     def test_getstate_uninitialized(self) -> None:
         """Tests getstate on uninitialized object."""
@@ -674,7 +763,7 @@ class BaseTimedCacheTestSuite(DynamicDecoratorTestSuite):
         """Tests setter for instanced_cache."""
         obj = self.UnitTestClass(func=lambda: None)
         obj.instanced_cache = instanced
-        assert obj._instanced_cache is instanced
+        assert obj.instanced_cache is instanced
 
     @pytest.mark.parametrize("lifetime", [10, None])
     def test_clear_cache_expiration_update(self, lifetime: int | None) -> None:
@@ -685,7 +774,7 @@ class BaseTimedCacheTestSuite(DynamicDecoratorTestSuite):
         else:
             obj.expiration = 0
 
-        obj.clear_cache()
+        obj.clear_cache(obj.cache_info)
 
         if lifetime is None:
             # Should not update expiration

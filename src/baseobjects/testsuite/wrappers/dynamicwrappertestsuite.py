@@ -73,7 +73,7 @@ class DynamicWrapperTestSuite(WrapperTestSuite):
             def __getattr__(self, name: str) -> str:
                 if name.startswith("dynamic_"):
                     return f"got_{name}"
-                msg = f"'{type(self).__name__}' object has no attribute '{name}'"
+                msg = f"'{self.__class__.__name__}' object has no attribute '{name}'"
                 raise AttributeError(msg)
 
         example = ConcreteWithGetAttr()

@@ -310,7 +310,7 @@ class TriNumberVersion(Version):
                 case Iterable():
                     self.major, self.minor, self.patch = version
                 case _:
-                    msg = f"Cannot construct version from '{version!s}' of type '{type(version)!s}'"  # type: ignore[unreachable]
+                    msg = f"Cannot construct version from '{version!s}' of type '{version.__class__!s}'"  # type: ignore[unreachable]
                     raise TypeError(msg)
         except ValueError as e:
             msg = f"Invalid version format: {version}"

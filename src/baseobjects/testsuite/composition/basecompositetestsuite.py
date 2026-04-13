@@ -147,7 +147,7 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
         for name, component in test_object.components.items():
             assert name in obj_deepcopy.components
             assert obj_deepcopy.components[name] is not component
-            assert isinstance(obj_deepcopy.components[name], type(component))
+            assert isinstance(obj_deepcopy.components[name], component.__class__)
 
     # Pickling #
     def test_pickling(self, test_object: Any) -> None:  # type: ignore[override, unused-ignore]
@@ -170,7 +170,7 @@ class BaseCompositeTestSuite(BaseObjectTestSuite):
         for name, component in test_object.components.items():
             assert name in unpickled.components
             assert unpickled.components[name] is not component
-            assert isinstance(unpickled.components[name], type(component))
+            assert isinstance(unpickled.components[name], component.__class__)
 
     # Functionality #
     def test_construct_components_defaults(self, component_kwargs: dict[str, dict[str, Any]] | None = None) -> None:

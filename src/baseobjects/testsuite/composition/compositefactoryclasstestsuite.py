@@ -89,7 +89,7 @@ class CompositeFactoryClassTestSuite(BaseDispatchingCompositeTestSuite, Namespac
         # Check that the instance is of the head class, not the subclass
         assert self.MockFactoryPreset.class_registry is not None
         head_class = self.MockFactoryPreset.class_registry.head_class
-        assert type(instance) is head_class
+        assert instance.__class__ is head_class
         assert not isinstance(instance, self.MockFactoryPreset)
 
         # Check that the components from the subclass were used
@@ -102,7 +102,7 @@ class CompositeFactoryClassTestSuite(BaseDispatchingCompositeTestSuite, Namespac
         instance = self.UnitTestClass()
 
         # Check that the instance is of the head class
-        assert type(instance) is self.UnitTestClass
+        assert instance.__class__ is self.UnitTestClass
 
         # Check that it doesn't have the components defined only in subclasses
         assert "mock_comp" not in instance.components

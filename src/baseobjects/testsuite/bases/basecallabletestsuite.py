@@ -354,7 +354,7 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
 
         # Validate
         assert obj_copy is not test_object
-        assert isinstance(obj_copy, type(test_object))
+        assert isinstance(obj_copy, test_object.__class__)
         assert obj_copy.__func__ is test_object.__func__
 
     @pytest.mark.parametrize("method", ["copy", "method"])
@@ -384,7 +384,7 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
 
         # Validate
         assert obj_deepcopy is not test_object
-        assert isinstance(obj_deepcopy, type(test_object))
+        assert isinstance(obj_deepcopy, test_object.__class__)
         assert obj_deepcopy.__func__ is test_object.__func__
 
     # Pickling #
@@ -411,7 +411,7 @@ class BaseCallableTestSuite(BaseObjectTestSuite):
 
         # Validate
         assert unpickled is not test_object
-        assert isinstance(unpickled, type(test_object))
+        assert isinstance(unpickled, test_object.__class__)
         assert unpickled.__func__ is test_object.__func__
 
     # Functionality #

@@ -433,7 +433,7 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
         # For function wrappers, the func might be copied if it's an object, or shared if it's a function.
         # We just verify it's present and correct type.
         assert cache_copy.__func__ is not None
-        assert type(cache_copy.__func__) is type(test_object.__func__)
+        assert cache_copy.__func__.__class__ is test_object.__func__.__class__
         assert cache_copy.clear_condition.__func__ is test_object.clear_condition.__func__
         assert cache_copy.is_timed == test_object.is_timed
         assert cache_copy.lifetime == test_object.lifetime
@@ -453,7 +453,7 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
         # Validate
         assert cache_copy is not test_object
         assert cache_copy.__func__ is not None
-        assert type(cache_copy.__func__) is type(test_object.__func__)
+        assert cache_copy.__func__.__class__ is test_object.__func__.__class__
         assert cache_copy.clear_condition.__func__ is test_object.clear_condition.__func__
         assert cache_copy.is_timed == test_object.is_timed
         assert cache_copy.lifetime == test_object.lifetime
@@ -477,7 +477,7 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
         # Validate
         assert cache_copy is not test_object
         assert cache_copy.__func__ is not None
-        assert type(cache_copy.__func__) is type(test_object.__func__)
+        assert cache_copy.__func__.__class__ is test_object.__func__.__class__
         assert cache_copy.clear_condition.__func__ is test_object.clear_condition.__func__
         assert cache_copy.is_timed == test_object.is_timed
         assert cache_copy.lifetime == test_object.lifetime
@@ -501,7 +501,7 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
         # Validate
         assert cache_copy is not test_object
         assert cache_copy.__func__ is not None
-        assert type(cache_copy.__func__) is type(test_object.__func__)
+        assert cache_copy.__func__.__class__ is test_object.__func__.__class__
         assert cache_copy.clear_condition.__func__ is test_object.clear_condition.__func__
         assert cache_copy.is_timed == test_object.is_timed
         assert cache_copy.lifetime == test_object.lifetime
@@ -522,7 +522,7 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
         # Validate
         assert cache_copy is not test_object
         assert cache_copy.__func__ is not None
-        assert type(cache_copy.__func__) is type(test_object.__func__)
+        assert cache_copy.__func__.__class__ is test_object.__func__.__class__
         assert cache_copy.clear_condition.__func__ is test_object.clear_condition.__func__
         assert cache_copy.is_timed == test_object.is_timed
         assert cache_copy.lifetime == test_object.lifetime
@@ -584,20 +584,20 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
         # Verifies that clear_condition returns False when the cache is not expired
         caching_func.is_timed = True
         caching_func.expiration = time.perf_counter() + 2
-        assert not caching_func.clear_condition()
+        assert not caching_func.clear_condition(caching_func.cache_info)
 
         # Verifies that clear_condition returns True when the cache is expired
         caching_func.expiration = time.perf_counter() - 2
-        assert caching_func.clear_condition()
+        assert caching_func.clear_condition(caching_func.cache_info)
 
         # Verifies that clear_condition returns False when is_timed is False
         caching_func.is_timed = False
-        assert not caching_func.clear_condition()
+        assert not caching_func.clear_condition(caching_func.cache_info)
 
         # Verifies that clear_condition returns False when lifetime is None
         caching_func.is_timed = True
         caching_func.lifetime = None
-        assert not caching_func.clear_condition()
+        assert not caching_func.clear_condition(caching_func.cache_info)
 
     @abstractmethod
     def test_pause_timer(
@@ -651,5 +651,7 @@ class TimedCacheTestSuite(BaseCacheTestSuite):
         cache, _, _ = self.create_test_caching_function(*args, **kwargs)
         cache.instanced_cache = instanced
 
-        expected_binding = "bind_to_attribute" if instanced else "bind_builtin"
+        # Note: In the new paradigm, instanced_cache is handled within the cache dispatch (bind_self)
+        # and doesn't necessarily change the bind method to bind_to_attribute.
+        expected_binding = "bind_self"
         assert cache.bind_multiplexer.selected == expected_binding, f"Failed: {cache.bind_multiplexer.selected} != {expected_binding}"

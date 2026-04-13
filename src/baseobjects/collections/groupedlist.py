@@ -129,7 +129,7 @@ class GroupedList(BaseList):
                 try:
                     return self.get_item(int(i))
                 except (ValueError, TypeError):
-                    msg = f"Invalid index type: {type(i)}"
+                    msg = f"Invalid index type: {i.__class__}"
                     raise TypeError(msg) from None
 
     def __setitem__(self, i: SupportsIndex | str | slice, item: Any, /) -> None:
@@ -155,7 +155,7 @@ class GroupedList(BaseList):
                 try:
                     self.set_item(int(i), item)
                 except (ValueError, TypeError):
-                    msg = f"Invalid index type: {type(i)}"
+                    msg = f"Invalid index type: {i.__class__}"
                     raise TypeError(msg) from None
 
     def __delitem__(self, i: SupportsIndex | str | slice, /) -> None:
@@ -180,7 +180,7 @@ class GroupedList(BaseList):
                 try:
                     self.delete_item(int(i))
                 except (ValueError, TypeError):
-                    msg = f"Invalid index type: {type(i)}"
+                    msg = f"Invalid index type: {i.__class__}"
                     raise TypeError(msg) from None
 
     def __iter__(self) -> Iterator[Any]:
