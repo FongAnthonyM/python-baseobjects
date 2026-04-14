@@ -24,8 +24,8 @@ from functools import partial
 from typing import Any
 
 # Local Packages #
-from ..typing import DescriptorGetMethod
 from ..bases import BaseMethod
+from ..typing import DescriptorGetMethod
 
 
 # Definitions #

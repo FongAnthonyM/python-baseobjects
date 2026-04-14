@@ -23,19 +23,17 @@ __version__ = "1.12.0"
 import abc
 from collections import OrderedDict
 from collections.abc import Hashable, Iterable, Iterator
-from copy import copy
-from types import MethodType
 from contextlib import contextmanager
+from copy import copy
 from dataclasses import dataclass
 from time import perf_counter
+from types import MethodType
 from typing import Any
-
 
 # Local Packages #
 from ...bases import SentinelObject
 from ...functions import BaseDecorator
 from ...typing import AnyCallable, DescriptorGetMethod
-
 
 # Definitions #
 # Constants #
