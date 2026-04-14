@@ -3,27 +3,50 @@ Bases
 
 Overview
 --------
-The bases package provides the core building blocks used throughout baseobjects. It supplies foundational abstractions and protocols that standardize object behavior in areas like copying, serialization, metaclass functionality, and callability. These classes are designed to be composed and extended, giving a consistent, predictable baseline for building libraries and applications.
+The ``bases`` package provides the core building blocks used throughout the ``baseobjects`` library. It supplies foundational abstractions and protocols that standardize object behavior in areas like copying, serialization, metaclass functionality, and callability. These classes are designed to be composed and extended, giving a consistent, predictable baseline for building complex libraries and applications.
 
-Purpose
---------
-- Establish consistent behavior for core object operations (copy, deepcopy, reduction/pickling).
-- Provide a reliable metaclass that works well with copying and advanced class construction.
-- Offer a standard way to build callable objects (objects that behave like functions and methods).
-- Provide sentinel values for representing "no value" or special markers in APIs.
+Conceptual Workings
+-------------------
 
-Key Concepts and Components
----------------------------
-- BaseObject: A minimal, extensible base class that implements sensible defaults for copying and deep copying.
-- BaseReducible: Adds explicit support for Python object reduction (pickling) with correct handling of both __dict__ and __slots__.
-- BaseMeta: A metaclass derived from ABCMeta that ensures classes themselves can be copied and deep-copied properly.
-- BaseCallable, BaseMethod, BaseFunction: Abstract bases for creating callable objects that encapsulate behavior and state.
-- SentinelObject: A lightweight singleton type for creating unique sentinel values (e.g., DEFAULTSENTINEL, SEARCHSENTINEL).
+Serialization with BaseReducible
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+While Python's ``pickle`` module handles most objects, classes using ``__slots__`` require special care. ``BaseReducible`` implements ``__getstate__`` and ``__setstate__`` to automatically discover and preserve both ``__dict__`` (regular attributes) and ``__slots__`` attributes, ensuring robust serialization across different object layouts.
+
+Advanced Callables
+~~~~~~~~~~~~~~~~~~
+The ``BaseCallable`` hierarchy (including ``BaseMethod`` and ``BaseFunction``) provides more than simple function wrapping:
+* **Attribute Preservation**: Wrappers automatically copy docstrings, annotations, and custom attributes from the wrapped function.
+* **Coroutine Support**: Correctly identifies and maintains the async nature of wrapped coroutines.
+* **Weak Binding**: ``BaseMethod`` uses weak references (``weakref``) to bind to instances, preventing memory leaks in long-lived method objects.
+
+Identity with SentinelObject
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unlike using ``None`` or magic strings, ``SentinelObject`` creates unique, singleton identifiers. These are ideal for distinguishing between a "default" value and a valid user-provided ``None``. They are registry-backed, meaning the same identifier always returns the same object instance.
+
+Key Components
+--------------
+* **BaseObject**: Standardized copying and lifecycle hooks.
+* **BaseReducible**: Reliable pickling for slotted and non-slotted objects.
+* **BaseMeta**: A metaclass ensuring classes themselves can be copied.
+* **BaseCallable / BaseMethod / BaseFunction**: Customizable wrappers for functions and methods.
+* **SentinelObject**: Unique, picklable singleton markers (e.g., ``DEFAULTSENTINEL``).
+
+Performance & Trade-offs
+------------------------
++-------------------+--------------------+------------------------+------------------------------------------+
+| Component         | Overhead           | Impact                 | Best Use Case                            |
++===================+====================+========================+==========================================+
+| ``BaseCallable``  | Low                | Minor call delegation  | Decorators requiring attr preservation   |
++-------------------+--------------------+------------------------+------------------------------------------+
+| ``BaseReducible`` | Moderate           | State discovery        | Objects with ``__slots__`` and pickling  |
++-------------------+--------------------+------------------------+------------------------------------------+
+| ``SentinelObject``| Very Low           | Singleton lookup       | API markers, distinguishing ``None``     |
++-------------------+--------------------+------------------------+------------------------------------------+
 
 Examples
 --------
 Shallow vs deep copy with BaseObject
-
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: python
 
    from baseobjects.bases import BaseObject
@@ -40,7 +63,7 @@ Shallow vs deep copy with BaseObject
    assert c.meta is not a.meta
 
 Pickling-ready objects with BaseReducible
-
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: python
 
    import pickle
@@ -57,7 +80,7 @@ Pickling-ready objects with BaseReducible
    assert round_trip.data == {"x": 1}
 
 Callable objects with BaseCallable
-
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: python
 
    from baseobjects.bases import BaseCallable
@@ -70,29 +93,19 @@ Callable objects with BaseCallable
    assert add(2, 3) == 5
 
 Sentinel values
-
+~~~~~~~~~~~~~~~
 .. code-block:: python
 
-   from baseobjects.bases import DEFAULTSENTINEL, SEARCHSENTINEL
+   from baseobjects.bases import DEFAULTSENTINEL
 
    def get(config, key, default=DEFAULTSENTINEL):
        if default is DEFAULTSENTINEL:
-           # sentinel means: error if missing
            return config[key]
        return config.get(key, default)
 
-   cfg = {"a": 1}
-   assert get(cfg, "a") == 1
-   assert get(cfg, "b", default=0) == 0
-
-Interplay with Other Modules
-----------------------------
-- functions: Often paired with BaseCallable for advanced callable/multiplexing patterns.
-- wrappers: BaseObject semantics help wrappers behave consistently when copying and serializing.
-- composition: Base classes provide predictable behavior for complex composite structures.
-
 Best Practices
 --------------
-- Derive public base classes from BaseObject to inherit consistent copy/deepcopy behavior.
-- Prefer SentinelObject instances over None or magic strings to represent exceptional states.
-- Use BaseReducible if objects need to round-trip through pickle reliably, including across versions (with care).
+1. **Prefer BaseReducible for State**: If your class uses ``__slots__``, inherit from ``BaseReducible`` to ensure it remains picklable.
+2. **Use SentinelObject for APIs**: Stop using ``None`` as a default if ``None`` is a valid value the user might pass; use a ``SentinelObject`` instead.
+3. **Async Awareness**: When building decorators, use ``BaseCallable`` to ensure that async functions stay async when wrapped.
+4. **Avoid Strong Method Refs**: Use ``BaseMethod`` logic when storing bound methods to avoid circular references and memory leaks.

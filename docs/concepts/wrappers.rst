@@ -3,47 +3,69 @@ Wrappers
 
 Overview
 --------
-The wrappers provide objects that proxy attributes and methods of embedded objects. This enables adding behavior (validation, logging, access control, adaptation) around an underlying object while exposing a familiar interface.
+The ``wrappers`` package provides a set of tools for creating proxy objects that encapsulate and extend the behavior of other objects. By implementing the Decorator and Proxy patterns, these wrappers allow developers to add functionality such as validation, logging, or access control to an underlying object while maintaining a familiar and compatible interface.
 
-Purpose
---------
-- Support the Decorator and Proxy patterns with predictable performance.
-- Offer static vs dynamic tradeoffs depending on how often the wrapped object’s interface changes.
+Conceptual Workings
+-------------------
+
+Delegation vs. Inheritance
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+Wrappers favor composition over inheritance. Instead of inheriting from a class to modify its behavior, a wrapper embeds an instance of that class and delegates method calls and attribute accesses to it.
+
+* **Attribute Proxying**: Wrappers automatically route requests for attributes they do not possess to the wrapped object.
+* **State Isolation**: The wrapper can maintain its own state independently of the object it wraps, preventing unintended side effects in the original object.
+
+Static vs. Dynamic Wrapping
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The module offers two primary strategies for attribute resolution, allowing for a trade-off between performance and flexibility:
+
+* **StaticWrapper**: Optimized for performance. It uses an explicit ``_wrap()`` step to create property descriptors for the wrapped object's attributes at initialization. This results in very fast attribute access but requires the wrapped interface to be stable.
+* **DynamicWrapper**: Optimized for flexibility. It resolves attributes at runtime using dynamic lookup mechanisms. While this incurs more overhead than static wrapping, it can adapt to objects whose interface changes or is unknown until execution.
 
 Key Components
 --------------
-- StaticWrapper: A performant wrapper for objects with a stable, known interface. It creates property descriptors for wrapped attributes via an explicit _wrap() step.
-- DynamicWrapper: A flexible wrapper that adapts to changing attributes/methods at runtime (with higher overhead). If available in the installed version, use when the wrapped interface is heterogeneous.
+* **StaticWrapper**: A high-performance wrapper that pre-binds to a stable, known interface.
+* **DynamicWrapper**: A flexible wrapper designed for heterogeneous or frequently changing interfaces.
+* **_wrapped_map_**: A declarative mapping used by wrappers to identify which internal objects and attributes should be proxied.
 
-Basic Example with StaticWrapper
---------------------------------
+Performance & Trade-offs
+------------------------
++--------------------+--------------------+------------------------+------------------------------------------+
+| Wrapper Type       | Access Overhead    | Initialization         | Best Use Case                            |
++====================+====================+========================+==========================================+
+| ``StaticWrapper``  | Very Low           | Moderate (setup)       | Stable interfaces, performance-critical  |
++--------------------+--------------------+------------------------+------------------------------------------+
+| ``DynamicWrapper`` | Moderate           | Low                    | Changing interfaces, rapid prototyping   |
++--------------------+--------------------+------------------------+------------------------------------------+
+
+Basic Usage
+-----------
 .. code-block:: python
 
    from baseobjects.wrappers import StaticWrapper
 
-   class Service:
-       def __init__(self, value: int = 0):
-           self.value = value
-       def inc(self, n: int) -> None:
-           self.value += n
+   class InternalService:
+       def perform_action(self):
+           return "Success"
 
    class ServiceWrapper(StaticWrapper):
-       _wrapped_map_ = [("svc", Service)]
-       def __init__(self, svc: Service | None = None):
-           self._svc = svc or Service()
-           self._wrap()  # make wrapped attributes available as properties
+       # Map the internal attribute to its type for property generation
+       _wrapped_map_ = [("_service", InternalService)]
 
-   w = ServiceWrapper()
-   w.inc(3)            # delegates to Service.inc
-   assert w.value == 3 # property proxies Service.value
+       def __init__(self, service):
+           super().__init__()
+           self._service = service
+           self._wrap()  # Generate the proxy properties
 
-Attribute Resolution and Rewrapping
------------------------------------
-- Resolution order follows the order of entries in _wrapped_map_.
-- If new attributes are added to wrapped objects at runtime, call _wrap() again to expose them on the wrapper.
+   service = InternalService()
+   wrapper = ServiceWrapper(service)
+
+   # Calls InternalService.perform_action via the proxy
+   assert wrapper.perform_action() == "Success"
 
 Best Practices
 --------------
-- Prefer StaticWrapper when the interface is known and stable; choose a dynamic wrapper when heterogeneity is unavoidable.
-- Be explicit about which attributes/methods are exposed to avoid accidental leakage of internals.
-- Consider thread safety if the wrapped object is used concurrently.
+1. **Prefer Static for Performance**: Use ``StaticWrapper`` whenever the interface of the wrapped object is well-defined and stable.
+2. **Explicit Wrapping**: Use the ``_wrapped_map_`` to explicitly define which parts of the inner object should be exposed, preventing the accidental leakage of internal details.
+3. **Refresh when Necessary**: If the underlying object's interface changes after the wrapper is initialized, call ``self._wrap()`` again on a ``StaticWrapper`` to refresh the available properties.
+4. **Avoid Deep Nesting**: While wrappers can wrap other wrappers, keep the nesting depth minimal to avoid complex debugging and performance degradation from multiple layers of delegation.

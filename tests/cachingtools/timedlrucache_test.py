@@ -15,28 +15,79 @@ __version__ = "1.12.0"
 
 
 # Imports #
+# Standard Libraries #
+import time
+
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
 from baseobjects.cachingtools.caches.timedlrucache import TimedLRUCache
-from baseobjects.testsuite.cachingtools.timedlrucachetestsuite import TimedLRUCacheTestSuite
 
 
 # Definitions #
 # Classes #
-class TestTimedLRUCache(TimedLRUCacheTestSuite):
-    """Test the TimedLRUCache class.
+class TestTimedLRUCache:
+    """Test the TimedLRUCache class."""
 
-    This class tests the functionality of the TimedLRUCache class, utilizing the TimedLRUCacheTestSuite.
-    """
+    def test_lru_behavior(self):
+        """Tests LRU eviction."""
+        count = [0]
+        def func(x):
+            count[0] += 1
+            return x
 
-    # Attributes #
-    UnitTestClass = TimedLRUCache
+        cache = TimedLRUCache(func=func, maxsize=2)
 
-    # Instance Methods #
-    def test_pause_timer(self) -> None:
-        """Tests pausing the timer."""
+        assert cache(1) == 1
+        assert cache(2) == 2
+        assert count[0] == 2
+
+        # Access 1 again to make it recently used
+        assert cache(1) == 1
+        assert count[0] == 2
+
+        # Add 3, should evict 2 (since 1 was recently used)
+        assert cache(3) == 3
+        assert count[0] == 3
+
+        # 1 should still be in cache
+        assert cache(1) == 1
+        assert count[0] == 3
+
+        # 2 should be evicted
+        assert cache(2) == 2
+        assert count[0] == 4
+
+    def test_expiration(self):
+        """Tests expiration of TimedLRUCache."""
+        count = [0]
+        def func(x):
+            count[0] += 1
+            return x
+
+        cache = TimedLRUCache(func=func, lifetime=0.1)
+        assert cache(1) == 1
+        assert count[0] == 1
+
+        time.sleep(0.15)
+        assert cache(1) == 1
+        assert count[0] == 2
+
+    def test_clear_cache(self):
+        """Tests clear_cache method."""
+        count = [0]
+        def func(x):
+            count[0] += 1
+            return x
+
+        cache = TimedLRUCache(func=func)
+        assert cache(1) == 1
+        assert count[0] == 1
+
+        cache.clear_cache()
+        assert cache(1) == 1
+        assert count[0] == 2
 
 
 # Main #

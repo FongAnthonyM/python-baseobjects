@@ -39,33 +39,23 @@ class TimedCacheInfo(CacheInfo):
 
     Attributes:
         maxsize: The maximum number of items the cache can hold.
-        priority_queue_type: The type of priority queue to hold cache item priorities.
-        priority: The priority queue used for cache item management.
     """
 
     # Attributes #
     cache_method: str = "unlimited_cache"
     maxsize: int | None = None
-    priority_queue_type: type[CircularDoublyLinkedContainer] = CircularDoublyLinkedContainer
-    priority: Any = None
 
 
 class TimedCache(BaseTimedCache):
     """A periodically clearing multiple item cache wrapper object for a function.
 
-    Class Attributes:
-        priority_queue_type: The type of priority queue to hold cache item priorities.
+    This cache implementation stores multiple results based on the function's arguments. It supports
+    optional maximum size limits and time-based expiration (TTL). When the cache is limited and reaches its
+    maximum size, it can be configured with different replacement policies, though the default `TimedCache`
+    does not automatically evict old items unless a specific policy (like LRU) is used or it is manually cleared.
 
-    Args:
-        func: The function to wrap.
-        maxsize: The max size of the cache.
-        typed: Determines if the function's arguments are type sensitive for caching.
-        lifetime: The period between cache resets in seconds.
-        call_method: The default call method to use.
-        instanced: Determines if the cache exists in the main function or in the method instances.
-        *args: Arguments for inheritance.
-        init: Determines if this object will construct.
-        **kwargs: Keyword arguments for inheritance.
+    Attributes:
+        cache_info_type: The type of cache information to use for this cache.
     """
 
     # Attributes #
@@ -99,8 +89,71 @@ class TimedCache(BaseTimedCache):
     def priority(self, value: Any) -> None:
         self.cache_info.priority = value
 
-    # Magic Methods #
-    # Construction/Destruction
+    # Calling
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        """The call magic method which handles the caching logic and invokes the wrapped function.
+
+        This method first checks if caching is enabled and if the cache has expired. It then attempts
+        to retrieve a result from the cache using a key generated from the arguments. If the result
+        is not in the cache, it calls the wrapped function and stores the result if appropriate.
+
+        Args:
+            *args: Positional arguments for the wrapped function.
+            **kwargs: Keyword arguments for the wrapped function.
+
+        Returns:
+            The result of the wrapped function, either from the cache or a fresh call.
+        """
+        instance = None
+        if (reference := self._self_) is not None:
+            instance = reference()
+
+        if instance is not None:
+            cache_info = self.get_instance_cache_info(instance) if self.instanced_cache else self.cache_info
+        else:
+            cache_info = self.cache_info
+
+        if cache_info.is_caching:
+            if cache_info.is_timed and cache_info.lifetime is not None and perf_counter() >= cache_info.expiration:
+                self.clear_cache(instance, cache_info=cache_info)
+
+            # Fast path for key creation
+            if not cache_info.typed and not kwargs:
+                if len(args) == 1:
+                    key = args[0]
+                    if type(key) not in {int, str}:
+                        key = args
+                else:
+                    key = args
+            else:
+                key = self.create_key(args, kwargs, cache_info.typed)
+
+            result = cache_info.cache_container.get(key, SEARCHSENTINEL)
+            if result is not SEARCHSENTINEL:
+                return result
+
+            if instance is not None:
+                try:
+                    result = self.__wrapped__.__get__(instance, self.__owner__)(*args, **kwargs)  # type: ignore[misc]
+                except AttributeError:
+                    result = self.__wrapped__(instance, *args, **kwargs)  # type: ignore[misc]
+            else:
+                result = self.__wrapped__(*args, **kwargs)
+
+            if cache_info.cache_method == "unlimited_cache":
+                cache_info.cache_container[key] = result
+            elif cache_info.maxsize is not None and len(cache_info.cache_container) < cache_info.maxsize:
+                cache_info.cache_container[key] = result
+            return result
+
+        if instance is not None:
+            try:
+                return self.__wrapped__.__get__(instance, self.__owner__)(*args, **kwargs)  # type: ignore[misc]
+            except AttributeError:
+                return self.__wrapped__(instance, *args, **kwargs)  # type: ignore[misc]
+
+        return self.__wrapped__(*args, **kwargs)
+
     def __init__(
         self,
         func: AnyCallable | None = None,
@@ -127,18 +180,18 @@ class TimedCache(BaseTimedCache):
             **kwargs: Additional keyword arguments forwarded to the parent initializer/constructor.
         """
         # Parent Initialization #
-        super().__init__(*args, init=False, **kwargs)  # type: ignore[misc]
+        super().__init__(func=func, init=False, *args, **kwargs)
 
         # Object Construction #
         if init:
-            self.construct(  # type: ignore[misc]
-                *args,
+            self.construct(
                 func=func,
                 maxsize=maxsize,
                 typed=typed,
                 lifetime=lifetime,
                 call_method=call_method,
                 instanced=instanced,
+                *args,
                 **kwargs,
             )
 
@@ -179,33 +232,24 @@ class TimedCache(BaseTimedCache):
         if maxsize is not None:
             self.maxsize = maxsize
 
-        super().construct(  # type: ignore[misc]
-            *args,
+        super().construct(
             func=func,
             typed=typed,
             lifetime=lifetime,
             call_method=call_method,
             instanced=instanced,
+            *args,
             **kwargs,
         )
 
     # Caching Methods
-    def init_cache_info(self, cache_info: TimedCacheInfo) -> None:  # type: ignore[override]
-        """Initializes the cache information.
-
-        Args:
-            cache_info: The cache information to initialize.
-        """
-        super().init_cache_info(cache_info)
-        cache_info.priority = cache_info.priority_queue_type()
-
     def unlimited_cache(self, *args: Any, cache_info: TimedCacheInfo | None = None, **kwargs: Any) -> Any:
-        """Caching with no limit on items in the cache.
+        """Caches results without any limit on the number of items.
 
         Args:
-            *args: Arguments of the wrapped function.
-            cache_info: The cache information to use for caching.
-            **kwargs: Keyword Arguments of the wrapped function.
+            *args: Positional arguments for the wrapped function.
+            cache_info: The cache information to use. If None, it will be retrieved.
+            **kwargs: Keyword arguments for the wrapped function.
 
         Returns:
             The result of the wrapped function.
@@ -214,22 +258,22 @@ class TimedCache(BaseTimedCache):
             cache_info = self.get_cache_info(*args)  # type: ignore[assignment]
 
         key = self.create_key(args, kwargs, cache_info.typed)
-        cache_item = cache_info.cache_container.get(key, SEARCHSENTINEL)
+        result = cache_info.cache_container.get(key, SEARCHSENTINEL)
 
-        if cache_item is not SEARCHSENTINEL:
-            return cache_item.result
+        if result is not SEARCHSENTINEL:
+            return result
         else:
             result = self.call_wrapped(*args, **kwargs)
-            cache_info.cache_container[key] = self.cache_item_type(key=key, result=result)
+            cache_info.cache_container[key] = result
             return result
 
     def limited_cache(self, *args: Any, cache_info: TimedCacheInfo | None = None, **kwargs: Any) -> Any:
-        """Caching that does not cache new results when cache is full.
+        """Caches results but stops caching new items when the maximum size is reached.
 
         Args:
-            *args: Arguments of the wrapped function.
-            cache_info: The cache information to use for caching.
-            **kwargs: Keyword Arguments of the wrapped function.
+            *args: Positional arguments for the wrapped function.
+            cache_info: The cache information to use. If None, it will be retrieved.
+            **kwargs: Keyword arguments for the wrapped function.
 
         Returns:
             The result of the wrapped function.
@@ -238,19 +282,19 @@ class TimedCache(BaseTimedCache):
             cache_info = self.get_cache_info(*args)  # type: ignore[assignment]
 
         key = self.create_key(args, kwargs, cache_info.typed)
-        cache_item = cache_info.cache_container.get(key, SEARCHSENTINEL)
+        result = cache_info.cache_container.get(key, SEARCHSENTINEL)
 
-        if cache_item is not SEARCHSENTINEL:
-            return cache_item.result
+        if result is not SEARCHSENTINEL:
+            return result
         else:
             result = self.call_wrapped(*args, **kwargs)
             if cache_info.maxsize is not None and len(cache_info.cache_container) < cache_info.maxsize:
-                cache_info.cache_container[key] = self.cache_item_type(result=result)
+                cache_info.cache_container[key] = result
             return result
 
     # Cache Control
     def clear_cache(self, *args: Any, cache_info: TimedCacheInfo | None = None, **kwargs: Any) -> None:  # type: ignore[override]
-        """Clear the cache and update the expiration of the cache.
+        """Clears the cache and updates the expiration of the cache.
 
         Args:
             *args: Arguments that contain the instance if bound.
@@ -261,11 +305,10 @@ class TimedCache(BaseTimedCache):
             cache_info = self.get_cache_info(*args)  # type: ignore[assignment]
 
         cache_info.cache_container.clear()
-        cache_info.priority.clear()
         super().clear_cache(*args, cache_info=cache_info, **kwargs)
 
     def set_maxsize(self, value: int | None) -> None:
-        """Change the cache's max size to a new value and updates the cache to its optimal handle function.
+        """Changes the cache's max size to a new value and updates the cache to its optimal handle function.
 
         Args:
             value: The new max size of the cache.

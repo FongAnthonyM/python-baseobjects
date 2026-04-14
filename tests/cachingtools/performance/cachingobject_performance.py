@@ -31,6 +31,9 @@ from baseobjects.testsuite import BasePerformanceTestSuite
 class ExampleCachingObject(CachingObject):
     """An example class for testing CachingObject performance."""
 
+    # Attributes #
+    _is_caching: bool = True
+
     @timed_cache(lifetime=10)
     def cached_method(self) -> int:
         """A cached method.

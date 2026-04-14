@@ -30,11 +30,15 @@ from .caches import BaseTimedCache
 # Definitions #
 # Classes #
 class CachingObject(BaseReducible, metaclass=InitMeta):
-    """An abstract class which has functionality for functions that are caching.
+    """An abstract class that provides centralized management for all timed caches within an object.
+
+    This class automatically discovers and manages any `BaseTimedCache` instances assigned as class or instance
+    attributes. It allows for enabling, disabling, and clearing all caches at once, and supports both
+    global and per-instance caching control.
 
     Attributes:
-        _is_caching: Determines if the caching functions of this object will cache.
-        _caches: All the caches within this object.
+        _is_caching: Determines if the caching functions of this object will cache globally.
+        _caches: All the caches within this object instance.
     """
 
     # Class Attributes #
@@ -76,7 +80,6 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
 
     # Attributes #
     __cache__: dict[str, Any]
-    _is_caching: bool = True
     _caches: dict[str, BaseTimedCache]
 
     # Properties #
@@ -124,6 +127,7 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
             **kwargs: Keyword arguments forwarded to the parent initializer.
         """
         # Attributes #
+        self._is_caching = True
         self.__cache__ = {}
         self._caches = self._caches_.copy()
 
@@ -172,10 +176,13 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
     # Instance Methods #
     # Inspection
     def get_caches(self) -> dict[str, BaseTimedCache]:
-        """Gets all the caches in this object.
+        """Discovers and returns all `BaseTimedCache` instances within this object.
+
+        This method scans the class MRO, `__slots__`, and `__dict__` to find all attributes that
+        are instances of `BaseTimedCache`.
 
         Returns:
-            All the cache objects within this object.
+            A dictionary mapping attribute names to their respective cache objects.
         """
         self._caches.clear()
 
@@ -218,14 +225,14 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
 
     # State
     def get_any_caching(self, exclude: set[str] | None = None, caches: bool = False) -> bool:
-        """Checks if any cache has its caching enabled.
+        """Checks if at least one cache is currently enabled.
 
         Args:
-            exclude: The names of the caches to exclude from caching.
-            caches: Determines if get_caches will run before setting the caches.
+            exclude: A set of cache names to ignore during the check.
+            caches: If True, refresh the internal cache registry before checking.
 
         Returns:
-            If any cache has its caching enabled.
+            True if any non-excluded cache is enabled, False otherwise.
         """
         if not self._is_caching:
             return False
@@ -249,14 +256,14 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
         return False
 
     def get_all_caching(self, exclude: set[str] | None = None, caches: bool = False) -> bool:
-        """Checks if all caches have their caching enabled.
+        """Checks if all caches are currently enabled.
 
         Args:
-            exclude: The names of the caches to exclude from caching.
-            caches: Determines if get_caches will run before setting the caches.
+            exclude: A set of cache names to ignore during the check.
+            caches: If True, refresh the internal cache registry before checking.
 
         Returns:
-            If all caches have their caching enabled.
+            True if all non-excluded caches are enabled, False otherwise.
         """
         if not self._is_caching:
             return False
@@ -402,8 +409,8 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
         """Enables all caches in this object.
 
         Args:
-            exclude: The names of the caches to exclude from caching.
-            caches: Determines if get_caches will run before setting the caches.
+            exclude: A set of cache names to skip when enabling.
+            caches: If True, refresh the internal cache registry before enabling.
         """
         if not exclude:
             self._is_caching = True
@@ -424,8 +431,8 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
         """Disables all caches in this object.
 
         Args:
-            exclude: The names of the caches to exclude from caching.
-            caches: Determines if get_caches will run before setting the caches.
+            exclude: A set of cache names to skip when disabling.
+            caches: If True, refresh the internal cache registry before disabling.
         """
         if not exclude:
             self._is_caching = False
@@ -440,50 +447,6 @@ class CachingObject(BaseReducible, metaclass=InitMeta):
         else:
             for cache in self._caches.values():
                 if (method := getattr(cache, "disable_caching", None)) is not None:
-                    method(self)
-
-    def stop_caching(self, exclude: set[str] | None = None, caches: bool = False) -> None:
-        """Stops all caches in this object.
-
-        Args:
-            exclude: The names of the caches to exclude from caching.
-            caches: Determines if get_caches will run before setting the caches.
-        """
-        if not exclude:
-            self._is_caching = False
-
-        if caches:
-            self.get_caches()
-
-        if exclude:
-            for name, cache in self._caches.items():
-                if name not in exclude and (method := getattr(cache, "stop_caching", None)) is not None:
-                    method(self)
-        else:
-            for cache in self._caches.values():
-                if (method := getattr(cache, "stop_caching", None)) is not None:
-                    method(self)
-
-    def resume_caching(self, exclude: set[str] | None = None, caches: bool = False) -> None:
-        """Resumes all caches in this object.
-
-        Args:
-            exclude: The names of the caches to exclude from caching.
-            caches: Determines if get_caches will run before setting the caches.
-        """
-        if not exclude:
-            self._is_caching = True
-
-        if caches:
-            self.get_caches()
-
-        if exclude:
-            for name, cache in self._caches.items():
-                if name not in exclude and (method := getattr(cache, "resume_caching", None)) is not None:
-                    method(self)
-        else:
-            for cache in self._caches.values():
-                if (method := getattr(cache, "resume_caching", None)) is not None:
                     method(self)
 
     def timeless_caching(self, exclude: set[str] | None = None, caches: bool = False) -> None:

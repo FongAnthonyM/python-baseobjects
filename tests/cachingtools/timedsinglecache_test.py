@@ -15,34 +15,91 @@ __version__ = "1.12.0"
 
 
 # Imports #
+# Standard Libraries #
+import time
+
 # Third-Party Packages #
 import pytest
 
 # Source Packages #
 from baseobjects.cachingtools.caches.timedsinglecache import TimedSingleCache
-from baseobjects.testsuite.cachingtools.timedsinglecachetestsuite import TimedSingleCacheTestSuite
 
 
 # Definitions #
 # Classes #
-class TestTimedSingleCache(TimedSingleCacheTestSuite):
-    """Test the TimedSingleCache class.
+class TestTimedSingleCache:
+    """Test the TimedSingleCache class."""
 
-    This class tests the functionality of the TimedSingleCache class, utilizing the TimedSingleCacheTestSuite.
-    """
+    def test_single_cache_behavior(self):
+        """Tests that TimedSingleCache only holds one item."""
+        count = [0]
+        def func(x):
+            count[0] += 1
+            return x * 10
 
-    # Attributes #
-    UnitTestClass = TimedSingleCache
+        cache = TimedSingleCache(func=func)
 
-    # Instance Methods #
-    def test_pause_timer(self) -> None:
-        """Tests pausing the timer."""
+        assert cache(1) == 10
+        assert count[0] == 1
 
-    def test_refresh_expiration_no_lifetime(self) -> None:
-        """Tests refresh_expiration with no lifetime."""
-        cache = self.UnitTestClass(lambda: None, lifetime=None)
-        cache.refresh_expiration()
-        assert cache.expiration == 0
+        # Second call same arg -> HIT
+        assert cache(1) == 10
+        assert count[0] == 1
+
+        # Call with different arg -> REPLACES
+        assert cache(2) == 20
+        assert count[0] == 2
+
+        # Call with first arg again -> MISS (because it was replaced)
+        assert cache(1) == 10
+        assert count[0] == 3
+
+    def test_expiration(self):
+        """Tests expiration of TimedSingleCache."""
+        count = [0]
+        def func(x):
+            count[0] += 1
+            return x
+
+        cache = TimedSingleCache(func=func, lifetime=0.1)
+        assert cache(1) == 1
+        assert count[0] == 1
+
+        time.sleep(0.15)
+        assert cache(1) == 1
+        assert count[0] == 2
+
+    def test_clear_cache(self):
+        """Tests clear_cache method."""
+        count = [0]
+        def func(x):
+            count[0] += 1
+            return x
+
+        cache = TimedSingleCache(func=func)
+        assert cache(1) == 1
+        assert count[0] == 1
+
+        cache.clear_cache()
+        assert cache(1) == 1
+        assert count[0] == 2
+
+    def test_disable_caching(self):
+        """Tests that disabling caching works."""
+        count = [0]
+        def func(x):
+            count[0] += 1
+            return x
+
+        cache = TimedSingleCache(func=func)
+        assert cache(1) == 1
+        assert count[0] == 1
+
+        cache.disable_caching()
+        assert cache(1) == 1
+        assert count[0] == 2
+        assert cache(1) == 1
+        assert count[0] == 3
 
 
 # Main #

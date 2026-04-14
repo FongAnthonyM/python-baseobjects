@@ -20,6 +20,7 @@ __version__ = "1.12.0"
 
 # Imports #
 # Standard Libraries #
+from time import perf_counter
 from typing import Any
 
 # Local Packages #
@@ -29,62 +30,80 @@ from .timedsinglecache import TimedSingleCache, TimedSingleCacheInfo
 # Definitions #
 # Classes #
 class TimedKeylessCache(TimedSingleCache):
-    """A periodically clearing cache wrapper object for a function that only has one result."""
+    """A periodically clearing cache wrapper object for a function that only has one result.
 
-    # Instance Methods #
-    # Constructors
-    def construct(
-        self,
-        func: Any | None = None,
-        typed: bool | None = None,
-        lifetime: int | float | None = None,
-        call_method: str | None = None,
-        instanced: bool | None = None,
-        *args: Any,
-        **kwargs: Any,
-    ) -> None:
-        """Constructs this object with the given arguments.
+    This cache implementation stores only a single result regardless of the input arguments.
+    It is useful for functions whose results change only over time and are independent of
+    the arguments provided.
+    """
+
+    # Calling
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        """The call magic method which handles the caching logic and invokes the wrapped function.
+
+        This method first checks if caching is enabled and if the cache has expired. It stores
+        a single result and ignores all arguments when checking if the result is already cached.
 
         Args:
-            func: The function to wrap.
-            typed: Determines if the function's arguments are type sensitive for caching.
-            lifetime: The period between cache resets in seconds.
-            call_method: The default call method to use.
-            instanced: Determines if the cache exists in the main function or in the method instances.
-            *args: Arguments for inheritance.
-            **kwargs: Keyword arguments for inheritance.
-        """
-        super().construct(  # type: ignore[misc]
-            *args,
-            func=func,
-            typed=typed,
-            lifetime=lifetime,
-            call_method=call_method,
-            instanced=instanced,
-            **kwargs,
-        )
-
-    # Caching
-    def caching(self, *args: Any, cache_info: TimedSingleCacheInfo | None = None, **kwargs: Any) -> Any:
-        """Caching that holds a single result.
-
-        Args:
-            *args: Arguments of the wrapped function.
-            cache_info: The cache information to use for caching.
-            **kwargs: Keyword Arguments of the wrapped function.
+            *args: Positional arguments for the wrapped function.
+            **kwargs: Keyword arguments for the wrapped function.
 
         Returns:
-            The result of the wrapped function.
+            The result of the wrapped function, either from the cache or a fresh call.
+        """
+        instance = None
+        if (reference := self._self_) is not None:
+            instance = reference()
+
+        if instance is not None:
+            cache_info = self.get_instance_cache_info(instance) if self.instanced_cache else self.cache_info
+        else:
+            cache_info = self.cache_info
+
+        if cache_info.is_caching:
+            if cache_info.is_timed and cache_info.lifetime is not None and perf_counter() >= cache_info.expiration:
+                cache_info.cache_container = None
+                cache_info.args_key = None
+                if cache_info.lifetime is not None:
+                    cache_info.expiration = perf_counter() + cache_info.lifetime
+
+            if not cache_info.args_key:
+                cache_info.args_key = True
+                if instance is not None:
+                    try:
+                        cache_info.cache_container = self.__wrapped__.__get__(instance, self.__owner__)(*args, **kwargs)  # type: ignore[misc]
+                    except AttributeError:
+                        cache_info.cache_container = self.__wrapped__(instance, *args, **kwargs)  # type: ignore[misc]
+                else:
+                    cache_info.cache_container = self.__wrapped__(*args, **kwargs)
+
+            return cache_info.cache_container
+
+        if instance is not None:
+            try:
+                return self.__wrapped__.__get__(instance, self.__owner__)(*args, **kwargs)  # type: ignore[misc]
+            except AttributeError:
+                return self.__wrapped__(instance, *args, **kwargs)  # type: ignore[misc]
+
+        return self.__wrapped__(*args, **kwargs)
+
+    # Cache Control
+    def clear_cache(self, *args: Any, cache_info: TimedSingleCacheInfo | None = None, **kwargs: Any) -> None:  # type: ignore[override]
+        """Clears the cache and updates the expiration of the cache.
+
+        Args:
+            *args: Arguments that contain the instance if bound.
+            cache_info: The cache information to clear.
+            **kwargs: Keyword arguments.
         """
         if cache_info is None:
-            cache_info = self.get_cache_info(*args)  # type: ignore[assignment]
+            instance = None
+            if (reference := self._self_) is not None:
+                instance = reference()
 
-        if not cache_info.args_key:
-            cache_info.cache_container = self.call_wrapped(*args, **kwargs)
-            cache_info.args_key = True
+            cache_info = self.get_cache_info(instance)
 
-        return cache_info.cache_container
-
-
-# Aliases #
+        cache_info.cache_container = None
+        cache_info.args_key = None
+        super().clear_cache(*args, cache_info=cache_info, **kwargs)
 timed_keyless_cache = TimedKeylessCache
