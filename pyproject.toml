@@ -169,6 +169,7 @@ quote-style = "double"  # Like C++ double quotes for strings and single for char
 docstring-code-format = false  # Format code in docstrings
 docstring-code-line-length = "dynamic"
 
+
 # isort [Import Sorting]
 [tool.isort]
 skip = ["venv", ".venv", ".nox", "docs/python-styleguide"]
