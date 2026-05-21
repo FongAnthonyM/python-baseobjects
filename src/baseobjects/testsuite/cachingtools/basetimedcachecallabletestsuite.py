@@ -28,9 +28,9 @@ from typing import Any
 import pytest
 
 # Local Packages #
-from ...cachingtools.caches.basetimedcache import BaseTimedCache
+from ...cachingtools import BaseTimedCache
 from ..bases import concrete_function
-from ..functions.dynamicdecoratortestsuite import DynamicDecoratorTestSuite
+from ..functions import BaseDecoratorTestSuite
 
 
 # Helper Functions #
@@ -111,7 +111,7 @@ class MockObj:
         return self.value + x
 
 
-class BaseTimedCacheTestSuite(DynamicDecoratorTestSuite):
+class BaseTimedCacheTestSuite(BaseDecoratorTestSuite):
     """Base test suite for BaseTimedCache and its subclasses.
 
     This class provides common test functionality for timed cache callables, including tests for caching behavior,

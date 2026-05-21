@@ -386,7 +386,7 @@ class staterestriction(BaseDecorator):  # noqa: N801
             self.construct(func, open_state, valid_modes, mode_group, *args, **kwargs)
 
     # Calling #
-    def call_wrapped(self, *args: Any, **kwargs: Any) -> Any:
+    def call_state_restriction(self, *args: Any, **kwargs: Any) -> Any:
         """Calls the wrapped function if the object's state and mode are valid.
 
         Args:
@@ -406,7 +406,7 @@ class staterestriction(BaseDecorator):  # noqa: N801
             if not self.all_modes:
                 obj.require_mode(self.valid_modes, self.mode_group)
 
-        return super().call_wrapped(*args, **kwargs)
+        return self.call_binding(*args, **kwargs)
 
     # Descriptor #
     def __set__(self, instance: Any, value: Any) -> None:
@@ -461,8 +461,7 @@ class staterestriction(BaseDecorator):  # noqa: N801
             self.mode_group = mode_group
             self.all_modes = False
 
-    # Method Overrides #
-    __call__: CallMethod = call_wrapped
+
 
 
 class asopen(BaseDecorator):  # noqa: N801
@@ -542,9 +541,6 @@ class asopen(BaseDecorator):  # noqa: N801
         # Construction #
         self.args = args
         self.kwargs = kwargs
-
-    # Method Overrides #
-    __call__: CallMethod = call_wrapped
 
 
 class asopenasync(BaseDecorator):  # noqa: N801
@@ -630,6 +626,3 @@ class asopenasync(BaseDecorator):  # noqa: N801
         # Construction #
         self.args = args
         self.kwargs = kwargs
-
-    # Method Overrides #
-    __call__: CallMethod = call_wrapped

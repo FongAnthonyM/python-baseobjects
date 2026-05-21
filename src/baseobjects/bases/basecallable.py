@@ -83,6 +83,18 @@ class BaseCallable(BaseReducible):
 
     # Properties #
     @property
+    def __name__(self) -> str:
+        """The name of the wrapped function."""
+        return getattr(self.__wrapped__, "__name__", self.__class__.__name__)
+
+    @__name__.setter
+    def __name__(self, value: str) -> None:
+        try:
+            self.__dict__["__name__"] = value
+        except (AttributeError, TypeError):
+            pass
+
+    @property
     def __func__(self) -> AnyCallable | None:
         """The function which this callable wraps."""
         return self.__wrapped__
